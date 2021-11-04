@@ -11,7 +11,7 @@ The [RWS Viewer](https://rws-viewer.netlify.app/) gives insight in a wide variet
 ```sh
 git clone git@github.com:openearth/rws-viewer.git
 cd rws-viewer
-npm ci
+yarn install
 ```
 
 - Copy `.env.example` to `.env`. And set all variables.
@@ -19,5 +19,5 @@ npm ci
 ### Local development
 
 ```sh
-npm run dev
+yarn dev
 ```

@@ -19,7 +19,7 @@
     "lint:js": "vue-cli-service lint --no-fix",
     "lint:scss": "stylelint ./src/**/*.{vue,scss}",
     "serve": "vue-cli-service serve --port 3000 --color",
-    "start": "npm run serve"
+    "start": "yarn serve"
   },
   "dependencies": {
     "@deltares/utilities": "^0.3.0",
