@@ -25,6 +25,7 @@
     },
     data: () => ({
       accessToken: process.env.VUE_APP_MAPBOX_TOKEN,
+      layers: [],
     }),
   }
 </script>
