@@ -1,0 +1,20 @@
+{
+  "extends": [
+    "stylelint-config-standard",
+    "stylelint-config-property-sort-order-smacss"
+  ],
+  "rules": {
+    "at-rule-no-unknown": null,
+    "block-no-empty": true,
+    "color-hex-length": "long",
+    "color-no-invalid-hex": true,
+    "font-weight-notation": "numeric",
+    "indentation": [ 2, { "baseIndentLevel": 1 } ],
+    "no-empty-first-line": true,
+    "no-eol-whitespace": true,
+    "no-invalid-position-at-import-rule": null,
+    "number-leading-zero": "never",
+    "selector-pseudo-element-colon-notation": "double",
+    "string-quotes": "single"
+  }
+}

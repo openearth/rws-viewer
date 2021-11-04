@@ -1,0 +1,10 @@
+{
+  "name": "RWS Viewer",
+  "short_name": "RWS Viewer",
+  "start_url": "/",
+  "orientation": "portrait",
+  "theme_color": "#008fc5",
+  "background_color": "#008fc5",
+  "display": "standalone",
+  "icons": []
+}
