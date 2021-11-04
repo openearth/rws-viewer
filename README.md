@@ -6,14 +6,18 @@ The [RWS Viewer](https://rws-viewer.netlify.app/) gives insight in a wide variet
 
 ## Getting started
 
+- Clone [this repository](https://github.com/openearth/rws-viewer):
+
 ```sh
 git clone git@github.com:openearth/rws-viewer.git
 cd rws-viewer
-npm ci
+yarn install
 ```
+
+- Copy `.env.example` to `.env`. And set all variables.
 
 ### Local development
 
 ```sh
-npm run dev
+yarn dev
 ```
