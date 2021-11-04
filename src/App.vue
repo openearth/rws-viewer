@@ -16,7 +16,7 @@
 <script>
   import { MapboxMap } from '@deltares/vue-components'
 
-  const AppShell = () => import(/* webpackChunkName: "app-shell" */ '~/components/AppShell/AppShell')
+  const AppShell = () => import('~/components/AppShell/AppShell')
 
   export default {
     components: {
