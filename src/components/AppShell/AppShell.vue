@@ -18,7 +18,7 @@
 </template>
 
 <script>
-  import AppHeader from '~/components/AppHeader/AppHeader'
+  const AppHeader = () => import(/* webpackChunkName: "app-header" */ '~/components/AppHeader/AppHeader')
 
   export default {
     name: 'AppShell',

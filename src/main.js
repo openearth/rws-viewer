@@ -6,7 +6,7 @@ import vuetify from './plugins/vuetify'
 import './plugins/composition-api'
 import './plugins/axios'
 
-import App from './App.vue'
+const App = () => import(/* webpackChunkName: "vue-app" */  './App.vue')
 
 Vue.config.productionTip = false
 
