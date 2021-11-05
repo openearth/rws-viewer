@@ -1,11 +1,14 @@
 <template>
-  <div class="layers">
+  <v-card class="layers" flat>
+    <v-card-text>
+      Lorem ipsum dolor sit amet.
+    </v-card-text>
     <layer-list-controls
       :layers="layers"
       @active-layers-change="onActiveLayerChange"
       @layer-sorting-change="onLayerSortingChange"
     />
-  </div>
+  </v-card>
 </template>
 
 <script>

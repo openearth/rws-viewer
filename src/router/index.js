@@ -3,7 +3,6 @@ import VueRouter from 'vue-router'
 
 const Download = () => import('../views/Download.vue')
 const Favourites = () => import('../views/Favourites.vue')
-const Home = () => import('../views/Home.vue')
 const Layers = () => import('../views/Layers.vue')
 
 Vue.use(VueRouter)
@@ -11,8 +10,8 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'home',
-    component: Home,
+    name: 'Layers',
+    component: Layers,
   },
   {
     path: '/download',
@@ -23,11 +22,6 @@ const routes = [
     path: '/favourites',
     name: 'Favourites',
     component: Favourites,
-  },
-  {
-    path: '/layers',
-    name: 'Layers',
-    component: Layers,
   },
 ]
 

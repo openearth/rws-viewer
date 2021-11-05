@@ -1,7 +1,9 @@
 <template>
-  <div class="downloads">
-    <p>downloads</p>
-  </div>
+  <v-card class="downloads" flat>
+    <v-card-text>
+      Lorem ipsum dolor sit amet.
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
