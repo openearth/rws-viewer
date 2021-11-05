@@ -10,9 +10,9 @@
     </app-header>
 
     <v-main>
-      <app-sidebar />
-      <slot />
       <slot name="map" />
+      <slot />
+      <app-sidebar />
     </v-main>
   </v-app>
 </template>
