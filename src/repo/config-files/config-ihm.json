@@ -56,7 +56,7 @@
               [
                 {"id": "Vegetatie",
                 "name": "Vegetatie",
-                "children":
+                "children": [
                   {
                     "id": "zeegras_alledata",
                     "name": "Bedekking Groot zeegras, Klein zeegras, Snavelruppia, alle data",
@@ -64,6 +64,7 @@
                     "url": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/zeegras/ows",
                     "layer": "zeegras_alledata"
                   }
+                ]
                 }
               ]
             },
