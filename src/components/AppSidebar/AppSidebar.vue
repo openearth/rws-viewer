@@ -36,16 +36,14 @@
 
   export default {
     name: 'AppSidebar',
-    data() {
-      return {
-        drawer: false,
-        tabs: [
-          { name: 'Layers', page: '/', icon: 'mdi-layers' },
-          { name: 'Download', page: '/download', icon: 'mdi-download' },
-          { name: 'Favourites', page: '/favourites', icon: 'mdi-star' },
-        ],
-      }
-    },
+    data: () => ({
+      drawer: false,
+      tabs: [
+        { name: 'Layers', page: '/', icon: 'mdi-layers' },
+        { name: 'Download', page: '/download', icon: 'mdi-download' },
+        { name: 'Favourites', page: '/favourites', icon: 'mdi-star' },
+      ],
+    }),
     computed: {
       ...mapState('app', [ 'appNavigationOpen' ]),
     },
