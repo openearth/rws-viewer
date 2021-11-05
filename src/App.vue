@@ -17,6 +17,7 @@
   import { MapboxMap } from '@deltares/vue-components'
   import configRepo from '~/repo/configRepo'
   import { VALID_PLATFORMS } from '~/lib/constants'
+  import { flattenLayers, getLayersTags } from '~/lib/layer-helpers'
 
   const AppShell = () => import('~/components/AppShell/AppShell')
 
@@ -47,6 +48,11 @@
 
         const configData = configRepo.getConfig(platformToUse)
         this.platformName = configData.name
+
+        const layerList = flattenLayers(configData.layers)
+        console.log(layerList)
+        const tagList = getLayersTags(layerList)
+        console.log(tagList)
       },
     },
   }
