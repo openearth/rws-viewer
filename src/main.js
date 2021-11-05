@@ -4,7 +4,6 @@ import store from './store'
 
 import vuetify from './plugins/vuetify'
 import './plugins/composition-api'
-import './plugins/axios'
 
 import App from './App.vue'
 
