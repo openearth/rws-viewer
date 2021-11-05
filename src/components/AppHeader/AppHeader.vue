@@ -1,11 +1,12 @@
 <template>
   <v-app-bar
     app
-    class="app-header"
     :color="color"
     :dark="theme === 'dark'"
     width="100%"
   >
+    <v-app-bar-nav-icon @click.stop="onMenuButtonClick" />
+
     <v-toolbar-title v-if="title">
       {{ title }}
     </v-toolbar-title>
@@ -17,6 +18,8 @@
 </template>
 
 <script>
+  import { mapActions, mapState } from 'vuex'
+
   export default {
     name: 'AppHeader',
     props: {
@@ -34,11 +37,14 @@
         default: 'primary',
       },
     },
+    computed: {
+      ...mapState('app', [ 'appNavigationOpen' ]),
+    },
+    methods: {
+      ...mapActions('app', [ 'setNavigationOpen' ]),
+      onMenuButtonClick() {
+        this.setNavigationOpen({ open: !this.appNavigationOpen })
+      },
+    },
   }
 </script>
-
-<style lang="scss">
-  .app-header {
-    left: 0 !important;
-  }
-</style>
