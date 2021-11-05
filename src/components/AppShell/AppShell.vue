@@ -10,7 +10,7 @@
     </app-header>
 
     <v-main>
-      <router-view />
+      <app-sidebar />
       <slot />
       <slot name="map" />
     </v-main>
@@ -19,11 +19,13 @@
 
 <script>
   const AppHeader = () => import('~/components/AppHeader/AppHeader')
+  const AppSidebar = () => import('~/components/AppSidebar/AppSidebar')
 
   export default {
     name: 'AppShell',
     components: {
       AppHeader,
+      AppSidebar,
     },
     props: {
       headerTitle: {
