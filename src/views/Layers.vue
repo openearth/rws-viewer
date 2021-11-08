@@ -1,11 +1,18 @@
 <template>
   <v-card class="layers" flat>
-    <v-card-text>
-      Lorem ipsum dolor sit amet.
-    </v-card-text>
+    <v-select
+      v-model="selectedTags"
+      class="px-4 pt-4 pb-1"
+      label="Filter by tag"
+      multiple
+      dense
+      outlined
+      hide-details
+      :items="layerTags"
+    />
     <layer-list-controls
-      v-if="layers"
-      :layers="layers"
+      v-if="layersForTree"
+      :layers="layersForTree"
       @active-layers-change="onActiveLayerChange"
       @layer-sorting-change="onLayerSortingChange"
     />
@@ -13,24 +20,43 @@
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex'
+  import { mapActions, mapGetters } from 'vuex'
   import { LayerListControls } from '@deltares/vue-components'
 
   export default {
     name: 'Layer',
+
     components: {
       LayerListControls,
     },
+
+    data: () => ({
+      selectedTags: [],
+    }),
+
     computed: {
-      ...mapState('data', [ 'layers' ]),
+      ...mapGetters('data', [
+        'displayLayers',
+        'flattenedLayers',
+        'layerTags',
+      ]),
+
+      layersForTree() {
+        if(!this.selectedTags.length) return this.displayLayers
+        return this.flattenedLayers.filter(({ tags }) =>
+          this.selectedTags.every(tag => tags.includes(tag)))
+      },
     },
+
     methods: {
-      ...mapActions('data', [ 'setDataLayers' ]),
+      ...mapActions('data', [ 'setDisplayLayers' ]),
+
       onActiveLayerChange(layers) {
         console.log('onActiveLayerChange', { layers })
       },
+
       onLayerSortingChange(layers) {
-        this.setDataLayers({ layers })
+        this.setDisplayLayers({ layers })
       },
     },
   }

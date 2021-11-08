@@ -24,24 +24,20 @@
       AppShell,
       MapboxMap,
     },
+
     data: () => ({
       accessToken: process.env.VUE_APP_MAPBOX_TOKEN,
       layers: [],
     }),
+
     computed: {
       ...mapState('app', [ 'appName' ]),
     },
-    watch: {
-      appName: {
-        immediate: true,
-        handler(name) {
-          document.title = name
-        },
-      },
-    },
+
     mounted() {
       this.$router.onReady(this.getAppData)
     },
+
     methods: {
       ...mapActions('data', [ 'getAppData' ]),
     },

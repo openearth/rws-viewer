@@ -1,41 +1,59 @@
 import configRepo from '~/repo/configRepo'
-import { VALID_PLATFORMS } from '~/lib/constants'
+import { flattenLayers, getLayersTags } from '~/lib/layer-helpers'
 
 export default {
   namespaced: true,
 
   state: () => ({
-    layers: [],
+    // originalLayers: [],
+    displayLayers: [],
+    flattenedLayers: [],
+    layerTags: [],
   }),
 
   getters: {
-    availableLayers(state) {
-      return state.layers
+    displayLayers: state => state.displayLayers,
+    flattenedLayers: state => state.flattenedLayers,
+    layerTags: state => state.layerTags,
+  },
+
+  mutations: {
+    // SET_ORIGINAL_LAYERS(state, { layers }) {
+    //   state.originalLayers = Object.freeze(layers)
+    // },
+    SET_DISPLAY_LAYERS(state, { layers }) {
+      state.displayLayers = Object.freeze(layers)
+    },
+    SET_FLATTENED_LAYERS(state, { layers }) {
+      state.flattenedLayers = Object.freeze(layers)
+    },
+    SET_LAYER_TAGS(state, { tags }) {
+      state.layerTags = Object.freeze(tags)
     },
   },
 
   actions: {
-    getAppData({ commit }, route) {
+    getAppData({ commit, dispatch }, route) {
       const platform = route?.query?.platform
-      const isValidPlatform = platform && VALID_PLATFORMS.includes(platform)
-      const platformToUse = isValidPlatform ? platform : VALID_PLATFORMS[0]
-      const { layers, name } = configRepo.getConfig(platformToUse)
+      const { layers, name } = configRepo.getConfig(platform)
 
-      if (!isValidPlatform) {
-        console.warn(`No (valid) platform provided in the query string, falling back to ${ platformToUse }`)
-      }
+      dispatch('app/setAppName', { name }, { root: true })
+      // commit('SET_ORIGINAL_LAYERS', { layers })
+      commit('SET_DISPLAY_LAYERS', { layers })
 
-      commit('app/SET_APP_NAME', { name }, { root: true })
-      commit('SET_DATA_LAYERS', { layers })
+      const flattenedLayers = flattenLayers(layers)
+      commit('SET_FLATTENED_LAYERS', { layers: flattenedLayers })
+
+      const tags = getLayersTags(flattenedLayers)
+      commit('SET_LAYER_TAGS', { tags })
     },
-    setDataLayers({ commit }, { layers }) {
-      commit('SET_DATA_LAYERS', { layers })
-    },
-  },
 
-  mutations: {
-    SET_DATA_LAYERS(state, { layers }) {
-      state.layers = layers
+    // resetDisplayLayers({ commit, state }) {
+    //   commit('SET_DISPLAY_LAYERS', { layers: state.originalLayers })
+    // },
+
+    setDisplayLayers({ commit }, { layers }) {
+      commit('SET_DISPLAY_LAYERS', { layers })
     },
   },
 }
