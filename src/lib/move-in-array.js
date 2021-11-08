@@ -1,11 +1,5 @@
 /**
  * Moves an item in the array to a new index
- *
- * @template Item
- * @param {Item[]} array The source array
- * @param {Number} oldIndex The index of the item before reordering
- * @param {Number} newIndex The index of the item after reordering
- * @return {<Item>}
  */
  export default function moveInArray(array, oldIndex, newIndex) {
   if (newIndex > array.length) throw new RangeError(`newIndex (${ newIndex }) lies outside of array length (${ array.length })`)

@@ -1,26 +1,9 @@
-/** @typedef {import('./_types').Layer} */
-/** @typedef {import('./_types').LayerGroup} */
-
-/**
- * @param {Layer | LayerGroup} item
- * @returns {Boolean}
- */
 const isGroup = item => Boolean(item.children)
-
-/**
- * @param {Layer | LayerGroup} item
- * @returns {Boolean}
- */
 const isLayer = item => Boolean(item.url)
 
 /**
  * [Recursive]
  * Finds an item in the LayerGroup based on the provided property and value
- *
- * @param {LayerGroup[]} source The LayerGroup to look in
- * @param {String} property Property with a unique value in the whole source
- * @param {String} value Value of the property to check against
- * @returns {Layer}
  */
 function findInTree(source, property, value) {
   return source.reduce((foundItem, layerOrgroup) => {

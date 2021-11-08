@@ -34,9 +34,11 @@
 
 <script>
   import { watch, ref, toRefs, computed } from '@vue/composition-api'
-  import addIndex from './add-index'
-  import findInTree from './find-in-tree'
-  import addParentIdToLayers from './add-parent-id-to-layers'
+
+  import addIndex from '~/lib/add-index'
+  import addParentIdToLayers from '~/lib/add-parent-id-to-layers'
+  import findInTree from '~/lib/find-in-tree'
+
   import useLegend from './useLegend'
   import useSelected from './useSelected'
   import useSortable from './useSortable'
@@ -57,12 +59,11 @@
     setup(props, context) {
       const root = ref(null)
       const openItems = ref([])
+
       const { layers } = toRefs(props)
+
       const layersWithParents = computed(() => addParentIdToLayers(layers.value))
       const layersAreProvided = computed(() => layersWithParents.value.length > 0)
-      const { setSelectedIds, selectedIds } = useSelected()
-      const { activeLegend, setActiveLegend } = useLegend(selectedIds)
-      const { onSortingChange } = useSortable(layers, root, openItems)
       const sortedSelectedLayers = computed(() => {
         const withIndex = addIndex(layers.value)
         return selectedIds.value
@@ -71,7 +72,12 @@
           .map(deleteIndex)
       })
 
+      const { setSelectedIds, selectedIds } = useSelected()
+      const { activeLegend, setActiveLegend } = useLegend(selectedIds)
+      const { onSortingChange } = useSortable(layers, root, openItems)
+
       onSortingChange(sortedLayers => context.emit('layer-sorting-change', sortedLayers))
+
       watch(activeLegend, newActiveLegend => context.emit('legend-change', newActiveLegend))
       watch(sortedSelectedLayers, sortedSelected => context.emit('active-layers-change', sortedSelected))
 
@@ -81,7 +87,12 @@
 </script>
 
 <style lang="scss">
+  @import '~/components/AppCore/mixins.scss';
+
   .sortable-handle {
+    @include truncate;
+
+    width: 100%;
     cursor: grab;
   }
 </style>

@@ -1,9 +1,6 @@
 import moveInArray from '~/lib/move-in-array'
 
 function walkGroup(parentIds, oldIndex, newIndex) {
-  /**
-   * @param {LayerGroup} group
-   */
   function execute(group) {
     const groupId = group.id
     const [ parentId, ...rest ] = parentIds
@@ -29,10 +26,6 @@ function walkGroup(parentIds, oldIndex, newIndex) {
 
 /**
  * Reorders an item in the layers array.
- * @param {LayerGroup[]} source
- * @param {Number} oldIndex
- * @param {Number} newIndex
- * @param {String[]} parentIds
  */
 export default function reorderLayerArray(source, parentIds, oldIndex, newIndex) {
   // We clone the source so we can mutate the clone in place

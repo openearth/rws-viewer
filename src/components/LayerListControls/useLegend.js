@@ -1,19 +1,11 @@
-/** @typedef {import('./useSelected').SelectedIds} */
-/** @typedef {{ value: String }} ActiveLegend */
-
 import { ref, watch } from '@vue/composition-api'
 import last from '~/lib/last'
 
 export default function useLegend(selectedIds) {
-
-  /**
-   * @type {ActiveLegend}
-   */
   const activeLegend = ref('')
 
   /**
    * Set the active legend to a new value, or clear it when the same value is provided
-   * @param {String} id
    */
   function setActiveLegend(id) {
     activeLegend.value = activeLegend.value === id
@@ -23,7 +15,6 @@ export default function useLegend(selectedIds) {
 
   /**
    * Handler for when `selectedIds` change.
-   * @param {SelectedIds} newSelectedIds
    */
   function handleSelectedIdsChange(newSelectedIds) {
     if (newSelectedIds.includes(activeLegend.value)) return

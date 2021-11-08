@@ -1,6 +1,6 @@
 import { ref, watch, nextTick, onMounted } from '@vue/composition-api'
 import { Sortable } from 'sortablejs'
-import reorderLayerArray from './reorder-layers-array'
+import reorderLayerArray from '~/lib/reorder-layers-array'
 
 export default function useSortable(layers, componentRoot, openItems) {
   const treeViewRootSelector = '.v-treeview'
