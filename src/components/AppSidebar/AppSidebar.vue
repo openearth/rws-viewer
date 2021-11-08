@@ -1,9 +1,12 @@
 <template>
   <v-navigation-drawer
+    class="app-sidebar"
     floating
     absolute
     width="440"
     :value="appNavigationOpen"
+    disable-route-watcher
+    disable-resize-watcher
   >
     <v-tabs
       v-model="tabs.name"
@@ -36,18 +39,26 @@
 
   export default {
     name: 'AppSidebar',
-    data() {
-      return {
-        drawer: false,
-        tabs: [
-          { name: 'Layers', page: '/', icon: 'mdi-layers' },
-          { name: 'Download', page: '/download', icon: 'mdi-download' },
-          { name: 'Favourites', page: '/favourites', icon: 'mdi-star' },
-        ],
-      }
-    },
+    data: () => ({
+      drawer: false,
+      tabs: [
+        { name: 'Layers', page: '/', icon: 'mdi-layers' },
+        { name: 'Download', page: '/download', icon: 'mdi-download' },
+        { name: 'Favourites', page: '/favourites', icon: 'mdi-star' },
+      ],
+    }),
     computed: {
       ...mapState('app', [ 'appNavigationOpen' ]),
     },
   }
 </script>
+
+<style lang="scss">
+  .app-sidebar {
+    z-index: 3;
+    box-shadow:
+      0 3px 5px -1px rgba(0, 0, 0, .2),
+      0 6px 10px 0 rgba(0, 0, 0, .14),
+      0 1px 18px 0 rgba(0, 0, 0, .12);
+  }
+</style>

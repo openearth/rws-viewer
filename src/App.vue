@@ -1,5 +1,5 @@
 <template>
-  <app-shell :header-title="platformName">
+  <app-shell :header-title="appName">
     <mapbox-map
       slot="map"
       :access-token="accessToken"
@@ -14,9 +14,8 @@
 </template>
 
 <script>
+  import { mapActions, mapState } from 'vuex'
   import { MapboxMap } from '@deltares/vue-components'
-  import configRepo from '~/repo/configRepo'
-  import { VALID_PLATFORMS } from '~/lib/constants'
 
   const AppShell = () => import('~/components/AppShell/AppShell')
 
@@ -25,29 +24,26 @@
       AppShell,
       MapboxMap,
     },
-
     data: () => ({
       accessToken: process.env.VUE_APP_MAPBOX_TOKEN,
-      platformName: '',
       layers: [],
     }),
-
+    computed: {
+      ...mapState('app', [ 'appName' ]),
+    },
+    watch: {
+      appName: {
+        immediate: true,
+        handler(name) {
+          document.title = name
+        },
+      },
+    },
     mounted() {
       this.$router.onReady(this.getAppData)
     },
-
     methods: {
-      getAppData(route) {
-        const platform = route?.query?.platform
-        const isValidPlatform = platform && VALID_PLATFORMS.includes(platform)
-        const platformToUse = isValidPlatform ? platform : VALID_PLATFORMS[0]
-        if(!isValidPlatform) {
-          console.error(`No valid platform provided in the query string, falling back to ${ platformToUse }`)
-        }
-
-        const configData = configRepo.getConfig(platformToUse)
-        this.platformName = configData.name
-      },
+      ...mapActions('data', [ 'getAppData' ]),
     },
   }
 </script>

@@ -4,6 +4,7 @@
       Lorem ipsum dolor sit amet.
     </v-card-text>
     <layer-list-controls
+      v-if="layers"
       :layers="layers"
       @active-layers-change="onActiveLayerChange"
       @layer-sorting-change="onLayerSortingChange"
@@ -12,6 +13,7 @@
 </template>
 
 <script>
+  import { mapActions, mapState } from 'vuex'
   import { LayerListControls } from '@deltares/vue-components'
 
   export default {
@@ -19,34 +21,16 @@
     components: {
       LayerListControls,
     },
-    data: () => ({
-      layers: [
-        {
-          'id': 'geological-layout1',
-          'name': 'Geological Layout',
-          'children': [
-            {
-              'id': 'plasvorming_herstelkosten',
-              'name': 'Plasvorming Herstelkosten',
-              'layer': 'ra2ce:plasvorming_herstelkosten',
-              'url': 'https://ra2ce.openearth.eu/geoserver/ows',
-            },
-            {
-              'id': 'plasvorming_stremmingskosten',
-              'name': 'Plasvorming Stremmingskosten',
-              'layer': 'ra2ce:plasvorming_stremmingskosten',
-              'url': 'https://ra2ce.openearth.eu/geoserver/ows',
-            },
-          ],
-        },
-      ],
-    }),
+    computed: {
+      ...mapState('data', [ 'layers' ]),
+    },
     methods: {
-      onActiveLayerChange(event) {
-        console.log(event)
+      ...mapActions('data', [ 'setDataLayers' ]),
+      onActiveLayerChange(layers) {
+        console.log('onActiveLayerChange', { layers })
       },
-      onLayerSortingChange(sortedLayers) {
-        this.layers = sortedLayers
+      onLayerSortingChange(layers) {
+        this.setDataLayers({ layers })
       },
     },
   }

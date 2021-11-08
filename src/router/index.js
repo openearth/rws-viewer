@@ -10,17 +10,17 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Layers',
+    name: 'layers',
     component: Layers,
   },
   {
     path: '/download',
-    name: 'Download',
+    name: 'download',
     component: Download,
   },
   {
     path: '/favourites',
-    name: 'Favourites',
+    name: 'favourites',
     component: Favourites,
   },
 ]
