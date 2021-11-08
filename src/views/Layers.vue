@@ -35,3 +35,12 @@
     },
   }
 </script>
+
+<style lang="scss">
+  @import '~/components/AppCore/mixins.scss';
+
+  .layers .sortable-handle {
+    @include truncate;
+    width: 100%;
+  }
+</style>
