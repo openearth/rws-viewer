@@ -67,6 +67,7 @@
 
   .layers .sortable-handle {
     @include truncate;
+
     width: 100%;
   }
 </style>
