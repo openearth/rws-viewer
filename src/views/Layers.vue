@@ -21,7 +21,7 @@
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
-  import { LayerListControls } from '@deltares/vue-components'
+  import LayerListControls from '~/components/LayerListControls/LayerListControls'
 
   export default {
     name: 'Layer',
@@ -61,13 +61,3 @@
     },
   }
 </script>
-
-<style lang="scss">
-  @import '~/components/AppCore/mixins.scss';
-
-  .layers .sortable-handle {
-    @include truncate;
-
-    width: 100%;
-  }
-</style>
