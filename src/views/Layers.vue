@@ -1,11 +1,18 @@
 <template>
   <v-card class="layers" flat>
-    <v-card-text>
-      Lorem ipsum dolor sit amet.
-    </v-card-text>
+    <v-select
+      v-model="selectedTags"
+      class="px-4 pt-4 pb-1"
+      label="Filter by tag"
+      multiple
+      dense
+      outlined
+      hide-details
+      :items="layerTags"
+    />
     <layer-list-controls
-      v-if="displayLayers"
-      :layers="displayLayers"
+      v-if="layersForTree"
+      :layers="layersForTree"
       @active-layers-change="onActiveLayerChange"
       @layer-sorting-change="onLayerSortingChange"
     />
@@ -23,8 +30,22 @@
       LayerListControls,
     },
 
+    data: () => ({
+      selectedTags: [],
+    }),
+
     computed: {
-      ...mapGetters('data', [ 'displayLayers' ]),
+      ...mapGetters('data', [
+        'displayLayers',
+        'flattenedLayers',
+        'layerTags',
+      ]),
+
+      layersForTree() {
+        if(!this.selectedTags.length) return this.displayLayers
+        return this.flattenedLayers.filter(({ tags }) =>
+          this.selectedTags.every(tag => tags.includes(tag)))
+      },
     },
 
     methods: {

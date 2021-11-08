@@ -1,4 +1,4 @@
-import { compose, flatten, map, props, uniq } from 'ramda'
+import { compose, flatten, map, props, uniq, sort } from 'ramda'
 
 const pickLayersRecursive = el => {
   if(Array.isArray(el)) return el.map(pickLayersRecursive)
@@ -12,6 +12,7 @@ export const flattenLayers = compose(
 )
 
 export const getLayersTags = compose(
+  sort((a, b) => a.localeCompare(b)),
   uniq,
   flatten,
   map(props([ 'tags' ])),

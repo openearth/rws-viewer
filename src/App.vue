@@ -16,7 +16,6 @@
 <script>
   import { mapActions, mapState } from 'vuex'
   import { MapboxMap } from '@deltares/vue-components'
-  import { flattenLayers, getLayersTags } from '~/lib/layer-helpers'
 
   const AppShell = () => import('~/components/AppShell/AppShell')
 
