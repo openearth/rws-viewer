@@ -9,6 +9,7 @@
         :key="layer.id"
         :options="layer"
       />
+      <mapbox-draw-control />
     </mapbox-map>
   </app-shell>
 </template>
@@ -16,6 +17,7 @@
 <script>
   import { mapActions, mapState } from 'vuex'
   import { MapboxMap } from '@deltares/vue-components'
+  import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
 
   const AppShell = () => import('~/components/AppShell/AppShell')
 
@@ -23,6 +25,7 @@
     components: {
       AppShell,
       MapboxMap,
+      MapboxDrawControl,
     },
 
     data: () => ({
