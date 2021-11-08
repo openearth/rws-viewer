@@ -4,12 +4,20 @@ export default {
   namespaced: true,
 
   state: () => ({
-    layers: [],
+    originalLayers: [],
+    displayLayers: [],
   }),
 
   getters: {
-    availableLayers(state) {
-      return state.layers
+    displayLayers: state => state.displayLayers,
+  },
+
+  mutations: {
+    SET_ORIGINAL_LAYERS(state, { layers }) {
+      state.originalLayers = Object.freeze(layers)
+    },
+    SET_DISPLAY_LAYERS(state, { layers }) {
+      state.displayLayers = Object.freeze(layers)
     },
   },
 
@@ -19,16 +27,16 @@ export default {
       const { layers, name } = configRepo.getConfig(platform)
 
       dispatch('app/setAppName', { name }, { root: true })
-      commit('SET_DATA_LAYERS', { layers })
+      commit('SET_ORIGINAL_LAYERS', { layers })
+      commit('SET_DISPLAY_LAYERS', { layers })
     },
-    setDataLayers({ commit }, { layers }) {
-      commit('SET_DATA_LAYERS', { layers })
-    },
-  },
 
-  mutations: {
-    SET_DATA_LAYERS(state, { layers }) {
-      state.layers = layers
+    resetDisplayLayers({ commit, state }) {
+      commit('SET_DISPLAY_LAYERS', state.originalLayers)
+    },
+
+    setDisplayLayers({ commit }, { layers }) {
+      commit('SET_DISPLAY_LAYERS', { layers })
     },
   },
 }

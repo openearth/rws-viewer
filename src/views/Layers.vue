@@ -4,8 +4,8 @@
       Lorem ipsum dolor sit amet.
     </v-card-text>
     <layer-list-controls
-      v-if="layers"
-      :layers="layers"
+      v-if="displayLayers"
+      :layers="displayLayers"
       @active-layers-change="onActiveLayerChange"
       @layer-sorting-change="onLayerSortingChange"
     />
@@ -13,24 +13,29 @@
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex'
+  import { mapActions, mapGetters } from 'vuex'
   import { LayerListControls } from '@deltares/vue-components'
 
   export default {
     name: 'Layer',
+
     components: {
       LayerListControls,
     },
+
     computed: {
-      ...mapState('data', [ 'layers' ]),
+      ...mapGetters('data', [ 'displayLayers' ]),
     },
+
     methods: {
-      ...mapActions('data', [ 'setDataLayers' ]),
+      ...mapActions('data', [ 'setDisplayLayers' ]),
+
       onActiveLayerChange(layers) {
         console.log('onActiveLayerChange', { layers })
       },
+
       onLayerSortingChange(layers) {
-        this.setDataLayers({ layers })
+        this.setDisplayLayers({ layers })
       },
     },
   }
