@@ -50,9 +50,10 @@
 
     methods: {
       ...mapActions('data', [ 'setDisplayLayers' ]),
+      ...mapActions('map', [ 'setActiveLayers' ]),
 
       onActiveLayerChange(layers) {
-        console.log('onActiveLayerChange', { layers })
+        this.setActiveLayers({ layers })
       },
 
       onLayerSortingChange(layers) {

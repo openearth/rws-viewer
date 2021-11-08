@@ -1,12 +1,13 @@
 <template>
   <v-navigation-drawer
     class="app-sidebar"
-    floating
     absolute
-    width="440"
-    :value="appNavigationOpen"
     disable-route-watcher
     disable-resize-watcher
+    floating
+    stateless
+    :value="appNavigationOpen"
+    width="440"
   >
     <v-tabs
       v-model="tabs.name"
