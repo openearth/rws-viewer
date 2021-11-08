@@ -1,23 +1,23 @@
-
 {
   "id": "ihm-viewer",
   "name": "IHM Viewer",
-  "layers":
-  [
+  "layers": [
     {
       "id": "Mariene projecten",
       "name": "Mariene projecten",
-      "children":
-      [
+      "children": [
         {
           "id": "Aanleg 2e Maasvlakte (A2M)",
           "name": "Aanleg 2e Maasvlakte (A2M)",
-          "children":
-          [
+          "children": [
             {
               "id": "A2M-Benthos-Maarten-de-Jong",
               "name": "Benthos-Maarten-de-Jong",
-              "tags": ["Benthos","Noordzee","Macrofauna"],
+              "tags": [
+                "Benthos",
+                "Noordzee",
+                "Macrofauna"
+              ],
               "url": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wms",
               "layer": "PhDMdJ_S_All_OD_Geo_view",
               "downloadURL": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wfs"
@@ -27,19 +27,24 @@
         {
           "id": "Kustgenese 2 (KG2)",
           "name": "Kustgenese 2 (KG2)",
-          "children":
-          [
+          "children": [
             {
-              "id": "20210711_vaklodingen",
-              "name": "Vakloding 2021-07-11",
-              "tags": ["Bathymetrie","Waddenzee"],
+              "id": "20210711_vaklodingen_1",
+              "name": "Vakloding 2021-07-11 (1)",
+              "tags": [
+                "Bathymetrie",
+                "Waddenzee"
+              ],
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/kustgenese2/wms",
               "layer": "20210711_vakloding_KG2"
             },
             {
-              "id": "20210711_vaklodingen",
-              "name": "Vakloding 2021-07-11",
-              "tags": ["Bathymetrie","Waddenzee"],
+              "id": "20210711_vaklodingen_2",
+              "name": "Vakloding 2021-07-11 (2)",
+              "tags": [
+                "Bathymetrie",
+                "Waddenzee"
+              ],
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/kustgenese2/wms",
               "layer": "20210711_vakloding_KG2"
             }
@@ -48,34 +53,41 @@
         {
           "id": "Reguliere monitoring RWS",
           "name": "Reguliere monitoring RWS",
-          "children":
-          [
-            {"id": "Biologie",
-            "name": "Biologie",
-            "children":
-              [
-                {"id": "Vegetatie",
-                "name": "Vegetatie",
-                "children": [
-                  {
-                    "id": "zeegras_alledata",
-                    "name": "Bedekking Groot zeegras, Klein zeegras, Snavelruppia, alle data",
-                    "tags": ["Noordzee","Waddenzee","Flora"],
-                    "url": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/zeegras/ows",
-                    "layer": "zeegras_alledata"
-                  }
-                ]
+          "children": [
+            {
+              "id": "Biologie",
+              "name": "Biologie",
+              "children": [
+                {
+                  "id": "Vegetatie",
+                  "name": "Vegetatie",
+                  "children": [
+                    {
+                      "id": "zeegras_alledata",
+                      "name": "Bedekking Groot zeegras, Klein zeegras, Snavelruppia, alle data",
+                      "tags": [
+                        "Noordzee",
+                        "Waddenzee",
+                        "Flora"
+                      ],
+                      "url": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/zeegras/ows",
+                      "layer": "zeegras_alledata"
+                    }
+                  ]
                 }
               ]
             },
-            {"id": "Chemie",
-            "name": "Chemie",
-            "children":
-              [
+            {
+              "id": "Chemie",
+              "name": "Chemie",
+              "children": [
                 {
                   "id": "Campagne arseen seleen chroom",
                   "name": "Campagne arseen seleen chroom",
-                  "tags": ["Chemie","Noordzee"],
+                  "tags": [
+                    "Chemie",
+                    "Noordzee"
+                  ],
                   "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
                   "layer": "mwtl_meetcampagne_arseen_seleen_chroom_location",
                   "downloadURL": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
@@ -84,7 +96,10 @@
                 {
                   "id": "Campagne geneesmiddelen",
                   "name": "Campagne geneesmiddelen",
-                  "tags": ["Chemie","Noordzee"],
+                  "tags": [
+                    "Chemie",
+                    "Noordzee"
+                  ],
                   "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
                   "layer": "mwtl_meetcampagne_geneesmiddelen_location",
                   "downloadURL": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
@@ -99,25 +114,29 @@
     {
       "id": "Zoetwater projecten",
       "name": "Zoetwater projecten",
-      "children":
-      [
+      "children": [
         {
           "id": "NVO Maas (NVO)",
           "name": "NVO Maas (NVO)",
-          "children":
-          [
+          "children": [
             {
               "id": "nvo_macrofauna",
               "name": "Macrofauna (NVO)",
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wms",
-              "tags": ["Biota","Rivieren"],
+              "tags": [
+                "Biota",
+                "Rivieren"
+              ],
               "layer": "nvo_macrofauna",
               "downloadURL": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wfs"
             },
             {
               "id": "nvo_terrestrisch",
               "name": "Terrestrisch (NVO)",
-              "tags": ["Fauna","Rivieren"],
+              "tags": [
+                "Fauna",
+                "Rivieren"
+              ],
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wms",
               "layer": "nvo_terrestrisch",
               "downloadURL": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wfs"
@@ -127,12 +146,15 @@
         {
           "id": "Hollandse IJssel en Lek (HYLEK)",
           "name": "Hollandse IJssel en Lek (HYLEK)",
-          "children":
-          [
+          "children": [
             {
               "id": "hylek",
               "name": "Saliniteits, Temperatuur en druk metingen Hollandse IJssel en Lek",
-              "tags": ["Rivieren","Fysisch","Chemisch"],
+              "tags": [
+                "Rivieren",
+                "Fysisch",
+                "Chemisch"
+              ],
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/hylek/wms",
               "layer": "hylek_location",
               "downloadURL": "https://rwsprojectarchief.openearth.nl/geoserver/hylek/wfs",
