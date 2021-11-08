@@ -1,5 +1,4 @@
 import configRepo from '~/repo/configRepo'
-import { VALID_PLATFORMS } from '~/lib/constants'
 
 export default {
   namespaced: true,
@@ -15,17 +14,11 @@ export default {
   },
 
   actions: {
-    getAppData({ commit }, route) {
+    getAppData({ commit, dispatch }, route) {
       const platform = route?.query?.platform
-      const isValidPlatform = platform && VALID_PLATFORMS.includes(platform)
-      const platformToUse = isValidPlatform ? platform : VALID_PLATFORMS[0]
-      const { layers, name } = configRepo.getConfig(platformToUse)
+      const { layers, name } = configRepo.getConfig(platform)
 
-      if (!isValidPlatform) {
-        console.warn(`No (valid) platform provided in the query string, falling back to ${ platformToUse }`)
-      }
-
-      commit('app/SET_APP_NAME', { name }, { root: true })
+      dispatch('app/setAppName', { name }, { root: true })
       commit('SET_DATA_LAYERS', { layers })
     },
     setDataLayers({ commit }, { layers }) {
