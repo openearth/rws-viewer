@@ -5,6 +5,8 @@
     absolute
     width="440"
     :value="appNavigationOpen"
+    disable-route-watcher
+    disable-resize-watcher
   >
     <v-tabs
       v-model="tabs.name"
