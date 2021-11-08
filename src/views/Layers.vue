@@ -50,10 +50,10 @@
 
     methods: {
       ...mapActions('data', [ 'setDisplayLayers' ]),
-      ...mapActions('map', [ 'setActiveLayers' ]),
+      ...mapActions('map', [ 'setRasterLayers' ]),
 
       onActiveLayerChange(layers) {
-        this.setActiveLayers({ layers })
+        this.setRasterLayers({ layers })
       },
 
       onLayerSortingChange(layers) {

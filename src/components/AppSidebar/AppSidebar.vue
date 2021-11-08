@@ -2,8 +2,6 @@
   <v-navigation-drawer
     class="app-sidebar"
     absolute
-    disable-route-watcher
-    disable-resize-watcher
     floating
     stateless
     :value="appNavigationOpen"

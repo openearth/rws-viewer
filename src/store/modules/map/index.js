@@ -4,21 +4,21 @@ export default {
   namespaced: true,
 
   state: () => ({
-    layers: [],
+    rasterLayers: [],
   }),
 
   getters: {},
 
   mutations: {
-    SET_ACTIVE_LAYERS(state, { layers }) {
+    SET_RASTER_LAYERS(state, { layers }) {
       const wmsLayers = layers.map(layer => buildWmsLayer(layer))
-      state.layers = wmsLayers
+      state.rasterLayers = wmsLayers
     },
   },
 
   actions: {
-    setActiveLayers({ commit }, { layers }) {
-      commit('SET_ACTIVE_LAYERS', { layers })
+    setRasterLayers({ commit }, { layers }) {
+      commit('SET_RASTER_LAYERS', { layers })
     },
   },
 }

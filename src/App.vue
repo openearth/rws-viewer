@@ -5,7 +5,7 @@
       :access-token="accessToken"
     >
       <v-mapbox-layer
-        v-for="layer in layers"
+        v-for="layer in rasterLayers"
         :key="layer.id"
         :options="layer"
       />
@@ -31,7 +31,7 @@
 
     computed: {
       ...mapState('app', [ 'appName' ]),
-      ...mapState('map', [ 'layers' ]),
+      ...mapState('map', [ 'rasterLayers' ]),
     },
 
     mounted() {
