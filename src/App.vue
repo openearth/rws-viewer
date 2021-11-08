@@ -35,7 +35,7 @@
       appName: {
         immediate: true,
         handler(name) {
-          document.title = name ? `${ name } | Open Data Viewer` : 'Open Data Viewer'
+          document.title = name
         },
       },
     },
