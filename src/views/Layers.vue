@@ -21,7 +21,7 @@
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
-  import { LayerListControls } from '@deltares/vue-components'
+  import LayerListControls from '~/components/LayerListControls/LayerListControls'
 
   export default {
     name: 'Layer',
