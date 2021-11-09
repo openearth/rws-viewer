@@ -39,7 +39,9 @@ export default function useSortable(layers, componentRoot, openItems) {
   watch(
     [ openItems, isMounted ],
     async ([ openItems, isMounted ]) => {
-      if (openItems === [] || isMounted === false) return
+      if (openItems === [] || isMounted === false) {
+return
+}
 
       await nextTick()
       sortInstances.forEach(instance => instance.destroy())

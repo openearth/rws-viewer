@@ -18,6 +18,8 @@ module.exports = {
   ],
   rules: {
     'array-bracket-spacing': [ 'warn', 'always' ],
+    'brace-style': [ 'warn', '1tbs' ],
+    'curly': [ 'warn', 'all' ],
     'comma-dangle': [ 'error', 'always-multiline' ],
     'jsx-quotes': [ 'error', 'prefer-double' ],
     'semi': [ 'error', 'never' ],
