@@ -18,8 +18,8 @@ export default function useLegend(selectedIds) {
    */
   function handleSelectedIdsChange(newSelectedIds) {
     if (newSelectedIds.includes(activeLegend.value)) {
-return
-}
+      return
+    }
 
     const lastSelectedId = last(newSelectedIds)
     setActiveLegend(lastSelectedId)

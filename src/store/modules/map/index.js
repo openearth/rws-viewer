@@ -42,7 +42,9 @@ export default {
     },
 
     setDrawnFeatures({ commit, state }, featureCollection) {
-      if(state.drawMode) commit('SET_DRAW_MODE', { mode: null })
+      if (state.drawMode) {
+        commit('SET_DRAW_MODE', { mode: null })
+      }
       commit('SET_DRAWN_FEATURES', featureCollection)
     },
   },

@@ -1,15 +1,17 @@
 import { compose, flatten, map, props, uniq, sort } from 'ramda'
 
 const pickLayersRecursive = el => {
-  if(Array.isArray(el)) {
-return el.map(pickLayersRecursive)
-}
-  if(el.children) {
-return el.children.map(pickLayersRecursive)
-}
-  if(el.layer) {
-return el
-}
+  if (Array.isArray(el)) {
+    return el.map(pickLayersRecursive)
+  }
+
+  if (el.children) {
+    return el.children.map(pickLayersRecursive)
+  }
+
+  if (el.layer) {
+    return el
+  }
 }
 
 export const flattenLayers = compose(
