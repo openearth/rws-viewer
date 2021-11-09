@@ -111,3 +111,10 @@
     },
   }
 </script>
+
+<style lang="scss">
+  .v-treeview-node__checkbox {
+    margin-top: $spacing-small;
+    margin-bottom: auto;
+  }
+</style>

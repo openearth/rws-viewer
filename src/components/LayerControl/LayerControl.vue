@@ -1,21 +1,14 @@
 <template>
   <div>
-    <div class="d-flex justify-space-between align-center">
+    <div class="d-flex align-center">
       <span
-        class="sortable-handle"
+        class="sortable-handle py-3"
         :data-id="id"
         :data-parent-ids="parentIds"
       >
         {{ name }}
       </span>
       <div v-if="isLayer" class="d-flex align-center ml-3">
-        <v-switch
-          v-model="switchStatus"
-          class="mt-0 py-3"
-          hide-details
-          :ripple="false"
-          @change="$emit('toggle-layer', id)"
-        />
         <v-btn icon @click.stop="$emit('show-info', id)">
           <v-icon>
             mdi-information
@@ -24,18 +17,16 @@
       </div>
     </div>
     <v-expand-transition>
-      <div v-if="switchStatus">
-        <v-subheader class="px-8">
-          Opacity
-        </v-subheader>
+      <div v-if="isLayer && selected">
         <v-slider
           v-model="layerOpacity"
-          class="pb-4 px-6"
+          class="pt-2 pb-5 pr-5"
           hide-details
           :ripple="false"
           :max="1"
           :step="0.1"
           :input="$emit('update-layer-opacity', { id, opacity: layerOpacity })"
+          label="Opacity"
         />
       </div>
     </v-expand-transition>
@@ -73,7 +64,6 @@
       },
     },
     data: (props) => ({
-      switchStatus: props.selected,
       layerOpacity: props.opacity,
     }),
   }
