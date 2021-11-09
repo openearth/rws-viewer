@@ -28,7 +28,9 @@
     <v-divider />
 
     <transition name="fade" mode="out-in">
-      <router-view />
+      <keep-alive>
+        <router-view />
+      </keep-alive>
     </transition>
   </v-navigation-drawer>
 </template>
