@@ -28,13 +28,15 @@
     <v-divider />
 
     <transition name="fade" mode="out-in">
-      <router-view />
+      <keep-alive>
+        <router-view />
+      </keep-alive>
     </transition>
   </v-navigation-drawer>
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  import { mapGetters } from 'vuex'
 
   export default {
     name: 'AppSidebar',
@@ -47,7 +49,7 @@
       ],
     }),
     computed: {
-      ...mapState('app', [ 'appNavigationOpen' ]),
+      ...mapGetters('app', [ 'appNavigationOpen' ]),
     },
   }
 </script>
