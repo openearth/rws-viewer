@@ -9,13 +9,18 @@
         :key="layer.id"
         :options="layer"
       />
+      <mapbox-draw-control
+        :draw-mode="drawMode"
+        @change="setDrawnFeatures"
+      />
     </mapbox-map>
   </app-shell>
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex'
+  import { mapActions, mapGetters } from 'vuex'
   import { MapboxMap } from '@deltares/vue-components'
+  import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
 
   const AppShell = () => import('~/components/AppShell/AppShell')
 
@@ -23,6 +28,7 @@
     components: {
       AppShell,
       MapboxMap,
+      MapboxDrawControl,
     },
 
     data: () => ({
@@ -30,8 +36,8 @@
     }),
 
     computed: {
-      ...mapState('app', [ 'appName' ]),
-      ...mapState('map', [ 'rasterLayers' ]),
+      ...mapGetters('app', [ 'appName' ]),
+      ...mapGetters('map', [ 'rasterLayers', 'drawMode' ]),
     },
 
     mounted() {
@@ -40,6 +46,7 @@
 
     methods: {
       ...mapActions('data', [ 'getAppData' ]),
+      ...mapActions('map', [ 'setDrawnFeatures' ]),
     },
   }
 </script>

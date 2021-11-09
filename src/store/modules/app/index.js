@@ -6,7 +6,10 @@ export default {
     appName: '',
   }),
 
-  getters: {},
+  getters: {
+    appNavigationOpen: state => state.appNavigationOpen,
+    appName: state => state.appName,
+  },
 
   mutations: {
     SET_APP_NAME(state, { name }) {
