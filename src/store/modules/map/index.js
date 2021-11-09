@@ -8,7 +8,10 @@ export default {
     drawMode: null,
   }),
 
-  getters: {},
+  getters: {
+    rasterLayers: state => state.rasterLayers,
+    drawMode: state => state.drawMode,
+  },
 
   mutations: {
     SET_RASTER_LAYERS(state, { layers }) {

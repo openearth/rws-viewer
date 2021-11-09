@@ -34,7 +34,7 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  import { mapGetters } from 'vuex'
 
   export default {
     name: 'AppSidebar',
@@ -47,7 +47,7 @@
       ],
     }),
     computed: {
-      ...mapState('app', [ 'appNavigationOpen' ]),
+      ...mapGetters('app', [ 'appNavigationOpen' ]),
     },
   }
 </script>

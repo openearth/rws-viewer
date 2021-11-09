@@ -21,11 +21,11 @@
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex'
+  import { mapActions, mapGetters } from 'vuex'
 
   export default {
     computed: {
-      ...mapState('map', [ 'drawMode' ]),
+      ...mapGetters('map', [ 'drawMode' ]),
     },
 
     methods: {

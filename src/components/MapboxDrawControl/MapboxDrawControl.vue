@@ -37,12 +37,10 @@
         map.addControl(mbDraw)
 
         map.on('draw.create', evt => {
-          console.log(evt)
           this.$emit('create', evt)
         })
 
         map.on('draw.update', evt => {
-          console.log(evt)
           this.$emit('update', evt)
         })
       },
