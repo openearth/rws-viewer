@@ -1,32 +1,25 @@
 <template>
   <div v-if="layersAreProvided" ref="root">
     <v-treeview
-      :open.sync="openItems"
-      selectable
+      hoverable
       :items="layersWithParents"
-      :open-all="true"
+      :open.sync="openItems"
+      open-on-click
+      selectable
       @input="setSelectedIds"
     >
       <template #label="{ item, selected }">
-        <div class="d-flex align-center">
-          <span
-            class="sortable-handle"
-            :data-id="item.id"
-            :data-parent-ids="item.parentIds.toString()"
-          >{{ item.name }}</span>
-          <v-btn
-            v-if="item.layer && selected"
-            icon
-            class="ml-auto"
-            @click="setActiveLegend(item.id)"
-          >
-            <v-icon>
-              mdi-card-bulleted{{
-                item.id === activeLegend ? '' : '-off'
-              }}-outline
-            </v-icon>
-          </v-btn>
-        </div>
+        <layer-control
+          :id="item.id"
+          :name="item.name"
+          :is-layer="Boolean(item.layer)"
+          :opacity="layerOpacity(item.id)"
+          :parent-ids="item.parentIds.toString()"
+          :selected="selected"
+          @show-info="showInfo"
+          @toggle-layer="toggleLayer"
+          @update-layer-opacity="updateLayerOpacity"
+        />
       </template>
     </v-treeview>
   </div>
@@ -34,6 +27,8 @@
 
 <script>
   import { watch, ref, toRefs, computed } from '@vue/composition-api'
+
+  import LayerControl from '~/components/LayerControl/LayerControl'
 
   import addIndex from '~/lib/add-index'
   import addParentIdToLayers from '~/lib/add-parent-id-to-layers'
@@ -50,6 +45,7 @@
 
   export default {
     name: 'LayerListControls',
+    components: { LayerControl },
     props: {
       layers: {
         type: Array,
@@ -76,23 +72,42 @@
       const { activeLegend, setActiveLegend } = useLegend(selectedIds)
       const { onSortingChange } = useSortable(layers, root, openItems)
 
+      const layerOpacity = (id) => {
+        const activeLayer = Object.assign({}, layers.value.find(item => item.id === id))
+        return activeLayer.opacity
+      }
+
+      const showInfo = (id) => {
+        console.log('show layer info for id:', id)
+      }
+
+      const toggleLayer = (id) => {
+        console.log('toggle layer with id:', id)
+      }
+
+      const updateLayerOpacity = ({ id, opacity }) => {
+        console.log('update layer opacity with id:', { id, opacity })
+        context.root.$store.dispatch('map/updateRasterLayerOpacity', { id, opacity }, { root: true })
+      }
+
       onSortingChange(sortedLayers => context.emit('layer-sorting-change', sortedLayers))
 
       watch(activeLegend, newActiveLegend => context.emit('legend-change', newActiveLegend))
       watch(sortedSelectedLayers, sortedSelected => context.emit('active-layers-change', sortedSelected))
 
-      return { root, openItems, layersAreProvided, activeLegend, setActiveLegend, setSelectedIds, layersWithParents }
+      return {
+        root,
+        openItems,
+        layersWithParents,
+        layersAreProvided,
+        activeLegend,
+        setActiveLegend,
+        setSelectedIds,
+        layerOpacity,
+        showInfo,
+        toggleLayer,
+        updateLayerOpacity,
+      }
     },
   }
 </script>
-
-<style lang="scss">
-  @import '~/components/AppCore/mixins.scss';
-
-  .sortable-handle {
-    @include truncate;
-
-    width: 100%;
-    cursor: grab;
-  }
-</style>
