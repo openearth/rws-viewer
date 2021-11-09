@@ -21,7 +21,8 @@
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
-  import LayerListControls from '~/components/LayerListControls/LayerListControls'
+
+  const LayerListControls = () => import('~/components/LayerListControls/LayerListControls')
 
   export default {
     name: 'Layer',
@@ -42,7 +43,9 @@
       ]),
 
       layersForTree() {
-        if(!this.selectedTags.length) return this.displayLayers
+        if (!this.selectedTags.length) {
+          return this.displayLayers
+        }
         return this.flattenedLayers.filter(({ tags }) =>
           this.selectedTags.every(tag => tags.includes(tag)))
       },

@@ -28,7 +28,7 @@
 <script>
   import { watch, ref, toRefs, computed } from '@vue/composition-api'
 
-  import LayerControl from '~/components/LayerControl/LayerControl'
+  const LayerControl = () => import('~/components/LayerControl/LayerControl')
 
   import addIndex from '~/lib/add-index'
   import addParentIdToLayers from '~/lib/add-parent-id-to-layers'
@@ -79,6 +79,7 @@
 
       const showInfo = (id) => {
         console.log('show layer info for id:', id)
+        context.root.$store.dispatch('data/setLayerDialogOpen', { open: true }, { root: true })
       }
 
       const toggleLayer = (id) => {
