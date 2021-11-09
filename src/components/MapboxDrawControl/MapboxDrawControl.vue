@@ -12,8 +12,11 @@
 
     watch: {
       drawMode(mode) {
-        if(mode) this.mbDraw.changeMode(`draw_${ mode }`)
-        else this.mbDraw.changeMode('simple_select')
+        if (mode) {
+          this.mbDraw.changeMode(`draw_${ mode }`)
+        } else {
+          this.mbDraw.changeMode('simple_select')
+        }
       },
     },
 
