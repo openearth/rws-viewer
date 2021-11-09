@@ -11,8 +11,7 @@
       />
       <mapbox-draw-control
         :draw-mode="drawMode"
-        @create="onDrawCreate"
-        @update="onDrawUpdate"
+        @change="setDrawnFeatures"
       />
     </mapbox-map>
   </app-shell>
@@ -47,14 +46,7 @@
 
     methods: {
       ...mapActions('data', [ 'getAppData' ]),
-
-      onDrawCreate({ features }) {
-
-      },
-
-      onDrawUpdate() {
-
-      },
+      ...mapActions('map', [ 'setDrawnFeatures' ]),
     },
   }
 </script>

@@ -6,11 +6,16 @@ export default {
   state: () => ({
     rasterLayers: [],
     drawMode: null,
+    drawnFeatures: Object.freeze({
+      type: 'FeatureCollection',
+      features: [],
+    }),
   }),
 
   getters: {
     rasterLayers: state => state.rasterLayers,
     drawMode: state => state.drawMode,
+    drawnFeatures: state => state.drawnFeatures,
   },
 
   mutations: {
@@ -20,6 +25,9 @@ export default {
     },
     SET_DRAW_MODE(state, { mode }) {
       state.drawMode = mode
+    },
+    SET_DRAWN_FEATURES(state, featureCollection) {
+      state.drawnFeatures = featureCollection
     },
   },
 
@@ -31,6 +39,11 @@ export default {
     setDrawMode({ commit, state }, { mode }) {
       const modeToCommit = state.drawMode === mode ? null : mode
       commit('SET_DRAW_MODE', { mode: modeToCommit })
+    },
+
+    setDrawnFeatures({ commit, state }, featureCollection) {
+      if(state.drawMode) commit('SET_DRAW_MODE', { mode: null })
+      commit('SET_DRAWN_FEATURES', featureCollection)
     },
   },
 }

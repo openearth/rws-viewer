@@ -36,13 +36,15 @@
         this.mbDraw = mbDraw
         map.addControl(mbDraw)
 
-        map.on('draw.create', evt => {
-          this.$emit('create', evt)
-        })
+        const onChangeFn = () => {
+          const drawnFeatures = mbDraw.getAll()
+          this.$emit('change', drawnFeatures)
+        }
 
-        map.on('draw.update', evt => {
-          this.$emit('update', evt)
-        })
+        map
+          .on('draw.create', onChangeFn)
+          .on('draw.delete', onChangeFn)
+          .on('draw.update', onChangeFn)
       },
     },
 
