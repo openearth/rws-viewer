@@ -22,6 +22,7 @@ module.exports = {
     'curly': [ 'warn', 'all' ],
     'comma-dangle': [ 'error', 'always-multiline' ],
     'jsx-quotes': [ 'error', 'prefer-double' ],
+    'keyword-spacing': [ 'warn', { 'before': true, 'after': true } ],
     'semi': [ 'error', 'never' ],
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
