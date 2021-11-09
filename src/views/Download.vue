@@ -1,10 +1,10 @@
 <template>
   <v-container class="download">
-    <!-- class="d-flex flex-wrap justify-space-between" -->
     <v-row>
       <v-col>
         <v-btn
           :color="drawMode === 'rectangle' ? 'primary' : null"
+          block
           @click="setDrawMode({ mode: 'rectangle' })"
         >
           Draw rectangle
@@ -13,6 +13,7 @@
       <v-col>
         <v-btn
           :color="drawMode === 'polygon' ? 'primary' : null"
+          block
           @click="setDrawMode({ mode: 'polygon' })"
         >
           Draw polygon
@@ -35,9 +36,3 @@
     },
   }
 </script>
-
-<style>
-.download .v-btn {
-  width: 100%;
-}
-</style>

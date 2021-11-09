@@ -27,7 +27,7 @@ export default {
       state.drawMode = mode
     },
     SET_DRAWN_FEATURES(state, featureCollection) {
-      state.drawnFeatures = featureCollection
+      state.drawnFeatures = Object.freeze(featureCollection)
     },
   },
 

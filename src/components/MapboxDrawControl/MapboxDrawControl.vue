@@ -1,7 +1,6 @@
 <script>
   import MapboxDraw from '@mapbox/mapbox-gl-draw'
   import DrawRectangle from 'mapbox-gl-draw-rectangle-mode'
-  // import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 
   export default {
     props: {
