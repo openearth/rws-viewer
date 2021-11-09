@@ -1,13 +1,35 @@
 <template>
   <v-card class="downloads" flat>
-    <v-card-text>
-      Lorem ipsum dolor sit amet.
-    </v-card-text>
+    <div class="d-flex flex-wrap justify-space-between">
+      <v-btn
+        class="flex-grow-0"
+        :color="drawMode === 'rectangle' ? 'primary' : null"
+        @click="setDrawMode({ mode: 'rectangle' })"
+      >
+        Draw rectangle
+      </v-btn>
+      <v-btn
+        class="flex-grow-0"
+        :color="drawMode === 'polygon' ? 'primary' : null"
+        @click="setDrawMode({ mode: 'polygon' })"
+      >
+        Draw polygon
+      </v-btn>
+    </div>
+    <pre>{{ drawMode }}</pre>
   </v-card>
 </template>
 
 <script>
+  import { mapActions, mapState } from 'vuex'
+
   export default {
-    name: 'Home',
+    computed: {
+      ...mapState('map', [ 'drawMode' ]),
+    },
+
+    methods: {
+      ...mapActions('map', [ 'setDrawMode' ]),
+    },
   }
 </script>

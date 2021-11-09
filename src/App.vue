@@ -9,7 +9,9 @@
         :key="layer.id"
         :options="layer"
       />
-      <mapbox-draw-control />
+      <mapbox-draw-control
+        :draw-mode="drawMode"
+      />
     </mapbox-map>
   </app-shell>
 </template>
@@ -34,7 +36,7 @@
 
     computed: {
       ...mapState('app', [ 'appName' ]),
-      ...mapState('map', [ 'rasterLayers' ]),
+      ...mapState('map', [ 'rasterLayers', 'drawMode' ]),
     },
 
     mounted() {
