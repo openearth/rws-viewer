@@ -18,7 +18,7 @@
 </template>
 
 <script>
-  import { mapActions, mapState } from 'vuex'
+  import { mapActions, mapGetters } from 'vuex'
 
   export default {
     name: 'AppHeader',
@@ -38,7 +38,7 @@
       },
     },
     computed: {
-      ...mapState('app', [ 'appNavigationOpen' ]),
+      ...mapGetters('app', [ 'appNavigationOpen' ]),
     },
     methods: {
       ...mapActions('app', [ 'setNavigationOpen' ]),
