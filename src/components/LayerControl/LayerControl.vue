@@ -25,8 +25,8 @@
           :ripple="false"
           :max="1"
           :step="0.1"
-          :input="$emit('update-layer-opacity', { id, opacity: layerOpacity })"
           label="Opacity"
+          @end="$emit('update-layer-opacity', { id, opacity: layerOpacity })"
         />
       </div>
     </v-expand-transition>

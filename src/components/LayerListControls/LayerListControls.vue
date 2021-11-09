@@ -86,7 +86,6 @@
       }
 
       const updateLayerOpacity = ({ id, opacity }) => {
-        console.log('update layer opacity with id:', { id, opacity })
         context.root.$store.dispatch('map/updateRasterLayerOpacity', { id, opacity }, { root: true })
       }
 

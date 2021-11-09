@@ -32,9 +32,14 @@ export default {
     UPDATE_RASTER_LAYER_OPACITY(state, { id, opacity }) {
       const layerToUpdate = state.rasterLayers.find(layer => layer.id === id)
 
-      if (layerToUpdate) {
-        layerToUpdate.opacity = opacity
-      }
+      if (!layerToUpdate) { return }
+
+      layerToUpdate.opacity = opacity
+
+      state.rasterLayers = [
+        ...state.rasterLayers.filter(layer => layer.id !== id),
+        layerToUpdate,
+      ]
     },
   },
 

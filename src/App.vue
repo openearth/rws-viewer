@@ -8,6 +8,7 @@
         v-for="layer in rasterLayers"
         :key="layer.id"
         :options="layer"
+        :opacity="layer.opacity"
       />
       <mapbox-draw-control
         :draw-mode="drawMode"
