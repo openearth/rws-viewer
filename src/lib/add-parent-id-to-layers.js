@@ -10,8 +10,8 @@ const isLayerGroup = item => Boolean(item.children)
 function addParentIdToLayers(items, parentIds = []) {
   return items.map(item => {
     if (isLayerGroup(item) === false) {
-return { ...item, parentIds }
-}
+      return { ...item, parentIds }
+    }
 
     const children = addParentIdToLayers(item.children, [ ...parentIds, item.id ])
     return { ...item, children, parentIds }
