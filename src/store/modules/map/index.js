@@ -7,14 +7,12 @@ export default {
     rasterLayers: [],
     drawMode: null,
     drawnFeature: null,
-    selectedTemplateFeatures: [],
   }),
 
   getters: {
     rasterLayers: state => state.rasterLayers,
     drawMode: state => state.drawMode,
     drawnFeature: state => state.drawnFeature,
-    selectedTemplateFeatures: state => state.selectedTemplateFeatures,
   },
 
   mutations: {
@@ -27,9 +25,6 @@ export default {
     },
     SET_DRAWN_FEATURE(state, feature) {
       state.drawnFeature = Object.freeze(feature)
-    },
-    SET_SELECTED_TEMPLATE_FEATURES(state, features) {
-      state.selectedTemplateFeatures = features.map(Object.freeze)
     },
   },
 
@@ -50,10 +45,6 @@ export default {
     setDrawnFeature({ commit, state }, feature) {
       if(state.drawMode) commit('SET_DRAW_MODE', { mode: null })
       commit('SET_DRAWN_FEATURE', feature)
-    },
-
-    setSelectedTemplateFeatures({ commit }, features) {
-      commit('SET_SELECTED_TEMPLATE_FEATURES', features)
     },
   },
 }

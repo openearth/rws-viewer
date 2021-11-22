@@ -23,12 +23,11 @@
     <v-row>
       <v-col>
         <v-select
-          v-model="selectedAreas"
-          label="Use predefined selections"
+          v-model="selectedArea"
+          label="Use predefined selection"
           :items="preDefinedAreas"
           item-text="properties.mpnomsch"
           item-value="id"
-          multiple
           dense
           outlined
           hide-details
@@ -43,10 +42,12 @@
   import { mapActions, mapGetters } from 'vuex'
   import metaRepo from '~/repo/metaRepo'
 
+  const NO_SELECTION_ID = 'NO_SELECTION_ID'
+
   export default {
     data: () => ({
       preDefinedAreas: [],
-      selectedAreas: [],
+      selectedArea: null,
     }),
 
     computed: {
@@ -57,7 +58,11 @@
       metaRepo
         .getPredefinedAreas()
         .then(areas => {
-          this.preDefinedAreas = Object.freeze(areas)
+          const noSelectionObj = {
+            id: NO_SELECTION_ID,
+            properties: { mpnomsch: 'No selection' },
+          }
+          this.preDefinedAreas = Object.freeze([ noSelectionObj, ...areas ])
         })
         .catch(err => {
           console.error('Error getting predefined selections', err)
@@ -65,18 +70,24 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'setDrawMode', 'clearDrawnFeature', 'setSelectedTemplateFeatures' ]),
+      ...mapActions('map', [ 'setDrawMode', 'setDrawnFeature', 'clearDrawnFeature' ]),
 
       async onDrawModeSelect(mode) {
         // We need to wait for clearing the feature
         // before we can start drawing again
         await this.clearDrawnFeature()
+        this.selectedArea = null
         this.setDrawMode({ mode })
       },
 
-      onAreaSelection(ids) {
-        const features = ids.map(id => this.preDefinedAreas.find(area => area.id === id))
-        this.setSelectedTemplateFeatures(features)
+      onAreaSelection(id) {
+        this.setDrawMode({ mode: null })
+        if(id === NO_SELECTION_ID) {
+          this.clearDrawnFeature()
+          return
+        }
+        const feature = this.preDefinedAreas.find(area => area.id === id)
+        this.setDrawnFeature(feature)
       },
     },
   }
