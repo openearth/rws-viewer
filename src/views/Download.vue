@@ -5,7 +5,7 @@
         <v-btn
           :color="drawMode === 'rectangle' ? 'primary' : null"
           block
-          @click="setDrawMode({ mode: 'rectangle' })"
+          @click="onDrawModeSelect('rectangle')"
         >
           Draw rectangle
         </v-btn>
@@ -14,7 +14,7 @@
         <v-btn
           :color="drawMode === 'polygon' ? 'primary' : null"
           block
-          @click="setDrawMode({ mode: 'polygon' })"
+          @click="onDrawModeSelect('polygon')"
         >
           Draw polygon
         </v-btn>
@@ -65,7 +65,14 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'setDrawMode', 'setSelectedTemplateFeatures' ]),
+      ...mapActions('map', [ 'setDrawMode', 'clearDrawnFeature', 'setSelectedTemplateFeatures' ]),
+
+      async onDrawModeSelect(mode) {
+        // We need to wait for clearing the feature
+        // before we can start drawing again
+        await this.clearDrawnFeature()
+        this.setDrawMode({ mode })
+      },
 
       onAreaSelection(ids) {
         const features = ids.map(id => this.preDefinedAreas.find(area => area.id === id))

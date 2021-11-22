@@ -6,17 +6,14 @@ export default {
   state: () => ({
     rasterLayers: [],
     drawMode: null,
-    drawnFeatures: Object.freeze({
-      type: 'FeatureCollection',
-      features: [],
-    }),
+    drawnFeature: null,
     selectedTemplateFeatures: [],
   }),
 
   getters: {
     rasterLayers: state => state.rasterLayers,
     drawMode: state => state.drawMode,
-    drawnFeatures: state => state.drawnFeatures,
+    drawnFeature: state => state.drawnFeature,
     selectedTemplateFeatures: state => state.selectedTemplateFeatures,
   },
 
@@ -28,8 +25,8 @@ export default {
     SET_DRAW_MODE(state, { mode }) {
       state.drawMode = mode
     },
-    SET_DRAWN_FEATURES(state, featureCollection) {
-      state.drawnFeatures = Object.freeze(featureCollection)
+    SET_DRAWN_FEATURE(state, feature) {
+      state.drawnFeature = Object.freeze(feature)
     },
     SET_SELECTED_TEMPLATE_FEATURES(state, features) {
       state.selectedTemplateFeatures = features.map(Object.freeze)
@@ -46,9 +43,13 @@ export default {
       commit('SET_DRAW_MODE', { mode: modeToCommit })
     },
 
-    setDrawnFeatures({ commit, state }, featureCollection) {
+    clearDrawnFeature({ commit }) {
+      commit('SET_DRAWN_FEATURE', null)
+    },
+
+    setDrawnFeature({ commit, state }, feature) {
       if(state.drawMode) commit('SET_DRAW_MODE', { mode: null })
-      commit('SET_DRAWN_FEATURES', featureCollection)
+      commit('SET_DRAWN_FEATURE', feature)
     },
 
     setSelectedTemplateFeatures({ commit }, features) {

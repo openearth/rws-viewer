@@ -1,9 +1,6 @@
 <script>
-  import { differenceWith } from 'ramda'
   import MapboxDraw from '@mapbox/mapbox-gl-draw'
   import DrawRectangle from 'mapbox-gl-draw-rectangle-mode'
-
-  const differenceWithId = differenceWith((x, y) => x.id === y.id)
 
   export default {
     props: {
@@ -11,11 +8,15 @@
         type: String,
         default: null,
       },
-      templateFeatures: {
-        type: Array,
-        required: true,
+      drawnFeature: {
+        type: Object,
+        default: null,
       },
     },
+
+    data: () => ({
+      internalFeatureId: undefined,
+    }),
 
     watch: {
       drawMode(mode) {
@@ -27,25 +28,22 @@
         }
       },
 
-      templateFeatures(newFeatures, oldFeatures) {
-        const featuresToAdd = differenceWithId(newFeatures, oldFeatures)
-        const featuresToRemove = differenceWithId(oldFeatures, newFeatures)
-        featuresToAdd.forEach(feature => {
-          this.mbDraw.add(feature)
-        })
-        if(featuresToRemove.length) {
-          this.mbDraw.delete(featuresToRemove.map(({ id }) => id))
+      drawnFeature(feature) {
+        // If the id is the same the update came from an operation
+        // done with this component, so no updates necessary
+        if(feature && this.internalFeatureId === feature.id) {
+          return
         }
-        this.onCollectionChange()
+        // Otherwise we clear all drawn features and update if necessary
+        this.mbDraw.deleteAll()
+        this.internalFeatureId = feature?.id
+        if(feature) {
+          this.mbDraw.add(feature)
+        }
       },
     },
 
     methods: {
-      onCollectionChange() {
-        const drawnFeatures = this.mbDraw.getAll()
-        this.$emit('change', drawnFeatures)
-      },
-
       deferredMountedTo(map) {
         const modes = MapboxDraw.modes
         modes.draw_rectangle = DrawRectangle
@@ -63,10 +61,18 @@
         this.mbDraw = mbDraw
         map.addControl(mbDraw)
 
+        const onChangeFn = () => {
+          const { features } = this.mbDraw.getAll()
+          const feature = features[0]
+          // We track the id of the feature so we know when to delete or replace it
+          this.internalFeatureId = feature?.id
+          this.$emit('change', feature)
+        }
+
         map
-          .on('draw.create', this.onCollectionChange)
-          .on('draw.delete', this.onCollectionChange)
-          .on('draw.update', this.onCollectionChange)
+          .on('draw.create', onChangeFn)
+          .on('draw.delete', onChangeFn)
+          .on('draw.update', onChangeFn)
       },
     },
 

@@ -11,8 +11,8 @@
       />
       <mapbox-draw-control
         :draw-mode="drawMode"
-        :template-features="selectedTemplateFeatures"
-        @change="setDrawnFeatures"
+        :drawn-feature="drawnFeature"
+        @change="setDrawnFeature"
       />
     </mapbox-map>
   </app-shell>
@@ -38,7 +38,7 @@
 
     computed: {
       ...mapGetters('app', [ 'appName' ]),
-      ...mapGetters('map', [ 'rasterLayers', 'drawMode', 'selectedTemplateFeatures' ]),
+      ...mapGetters('map', [ 'rasterLayers', 'drawMode', 'drawnFeature' ]),
     },
 
     mounted() {
@@ -47,7 +47,7 @@
 
     methods: {
       ...mapActions('data', [ 'getAppData' ]),
-      ...mapActions('map', [ 'setDrawnFeatures' ]),
+      ...mapActions('map', [ 'setDrawnFeature' ]),
     },
   }
 </script>
