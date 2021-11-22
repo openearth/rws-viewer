@@ -1,11 +1,11 @@
 <template>
   <div v-if="layersAreProvided" ref="root">
     <v-treeview
+      v-model="selectedIds"
       :open.sync="openItems"
       selectable
       :items="layersWithParents"
       :open-all="true"
-      @input="setSelectedIds"
     >
       <template #label="{ item, selected }">
         <div class="d-flex align-center">
@@ -72,7 +72,7 @@
           .map(deleteIndex)
       })
 
-      const { setSelectedIds, selectedIds } = useSelected()
+      const { selectedIds } = useSelected()
       const { activeLegend, setActiveLegend } = useLegend(selectedIds)
       const { onSortingChange } = useSortable(layers, root, openItems)
 
@@ -81,7 +81,7 @@
       watch(activeLegend, newActiveLegend => context.emit('legend-change', newActiveLegend))
       watch(sortedSelectedLayers, sortedSelected => context.emit('active-layers-change', sortedSelected))
 
-      return { root, openItems, layersAreProvided, activeLegend, setActiveLegend, setSelectedIds, layersWithParents }
+      return { root, openItems, layersAreProvided, activeLegend, setActiveLegend, layersWithParents, selectedIds }
     },
   }
 </script>
