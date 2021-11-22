@@ -38,13 +38,15 @@ export default {
       commit('SET_DRAW_MODE', { mode: modeToCommit })
     },
 
-    clearDrawnFeature({ commit }) {
-      commit('SET_DRAWN_FEATURE', null)
+    setDrawnFeature({ commit, state }, feature) {
+      if (state.drawMode) {
+        commit('SET_DRAW_MODE', { mode: null })
+      }
+      commit('SET_DRAWN_FEATURE', feature)
     },
 
-    setDrawnFeature({ commit, state }, feature) {
-      if(state.drawMode) commit('SET_DRAW_MODE', { mode: null })
-      commit('SET_DRAWN_FEATURE', feature)
+    clearDrawnFeature({ commit }) {
+      commit('SET_DRAWN_FEATURE', null)
     },
   },
 }

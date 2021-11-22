@@ -20,10 +20,9 @@
 
     watch: {
       drawMode(mode) {
-        if(mode) {
+        if (mode) {
           this.mbDraw.changeMode(`draw_${ mode }`)
-        }
-        else {
+        } else {
           this.mbDraw.changeMode('simple_select')
         }
       },
@@ -31,13 +30,13 @@
       drawnFeature(feature) {
         // If the id is the same the update came from an operation
         // done within this component, so no updates necessary
-        if(feature && this.internalFeatureId === feature.id) {
+        if (feature && this.internalFeatureId === feature.id) {
           return
         }
         // Otherwise we clear all drawn features and update if necessary
         this.mbDraw.deleteAll()
         this.internalFeatureId = feature?.id
-        if(feature) {
+        if (feature) {
           this.mbDraw.add(feature)
         }
       },

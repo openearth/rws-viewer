@@ -42,7 +42,9 @@
       ]),
 
       layersForTree() {
-        if(!this.selectedTags.length) return this.displayLayers
+        if (!this.selectedTags.length) {
+          return this.displayLayers
+        }
         return this.flattenedLayers.filter(({ tags }) =>
           this.selectedTags.every(tag => tags.includes(tag)))
       },

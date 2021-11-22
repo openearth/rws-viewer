@@ -82,7 +82,7 @@
 
       onAreaSelection(id) {
         this.setDrawMode({ mode: null })
-        if(id === NO_SELECTION_ID) {
+        if (id === NO_SELECTION_ID) {
           this.clearDrawnFeature()
           return
         }

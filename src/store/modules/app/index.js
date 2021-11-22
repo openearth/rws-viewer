@@ -25,6 +25,7 @@ export default {
       document.title = name
       commit('SET_APP_NAME', { name })
     },
+
     setNavigationOpen({ commit }, { open }) {
       commit('SET_APP_NAVIGATION_OPEN', { open })
     },
