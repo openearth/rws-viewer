@@ -30,7 +30,7 @@
 
       drawnFeature(feature) {
         // If the id is the same the update came from an operation
-        // done with this component, so no updates necessary
+        // done within this component, so no updates necessary
         if(feature && this.internalFeatureId === feature.id) {
           return
         }
