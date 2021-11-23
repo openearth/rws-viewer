@@ -1,4 +1,7 @@
-import { compose, flatten, map, props, uniq, sort } from 'ramda'
+import { compose, flatten, map, props, uniq, sort, filter, includes, prop } from 'ramda'
+
+const existsIn = list => value => includes(value, list)
+const idIncludedIn = ids => compose(existsIn(ids), prop('id'))
 
 const pickLayersRecursive = el => {
   if (Array.isArray(el)) {
@@ -25,3 +28,10 @@ export const getLayersTags = compose(
   flatten,
   map(props([ 'tags' ])),
 )
+
+export const getLayersById = (layers, ids) => 
+  compose(
+    filter(idIncludedIn(ids)),
+    flatten,
+    pickLayersRecursive,
+  )(layers)
