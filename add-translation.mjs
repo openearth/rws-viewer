@@ -6,7 +6,7 @@ import slugify from '@sindresorhus/slugify'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 
-const files = await fs.readdir(path.join(__dirname, 'translations'))
+const files = await fs.readdir(path.join(__dirname, 'public/translations'))
 const availableLocales = files.map(file => file.replace('.json', ''))
 
 console.clear()
@@ -30,7 +30,7 @@ if (answers.sure === false) {
 
 await Promise.all(files.map(async file => {
   const locale = file.replace('.json', '')
-  const filePath = path.join(__dirname, `translations/${ file }`)
+  const filePath = path.join(__dirname, `public/translations/${ file }`)
   const content = await fs.readFile(filePath)
   const json = JSON.parse(content)
   json[answers.key] = answers[locale]
