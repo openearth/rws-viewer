@@ -22,9 +22,9 @@
     "start": "yarn serve"
   },
   "dependencies": {
-    "@deltares/utilities": "^0.3.0",
-    "@deltares/vue-components": "^0.3.0",
-    "@deltares/vuetify-theme": "^0.3.0",
+    "@deltares/utilities": "0.4.0",
+    "@deltares/vue-components": "0.4.0",
+    "@deltares/vuetify-theme": "0.4.0",
     "@mapbox/mapbox-gl-draw": "^1.3.0",
     "@vue/composition-api": "^1.3.3",
     "core-js": "^3.6.5",
