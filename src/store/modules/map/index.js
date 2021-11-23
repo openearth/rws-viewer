@@ -16,6 +16,7 @@ export default {
   getters: {
     mapLoaded: state => state.mapLoaded,
     rasterLayers: state => (state.mapLoaded && state.rasterLayers) || [],
+    rasterLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
     drawnFeatures: state => state.drawnFeatures,
   },

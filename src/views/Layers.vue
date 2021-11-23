@@ -13,6 +13,7 @@
     <layer-list-controls
       v-if="layersForTree"
       :layers="layersForTree"
+      :selected-layer-ids="rasterLayerIds"
       @active-layers-change="onActiveLayerChange"
       @layer-sorting-change="onLayerSortingChange"
     />
@@ -40,6 +41,7 @@
         'flattenedLayers',
         'layerTags',
       ]),
+      ...mapGetters('map', [ 'rasterLayerIds' ]),
 
       layersForTree() {
         if (!this.selectedTags.length) {
