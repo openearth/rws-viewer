@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 
-import nl from '../../translations/nl.json'
+import nl from '../../public/translations/nl.json'
 
 Vue.use(VueI18n)
 
