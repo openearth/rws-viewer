@@ -5,7 +5,7 @@
     floating
     stateless
     :value="appNavigationOpen"
-    width="440"
+    :width="appNavigationWidth"
   >
     <v-tabs
       v-model="tabs.name"
@@ -49,7 +49,7 @@
       ],
     }),
     computed: {
-      ...mapGetters('app', [ 'appNavigationOpen' ]),
+      ...mapGetters('app', [ 'appNavigationOpen', 'appNavigationWidth' ]),
     },
   }
 </script>

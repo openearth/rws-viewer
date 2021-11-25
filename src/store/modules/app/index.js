@@ -3,11 +3,13 @@ export default {
 
   state: () => ({
     appNavigationOpen: true,
+    appNavigationWidth: 440,
     appName: '',
   }),
 
   getters: {
     appNavigationOpen: state => state.appNavigationOpen,
+    appNavigationWidth: state => state.appNavigationWidth,
     appName: state => state.appName,
   },
 
