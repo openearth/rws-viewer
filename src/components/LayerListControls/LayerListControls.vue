@@ -3,10 +3,12 @@
     <v-treeview
       hoverable
       :items="layersWithParents"
+      :value="selectedLayerIds"
       :open.sync="openItems"
       open-on-click
       selectable
-      @input="setSelectedIds"
+      :open-all="true"
+      @input="handleSelectedChange"
     >
       <template #label="{ item, selected }">
         <layer-control
@@ -33,7 +35,6 @@
   import findInTree from '~/lib/find-in-tree'
 
   import useLegend from './useLegend'
-  import useSelected from './useSelected'
   import useSortable from './useSortable'
 
   const deleteIndex = item => {
@@ -49,25 +50,20 @@
         type: Array,
         default: () => [],
       },
+      selectedLayerIds: {
+        type: Array,
+        default: () => [],
+      },
     },
     setup(props, context) {
       const root = ref(null)
       const openItems = ref([])
 
-      const { layers } = toRefs(props)
-
+      const { layers, selectedLayerIds } = toRefs(props)
       const layersWithParents = computed(() => addParentIdToLayers(layers.value))
       const layersAreProvided = computed(() => layersWithParents.value.length > 0)
-      const sortedSelectedLayers = computed(() => {
-        const withIndex = addIndex(layers.value)
-        return selectedIds.value
-          .map(id => findInTree(withIndex, 'id', id))
-          .sort((a, b) => b.index - a.index)
-          .map(deleteIndex)
-      })
 
-      const { setSelectedIds, selectedIds } = useSelected()
-      const { activeLegend, setActiveLegend } = useLegend(selectedIds)
+      const { activeLegend, setActiveLegend } = useLegend(selectedLayerIds)
       const { onSortingChange } = useSortable(layers, root, openItems)
 
       const showInfo = (id) => {
@@ -80,20 +76,28 @@
       }
 
       onSortingChange(sortedLayers => context.emit('layer-sorting-change', sortedLayers))
-
       watch(activeLegend, newActiveLegend => context.emit('legend-change', newActiveLegend))
-      watch(sortedSelectedLayers, sortedSelected => context.emit('active-layers-change', sortedSelected))
+
+      function handleSelectedChange(selectedIds) {
+        const withIndex = addIndex(layers.value)
+        const visibleLayers = selectedIds
+          .map(id => findInTree(withIndex, 'id', id))
+          .sort((a, b) => b.index - a.index)
+          .map(deleteIndex)
+
+        context.emit('active-layers-change', visibleLayers)
+      }
 
       return {
         root,
         openItems,
-        layersWithParents,
         layersAreProvided,
         activeLegend,
         setActiveLegend,
-        setSelectedIds,
         showInfo,
+        layersWithParents,
         updateLayerOpacity,
+        handleSelectedChange,
       }
     },
   }

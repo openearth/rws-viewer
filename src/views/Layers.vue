@@ -13,6 +13,7 @@
     <layer-list-controls
       v-if="layersForTree"
       :layers="layersForTree"
+      :selected-layer-ids="rasterLayerIds"
       @active-layers-change="onActiveLayerChange"
       @layer-sorting-change="onLayerSortingChange"
     />
@@ -41,6 +42,7 @@
         'flattenedLayers',
         'layerTags',
       ]),
+      ...mapGetters('map', [ 'rasterLayerIds' ]),
 
       layersForTree() {
         if (!this.selectedTags.length) {
@@ -57,6 +59,9 @@
 
       onActiveLayerChange(layers) {
         this.setRasterLayers({ layers })
+        const url = new URL(window.location.href)
+        url.searchParams.set('layers', layers.map(({ id }) => id).join(','))
+        this.$router.replace(`/?${ url.searchParams.toString() }`)
       },
 
       onLayerSortingChange(layers) {

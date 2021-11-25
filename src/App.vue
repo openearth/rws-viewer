@@ -1,8 +1,11 @@
 <template>
   <app-shell :header-title="appName">
+    <locale-switcher slot="header-right" />
+
     <mapbox-map
       slot="map"
       :access-token="accessToken"
+      @styledata="setMapLoaded"
     >
       <v-mapbox-layer
         v-for="layer in rasterLayers"
@@ -27,6 +30,7 @@
 
   const LayerInfoDialog = () => import('~/components/LayerInfoDialog/LayerInfoDialog')
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
+  import LocaleSwitcher from './components/LocaleSwitcher/LocaleSwitcher'
 
   const AppShell = () => import('~/components/AppShell/AppShell')
 
@@ -36,6 +40,7 @@
       LayerInfoDialog,
       MapboxMap,
       MapboxDrawControl,
+      LocaleSwitcher,
     },
 
     data: () => ({
@@ -53,7 +58,7 @@
 
     methods: {
       ...mapActions('data', [ 'getAppData', 'setLayerDialogOpen' ]),
-      ...mapActions('map', [ 'setDrawnFeatures' ]),
+      ...mapActions('map', [ 'setDrawnFeatures', 'setMapLoaded' ]),
 
       onCloseDialog() {
         this.setLayerDialogOpen({ open: false })

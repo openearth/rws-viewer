@@ -1,5 +1,5 @@
 import configRepo from '~/repo/configRepo'
-import { flattenLayers, getLayersTags } from '~/lib/layer-helpers'
+import { flattenLayers, getLayersTags, getLayersById } from '~/lib/layer-helpers'
 
 export default {
   namespaced: true,
@@ -48,6 +48,13 @@ export default {
 
       const flattenedLayers = flattenLayers(layers)
       commit('SET_FLATTENED_LAYERS', { layers: flattenedLayers })
+
+      const searchParams = new URLSearchParams(window.location.search)
+      const initialLayerIds = (searchParams.get('layers') || '').split(',')
+      const layersById = getLayersById(layers, initialLayerIds)
+      if (layersById.length) {
+        dispatch('map/setRasterLayers', { layers: layersById }, { root: true })
+      }
 
       const tags = getLayersTags(flattenedLayers)
       commit('SET_LAYER_TAGS', { tags })
