@@ -43,7 +43,7 @@ export default {
       const layerToUpdate = state.rasterLayers.find(layer => layer.id === id)
       const index = state.rasterLayers.findIndex(layer => layer.id === id)
 
-      if (index === -1) {
+      if (!layerToUpdate) {
         return
       }
 
