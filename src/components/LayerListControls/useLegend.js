@@ -17,7 +17,9 @@ export default function useLegend(selectedIds) {
    * Handler for when `selectedIds` change.
    */
   function handleSelectedIdsChange(newSelectedIds) {
-    if (newSelectedIds.includes(activeLegend.value)) return
+    if (newSelectedIds.includes(activeLegend.value)) {
+      return
+    }
 
     const lastSelectedId = last(newSelectedIds)
     setActiveLegend(lastSelectedId)
