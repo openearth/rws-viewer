@@ -35,7 +35,7 @@ await Promise.all(files.map(async file => {
   const json = JSON.parse(content)
   json[answers.key] = answers[locale]
   const updatedContent = JSON.stringify(json, null, 2)
-  await fs.writeFile(filePath, updatedContent, { encoding: 'utf-8' })
+  await fs.writeFile(filePath, `${ updatedContent }\n`, { encoding: 'utf-8' })
 }))
 .then(() => {
   console.log('')
