@@ -5,6 +5,7 @@
     <mapbox-map
       slot="map"
       :access-token="accessToken"
+      @styledata="setMapLoaded"
     >
       <v-mapbox-layer
         v-for="layer in rasterLayers"
@@ -50,7 +51,7 @@
 
     methods: {
       ...mapActions('data', [ 'getAppData' ]),
-      ...mapActions('map', [ 'setDrawnFeatures' ]),
+      ...mapActions('map', [ 'setDrawnFeatures', 'setMapLoaded' ]),
     },
   }
 </script>
