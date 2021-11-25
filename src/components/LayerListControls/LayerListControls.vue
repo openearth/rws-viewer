@@ -17,7 +17,6 @@
           :parent-ids="item.parentIds.toString()"
           :selected="selected"
           @show-info="showInfo"
-          @toggle-layer="toggleLayer"
           @update-layer-opacity="updateLayerOpacity"
         />
       </template>
@@ -82,10 +81,6 @@
         context.root.$store.dispatch('data/setLayerDialogOpen', { open: true }, { root: true })
       }
 
-      const toggleLayer = (id) => {
-        console.log('toggle layer with id:', id)
-      }
-
       const updateLayerOpacity = ({ id, opacity }) => {
         context.root.$store.dispatch('map/updateRasterLayerOpacity', { id, opacity }, { root: true })
       }
@@ -105,7 +100,6 @@
         setSelectedIds,
         layerOpacity,
         showInfo,
-        toggleLayer,
         updateLayerOpacity,
       }
     },
