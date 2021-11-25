@@ -22,7 +22,8 @@
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
-  import LayerListControls from '~/components/LayerListControls/LayerListControls'
+
+  const LayerListControls = () => import('~/components/LayerListControls/LayerListControls')
 
   export default {
     name: 'Layer',

@@ -1,4 +1,6 @@
+import { update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
+import mapLayerOpacity from '~/lib/map-layer-opacity'
 
 export default {
   namespaced: true,
@@ -24,13 +26,27 @@ export default {
     },
     SET_RASTER_LAYERS(state, { layers }) {
       const wmsLayers = layers.map(layer => buildWmsLayer(layer))
-      state.rasterLayers = wmsLayers
+      const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
+
+      state.rasterLayers = mappedWmsLayers
     },
     SET_DRAW_MODE(state, { mode }) {
       state.drawMode = mode
     },
     SET_DRAWN_FEATURE(state, feature) {
       state.drawnFeature = Object.freeze(feature)
+    },
+    UPDATE_RASTER_LAYER_OPACITY(state, { id, opacity }) {
+      const layerToUpdate = state.rasterLayers.find(layer => layer.id === id)
+      const index = state.rasterLayers.findIndex(layer => layer.id === id)
+
+      if (!layerToUpdate) {
+        return
+      }
+
+      layerToUpdate.opacity = opacity
+
+      state.rasterLayers = update(index, layerToUpdate, state.rasterLayers)
     },
   },
 
@@ -56,6 +72,10 @@ export default {
 
     clearDrawnFeature({ commit }) {
       commit('SET_DRAWN_FEATURE', null)
+    },
+
+    updateRasterLayerOpacity({ commit }, { id, opacity }) {
+      commit('UPDATE_RASTER_LAYER_OPACITY', { id, opacity })
     },
   },
 }

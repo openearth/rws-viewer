@@ -1,33 +1,25 @@
 <template>
   <div v-if="layersAreProvided" ref="root">
     <v-treeview
+      hoverable
+      :items="layersWithParents"
       :value="selectedLayerIds"
       :open.sync="openItems"
+      open-on-click
       selectable
-      :items="layersWithParents"
       :open-all="true"
       @input="handleSelectedChange"
     >
       <template #label="{ item, selected }">
-        <div class="d-flex align-center">
-          <span
-            class="sortable-handle"
-            :data-id="item.id"
-            :data-parent-ids="item.parentIds.toString()"
-          >{{ item.name }}</span>
-          <v-btn
-            v-if="item.layer && selected"
-            icon
-            class="ml-auto"
-            @click="setActiveLegend(item.id)"
-          >
-            <v-icon>
-              mdi-card-bulleted{{
-                item.id === activeLegend ? '' : '-off'
-              }}-outline
-            </v-icon>
-          </v-btn>
-        </div>
+        <layer-control
+          :id="item.id"
+          :name="item.name"
+          :is-layer="Boolean(item.layer)"
+          :parent-ids="item.parentIds.toString()"
+          :selected="selected"
+          @show-info="showInfo"
+          @update-layer-opacity="updateLayerOpacity"
+        />
       </template>
     </v-treeview>
   </div>
@@ -35,6 +27,8 @@
 
 <script>
   import { watch, ref, toRefs, computed } from '@vue/composition-api'
+
+  const LayerControl = () => import('~/components/LayerControl/LayerControl')
 
   import addIndex from '~/lib/add-index'
   import addParentIdToLayers from '~/lib/add-parent-id-to-layers'
@@ -50,6 +44,7 @@
 
   export default {
     name: 'LayerListControls',
+    components: { LayerControl },
     props: {
       layers: {
         type: Array,
@@ -71,6 +66,15 @@
       const { activeLegend, setActiveLegend } = useLegend(selectedLayerIds)
       const { onSortingChange } = useSortable(layers, root, openItems)
 
+      const showInfo = (id) => {
+        console.log('show layer info for id:', id)
+        context.root.$store.dispatch('data/setLayerDialogOpen', { open: true }, { root: true })
+      }
+
+      const updateLayerOpacity = ({ id, opacity }) => {
+        context.root.$store.dispatch('map/updateRasterLayerOpacity', { id, opacity }, { root: true })
+      }
+
       onSortingChange(sortedLayers => context.emit('layer-sorting-change', sortedLayers))
       watch(activeLegend, newActiveLegend => context.emit('legend-change', newActiveLegend))
 
@@ -84,18 +88,24 @@
         context.emit('active-layers-change', visibleLayers)
       }
 
-      return { root, openItems, layersAreProvided, activeLegend, setActiveLegend, layersWithParents, handleSelectedChange }
+      return {
+        root,
+        openItems,
+        layersAreProvided,
+        activeLegend,
+        setActiveLegend,
+        showInfo,
+        layersWithParents,
+        updateLayerOpacity,
+        handleSelectedChange,
+      }
     },
   }
 </script>
 
 <style lang="scss">
-  @import '~/components/AppCore/mixins.scss';
-
-  .sortable-handle {
-    @include truncate;
-
-    width: 100%;
-    cursor: grab;
+  .v-treeview-node__checkbox {
+    margin-top: $spacing-small;
+    margin-bottom: auto;
   }
 </style>

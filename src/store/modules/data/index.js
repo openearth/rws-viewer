@@ -9,12 +9,14 @@ export default {
     displayLayers: [],
     flattenedLayers: [],
     layerTags: [],
+    layerDialogOpen: false,
   }),
 
   getters: {
     displayLayers: state => state.displayLayers,
     flattenedLayers: state => state.flattenedLayers,
     layerTags: state => state.layerTags,
+    layerDialogOpen: state => state.layerDialogOpen,
   },
 
   mutations: {
@@ -29,6 +31,9 @@ export default {
     },
     SET_LAYER_TAGS(state, { tags }) {
       state.layerTags = Object.freeze(tags)
+    },
+    SET_LAYER_DIALOG_OPEN(state, { open }) {
+      state.layerDialogOpen = open
     },
   },
 
@@ -61,6 +66,10 @@ export default {
 
     setDisplayLayers({ commit }, { layers }) {
       commit('SET_DISPLAY_LAYERS', { layers })
+    },
+
+    setLayerDialogOpen({ commit }, { open }) {
+      commit('SET_LAYER_DIALOG_OPEN', { open })
     },
   },
 }
