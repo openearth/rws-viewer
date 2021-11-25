@@ -15,7 +15,8 @@
       />
       <mapbox-draw-control
         :draw-mode="drawMode"
-        @change="setDrawnFeatures"
+        :drawn-feature="drawnFeature"
+        @change="setDrawnFeature"
       />
     </mapbox-map>
     <layer-info-dialog
@@ -49,7 +50,7 @@
 
     computed: {
       ...mapGetters('app', [ 'appName' ]),
-      ...mapGetters('map', [ 'rasterLayers', 'drawMode' ]),
+      ...mapGetters('map', [ 'rasterLayers', 'drawMode', 'drawnFeature' ]),
     },
 
     mounted() {
@@ -58,7 +59,7 @@
 
     methods: {
       ...mapActions('data', [ 'getAppData', 'setLayerDialogOpen' ]),
-      ...mapActions('map', [ 'setDrawnFeatures', 'setMapLoaded' ]),
+      ...mapActions('map', [ 'setDrawnFeature', 'setMapLoaded' ]),
 
       onCloseDialog() {
         this.setLayerDialogOpen({ open: false })

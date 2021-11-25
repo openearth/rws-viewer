@@ -9,10 +9,7 @@ export default {
     mapLoaded: false,
     rasterLayers: [],
     drawMode: null,
-    drawnFeatures: Object.freeze({
-      type: 'FeatureCollection',
-      features: [],
-    }),
+    drawnFeature: null,
   }),
 
   getters: {
@@ -20,7 +17,7 @@ export default {
     rasterLayers: state => (state.mapLoaded && state.rasterLayers) || [],
     rasterLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
-    drawnFeatures: state => state.drawnFeatures,
+    drawnFeature: state => state.drawnFeature,
   },
 
   mutations: {
@@ -36,8 +33,8 @@ export default {
     SET_DRAW_MODE(state, { mode }) {
       state.drawMode = mode
     },
-    SET_DRAWN_FEATURES(state, featureCollection) {
-      state.drawnFeatures = Object.freeze(featureCollection)
+    SET_DRAWN_FEATURE(state, feature) {
+      state.drawnFeature = Object.freeze(feature)
     },
     UPDATE_RASTER_LAYER_OPACITY(state, { id, opacity }) {
       const layerToUpdate = state.rasterLayers.find(layer => layer.id === id)
@@ -66,11 +63,15 @@ export default {
       commit('SET_DRAW_MODE', { mode: modeToCommit })
     },
 
-    setDrawnFeatures({ commit, state }, featureCollection) {
+    setDrawnFeature({ commit, state }, feature) {
       if (state.drawMode) {
         commit('SET_DRAW_MODE', { mode: null })
       }
-      commit('SET_DRAWN_FEATURES', featureCollection)
+      commit('SET_DRAWN_FEATURE', feature)
+    },
+
+    clearDrawnFeature({ commit }) {
+      commit('SET_DRAWN_FEATURE', null)
     },
 
     updateRasterLayerOpacity({ commit }, { id, opacity }) {
