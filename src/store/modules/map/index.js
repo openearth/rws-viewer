@@ -1,5 +1,6 @@
 import { update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
+import mapLayerOpacity from '~/lib/map-layer-opacity'
 
 export default {
   namespaced: true,
@@ -22,7 +23,9 @@ export default {
   mutations: {
     SET_RASTER_LAYERS(state, { layers }) {
       const wmsLayers = layers.map(layer => buildWmsLayer(layer))
-      state.rasterLayers = wmsLayers
+      const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
+
+      state.rasterLayers = mappedWmsLayers
     },
     SET_DRAW_MODE(state, { mode }) {
       state.drawMode = mode
