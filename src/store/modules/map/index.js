@@ -1,3 +1,4 @@
+import { update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 
 export default {
@@ -31,15 +32,15 @@ export default {
     },
     UPDATE_RASTER_LAYER_OPACITY(state, { id, opacity }) {
       const layerToUpdate = state.rasterLayers.find(layer => layer.id === id)
+      const index = state.rasterLayers.findIndex(layer => layer.id === id)
 
-      if (!layerToUpdate) { return }
+      if (index === -1) {
+        return
+      }
 
       layerToUpdate.opacity = opacity
 
-      state.rasterLayers = [
-        ...state.rasterLayers.filter(layer => layer.id !== id),
-        layerToUpdate,
-      ]
+      state.rasterLayers = update(index, layerToUpdate, state.rasterLayers)
     },
   },
 
