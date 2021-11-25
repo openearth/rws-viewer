@@ -3,6 +3,7 @@
     <mapbox-map
       slot="map"
       :access-token="accessToken"
+      :padding="{ left: appNavigationOpen ? appNavigationWidth : 0 }"
     >
       <v-mapbox-layer
         v-for="layer in rasterLayers"
@@ -36,7 +37,7 @@
     }),
 
     computed: {
-      ...mapGetters('app', [ 'appName' ]),
+      ...mapGetters('app', [ 'appName', 'appNavigationOpen', 'appNavigationWidth' ]),
       ...mapGetters('map', [ 'rasterLayers', 'drawMode' ]),
     },
 
