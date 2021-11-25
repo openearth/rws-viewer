@@ -34,6 +34,6 @@ module.exports = {
     'vue/no-unused-components': 'warn',
     'vue/script-indent': [ 'error', 2, { baseIndent: 1 } ],
     'vue/no-v-html': 'off',
-    'eol-last': ['error', 'always']
+    'eol-last': [ 'error', 'always' ],
   },
 }
