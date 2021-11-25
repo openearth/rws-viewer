@@ -1,8 +1,11 @@
 <template>
   <app-shell :header-title="appName">
+    <locale-switcher slot="header-right" />
+
     <mapbox-map
       slot="map"
       :access-token="accessToken"
+      @styledata="setMapLoaded"
     >
       <v-mapbox-layer
         v-for="layer in rasterLayers"
@@ -22,6 +25,7 @@
   import { mapActions, mapGetters } from 'vuex'
   import { MapboxMap } from '@deltares/vue-components'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
+  import LocaleSwitcher from './components/LocaleSwitcher/LocaleSwitcher'
 
   const AppShell = () => import('~/components/AppShell/AppShell')
 
@@ -30,6 +34,7 @@
       AppShell,
       MapboxMap,
       MapboxDrawControl,
+      LocaleSwitcher,
     },
 
     data: () => ({
@@ -47,7 +52,7 @@
 
     methods: {
       ...mapActions('data', [ 'getAppData' ]),
-      ...mapActions('map', [ 'setDrawnFeature' ]),
+      ...mapActions('map', [ 'setDrawnFeature', 'setMapLoaded' ]),
     },
   }
 </script>

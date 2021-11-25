@@ -4,18 +4,24 @@ export default {
   namespaced: true,
 
   state: () => ({
+    mapLoaded: false,
     rasterLayers: [],
     drawMode: null,
     drawnFeature: null,
   }),
 
   getters: {
-    rasterLayers: state => state.rasterLayers,
+    mapLoaded: state => state.mapLoaded,
+    rasterLayers: state => (state.mapLoaded && state.rasterLayers) || [],
+    rasterLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
     drawnFeature: state => state.drawnFeature,
   },
 
   mutations: {
+    SET_MAP_LOADED(state) {
+      state.mapLoaded = true
+    },
     SET_RASTER_LAYERS(state, { layers }) {
       const wmsLayers = layers.map(layer => buildWmsLayer(layer))
       state.rasterLayers = wmsLayers
@@ -29,6 +35,9 @@ export default {
   },
 
   actions: {
+    setMapLoaded({ commit }) {
+      commit('SET_MAP_LOADED')
+    },
     setRasterLayers({ commit }, { layers }) {
       commit('SET_RASTER_LAYERS', { layers })
     },
