@@ -49,11 +49,6 @@
         type: String,
         required: true,
       },
-      opacity: {
-        type: Number,
-        default: 1,
-        required: true,
-      },
       parentIds: {
         type: String,
         required: true,
@@ -63,9 +58,18 @@
         required: true,
       },
     },
-    data: (props) => ({
-      layerOpacity: props.opacity,
+    data: () => ({
+      layerOpacity: 1,
     }),
+    watch: {
+      selected: {
+        handler(selected) {
+          if (!selected) {
+            this.layerOpacity = 1
+          }
+        },
+      },
+    },
   }
 </script>
 

@@ -13,7 +13,6 @@
           :id="item.id"
           :name="item.name"
           :is-layer="Boolean(item.layer)"
-          :opacity="layerOpacity(item.id)"
           :parent-ids="item.parentIds.toString()"
           :selected="selected"
           @show-info="showInfo"
@@ -71,11 +70,6 @@
       const { activeLegend, setActiveLegend } = useLegend(selectedIds)
       const { onSortingChange } = useSortable(layers, root, openItems)
 
-      const layerOpacity = (id) => {
-        const activeLayer = Object.assign({}, layers.value.find(item => item.id === id))
-        return activeLayer.opacity
-      }
-
       const showInfo = (id) => {
         console.log('show layer info for id:', id)
         context.root.$store.dispatch('data/setLayerDialogOpen', { open: true }, { root: true })
@@ -98,7 +92,6 @@
         activeLegend,
         setActiveLegend,
         setSelectedIds,
-        layerOpacity,
         showInfo,
         updateLayerOpacity,
       }
