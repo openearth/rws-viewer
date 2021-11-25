@@ -1,5 +1,7 @@
 <template>
   <app-shell :header-title="appName">
+    <locale-switcher slot="header-right" />
+
     <mapbox-map
       slot="map"
       :access-token="accessToken"
@@ -22,6 +24,7 @@
   import { mapActions, mapGetters } from 'vuex'
   import { MapboxMap } from '@deltares/vue-components'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
+  import LocaleSwitcher from './components/LocaleSwitcher/LocaleSwitcher'
 
   const AppShell = () => import('~/components/AppShell/AppShell')
 
@@ -30,6 +33,7 @@
       AppShell,
       MapboxMap,
       MapboxDrawControl,
+      LocaleSwitcher,
     },
 
     data: () => ({
