@@ -19,7 +19,7 @@
           :to="tab.page"
           :ripple="false"
         >
-          {{ tab.name }}
+          {{ $t(tab.name) }}
           <v-icon>{{ tab.icon }}</v-icon>
         </v-tab>
       </template>
@@ -43,9 +43,9 @@
     data: () => ({
       drawer: false,
       tabs: [
-        { name: 'Layers', page: '/', icon: 'mdi-layers' },
-        { name: 'Download', page: '/download', icon: 'mdi-download' },
-        { name: 'Favourites', page: '/favourites', icon: 'mdi-star' },
+        { name: 'layers', page: '/', icon: 'mdi-layers' },
+        { name: 'download', page: '/download', icon: 'mdi-download' },
+        { name: 'favourites', page: '/favourites', icon: 'mdi-star' },
       ],
     }),
     computed: {

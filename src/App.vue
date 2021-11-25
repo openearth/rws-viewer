@@ -1,9 +1,12 @@
 <template>
   <app-shell :header-title="appName">
+    <locale-switcher slot="header-right" />
+
     <mapbox-map
       slot="map"
       :access-token="accessToken"
       :padding="{ left: appNavigationOpen ? appNavigationWidth : 0 }"
+      @styledata="setMapLoaded"
     >
       <v-mapbox-layer
         v-for="layer in rasterLayers"
@@ -12,7 +15,8 @@
       />
       <mapbox-draw-control
         :draw-mode="drawMode"
-        @change="setDrawnFeatures"
+        :drawn-feature="drawnFeature"
+        @change="setDrawnFeature"
       />
     </mapbox-map>
   </app-shell>
@@ -22,6 +26,7 @@
   import { mapActions, mapGetters } from 'vuex'
   import { MapboxMap } from '@deltares/vue-components'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
+  import LocaleSwitcher from './components/LocaleSwitcher/LocaleSwitcher'
 
   const AppShell = () => import('~/components/AppShell/AppShell')
 
@@ -30,6 +35,7 @@
       AppShell,
       MapboxMap,
       MapboxDrawControl,
+      LocaleSwitcher,
     },
 
     data: () => ({
@@ -38,7 +44,7 @@
 
     computed: {
       ...mapGetters('app', [ 'appName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'rasterLayers', 'drawMode' ]),
+      ...mapGetters('map', [ 'rasterLayers', 'drawMode', 'drawnFeature' ]),
     },
 
     mounted() {
@@ -47,7 +53,7 @@
 
     methods: {
       ...mapActions('data', [ 'getAppData' ]),
-      ...mapActions('map', [ 'setDrawnFeatures' ]),
+      ...mapActions('map', [ 'setDrawnFeature', 'setMapLoaded' ]),
     },
   }
 </script>
