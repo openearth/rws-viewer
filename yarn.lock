@@ -920,30 +920,30 @@
     "@babel/helper-validator-identifier" "^7.15.7"
     to-fast-properties "^2.0.0"
 
-"@deltares/design-tokens@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@deltares/design-tokens/-/design-tokens-0.4.0.tgz#da85c6317a31ea5688a81cfe930f86fca9590ef7"
-  integrity sha512-pV7yOiGH4g17LZXefdd22WKPUl2z3smZLAv9GSrFT21Yrn+gHQwjtXT9brs3xF8GEnnCAjmZiqhjNu3tEs3Jeg==
+"@deltares/design-tokens@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@deltares/design-tokens/-/design-tokens-0.5.0.tgz#0e44daec4c75f016ccde582bf55d190de8ecd877"
+  integrity sha512-3BaXA8z9KSDqydRTYHwqYwBrPlZA/kGWLRaTYYsjmfXmqAuXwF+5Eo71JCk16uvcz+U1FJCUGKlsNZHT2VjqFg==
 
-"@deltares/utilities@0.4.0", "@deltares/utilities@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@deltares/utilities/-/utilities-0.4.0.tgz#fe74db475471ff5176b6dc02e12e319eb51e9bcb"
-  integrity sha512-iNC3QUVrkTaMlU/o9RxyTak9yW2gMvwj2KDzeh6chjui+r/zevSw0SwiH698eC2GEj3tLM7q2LjsdJn69RwmbQ==
+"@deltares/utilities@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@deltares/utilities/-/utilities-0.5.0.tgz#1058ceac1ed828c7b6f951f785ee266069652270"
+  integrity sha512-g5sI9RSYSuo8WWgMsoWZ2m3y/2+oliRYhb6cLPIq3bsYcOZ9AwHjOpf+q+WkUXTFlKjwd2fO2CGM8XELLQlpJg==
 
-"@deltares/vue-components@0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@deltares/vue-components/-/vue-components-0.4.0.tgz#8a3fff5c30db23d1d5efc12707ef8aa0852fc40a"
-  integrity sha512-V1AsCoJO59RW97hYQVOxp0+AVQAbpSL9Ct1nUeCGcAun+EF/0Arg/yOkDFRzLE2c2IpykDXTy2mYs/gbmFdEjA==
+"@deltares/vue-components@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@deltares/vue-components/-/vue-components-0.5.0.tgz#2cc554e097f1abceb5df1ffa2df34468d59255d7"
+  integrity sha512-6pM/0h2X7hX5scI+em58K5TweWhNrJE+RqV2hOxRNgtP6U5Tb03P0wc22KxtVw+zKL+AmDpUHpetgkSEZTgpLg==
   dependencies:
-    "@deltares/utilities" "^0.4.0"
+    "@deltares/utilities" "^0.5.0"
     query-string "6.13.7"
 
-"@deltares/vuetify-theme@0.4.0":
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/@deltares/vuetify-theme/-/vuetify-theme-0.4.0.tgz#ceb42858b318f383b6af7f601688482761079414"
-  integrity sha512-3/6y+LXcBAKQEyLMZx4HfJUySlhn8uFQJRe7+z4BJA0KvUYY495jxORpjpmHq29Wwb8xzY2TNpsxAAUCv3AtQA==
+"@deltares/vuetify-theme@^0.5.0":
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/@deltares/vuetify-theme/-/vuetify-theme-0.5.0.tgz#ad953d83fb2ae9c4dda94f565670b8bf4d880667"
+  integrity sha512-qnjMDZWtZbXCxK6zx5nOIjQ1nK3n1olJ+5jSnvYNHMEKJrClHf+UNq9tr0wUmZwpk0XDX2ci1Jy3prJWgLFTjw==
   dependencies:
-    "@deltares/design-tokens" "^0.4.0"
+    "@deltares/design-tokens" "^0.5.0"
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -7797,9 +7797,9 @@ prepend-http@^1.0.0:
   integrity sha1-1PRWKwzjaW5BrFLQ4ALlemNdxtw=
 
 "prettier@^1.18.2 || ^2.0.0":
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.4.1.tgz#671e11c89c14a4cfc876ce564106c4a6726c9f5c"
-  integrity sha512-9fbDAXSBcc6Bs1mZrDYb3XKzDLm4EXXL9sC1LqKP5rZkT6KRr/rf9amVUcODVXgguK/isJz0d0hP72WeaKWsvA==
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.5.0.tgz#a6370e2d4594e093270419d9cc47f7670488f893"
+  integrity sha512-FM/zAKgWTxj40rH03VxzIPdXmj39SwSjwG0heUcNFwI+EMZJnY93yAiKXM3dObIKAM5TA88werc8T/EwhB45eg==
 
 pretty-error@^2.0.2:
   version "2.1.2"
