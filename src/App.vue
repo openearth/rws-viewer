@@ -5,7 +5,7 @@
     <mapbox-map
       slot="map"
       :access-token="accessToken"
-      :padding="{ left: appNavigationOpen ? appNavigationWidth : 0 }"
+      :padding="{ left: mapLeftPadding }"
       @styledata="setMapLoaded"
     >
       <v-mapbox-layer
@@ -45,6 +45,9 @@
     computed: {
       ...mapGetters('app', [ 'appName', 'appNavigationOpen', 'appNavigationWidth' ]),
       ...mapGetters('map', [ 'rasterLayers', 'drawMode', 'drawnFeature' ]),
+      mapLeftPadding() {
+        return this.appNavigationOpen ? this.appNavigationWidth : 0
+      },
     },
 
     mounted() {
