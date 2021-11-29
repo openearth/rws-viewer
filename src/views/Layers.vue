@@ -3,7 +3,7 @@
     <v-select
       v-model="selectedTags"
       class="px-4 pt-4 pb-1"
-      label="Filter by tag"
+      :label="$t('filterByTag')"
       multiple
       dense
       outlined
