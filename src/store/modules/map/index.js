@@ -54,8 +54,10 @@ export default {
     setMapLoaded({ commit }) {
       commit('SET_MAP_LOADED')
     },
-    setRasterLayers({ commit }, { layers }) {
+
+    setRasterLayers({ commit, dispatch }, { layers }) {
       commit('SET_RASTER_LAYERS', { layers })
+      dispatch('data/setSelectedLayers', { layers }, { root: true })
     },
 
     setDrawMode({ commit, state }, { mode }) {

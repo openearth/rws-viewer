@@ -2,5 +2,6 @@
   "test": "test",
   "layers": "Layers",
   "download": "Download",
-  "favourites": "Favourites"
+  "favourites": "Favourites",
+  "downloadLayer": "Download full layer"
 }

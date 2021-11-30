@@ -2,9 +2,15 @@
   <v-container class="download">
     <v-row>
       <v-col>
+        <h4>Draw</h4>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
         <v-btn
           :color="drawMode === 'rectangle' ? 'primary' : null"
           block
+          :ripple="false"
           @click="onDrawModeSelect('rectangle')"
         >
           Draw rectangle
@@ -14,6 +20,7 @@
         <v-btn
           :color="drawMode === 'polygon' ? 'primary' : null"
           block
+          :ripple="false"
           @click="onDrawModeSelect('polygon')"
         >
           Draw polygon
@@ -35,12 +42,43 @@
         />
       </v-col>
     </v-row>
+    <v-row>
+      <v-col>
+        <h4>Download</h4>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-select
+          v-model="selectedLayer"
+          label="Selecteer uit zichtbare lagen"
+          :items="selectedLayersList"
+          dense
+          outlined
+          hide-details
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-btn
+          color="primary"
+          block
+          :ripple="false"
+          :disabled="!selectedLayer"
+          @click="onDownloadClick"
+        >
+          {{ $t('downloadLayer') }}
+        </v-btn>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
   import metaRepo from '~/repo/metaRepo'
+  import buildDownloadUrl from '~/lib/build-download-url'
 
   const NO_SELECTION_ID = 'NO_SELECTION_ID'
 
@@ -48,10 +86,37 @@
     data: () => ({
       preDefinedAreas: [],
       selectedArea: null,
+      selectedLayer: null,
     }),
 
     computed: {
-      ...mapGetters('map', [ 'drawMode' ]),
+      ...mapGetters('map', [ 'drawMode', 'drawnFeature', 'rasterLayers' ]),
+      ...mapGetters('data', [ 'selectedLayers' ]),
+
+      selectedLayersList() {
+        return this.selectedLayers.map(layer => ({
+          text: layer.name,
+          value: layer.id,
+        }))
+      },
+
+      selectedLayerData() {
+        return this.selectedLayers.find(layer => layer.id === this.selectedLayer)
+      },
+
+      selectionData() {
+        return this.rasterLayers.find(layer => layer.id === this.selectedLayer)
+      },
+
+      drawnFeatureCoordinates() {
+        return this.drawnFeature?.geometry?.coordinates
+          ? Array.from(this.drawnFeature?.geometry?.coordinates).map(coordinates => coordinates.flat())
+          : []
+      },
+
+      selectionCoordinates() {
+        return this.drawnFeatureCoordinates.toString().replace(/,/g, ' ')
+      },
     },
 
     created() {
@@ -88,6 +153,11 @@
         }
         const feature = this.preDefinedAreas.find(area => area.id === id)
         this.setDrawnFeature(feature)
+      },
+
+      onDownloadClick() {
+        const url = buildDownloadUrl(this.selectedLayerData, this.selectionCoordinates)
+        window.location.href = url
       },
     },
   }

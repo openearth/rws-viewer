@@ -2,5 +2,6 @@
   "test": "test",
   "layers": "Lagen",
   "download": "Download",
-  "favourites": "Favorieten"
+  "favourites": "Favorieten",
+  "downloadLayer": "Download volledige laag"
 }
