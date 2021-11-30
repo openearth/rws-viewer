@@ -51,7 +51,7 @@
       if (navigator.languages != undefined) {
         const languages = navigator.languages.map(removeRegion)
         browserLocales = [ ...new Set(languages) ].filter(localeIsAvailable)
-      } 
+      }
 
       const localeToUse = savedLocale || browserLocales[0] || defaultLocale
       if (localeToUse !== defaultLocale) {
@@ -66,7 +66,7 @@
       async switchLocale(locale) {
         this.loading = true
 
-        const promise = this.loadedLocales.includes('locale') 
+        const promise = this.loadedLocales.includes('locale')
           ? Promise.resolve(locale)
           : axios({ method: 'get', url: `/translations/${ locale }.json` })
             .then(({ data }) => {
@@ -74,13 +74,13 @@
               this.loadedLocales.push(locale)
               return locale
             })
-        
+
         promise.then(newLocale => {
           window.localStorage.setItem('locale', locale)
           this.$i18n.locale = newLocale
           this.currentLocale = newLocale
           this.loading = false
-        })  
+        })
       },
     },
   }

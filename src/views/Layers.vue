@@ -1,23 +1,27 @@
 <template>
-  <v-card class="layers" flat>
-    <v-select
-      v-model="selectedTags"
-      class="px-4 pt-4 pb-1"
-      label="Filter by tag"
-      multiple
-      dense
-      outlined
-      hide-details
-      :items="layerTags"
-    />
-    <layer-list-controls
-      v-if="layersForTree"
-      :layers="layersForTree"
-      :selected-layer-ids="rasterLayerIds"
-      @active-layers-change="onActiveLayerChange"
-      @layer-sorting-change="onLayerSortingChange"
-    />
-  </v-card>
+  <v-container class="layers pt-4">
+    <v-row>
+      <v-col>
+        <v-select
+          v-model="selectedTags"
+          class="pb-1"
+          :label="$t('filterByTag')"
+          multiple
+          dense
+          outlined
+          hide-details
+          :items="layerTags"
+        />
+        <layer-list-controls
+          v-if="layersForTree"
+          :layers="layersForTree"
+          :selected-layer-ids="rasterLayerIds"
+          @active-layers-change="onActiveLayerChange"
+          @layer-sorting-change="onLayerSortingChange"
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
