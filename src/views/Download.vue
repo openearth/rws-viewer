@@ -93,6 +93,10 @@
       ...mapGetters('map', [ 'drawMode', 'drawnFeature', 'rasterLayers' ]),
       ...mapGetters('data', [ 'selectedLayers' ]),
 
+      downloadButtonLabel() {
+        return (this.drawnFeature || this.selectedArea) ? this.$t('downloadSelection') : this.$t('downloadLayer')
+      },
+
       selectedLayersList() {
         return this.selectedLayers.map(layer => ({
           text: layer.name,
