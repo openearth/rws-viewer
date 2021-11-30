@@ -1,6 +1,8 @@
-import { difference, flatten, update } from 'ramda'
+import { difference, propOr, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import mapLayerOpacity from '~/lib/map-layer-opacity'
+
+const firstItem = propOr(null, 0)
 
 export default {
   namespaced: true,
@@ -68,17 +70,23 @@ export default {
     addRasterLayer({ commit, state }, { layers }) {
       const wmsLayers = layers.map(layer => buildWmsLayer(layer))
       const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
-      const layer = flatten(difference(mappedWmsLayers, state.rasterLayers))
+      const diffObjects = difference(mappedWmsLayers, state.rasterLayers)
+      const layer = firstItem(diffObjects)
 
-      commit('ADD_RASTER_LAYER', { layer })
+      if (layer) {
+        commit('ADD_RASTER_LAYER', { layer })
+      }
     },
 
     removeRasterLayer({ commit, state }, { layers }) {
       const wmsLayers = layers.map(layer => buildWmsLayer(layer))
       const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
-      const layer = flatten(difference(state.rasterLayers, mappedWmsLayers))
+      const diffObjects = difference(state.rasterLayers, mappedWmsLayers)
+      const layer = firstItem(diffObjects)
 
-      commit('REMOVE_RASTER_LAYER', { layer })
+      if (layer) {
+        commit('REMOVE_RASTER_LAYER', { layer })
+      }
     },
 
     setDrawMode({ commit, state }, { mode }) {
