@@ -1,6 +1,7 @@
 import fs from 'fs/promises'
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { split, map, pipe } from 'ramda'
 import inquirer from 'inquirer'
 import slugify from '@sindresorhus/slugify'
 
@@ -8,8 +9,17 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 
 const files = await fs.readdir(path.join(__dirname, 'public/translations'))
 const availableLocales = files.map(file => file.replace('.json', ''))
+const capitaliseFirstLetter = ([ first, ...rest ]) => first.toUpperCase() + rest.join('')
+const lowerCaseFirstLetter =  ([ first, ...rest ]) => first.toLowerCase() + rest.join('')
 
 console.clear()
+
+const toCamelCase = pipe(
+  slugify,
+  split('-'),
+  map(capitaliseFirstLetter),
+  lowerCaseFirstLetter,
+)
 
 const answers = await inquirer.prompt([
   ...availableLocales.map(locale => ({
@@ -17,7 +27,7 @@ const answers = await inquirer.prompt([
     type: 'input',
     message: `The translation in ${ locale.toUpperCase() }`,
   })),
-  { name: 'key', type: 'input', message: 'What key do you want to use?', default: ({ en }) => slugify(en) },
+  { name: 'key', type: 'input', message: 'What key do you want to use?', default: ({ en }) => toCamelCase(en) },
   { name: 'sure', type: 'confirm', message: 'Do you want to update the locale files?' },
 ])
 
