@@ -1,4 +1,4 @@
-import { update } from 'ramda'
+import { difference, head, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import mapLayerOpacity from '~/lib/map-layer-opacity'
 
@@ -25,10 +25,13 @@ export default {
       state.mapLoaded = true
     },
     SET_RASTER_LAYERS(state, { layers }) {
-      const wmsLayers = layers.map(layer => buildWmsLayer(layer))
-      const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
-
-      state.rasterLayers = mappedWmsLayers
+      state.rasterLayers = layers
+    },
+    ADD_RASTER_LAYER(state, { layer }) {
+      state.rasterLayers = [ ...state.rasterLayers, layer ]
+    },
+    REMOVE_RASTER_LAYER(state, { layer }) {
+      state.rasterLayers = state.rasterLayers.filter(rasterLayer => rasterLayer.id !== layer.id)
     },
     SET_DRAW_MODE(state, { mode }) {
       state.drawMode = mode
@@ -54,8 +57,34 @@ export default {
     setMapLoaded({ commit }) {
       commit('SET_MAP_LOADED')
     },
-    setRasterLayers({ commit }, { layers }) {
-      commit('SET_RASTER_LAYERS', { layers })
+
+    setRasterLayers({ commit, state }, { layers }) {
+      const wmsLayers = layers.map(layer => buildWmsLayer(layer))
+      const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
+
+      commit('SET_RASTER_LAYERS', { layers: mappedWmsLayers })
+    },
+
+    addRasterLayer({ commit, state }, { layers }) {
+      const wmsLayers = layers.map(layer => buildWmsLayer(layer))
+      const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
+      const diffObjects = difference(mappedWmsLayers, state.rasterLayers)
+      const layer = head(diffObjects)
+
+      if (layer) {
+        commit('ADD_RASTER_LAYER', { layer })
+      }
+    },
+
+    removeRasterLayer({ commit, state }, { layers }) {
+      const wmsLayers = layers.map(layer => buildWmsLayer(layer))
+      const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
+      const diffObjects = difference(state.rasterLayers, mappedWmsLayers)
+      const layer = head(diffObjects)
+
+      if (layer) {
+        commit('REMOVE_RASTER_LAYER', { layer })
+      }
     },
 
     setDrawMode({ commit, state }, { mode }) {

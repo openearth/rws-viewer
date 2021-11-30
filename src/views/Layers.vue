@@ -46,12 +46,16 @@
         'flattenedLayers',
         'layerTags',
       ]),
-      ...mapGetters('map', [ 'rasterLayerIds' ]),
+      ...mapGetters('map', [
+        'rasterLayerIds',
+        'rasterLayers',
+      ]),
 
       layersForTree() {
         if (!this.selectedTags.length) {
           return this.displayLayers
         }
+
         return this.flattenedLayers.filter(({ tags }) =>
           this.selectedTags.every(tag => tags.includes(tag)))
       },
@@ -59,17 +63,27 @@
 
     methods: {
       ...mapActions('data', [ 'setDisplayLayers' ]),
-      ...mapActions('map', [ 'setRasterLayers' ]),
+      ...mapActions('map', [ 'addRasterLayer', 'removeRasterLayer' ]),
 
       onActiveLayerChange(layers) {
-        this.setRasterLayers({ layers })
+        this.updateRasterLayers(layers)
+        this.setUrlParams(layers)
+      },
+
+      onLayerSortingChange(layers) {
+        this.setDisplayLayers({ layers })
+      },
+
+      setUrlParams(layers) {
         const url = new URL(window.location.href)
         url.searchParams.set('layers', layers.map(({ id }) => id).join(','))
         this.$router.replace(`/?${ url.searchParams.toString() }`)
       },
 
-      onLayerSortingChange(layers) {
-        this.setDisplayLayers({ layers })
+      updateRasterLayers(layers) {
+        this.rasterLayers.length > layers.length
+          ? this.removeRasterLayer({ layers })
+          : this.addRasterLayer({ layers })
       },
     },
   }
