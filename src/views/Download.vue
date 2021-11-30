@@ -1,5 +1,5 @@
 <template>
-  <v-container class="download">
+  <v-container class="download pt-4">
     <v-row>
       <v-col>
         <v-btn
@@ -7,7 +7,7 @@
           block
           @click="onDrawModeSelect('rectangle')"
         >
-          Draw rectangle
+          {{ $t('drawRectangle') }}
         </v-btn>
       </v-col>
       <v-col>
@@ -16,7 +16,7 @@
           block
           @click="onDrawModeSelect('polygon')"
         >
-          Draw polygon
+          {{ $t('drawPolygon') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -24,8 +24,8 @@
       <v-col>
         <v-select
           v-model="selectedArea"
-          label="Use predefined selection"
-          :items="preDefinedAreas"
+          :label="$t('predefinedSelection')"
+          :items="formattedAreas"
           item-text="properties.mpnomsch"
           item-value="id"
           dense
@@ -52,21 +52,21 @@
 
     computed: {
       ...mapGetters('map', [ 'drawMode' ]),
+      formattedAreas() {
+        const noSelectionObj = {
+          id: NO_SELECTION_ID,
+          properties: { mpnomsch: this.$t('noSelection') },
+        }
+
+        return Object.freeze([ noSelectionObj, ...this.preDefinedAreas ])
+      },
     },
 
     created() {
       metaRepo
         .getPredefinedAreas()
-        .then(areas => {
-          const noSelectionObj = {
-            id: NO_SELECTION_ID,
-            properties: { mpnomsch: 'No selection' },
-          }
-          this.preDefinedAreas = Object.freeze([ noSelectionObj, ...areas ])
-        })
-        .catch(err => {
-          console.error('Error getting predefined selections', err)
-        })
+        .then(areas => this.preDefinedAreas = areas)
+        .catch(err => console.error('Error getting predefined selections', err))
     },
 
     methods: {

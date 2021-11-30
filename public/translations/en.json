@@ -1,6 +1,10 @@
 {
-  "test": "test",
   "layers": "Layers",
   "download": "Download",
-  "favourites": "Favourites"
+  "favourites": "Favourites",
+  "filterByTag": "Filter by tag",
+  "predefinedSelection": "Use predefined selection",
+  "noSelection": "No selection",
+  "drawRectangle": "Draw rectangle",
+  "drawPolygon": "Draw polygon"
 }
