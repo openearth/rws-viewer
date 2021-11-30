@@ -59,6 +59,7 @@ export default {
       const layersById = getLayersById(layers, initialLayerIds)
       if (layersById.length) {
         dispatch('map/setRasterLayers', { layers: layersById }, { root: true })
+        dispatch('data/setSelectedLayers', { layers: layersById }, { root: true })
       }
 
       const tags = getLayersTags(flattenedLayers)

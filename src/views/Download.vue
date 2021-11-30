@@ -1,5 +1,5 @@
 <template>
-  <v-container class="download">
+  <v-container class="download pt-4">
     <v-row>
       <v-col>
         <h4>Draw</h4>
@@ -13,7 +13,7 @@
           :ripple="false"
           @click="onDrawModeSelect('rectangle')"
         >
-          Draw rectangle
+          {{ $t('drawRectangle') }}
         </v-btn>
       </v-col>
       <v-col>
@@ -23,7 +23,7 @@
           :ripple="false"
           @click="onDrawModeSelect('polygon')"
         >
-          Draw polygon
+          {{ $t('drawPolygon') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -31,8 +31,8 @@
       <v-col>
         <v-select
           v-model="selectedArea"
-          label="Use predefined selection"
-          :items="preDefinedAreas"
+          :label="$t('predefinedSelection')"
+          :items="formattedAreas"
           item-text="properties.mpnomsch"
           item-value="id"
           dense
@@ -97,6 +97,21 @@
         return (this.drawnFeature || this.selectedArea) ? this.$t('downloadSelection') : this.$t('downloadLayer')
       },
 
+      drawnFeatureCoordinates() {
+        return this.drawnFeature?.geometry?.coordinates
+          ? Array.from(this.drawnFeature?.geometry?.coordinates).map(coordinates => coordinates.flat())
+          : []
+      },
+
+      formattedAreas() {
+        const noSelectionObj = {
+          id: NO_SELECTION_ID,
+          properties: { mpnomsch: this.$t('noSelection') },
+        }
+
+        return Object.freeze([ noSelectionObj, ...this.preDefinedAreas ])
+      },
+
       selectedLayersList() {
         return this.selectedLayers.map(layer => ({
           text: layer.name,
@@ -112,12 +127,6 @@
         return this.rasterLayers.find(layer => layer.id === this.selectedLayer)
       },
 
-      drawnFeatureCoordinates() {
-        return this.drawnFeature?.geometry?.coordinates
-          ? Array.from(this.drawnFeature?.geometry?.coordinates).map(coordinates => coordinates.flat())
-          : []
-      },
-
       selectionCoordinates() {
         return this.drawnFeatureCoordinates.toString().replace(/,/g, ' ')
       },
@@ -126,16 +135,8 @@
     created() {
       metaRepo
         .getPredefinedAreas()
-        .then(areas => {
-          const noSelectionObj = {
-            id: NO_SELECTION_ID,
-            properties: { mpnomsch: 'No selection' },
-          }
-          this.preDefinedAreas = Object.freeze([ noSelectionObj, ...areas ])
-        })
-        .catch(err => {
-          console.error('Error getting predefined selections', err)
-        })
+        .then(areas => this.preDefinedAreas = areas)
+        .catch(err => console.error('Error getting predefined selections', err))
     },
 
     methods: {

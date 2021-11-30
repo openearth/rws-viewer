@@ -1,8 +1,12 @@
 {
-  "test": "test",
-  "layers": "Layers",
   "download": "Download",
-  "favourites": "Favourites",
   "downloadLayer": "Download full layer",
-  "downloadSelection": "Download selection of"
+  "downloadSelection": "Download selection of",
+  "drawPolygon": "Draw polygon",
+  "drawRectangle": "Draw rectangle",
+  "favourites": "Favourites",
+  "filterByTag": "Filter by tag",
+  "layers": "Layers",
+  "noSelection": "No selection",
+  "predefinedSelection": "Use predefined selection"
 }

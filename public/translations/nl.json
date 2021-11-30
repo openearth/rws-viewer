@@ -1,8 +1,12 @@
 {
-  "test": "test",
-  "layers": "Lagen",
   "download": "Download",
-  "favourites": "Favorieten",
   "downloadLayer": "Download volledige laag",
-  "downloadSelection": "Download selectie laag"
+  "downloadSelection": "Download selectie laag",
+  "drawPolygon": "Teken veelhoek",
+  "drawRectangle": "Teken rechthoek",
+  "favourites": "Favorieten",
+  "filterByTag": "Filteren op zoekterm",
+  "layers": "Lagen",
+  "noSelection": "Geen selectie",
+  "predefinedSelection": "Gebruik vooraf gedefinieerde selectie"
 }
