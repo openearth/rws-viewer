@@ -1,0 +1,984 @@
+{
+  "id": "ihm-viewer",
+  "name": "Water Info Extra Viewer",
+  "layers": [
+    {
+      "id": "Reguliere monitoring RWS",
+      "name": "Reguliere monitoring RWS",
+      "children": [
+        {
+          "id": "Biologie",
+          "name": "Biologie",
+          "children": [
+            {
+              "id": "Vegetatie",
+              "name": "Vegetatie",
+              "children": [
+                {
+                  "id": "waterplanten_ijsselmeergebied:totale_bedekking_2018",
+                  "name": "Waterplanten IJsselmeergebied 2018",
+                  "url": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/waterplanten_ijsselmeergebied/wms",
+                  "layer": "waterplanten_ijsselmeergebied:totale_bedekking_2018",
+                  "downloadUrl": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/waterplanten_ijsselmeergebied/wfs",
+                  "tags": ["IJsselmeer", "Flora"]
+                },
+                {
+                  "id": "waterplanten_ijsselmeergebied:totale_bedekking_2017",
+                  "name": "Waterplanten IJsselmeergebied 2017",
+                  "url": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/waterplanten_ijsselmeergebied/wms",
+                  "layer": "waterplanten_ijsselmeergebied:totale_bedekking_2017",
+                  "downloadUrl": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/waterplanten_ijsselmeergebied/wfs",
+                  "tags": ["IJsselmeer", "Flora"]
+                },
+                {
+                  "id": "waterplanten_ijsselmeergebied:totale_bedekking_2016",
+                  "name": "Waterplanten IJsselmeergebied 2016",
+                  "url": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/waterplanten_ijsselmeergebied/wms",
+                  "layer": "waterplanten_ijsselmeergebied:totale_bedekking_2016",
+                  "downloadUrl": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/waterplanten_ijsselmeergebied/wfs",
+                  "tags": ["IJsselmeer", "Flora"]
+                },
+                {
+                  "id": "kweldervegetatie:kweldervegetatie_alle_data",
+                  "name": "Kweldervegetatie",
+                  "url": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/kweldervegetatie/wms",
+                  "layer": "kweldervegetatie:kweldervegetatie_alle_data",
+                  "downloadUrl": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/kweldervegetatie/wfs",
+                  "tags": ["Kust", "Flora"]
+                },
+                {
+                  "id": "mwtl_waterplanten_location",
+                  "name": "Waterplanten",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+                  "layer": "mwtl_waterplanten_location",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+                  "tags": ["Flora"]
+                },
+                {
+                  "id": "zeegras_alledata",
+                  "name": "Bedekking Groot zeegras, Klein zeegras, Snavelruppia, alle data",
+                  "url": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/zeegras/ows",
+                  "layer": "zeegras_alledata",
+                  "downloadUrl": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/zeegras/wms",
+                  "tags": ["Kust", "Flora"]
+                }
+              ]
+            },
+            {
+              "id": "mwtl_benthos_donar_waddenzee_location",
+              "name": "Benthos Waddenzee",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "mwtl_benthos_donar_waddenzee_location",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Waddenzee","Benthos"]
+            },
+            {
+              "id": "ihm_rwsbenthos_tijdelijk_locations",
+              "name": "Benthos Noordzee",
+              "url": "https://marineprojects.openearth.nl/geoserver/rwsbenthos/ows",
+              "layer": "ihm_rwsbenthos_tijdelijk_locations",
+              "downloadUrl": "https://marineprojects.openearth.nl/geoserver/rwsbenthos/wfs",
+              "tags": ["Noordzee","Benthos"]
+            },
+            {
+              "id": "korrelgrootte_bodem_sediment_macrofauna_marien",
+              "name": "Korrelgrootte benthos",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "korrelgrootte_bodem_sediment_macrofauna_marien",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Fysisch","Benthos"]
+            },
+            {
+              "id": "rwsbenthos_zwdelta_tijdelijk_locations",
+              "name": "Benthos zwdelta",
+              "url": "https://marineprojects.openearth.nl/geoserver/rwsbenthos/ows",
+              "layer": "rwsbenthos_zwdelta_tijdelijk_locations",
+              "downloadUrl": "https://marineprojects.openearth.nl/geoserver/rwsbenthos/wfs",
+              "tags": ["Deltawateren","Benthos"]
+            },
+            {
+              "id": "fytoplankton_marien",
+              "name": "Fytoplankton marien",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "fytoplankton_marien",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Flora"]
+            },
+            {
+              "id": "macrofauna_marien",
+              "name": "Benthos DONAR",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "macrofauna_marien",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Benthos"]
+            },
+            {
+              "id": "zooplankton_marien",
+              "name": "Zooplankton marien",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "zooplankton_marien",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Fauna"]
+            }
+          ]
+        },
+        {
+          "id": "Afval",
+          "name": "Afval",
+          "children": [
+            {
+              "id": "mwtl_afvalopstrand",
+              "name": "afval op strand",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "mwtl_afvalopstrand",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Kust", "Chemie"]
+            }
+          ]
+        },
+        {
+          "id": "Chemie",
+          "name": "Chemie",
+          "children": [
+            {
+              "id": "jamp_mossel_pbm",
+              "name": "Mosselen PBM marien",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "jamp_mossel_pbm",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Chemie","Noordzee","Benthos"]
+            },
+            {
+              "id": "mwtl_mossel_abm_zout_water",
+              "name": "Mosselen ABM marien",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "mwtl_mossel_abm_zout_water",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Chemie","Noordzee","Benthos"]
+            },
+            {
+              "id": "jamp_schar",
+              "name": "Schar",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "jamp_schar",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Chemie","Noordzee","Vis"]
+            },
+            {
+              "id": "korrelgrootte_bodem_sediment_chemie_marien",
+              "name": "Korrelgrootte sediment",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "korrelgrootte_bodem_sediment_chemie_marien",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Fysisch"]
+            },
+            {
+              "id": "korrelgrootte_zwevend_stof_chemie_marien",
+              "name": "Korrelgrootte zwevend stof",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "korrelgrootte_zwevend_stof_chemie_marien",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Fysisch"]
+            },
+            {
+              "id": "mwtl_meetcampagne_arseen_seleen_chroom_location",
+              "name": "Campagne arseen seleen chroom",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "mwtl_meetcampagne_arseen_seleen_chroom_location",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Chemie"]
+            },
+            {
+              "id": "mwtl_meetcampagne_geneesmiddelen_location",
+              "name": "Campagne geneesmiddelen",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "mwtl_meetcampagne_geneesmiddelen_location",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Chemie"]
+            },
+            {
+              "id": "mwtl_meetcampagne_perfluorverbindingen_location",
+              "name": "Campagne perfluorverbindingen",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "mwtl_meetcampagne_perfluorverbindingen_location",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Chemie"]
+            },
+            {
+              "id": "mwtl_meetcampagne_screening_gcms_location",
+              "name": "Campagne screening gcms",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "mwtl_meetcampagne_screening_gcms_location",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Chemie"]
+            },
+            {
+              "id": "mwtl_meetcampagne_verzuring_noordzee_location",
+              "name": "Campagne verzuring noordzee",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "mwtl_meetcampagne_verzuring_noordzee_location",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Chemie"]
+            },
+            {
+              "id": "mwtl_microverontreinigingen_en_effecten_in_slakken_location",
+              "name": "Microverontr en effecten in slak",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "mwtl_microverontreinigingen_en_effecten_in_slakken_location",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Chemie","Fauna"]
+            },
+            {
+              "id": "mwtl_microverontreinigingen_in_blankvoorn_en_bot_location",
+              "name": "Microverontr in blankvoorn en bot",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "mwtl_microverontreinigingen_in_blankvoorn_en_bot_location",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Chemie","Vis"]
+            },
+            {
+              "id": "mwtl_microverontreinigingen_in_bot_location",
+              "name": "Microverontr in bot",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "mwtl_microverontreinigingen_in_bot_location",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Chemie","Vis"]
+            },
+            {
+              "id": "mwtl_microverontreinigingen_in_eieren_location",
+              "name": "Microverontr in eieren",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "mwtl_microverontreinigingen_in_eieren_location",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Chemie","Biota"]
+            },
+            {
+              "id": "mwtl_microverontreinigingen_in_schol_location",
+              "name": "Microverontr in schol",
+              "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
+              "layer": "mwtl_microverontreinigingen_in_schol_location",
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "tags": ["Noordzee","Chemie","Vis"]
+            }
+          ]
+        },
+        {
+          "id": "Morfologie",
+          "name": "Morfologie",
+          "children": [
+            {
+              "id": "trend_2018_100",
+              "name": "kustlijnkaart 2018",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/kustlijnkaart/wms",
+              "layer": "trend_2018_100",
+              "downloadUrl": "",
+              "tags": ["Kust", "Morfologie"]
+            },
+            {
+              "id": "rws_coast:jarkusgrid2014",
+              "name": "JARKUS 2014",
+              "url": "https://marineprojects.openearth.nl/geoserver/rws_coast/wms",
+              "layer": "rws_coast:jarkusgrid2014",
+              "downloadUrl": "",
+              "tags": ["Kust", "Morfologie"]
+            },
+            {
+              "id": "rws_coast:jarkusgrid2015",
+              "name": "JARKUS 2015",
+              "url": "https://marineprojects.openearth.nl/geoserver/rws_coast/wms",
+              "layer": "rws_coast:jarkusgrid2015",
+              "downloadUrl": "",
+              "tags": ["Kust", "Morfologie"]
+            },
+            {
+              "id": "rws_coast:jarkusgrid2016",
+              "name": "JARKUS 2016",
+              "url": "https://marineprojects.openearth.nl/geoserver/rws_coast/wms",
+              "layer": "rws_coast:jarkusgrid2016",
+              "downloadUrl": "",
+              "tags": ["Kust", "Morfologie"]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Projectdata",
+      "name": "Projectdata",
+      "children": [
+        {
+          "id": "Zoetwater projecten",
+          "name": "Zoetwater projecten",
+          "children": [
+            {
+              "id": "Houtribdijk",
+              "name": "Houtribdijk",
+              "children": [
+                {
+                  "id": "houtribdijk:hrdlocaties",
+                  "name": "Houtribdijk (meetlocaties)",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/houtribdijk/wms",
+                  "layer": "houtribdijk:hrdlocaties",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/houtribdijk/wfs",
+                  "tags": []
+                }
+              ]
+            },
+            {
+              "id": "R2M",
+              "name": "R2M",
+              "children": [
+                {
+                  "id": "r2m_location",
+                  "name": "R2M (locaties met metingen van korrelgroottes)",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/rwsarchief/wms",
+                  "layer": "r2m_location",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/rwsarchief/wfs",
+                  "tags": ["Fysisch","Binnenwater"]
+                }
+              ]
+            },
+            {
+              "id": "NVO Maas",
+              "name": "NVO Maas",
+              "children": [
+                {
+                  "id": "nvomaas:nvo_bodemchemie",
+                  "name": "Bodemchemie (NVO)",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wms",
+                  "layer": "nvomaas:nvo_bodemchemie",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wfs",
+                  "tags": ["Chemie","Binnenwater"]
+                },
+                {
+                  "id": "nvo_macrofauna",
+                  "name": "Macrofauna (NVO)",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wms",
+                  "layer": "nvo_macrofauna",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wfs",
+                  "tags": ["Fauna","Binnenwater"]
+                },
+                {
+                  "id": "nvo_terrestrisch",
+                  "name": "Terrestrisch (NVO)",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wms",
+                  "layer": "nvo_terrestrisch",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wfs",
+                  "tags": ["Fauna","Binnenwater"]
+                },
+                {
+                  "id": "nvo_vissen",
+                  "name": "Vissen (NVO)",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wms",
+                  "layer": "nvo_vissen",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wfs",
+                  "tags": ["Vis","Binnenwater"]
+                },
+                {
+                  "id": "nvo_waterplanten",
+                  "name": "Waterplanten (NVO)",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wms",
+                  "layer": "nvo_waterplanten",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/nvomaas/wfs",
+                  "tags": ["Flora","Binnenwater"]
+                }
+              ]
+            },
+            {
+              "id": "Hollandse IJssel en Lek",
+              "name": "Hollandse IJssel en Lek",
+              "children": [
+                {
+                  "id": "hylek:hylek_location",
+                  "name": "Saliniteits, Temperatuur en druk metingen Hollandse IJssel en Lek",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/hylek/wms",
+                  "layer": "hylek:hylek_location",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/hylek/wfs",
+                  "tags": ["CTD","Binnenwater"]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "Mariene projecten",
+          "name": "Mariene projecten",
+          "children": [
+            {
+              "id": "Offshore Expertise Centrum (OEC)",
+              "name": "Offshore Expertise Centrum (OEC)",
+              "children": [
+                {
+                  "id": "wind_lidar_metingen",
+                  "name": "wind_lidar_metingen",
+                  "url": "https://ihm-pub.geopublisher.nl/geoserver/IHM/wms",
+                  "layer": "wind_lidar_metingen",
+                  "downloadUrl": "https://ihm-pub.geopublisher.nl/geoserver/IHM/wfs",
+                  "tags": ["Abiotiek","Noordzee"]
+                }
+              ]
+            },
+            {
+              "id": "Eemsdollard",
+              "name": "Eemsdollard",
+              "children": [
+                {
+                  "id": "ed_sediment_locations",
+                  "name": "Sediment",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/eemsdollard/ows",
+                  "layer": "ed_sediment_locations",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/eemsdollard/wfs",
+                  "tags": ["Abiotiek", "Eems Dollard"]
+                },
+                {
+                  "id": "ed_algengroepen_locations",
+                  "name": "Algen",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/eemsdollard/ows",
+                  "layer": "ed_algengroepen_locations",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/eemsdollard/wfs",
+                  "tags": ["Primaire productie", "Eems Dollard"]
+                },
+                {
+                  "id": "ed_fotosynthese_locations",
+                  "name": "Primaire productie",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/eemsdollard/ows",
+                  "layer": "ed_fotosynthese_locations",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/eemsdollard/wfs",
+                  "tags": ["Primaire productie", "Eems Dollard"]
+                },
+                {
+                  "id": "ed_nutrients_locations",
+                  "name": "Nutrienten",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/eemsdollard/ows",
+                  "layer": "ed_nutrients_locations",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/eemsdollard/wfs",
+                  "tags": ["Abiotiek", "Eems Dollard"]
+                },
+                {
+                  "id": "ed_pocketbox_locations",
+                  "name": "CTD Data",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/eemsdollard/ows",
+                  "layer": "ed_pocketbox_locations",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/eemsdollard/wfs",
+                  "tags": ["CTD", "Eems Dollard"]
+                }
+              ]
+            },
+            {
+              "id": "Aanleg 2e Maasvlakte (A2M)",
+              "name": "Aanleg 2e Maasvlakte (A2M)",
+              "children": [
+                {
+                  "id": "_vw_mepaanleg",
+                  "name": "Waarnemingen A2M",
+                  "url": "https://marineprojects.openearth.nl/geoserver/MEP_aanleg/wms",
+                  "layer": "_vw_mepaanleg",
+                  "downloadUrl": "https://marineprojects.openearth.nl/geoserver/MEP_aanleg/wfs",
+                  "tags": []
+                },
+                {
+                  "id": "PhDMdJ_S_All_OD_Geo_view",
+                  "name": "Benthos-Maarten-de-Jong",
+                  "url": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wms",
+                  "layer": "PhDMdJ_S_All_OD_Geo_view",
+                  "downloadUrl": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wfs",
+                  "tags": []
+                },
+                {
+                  "id": "PhDMdJ_V_All_OD_Geo_view",
+                  "name": "Vis-Maarten-de-Jong",
+                  "url": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wms",
+                  "layer": "PhDMdJ_V_All_OD_Geo_view",
+                  "downloadUrl": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wfs",
+                  "tags": []
+                }
+              ]
+            },
+            {
+              "id": "CTD Data uit diverse bronnen",
+              "name": "CTD Data uit diverse bronnen",
+              "children": [
+                {
+                  "id": "ctd_locations",
+                  "name": "CTD data (diverse bronnen)",
+                  "url": "https://rwsprojectarchief.openearth.nl/geoserver/rwsarchief/ows",
+                  "layer": "ctd_locations",
+                  "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/rwsarchief/ows",
+                  "tags": ["CTD", "Noordzee"]
+                }
+              ]
+            },
+            {
+              "id": "Natuurcompensatie 2e Maasvlakte (NC2M)",
+              "name": "Natuurcompensatie 2e Maasvlakte (NC2M)",
+              "children": [
+                {
+                  "id": "PN_S_All_OD_Geo_view_location",
+                  "name": "Benthos (NC2M)",
+                  "url": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wms",
+                  "layer": "PN_S_All_OD_Geo_view_location",
+                  "downloadUrl": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wfs",
+                  "tags": ["Benthos", "Noordzee"]
+                },
+                {
+                  "id": "PN_V_All_OD_Geo_view_location",
+                  "name": "Vis (NC2M)",
+                  "url": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wms",
+                  "layer": "PN_V_All_OD_Geo_view_location",
+                  "downloadUrl": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wfs",
+                  "tags": ["Vis", "Noordzee"]
+                }
+              ]
+            },
+            {
+              "id": "Shortlist Wind op Zee (WOZ)",
+              "name": "Shortlist Wind op Zee (WOZ)",
+              "children": [
+                {
+                  "id": "ihm_viewer:shwoz_vogels",
+                  "name": "Vogels WOZ",
+                  "url": "https://marineprojects.openearth.nl/geoserver/ihm_viewer/ows",
+                  "layer": "ihm_viewer:shwoz_vogels",
+                  "downloadUrl": "https://marineprojects.openearth.nl/geoserver/ihm_viewer/wfs",
+                  "tags": ["Vogels", "Noordzee"]
+                },
+                {
+                  "id": "ihm_viewer:shwoz_vliegroute_mantelmeeuw",
+                  "name": "Vliegroute",
+                  "url": "https://marineprojects.openearth.nl/geoserver/ihm_viewer/ows",
+                  "layer": "ihm_viewer:shwoz_vliegroute_mantelmeeuw",
+                  "downloadUrl": "https://marineprojects.openearth.nl/geoserver/ihm_viewer/wfs",
+                  "tags": ["Vogels", "Noordzee"]
+                },
+                {
+                  "id": "ihm_viewer:shwoz_zeezoogdieren",
+                  "name": "Zeezoogdieren",
+                  "url": "https://marineprojects.openearth.nl/geoserver/ihm_viewer/ows",
+                  "layer": "ihm_viewer:shwoz_zeezoogdieren",
+                  "downloadUrl": "https://marineprojects.openearth.nl/geoserver/ihm_viewer/wfs",
+                  "tags": ["Zoogdieren", "Noordzee"]
+                }
+              ]
+            },
+            {
+              "id": "Zandmotor (ZM)",
+              "name": "Zandmotor (ZM)",
+              "children": [
+                {
+                  "id": "lidar_wgs",
+                  "name": "LIDAR 2011-05",
+                  "url": "https://marineprojects.openearth.nl/geoserver/zandmotor/wms",
+                  "layer": "lidar_wgs",
+                  "downloadUrl": "",
+                  "tags": ["Morfologie","Kust"]
+                },
+                {
+                  "id": "ZMOTOR_V_All_OD_Geo_view_location",
+                  "name": "Vis",
+                  "url": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wms",
+                  "layer": "ZMOTOR_V_All_OD_Geo_view_location",
+                  "downloadUrl": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wfs",
+                  "tags": ["Vis", "Noordzee"]
+                }
+              ]
+            },
+            {
+              "id": "Windmolenpark Egmond aan zee (OWEZ)",
+              "name": "Windmolenpark Egmond aan zee (OWEZ)",
+              "children": [
+                {
+                  "id": "OWEZ_V_All_OD_Geo_view_location",
+                  "name": "Vis OWEZ",
+                  "url": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wms",
+                  "layer": "OWEZ_V_All_OD_Geo_view_location",
+                  "downloadUrl": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wfs",
+                  "tags": ["Noordzee", "Vis"]
+                },
+                {
+                  "id": "ihm_viewer:mep-nsw_benthos",
+                  "name": "Benthos OWEZ",
+                  "url": "https://marineprojects.openearth.nl/geoserver/ihm_viewer/ows",
+                  "layer": "ihm_viewer:mep-nsw_benthos",
+                  "downloadUrl": "https://marineprojects.openearth.nl/geoserver/ihm_viewer/wfs",
+                  "tags": ["Benhtos", "Noordzee"]
+                }
+              ]
+            },
+            {
+              "id": "WOZEP (WOZEP)",
+              "name": "WOZEP (WOZEP)",
+              "children": [
+                {
+                  "id": "WOZEP_V_All_OD_Geo_view",
+                  "name": "Vis Wozep",
+                  "url": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wms",
+                  "layer": "WOZEP_V_All_OD_Geo_view",
+                  "downloadUrl": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wfs",
+                  "tags": ["Vis", "Noordzee"]
+                },
+                {
+                  "id": "WOZEP_B_EF_All_OD_Geo_view",
+                  "name": "Benthos Wozep",
+                  "url": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wms",
+                  "layer": "WOZEP_B_EF_All_OD_Geo_view",
+                  "downloadUrl": "https://opengeodata.wmr.wur.nl/geoserver/IHM/wfs",
+                  "tags": ["Benhos", "Noordzee"]
+                }
+              ]
+            },
+            {
+              "id": "Ecologisch gericht suppleren (EGS)",
+              "name": "Ecologisch gericht suppleren (EGS)",
+              "children": [
+                {
+                  "id": "ihm_viewer:EGS_benthos",
+                  "name": "Benthos EGS",
+                  "url": "https://marineprojects.openearth.nl/geoserver/ihm_viewer/ows",
+                  "layer": "ihm_viewer:EGS_benthos",
+                  "downloadUrl": "https://marineprojects.openearth.nl/geoserver/ihm_viewer/wfs",
+                  "tags": ["Benhos", "Noordzee"]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "Kaarten",
+      "name": "Kaarten",
+      "children": [
+        {
+          "id": "Beleid en beheer",
+          "name": "Beleid en beheer",
+          "children": [
+            {
+              "id": "ansnl_marinereportingunit_20180329",
+              "name": "KRM marine reporting units",
+              "url": "https://marineprojects.openearth.nl/geoserver/ihm_viewer/ows",
+              "layer": "ansnl_marinereportingunit_20180329",
+              "downloadUrl": "",
+              "tags": ["Beleid", "Noordzee"]
+            },
+            {
+              "id": "krm2_v",
+              "name": "KRM gebieden",
+              "url": "https://marineprojects.openearth.nl/geoserver/ihm_viewer/ows",
+              "layer": "krm2_v",
+              "downloadUrl": "",
+              "tags": ["Beleid", "Noordzee"]
+            },
+            {
+              "id": "GeslotenGebiedenVoorVisserij",
+              "name": "Toegangsbeperking Noordzee",
+              "url": "https://geodata.nationaalgeoregister.nl/geslotenvisserij/wms",
+              "layer": "GeslotenGebiedenVoorVisserij",
+              "downloadUrl": "",
+              "tags": ["Beleid", "Noordzee"]
+            },
+            {
+              "id": "toegangbep_besluit_voordelta:compensatiegebied_ivm_maasvlakte_2",
+              "name": "Toegangsbeperking Voordelta",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/toegangbep_besluit_voordelta/ows",
+              "layer": "toegangbep_besluit_voordelta:compensatiegebied_ivm_maasvlakte_2",
+              "downloadUrl": "",
+              "tags": ["Beleid", "Noordzee"]
+            },
+            {
+              "id": "toegangbep_besluit_noordzee:toegangbeperkingsbesluit_nzkustzone",
+              "name": "Toegangsbeperking NZ kustzone",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/toegangbep_besluit_noordzee/wms",
+              "layer": "toegangbep_besluit_noordzee:toegangbeperkingsbesluit_nzkustzone",
+              "downloadUrl": "",
+              "tags": ["Beleid", "Noordzee"]
+            },
+            {
+              "id": "kitesurflocaties_deltawateren:kitesurflocaties_toegangsbeperkings_besluiten_deltawateren",
+              "name": "Toegangsbeperking Deltawateren",
+              "url": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/kitesurflocaties_deltawateren/ows",
+              "layer": "kitesurflocaties_deltawateren:kitesurflocaties_toegangsbeperkings_besluiten_deltawateren",
+              "downloadUrl": "",
+              "tags": ["Beleid", "Noordzee"]
+            },
+            {
+              "id": "natura2000",
+              "name": "Natura 2000",
+              "url": "http://geodata.nationaalgeoregister.nl/natura2000/wms",
+              "layer": "natura2000",
+              "downloadUrl": "",
+              "tags": ["Beleid", "Noordzee"]
+            },
+            {
+              "id": "GN.GeographicalNames",
+              "name": "GeographicalNames",
+              "url": "https://inspire.caris.nl/geoserver/gnwms/wms",
+              "layer": "GN.GeographicalNames",
+              "downloadUrl": "",
+              "tags": ["Beleid", "Noordzee"]
+            },
+            {
+              "id": "auwms:AU.MaritimeBoundary",
+              "name": "Maritieme grenzen (geharmoniseerd)",
+              "url": "https://inspire.caris.nl/geoserver/auwms/wms",
+              "layer": "auwms:AU.MaritimeBoundary",
+              "downloadUrl": "",
+              "tags": ["Beleid", "Noordzee"]
+            },
+            {
+              "id": "pssa_nl:ManagementRestrictionOrRegulationZone",
+              "name": "PSSA Waddenzee",
+              "url": "https://inspire.caris.nl/gs5/pssa_nl/ows",
+              "layer": "pssa_nl:ManagementRestrictionOrRegulationZone",
+              "downloadUrl": "",
+              "tags": ["Beleid", "Noordzee"]
+            }
+          ]
+        },
+        {
+          "id": "Gebruik",
+          "name": "Gebruik",
+          "children": [
+            {
+              "id": "ospar_bottom_f_intensur_2017_01_001",
+              "name": "Bodemvisserij intensiteit 2017 ODIMS",
+              "url": "https://odims.ospar.org/geoserver/geonode/wms",
+              "layer": "ospar_bottom_f_intensur_2017_01_001",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee", "Vis"]
+            },
+            {
+              "id": "telecom_kabels_noordzee",
+              "name": "Telecom kabels Noordzee",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/kabels_en_leidingen_noordzee/ows",
+              "layer": "telecom_kabels_noordzee",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "electra_kabels_noordzee",
+              "name": "Electra kabels Noordzee",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/kabels_en_leidingen_noordzee/ows",
+              "layer": "electra_kabels_noordzee",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "pijpleidingen_noordzee",
+              "name": "Pijpleidingen Noordzee",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/kabels_en_leidingen_noordzee/ows",
+              "layer": "pijpleidingen_noordzee",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "voorkeurtraces_kabels_noordzee",
+              "name": "Voorkeurtraces kabels Noordzee",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/kabels_en_leidingen_noordzee/ows",
+              "layer": "voorkeurtraces_kabels_noordzee",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "bedieningskabels_noordzee",
+              "name": "Bedieningskabels Noordzee",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/kabels_en_leidingen_noordzee/ows",
+              "layer": "bedieningskabels_noordzee",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "diepwaterroute",
+              "name": "Diepwaterroute",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/verkeersscheidingsstelsel_nz/ows",
+              "layer": "diepwaterroute",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "separatiezones",
+              "name": "Separatiezones",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/verkeersscheidingsstelsel_nz/ows",
+              "layer": "separatiezones",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "aanloopgebieden",
+              "name": "Aanloopgebieden",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/verkeersscheidingsstelsel_nz/ows",
+              "layer": "aanloopgebieden",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "begrenzing",
+              "name": "Begrenzing",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/verkeersscheidingsstelsel_nz/ows",
+              "layer": "begrenzing",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "ankergebieden",
+              "name": "Ankergebieden",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/verkeersscheidingsstelsel_nz/ows",
+              "layer": "ankergebieden",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "Marine_Traffic_2017",
+              "name": "MARIN scheepvaartintensiteit 2017",
+              "url": "https://ihm-pub.geopublisher.nl/geoserver/MARIN/wms",
+              "layer": "Marine_Traffic_2017",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "aangewezen_windenergiegebieden__nwp_II_",
+              "name": "Aangewezen windenergiegebied NWP",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/windenergiegebieden/wms",
+              "layer": "aangewezen_windenergiegebieden__nwp_II_",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "vergunde_windparken",
+              "name": "Vergunde windparken",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/windenergiegebieden/wms",
+              "layer": "vergunde_windparken",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "overige_windenergie_studiegebieden",
+              "name": "Overige windenergie studiegebieden",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/windenergiegebieden/wms",
+              "layer": "overige_windenergie_studiegebieden",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "turbines_en_ohvs",
+              "name": "Turbines en OHVs",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/windenergiegebieden/wms",
+              "layer": "turbines_en_ohvs",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "zandwingebieden_vergund",
+              "name": "Zandwingebieden vergund",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/wingebieden_noordzee/ows",
+              "layer": "zandwingebieden_vergund",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "zandwingebieden_niet_vergund",
+              "name": "Zandwingebieden niet vergund",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/wingebieden_noordzee/ows",
+              "layer": "zandwingebieden_niet_vergund",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "zandwingebieden_verlaten",
+              "name": "Zandwingebieden verlaten",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/wingebieden_noordzee/ows",
+              "layer": "zandwingebieden_verlaten",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "zoekgebied_mer_2018_2027",
+              "name": "Zoekgebied MER 2018-2027",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/wingebieden_noordzee/ows",
+              "layer": "zoekgebied_mer_2018_2027",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "overige_wingebieden",
+              "name": "Overige wingebieden",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/wingebieden_noordzee/ows",
+              "layer": "overige_wingebieden",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "proefwingebieden",
+              "name": "Proefwingebieden",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/wingebieden_noordzee/ows",
+              "layer": "proefwingebieden",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "schelpenwingebieden",
+              "name": "Schelpenwingebieden",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/wingebieden_noordzee/ows",
+              "layer": "schelpenwingebieden",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "wingebieden_hoekpunten",
+              "name": "Wingebieden, hoekpunten",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/wingebieden_noordzee/ows",
+              "layer": "wingebieden_hoekpunten",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            },
+            {
+              "id": "zandwingebieden_concept",
+              "name": "Zandwingebieden concept",
+              "url": "https://geoservices.rijkswaterstaat.nl/apps/geoserver/wingebieden_noordzee/ows",
+              "layer": "zandwingebieden_concept",
+              "downloadUrl": "",
+              "tags": ["Gebruik", "Noordzee"]
+            }
+          ]
+        },
+        {
+          "id": "watersysteem-root",
+          "name": "Watersysteem",
+          "children": [
+            {
+              "id": "emodnet:mean_rainbowcolour",
+              "name": "Emodnet bathymetry interpolated",
+              "url": "https://ows.emodnet-bathymetry.eu/wms",
+              "layer": "emodnet:mean_rainbowcolour",
+              "downloadUrl": "",
+              "tags": ["Bathymetrie","Noordzee"]
+            },
+            {
+              "id": "bathymetrie2017",
+              "name": "Bathymetry 2017",
+              "url": "https://marineprojects.openearth.nl/geoserver/rws_coast/wms",
+              "layer": "bathymetrie2017",
+              "downloadUrl": "",
+              "tags": ["Bathymetrie","Noordzee"]
+            },
+            {
+              "id": "CHL",
+              "name": "Copernicus Chl-a daily interpol.",
+              "url": "http://nrt.cmems-du.eu/thredds/wms/dataset-oc-atl-bio-multi-l4-chl_interpolated_1km_daily-rt",
+              "layer": "CHL",
+              "downloadUrl": "",
+              "tags": ["Primaire productie","Noordzee"]
+            },
+            {
+              "id": "EL.ElevationGridCoverage",
+              "name": "Bathymetrie Nederland",
+              "url": "https://inspire.caris.nl/geoserver3/bathy_wcs/ows",
+              "layer": "EL.ElevationGridCoverage",
+              "downloadUrl": "",
+              "tags": ["Bathymetrie","Noordzee"]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
