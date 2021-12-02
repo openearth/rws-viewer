@@ -41,6 +41,7 @@
     }),
 
     computed: {
+      ...mapGetters('app', [ 'appConfig' ]),
       ...mapGetters('data', [
         'displayLayers',
         'flattenedLayers',
@@ -77,7 +78,7 @@
       setUrlParams(layers) {
         const url = new URL(window.location.href)
         url.searchParams.set('layers', layers.map(({ id }) => id).join(','))
-        this.$router.replace(`/?${ url.searchParams.toString() }`)
+        this.$router.replace(`/${ this.appConfig }/?${ url.searchParams.toString() }`)
       },
 
       updateRasterLayers(layers) {

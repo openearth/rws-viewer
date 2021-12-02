@@ -6,7 +6,7 @@ const configRepo = {
     const platformToUse = isValidPlatform ? platform : VALID_PLATFORMS[0]
 
     if (!isValidPlatform) {
-      console.warn(`No (valid) platform provided in the query string, falling back to ${ platformToUse }`)
+      console.warn(`No (valid) platform provided, falling back to ${ platformToUse }`)
     }
 
     const fileName = `config-${ platformToUse }`
