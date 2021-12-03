@@ -44,7 +44,7 @@ export default {
 
   actions: {
     getAppData({ commit, dispatch }, route) {
-      const platform = route?.query?.platform
+      const platform = route?.params?.config
       const { layers, name } = configRepo.getConfig(platform)
 
       dispatch('app/setAppName', { name }, { root: true })

@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
+import { VALID_PLATFORMS } from '../lib/constants'
 
 let hasHadFirstRoute = false
 
@@ -12,17 +13,17 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/',
+    path: '/:config',
     name: 'layers',
     component: Layers,
   },
   {
-    path: '/download',
+    path: '/:config/download',
     name: 'download',
     component: Download,
   },
   {
-    path: '/favourites',
+    path: '/:config/favourites',
     name: 'favourites',
     component: Favourites,
   },
@@ -32,6 +33,23 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes,
+})
+
+router.beforeEach((to, from, next) => {
+  const storedConfig = store.getters['app/appConfig']
+  const config = VALID_PLATFORMS.includes(to.params.config)
+      ? to.params.config
+      : VALID_PLATFORMS[0]
+
+  if (!storedConfig) {
+    store.commit('app/SET_APP_CONFIG', config)
+  }
+
+  if (!to.params.config) {
+    return next({ ...to, path: `/${ config }${ to.path }` })
+  } 
+    
+  next()
 })
 
 router.beforeEach((to, from, next) => {

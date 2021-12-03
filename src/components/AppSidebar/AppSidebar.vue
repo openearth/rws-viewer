@@ -16,7 +16,7 @@
       <template v-for="tab in tabs">
         <v-tab
           :key="tab.name"
-          :to="tab.page"
+          :to="`/${appConfig}${tab.page}`"
           :ripple="false"
         >
           {{ $t(tab.name) }}
@@ -49,7 +49,7 @@
       ],
     }),
     computed: {
-      ...mapGetters('app', [ 'appNavigationOpen', 'appNavigationWidth' ]),
+      ...mapGetters('app', [ 'appNavigationOpen', 'appNavigationWidth', 'appConfig' ]),
     },
   }
 </script>

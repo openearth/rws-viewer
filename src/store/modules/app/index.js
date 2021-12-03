@@ -4,6 +4,7 @@ export default {
   state: () => ({
     appNavigationOpen: true,
     appNavigationWidth: 440,
+    appConfig: '',
     appName: '',
   }),
 
@@ -11,6 +12,7 @@ export default {
     appNavigationOpen: state => state.appNavigationOpen,
     appNavigationWidth: state => state.appNavigationWidth,
     appName: state => state.appName,
+    appConfig: state => state.appConfig,
   },
 
   mutations: {
@@ -19,6 +21,9 @@ export default {
     },
     SET_APP_NAVIGATION_OPEN(state, { open }) {
       state.appNavigationOpen = open
+    },
+    SET_APP_CONFIG(state, config) {
+      state.appConfig = config
     },
   },
 
