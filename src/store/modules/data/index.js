@@ -10,6 +10,7 @@ export default {
     flattenedLayers: [],
     layerTags: [],
     layerDialogOpen: false,
+    selectedLayers: [],
   }),
 
   getters: {
@@ -17,6 +18,8 @@ export default {
     flattenedLayers: state => state.flattenedLayers,
     layerTags: state => state.layerTags,
     layerDialogOpen: state => state.layerDialogOpen,
+    selectedLayers: state => state.selectedLayers,
+    downloadAvailable: state => state.selectedLayers.some(layer => layer?.downloadUrl !== null),
   },
 
   mutations: {
@@ -34,6 +37,9 @@ export default {
     },
     SET_LAYER_DIALOG_OPEN(state, { open }) {
       state.layerDialogOpen = open
+    },
+    SET_SELECTED_LAYERS(state, { layers }) {
+      state.selectedLayers = layers
     },
   },
 
@@ -54,6 +60,7 @@ export default {
       const layersById = getLayersById(layers, initialLayerIds)
       if (layersById.length) {
         dispatch('map/setRasterLayers', { layers: layersById }, { root: true })
+        dispatch('data/setSelectedLayers', { layers: layersById }, { root: true })
       }
 
       const tags = getLayersTags(flattenedLayers)
@@ -70,6 +77,10 @@ export default {
 
     setLayerDialogOpen({ commit }, { open }) {
       commit('SET_LAYER_DIALOG_OPEN', { open })
+    },
+
+    setSelectedLayers({ commit }, { layers }) {
+      commit('SET_SELECTED_LAYERS', { layers })
     },
   },
 }

@@ -1,10 +1,17 @@
 {
-  "layers": "Lagen",
   "download": "Download",
+  "downloadData": "Download data",
+  "downloadDesc": "Kies een laag om te downloaden.",
+  "downloadUnavailable": "Downloaden van data is nog niet beschikbaar voor deze laag.",
+  "drawPolygon": "Teken veelhoek",
+  "drawRectangle": "Teken rechthoek",
   "favourites": "Favorieten",
   "filterByTag": "Filteren op zoekterm",
-  "predefinedSelection": "Gebruik vooraf gedefinieerde selectie",
+  "layers": "Lagen",
+  "noLayersSelected": "Selecteer één of meer lagen",
   "noSelection": "Geen selectie",
-  "drawRectangle": "Teken rechthoek",
-  "drawPolygon": "Teken veelhoek"
+  "predefinedSelection": "Gebruik vooraf gedefinieerde selectie",
+  "layerSelection": "Selecteer uit zichtbare lagen",
+  "select": "Selecteer",
+  "selectDesc": "Selecteer een deel van de kaart om te downloaden. Door te tekenen, of een gedefinieerde sectie te kiezen."
 }

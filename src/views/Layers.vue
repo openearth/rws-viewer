@@ -63,7 +63,7 @@
     },
 
     methods: {
-      ...mapActions('data', [ 'setDisplayLayers' ]),
+      ...mapActions('data', [ 'setDisplayLayers', 'setSelectedLayers' ]),
       ...mapActions('map', [ 'addRasterLayer', 'removeRasterLayer' ]),
 
       onActiveLayerChange(layers) {
@@ -82,6 +82,8 @@
       },
 
       updateRasterLayers(layers) {
+        this.setSelectedLayers({ layers })
+
         this.rasterLayers.length > layers.length
           ? this.removeRasterLayer({ layers })
           : this.addRasterLayer({ layers })
