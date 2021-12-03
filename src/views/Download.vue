@@ -2,7 +2,7 @@
   <v-container class="download pt-4">
     <v-row>
       <v-col>
-        <h2>{{ $t('select') }}</h2>
+        <h3>{{ $t('select') }}</h3>
         <p class="mb-0">
           {{ $t('selectDesc') }}
         </p>
@@ -47,7 +47,12 @@
     </v-row>
     <v-row>
       <v-col>
-        <h2>{{ $t('download') }}</h2>
+        <v-divider class="my-4" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <h3>{{ $t('download') }}</h3>
         <p class="mb-0">
           {{ $t('downloadDesc') }}
         </p>
