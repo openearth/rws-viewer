@@ -19,6 +19,7 @@ export default {
     layerTags: state => state.layerTags,
     layerDialogOpen: state => state.layerDialogOpen,
     selectedLayers: state => state.selectedLayers,
+    downloadAvailable: state => state.selectedLayers.some(layer => layer?.downloadUrl !== null),
   },
 
   mutations: {
