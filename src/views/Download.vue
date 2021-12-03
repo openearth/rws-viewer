@@ -2,7 +2,10 @@
   <v-container class="download pt-4">
     <v-row>
       <v-col>
-        <h4>Draw</h4>
+        <h2>{{ $t('select') }}</h2>
+        <p class="mb-0">
+          {{ $t('selectDesc') }}
+        </p>
       </v-col>
     </v-row>
     <v-row>
@@ -44,14 +47,17 @@
     </v-row>
     <v-row>
       <v-col>
-        <h4>Download</h4>
+        <h2>{{ $t('download') }}</h2>
+        <p class="mb-0">
+          {{ $t('downloadDesc') }}
+        </p>
       </v-col>
     </v-row>
     <v-row>
       <v-col>
         <v-select
           v-model="selectedLayer"
-          label="Selecteer uit zichtbare lagen"
+          :label="$t('layerSelection')"
           :items="selectedLayersList"
           dense
           outlined
@@ -68,7 +74,7 @@
           :disabled="!selectedLayer"
           @click="onDownloadClick"
         >
-          {{ $t('downloadLayer') }}
+          {{ $t('downloadData') }}
         </v-btn>
       </v-col>
     </v-row>
@@ -92,10 +98,6 @@
     computed: {
       ...mapGetters('map', [ 'drawMode', 'drawnFeature', 'rasterLayers' ]),
       ...mapGetters('data', [ 'selectedLayers' ]),
-
-      downloadButtonLabel() {
-        return (this.drawnFeature || this.selectedArea) ? this.$t('downloadSelection') : this.$t('downloadLayer')
-      },
 
       drawnFeatureCoordinates() {
         return this.drawnFeature?.geometry?.coordinates

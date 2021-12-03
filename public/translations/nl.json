@@ -1,12 +1,15 @@
 {
   "download": "Download",
-  "downloadLayer": "Download volledige laag",
-  "downloadSelection": "Download selectie laag",
+  "downloadData": "Download data",
+  "downloadDesc": "Kies een laag om te downloaden.",
   "drawPolygon": "Teken veelhoek",
   "drawRectangle": "Teken rechthoek",
   "favourites": "Favorieten",
   "filterByTag": "Filteren op zoekterm",
   "layers": "Lagen",
   "noSelection": "Geen selectie",
-  "predefinedSelection": "Gebruik vooraf gedefinieerde selectie"
+  "predefinedSelection": "Gebruik vooraf gedefinieerde selectie",
+  "layerSelection": "Selecteer uit zichtbare lagen",
+  "select": "Selecteer",
+  "selectDesc": "Selecteer een deel van de kaart om te downloaden. Door te tekenen, of een gedefinieerde sectie te kiezen."
 }

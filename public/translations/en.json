@@ -1,12 +1,15 @@
 {
   "download": "Download",
-  "downloadLayer": "Download full layer",
-  "downloadSelection": "Download selection of",
+  "downloadData": "Download data",
+  "downloadDesc": "Choose a layer to download.",
   "drawPolygon": "Draw polygon",
   "drawRectangle": "Draw rectangle",
   "favourites": "Favourites",
   "filterByTag": "Filter by tag",
   "layers": "Layers",
   "noSelection": "No selection",
-  "predefinedSelection": "Use predefined selection"
+  "predefinedSelection": "Use predefined selection",
+  "layerSelection": "Select from visible layers",
+  "select": "Select",
+  "selectDesc": "Select a portion of the map to download. Either by drawing, or choosing a predefined section."
 }
