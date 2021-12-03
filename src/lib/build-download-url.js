@@ -32,5 +32,5 @@ export default function(layerData = {}, coordinates = []) {
     ...(coordinates.length && { filter: filter }),
   })
 
-  return `${ layerData.downloadURL }?${ params }`
+  return `${ layerData.downloadUrl }?${ params }`
 }
