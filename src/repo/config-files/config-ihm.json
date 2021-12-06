@@ -291,7 +291,7 @@
           ]
         },
         {
-          "id": "Watersystemen-0",
+          "id": "Watersystemen",
           "name": "Watersystemen",
           "children": [
             {
@@ -383,7 +383,7 @@
           ]
         },
         {
-          "id": "Watersystemen-1",
+          "id": "Watersystemen",
           "name": "Watersystemen",
           "children": [
             {
@@ -441,7 +441,7 @@
           ]
         },
         {
-          "id": "Biologie-0",
+          "id": "Biologie",
           "name": "Biologie",
           "children": [
             {
@@ -461,7 +461,7 @@
           ]
         },
         {
-          "id": "Biologie-1",
+          "id": "Biologie",
           "name": "Biologie",
           "children": [
             {
@@ -478,6 +478,7 @@
               "url": "https://marineprojects.openearth.nl/geoserver/rwsbenthos/wms",
               "layer": "ihm_rwsbenthos_tijdelijk_locations",
               "downloadUrl": "https://marineprojects.openearth.nl/geoserver/rwsbenthos/wfs",
+              "downloadLayer": "ihm_rwsbenthos_tijdelijk",
               "tags": ["Benthos","Fauna","Biota","Noordzee"]
             },
             {
@@ -486,6 +487,7 @@
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
               "layer": "mwtl_benthos_donar_waddenzee_location",
               "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "downloadLayer": "mwtl_benthos_donar_waddenzee",
               "tags": ["Benthos","Fauna","Biota","Waddenzee"]
             },
             {
@@ -494,6 +496,7 @@
               "url": "https://marineprojects.openearth.nl/geoserver/rwsbenthos/wms",
               "layer": "rwsbenthos_zwdelta_tijdelijk_locations",
               "downloadUrl": "https://marineprojects.openearth.nl/geoserver/rwsbenthos/wfs",
+              "downloadLayer": "rwsbenthos_zwdelta_tijdelijk",
               "tags": ["Benthos","Fauna","Biota", "Delta"]
             },
             {
@@ -523,7 +526,7 @@
           ]
         },
         {
-          "id": "Chemie-0",
+          "id": "Chemie",
           "name": "Chemie",
           "children": [
             {
@@ -532,6 +535,7 @@
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
               "layer": "mwtl_meetcampagne_arseen_seleen_chroom_location",
               "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "downloadLayer": "mwtl_meetcampagne_arseen_seleen_chroom",
               "tags": ["Chemie","Noordzee"]
             },
             {
@@ -540,6 +544,7 @@
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
               "layer": "mwtl_meetcampagne_geneesmiddelen_location",
               "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "downloadLayer": "mwtl_meetcampagne_geneesmiddelen",
               "tags": ["Chemie","Noordzee"]
             },
             {
@@ -548,6 +553,7 @@
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
               "layer": "mwtl_meetcampagne_perfluorverbindingen_location",
               "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "downloadLayer": "mwtl_meetcampagne_perfluorverbindingen",
               "tags": ["Chemie","Noordzee"]
             },
             {
@@ -556,6 +562,7 @@
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
               "layer": "mwtl_meetcampagne_screening_gcms_location",
               "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "downloadLayer": "mwtl_meetcampagne_screening_gcms",
               "tags": ["Chemie","Noordzee"]
             },
             {
@@ -564,6 +571,7 @@
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
               "layer": "mwtl_meetcampagne_verzuring_noordzee_location",
               "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "downloadLayer": "mwtl_meetcampagne_verzuring_noordzee",
               "tags": ["Chemie","Noordzee"]
             },
             {
@@ -588,6 +596,7 @@
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
               "layer": "mwtl_microverontreinigingen_en_effecten_in_slakken_location",
               "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "downloadLayer": "mwtl_microverontreinigingen_en_effecten_in_slakken",
               "tags": ["Chemie","Noordzee","Biota","Benthos"]
             },
             {
@@ -596,6 +605,7 @@
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
               "layer": "mwtl_microverontreinigingen_in_blankvoorn_en_bot_location",
               "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "downloadLayer": "mwtl_microverontreinigingen_in_blankvoorn_en_bot",
               "tags": ["Chemie","Noordzee","Biota","Vis"]
             },
             {
@@ -604,6 +614,7 @@
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
               "layer": "mwtl_microverontreinigingen_in_bot_location",
               "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "downloadLayer": "mwtl_microverontreinigingen_in_bot",
               "tags": ["Chemie","Noordzee","Biota","Vis"]
             },
             {
@@ -612,6 +623,7 @@
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
               "layer": "mwtl_microverontreinigingen_in_eieren_location",
               "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "downloadLayer": "mwtl_microverontreinigingen_in_eieren",
               "tags": ["Chemie","Noordzee","Biota"]
             },
             {
@@ -620,6 +632,7 @@
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wms",
               "layer": "mwtl_microverontreinigingen_in_schol_location",
               "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/mwtl/wfs",
+              "downloadLayer": "mwtl_microverontreinigingen_in_schol",
               "tags": ["Chemie","Noordzee","Biota","Vis"]
             },
             {
@@ -657,7 +670,7 @@
               "name": "JARKUS 2014",
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/rws_coast/wms",
               "layer": "jarkusgrid2014",
-              "downloadUrl": null,
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/rws_coast/ows",
               "tags": ["Morfologie", "Kust"]
             },
             {
@@ -665,7 +678,7 @@
               "name": "JARKUS 2015",
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/rws_coast/wms",
               "layer": "jarkusgrid2015",
-              "downloadUrl": null,
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/rws_coast/ows",
               "tags": ["Morfologie", "Kust"]
             },
             {
@@ -673,7 +686,7 @@
               "name": "JARKUS 2016",
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/rws_coast/wms",
               "layer": "jarkusgrid2016",
-              "downloadUrl": null,
+              "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/rws_coast/ows",
               "tags": ["Morfologie", "Kust"]
             },
             {
@@ -681,7 +694,7 @@
               "name": "Hoogtebestand kust (DTM 2017, 5m)",
               "url": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/hoogte_2017/wms",
               "layer": "kust_2017_dtm_5",
-              "downloadUrl": null,
+              "downloadUrl": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/hoogte_2017/ows",
               "tags": ["Morfologie", "Kust"]
             },
             {
@@ -689,7 +702,7 @@
               "name": "Hoogtebestand kust (DTM 2018, 5m)",
               "url": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/hoogte_2018/wms",
               "layer": "kust_2018_dtm_5",
-              "downloadUrl": null,
+              "downloadUrl": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/hoogte_2018/ows",
               "tags": ["Morfologie", "Kust"]
             },
             {
@@ -697,7 +710,7 @@
               "name": "Hoogtebestand kust (DTM 2019, 5m)",
               "url": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/hoogte_2019/wms",
               "layer": "kust_2019_dtm_5m",
-              "downloadUrl": null,
+              "downloadUrl": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/hoogte_2019/ows",
               "tags": ["Morfologie", "Kust"]
             },
             {
@@ -705,7 +718,7 @@
               "name": "Hoogtebestand kust (DTM 2020, 5m)",
               "url": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/hoogte_2020/wms",
               "layer": "hoogte_kust_2020_dtm_5m_tif",
-              "downloadUrl": null,
+              "downloadUrl": "https://geo.rijkswaterstaat.nl/services/ogc/gdr/hoogte_2020/wms",
               "tags": ["Morfologie", "Kust"]
             },
             {
@@ -719,7 +732,7 @@
           ]
         },
         {
-          "id": "Chemie-1",
+          "id": "Chemie",
           "name": "Chemie",
           "children": [
             {
@@ -728,6 +741,7 @@
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/ihm_etl/wms",
               "layer": "ihmetl_chemie_locations",
               "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/ihm_etl/wfs",
+              "downloadLayer":"ihmetl_chemie",
               "tags": ["Chemie"]
             },
             {
@@ -736,6 +750,7 @@
               "url": "https://rwsprojectarchief.openearth.nl/geoserver/ihm_etl/wms",
               "layer": "ihmetl_overig_locations",
               "downloadUrl": "https://rwsprojectarchief.openearth.nl/geoserver/ihm_etl/wfs",
+              "downloadLayer":"ihmetl_overig",
               "tags": ["Chemie"]
             }
           ]
