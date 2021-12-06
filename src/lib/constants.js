@@ -1,3 +1,1 @@
-export const VALID_PLATFORMS = [
-  'ihm-viewer',
-]
+export const VALID_PLATFORMS = require('../../public/data/available-configs.json')

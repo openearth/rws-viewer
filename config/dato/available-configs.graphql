@@ -1,0 +1,5 @@
+query {
+  configs: allMenus(filter: {parent: {exists: false}}) {
+    name
+  }
+}
