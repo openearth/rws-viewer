@@ -291,7 +291,7 @@
           ]
         },
         {
-          "id": "Watersystemen",
+          "id": "Watersystemen-0",
           "name": "Watersystemen",
           "children": [
             {
@@ -383,7 +383,7 @@
           ]
         },
         {
-          "id": "Watersystemen",
+          "id": "Watersystemen-1",
           "name": "Watersystemen",
           "children": [
             {
@@ -441,7 +441,7 @@
           ]
         },
         {
-          "id": "Biologie",
+          "id": "Biologie-0",
           "name": "Biologie",
           "children": [
             {
@@ -461,7 +461,7 @@
           ]
         },
         {
-          "id": "Biologie",
+          "id": "Biologie-1",
           "name": "Biologie",
           "children": [
             {
@@ -526,7 +526,7 @@
           ]
         },
         {
-          "id": "Chemie",
+          "id": "Chemie-0",
           "name": "Chemie",
           "children": [
             {
@@ -732,7 +732,7 @@
           ]
         },
         {
-          "id": "Chemie",
+          "id": "Chemie-1",
           "name": "Chemie",
           "children": [
             {
