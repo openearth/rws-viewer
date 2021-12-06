@@ -15,13 +15,17 @@ let filter = `
   </ogc:Filter>
 `
 
-export default function(layerData = {}, coordinates = []) {
+export default function(layerData = {}, coordinates = '') {
   const { downloadUrl, layer } = layerData
+  const coordinatesArray = coordinates.split(' ')
+  const validCoordinates = ((coordinatesArray.length / 2) - 1) >= 3 // 3 = triangle, 4 = rectangle, 5+ = polygon
   const isWfsLayer = downloadUrl.endsWith('wfs')
   const isWcsLayer = downloadUrl.endsWith('wcs')
 
-  if (coordinates && coordinates.length) {
+  if (validCoordinates) {
     filter = filter.replace('{{COORDINATES}}', coordinates)
+  } else {
+    console.warn('Coordinates not valid. Make sure they have the right format and there are at least 3 pairs.')
   }
 
   const params = stringify({
@@ -32,10 +36,10 @@ export default function(layerData = {}, coordinates = []) {
     'srsName': 'EPSG:4326',
     'service': (isWfsLayer && 'WFS' || isWcsLayer && 'WCS'),
     'version': '1.1.0',
-    'outputFormat': 'csv', // outputformat=<een lijstje hier waaronder aaigrid, tif, netcdf3>
-    ...(isWfsLayer && { 'GetLayers': layer }), // GetLayers=<laagnaam>
-    ...(isWcsLayer && { 'GetCoverage': layer }), // GetCoverage=<laagnaam>
-    ...(coordinates.length && isWfsLayer && { 'filter': filter }),
+    'outputFormat': 'csv',
+    ...(isWfsLayer && { 'GetLayers': layer }),
+    ...(isWcsLayer && { 'GetCoverage': layer }),
+    ...(validCoordinates && isWfsLayer && { 'filter': filter }),
   })
 
   return `${ downloadUrl }?${ params }`
