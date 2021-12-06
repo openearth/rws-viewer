@@ -24,8 +24,6 @@ export default function(layerData = {}, coordinates = '') {
 
   if (validCoordinates) {
     filter = filter.replace('{{COORDINATES}}', coordinates)
-  } else {
-    console.warn('Coordinates not valid. Make sure they have the right format and there are at least 3 pairs.')
   }
 
   const params = stringify({
