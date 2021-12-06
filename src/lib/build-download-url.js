@@ -35,7 +35,7 @@ export default function(layerData = {}, coordinates = []) {
     'outputFormat': 'csv', // outputformat=<een lijstje hier waaronder aaigrid, tif, netcdf3>
     ...(isWfsLayer && { 'GetLayers': layer }), // GetLayers=<laagnaam>
     ...(isWcsLayer && { 'GetCoverage': layer }), // GetCoverage=<laagnaam>
-    ...(coordinates.length && { 'filter': filter }),
+    ...(coordinates.length && isWfsLayer && { 'filter': filter }),
   })
 
   return `${ downloadUrl }?${ params }`
