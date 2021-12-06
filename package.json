@@ -10,7 +10,10 @@
     "node": ">=15.0.0"
   },
   "scripts": {
+    "dato": "node ./config/dato/_dump-data.mjs",
+    "prebuild": "yarn dato",
     "build": "vue-cli-service build",
+    "predev": "yarn dato",
     "dev": "run-s lint serve",
     "fix": "run-s fix:*",
     "fix:js": "vue-cli-service lint",

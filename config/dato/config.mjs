@@ -44,6 +44,7 @@ export default function handleMenu(options) {
     
     menu
       .filter(rootPages)
+      .map(({ children, ...rest }) => ({ ...rest, layers: children }))
       .map(removeParentProperty)
       .forEach(root => {
         const title = slugify(root.name)
