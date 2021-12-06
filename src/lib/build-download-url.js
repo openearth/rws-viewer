@@ -3,7 +3,7 @@ import { stringify } from 'query-string'
 let filter = `
   <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
     <ogc:Intersects>
-      <ogc:PropertyName/>
+      <ogc:PropertyName />
       <gml:Polygon xmlns:gml="http://www.opengis.net/gml" srsName="EPSG:4326">
         <gml:exterior>
           <gml:LinearRing>
@@ -16,21 +16,27 @@ let filter = `
 `
 
 export default function(layerData = {}, coordinates = []) {
+  const { downloadUrl, layer } = layerData
+  const isWfsLayer = downloadUrl.endsWith('wfs')
+  const isWcsLayer = downloadUrl.endsWith('wcs')
+
   if (coordinates && coordinates.length) {
     filter = filter.replace('{{COORDINATES}}', coordinates)
   }
 
   const params = stringify({
-    'typeName': layerData.layer,
-    'request': 'GetFeature',
+    'typeName': layer,
+    'request': (isWfsLayer && 'GetFeature' || isWcsLayer && 'GetCoverage'),
     'Content-Disposition': 'attachment',
-    'filename': layerData.layer + '.csv',
+    'filename': layer + '.csv',
     'srsName': 'EPSG:4326',
-    'service': 'WFS',
+    'service': (isWfsLayer && 'WFS' || isWcsLayer && 'WCS'),
     'version': '1.1.0',
-    'outputFormat': 'csv',
-    ...(coordinates.length && { filter: filter }),
+    'outputFormat': 'csv', // outputformat=<een lijstje hier waaronder aaigrid, tif, netcdf3>
+    ...(isWfsLayer && { 'GetLayers': layer }), // GetLayers=<laagnaam>
+    ...(isWcsLayer && { 'GetCoverage': layer }), // GetCoverage=<laagnaam>
+    ...(coordinates.length && { 'filter': filter }),
   })
 
-  return `${ layerData.downloadUrl }?${ params }`
+  return `${ downloadUrl }?${ params }`
 }
