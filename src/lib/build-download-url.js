@@ -36,15 +36,9 @@ export default function(layerData = {}, coordinates = '') {
     'srsName': 'EPSG:4326',
     'service': (isWfsLayer && 'WFS' || isWcsLayer && 'WCS'),
     'version': '1.1.0',
-<<<<<<< HEAD
     'outputFormat': 'csv',
     ...(isWfsLayer && { 'GetLayers': layer }),
     ...(isWcsLayer && { 'GetCoverage': layer }),
-=======
-    'outputFormat': 'csv', // outputformat=<een lijstje hier waaronder aaigrid, tif, netcdf3>
-    ...(isWfsLayer && { 'GetLayers': layer }), // GetLayers=<laagnaam>
-    ...(isWcsLayer && { 'GetCoverage': layer }), // GetCoverage=<laagnaam>
->>>>>>> 33df57ba7eb7d7202c99379115f1366989a8d3ab
     ...(validCoordinates && isWfsLayer && { 'filter': filter }),
   })
 
