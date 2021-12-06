@@ -76,15 +76,8 @@ export default {
       }
     },
 
-    removeRasterLayer({ commit, state }, { layers }) {
-      const wmsLayers = layers.map(layer => buildWmsLayer(layer))
-      const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
-      const diffObjects = difference(state.rasterLayers, mappedWmsLayers)
-      const layer = head(diffObjects)
-
-      if (layer) {
-        commit('REMOVE_RASTER_LAYER', { layer })
-      }
+    removeRasterLayer({ commit }, { layers }) {
+      layers.forEach(layer => commit('REMOVE_RASTER_LAYER', { layer }))
     },
 
     setDrawMode({ commit, state }, { mode }) {
