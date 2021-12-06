@@ -1,0 +1,23 @@
+query ($first: IntType, $skip: IntType = 0) {
+  menu: allMenus(first: $first, skip: $skip) {
+    id
+    name
+    children: layers {
+      id
+      name
+      url
+      layer
+      downloadUrl
+      downloadLayer
+      tags {
+        title
+      }
+    }
+    parent {
+      id
+    }
+  }
+  _allMenusMeta {
+    count
+  }
+}
