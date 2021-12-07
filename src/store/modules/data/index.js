@@ -1,5 +1,5 @@
 import configRepo from '~/repo/configRepo'
-import { flattenLayers, getLayersTags, getLayersById } from '~/lib/layer-helpers'
+import { flattenLayers, getLayersTags, getLayersById, omitLayers } from '~/lib/layer-helpers'
 
 export default {
   namespaced: true,
@@ -18,6 +18,8 @@ export default {
     flattenedLayers: state => state.flattenedLayers,
     layerTags: state => state.layerTags,
     layerDialogOpen: state => state.layerDialogOpen,
+    availableDisplayLayers: (state, getters, rootState, rootGetters) => omitLayers(state.displayLayers, rootGetters['map/rasterLayerIds']),
+    availableFlattenedLayers: (state, getters, rootState, rootGetters) => getters.flattenedLayers.filter(layer => !rootGetters['map/rasterLayerIds'].includes(layer.id)),
     selectedLayers: state => state.selectedLayers,
     downloadAvailable: state => state.selectedLayers.some(layer => layer?.downloadUrl !== null),
   },
