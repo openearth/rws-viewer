@@ -44,9 +44,9 @@ export default {
   },
 
   actions: {
-    getAppData({ commit, dispatch }, route) {
+    async getAppData({ commit, dispatch }, route) {
       const platform = route?.params?.config
-      const { layers, name } = configRepo.getConfig(platform)
+      const { layers, name } = await configRepo.getConfig(platform)
 
       dispatch('app/setAppName', { name }, { root: true })
       // commit('SET_ORIGINAL_LAYERS', { layers })

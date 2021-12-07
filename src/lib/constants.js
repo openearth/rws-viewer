@@ -1,4 +1,1 @@
-export const VALID_PLATFORMS = [
-  'ihm',
-  'rws',
-]
+export const VALID_PLATFORMS = require('../../public/data/available-configs.json')
