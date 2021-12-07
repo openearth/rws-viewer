@@ -1,6 +1,6 @@
 import { stringify } from 'query-string'
 
-let filter = `
+const filterTemplate = `
   <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
     <ogc:Intersects>
       <ogc:PropertyName />
@@ -21,9 +21,10 @@ export default function(layerData = {}, coordinates = '') {
   const validCoordinates = ((coordinatesArray.length / 2) - 1) >= 3 // 3 = triangle, 4 = rectangle, 5+ = polygon
   const isWfsLayer = downloadUrl.endsWith('wfs')
   const isWcsLayer = downloadUrl.endsWith('wcs')
+  let filter = null
 
   if (validCoordinates) {
-    filter = filter.replace('{{COORDINATES}}', coordinates)
+    filter = filterTemplate.replace('{{COORDINATES}}', coordinates)
   }
 
   const params = stringify({
