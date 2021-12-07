@@ -19,9 +19,14 @@ export default function(layerData = {}, coordinates = '') {
   const { downloadUrl, layer } = layerData
   const coordinatesArray = coordinates.split(' ')
   const validCoordinates = ((coordinatesArray.length / 2) - 1) >= 3 // 3 = triangle, 4 = rectangle, 5+ = polygon
-  const isWfsLayer = downloadUrl.endsWith('wfs')
-  const isWcsLayer = downloadUrl.endsWith('wcs')
+  const isWfsLayer = downloadUrl && downloadUrl.endsWith('wfs')
+  const isWcsLayer = downloadUrl && downloadUrl.endsWith('wcs')
   let filter = null
+
+  if (!isWfsLayer && !isWcsLayer) {
+    console.warn('No valid `downloadUrl` present for layer: ', layer)
+    return
+  }
 
   if (validCoordinates) {
     filter = filterTemplate.replace('{{COORDINATES}}', coordinates)
