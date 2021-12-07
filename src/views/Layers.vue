@@ -2,23 +2,40 @@
   <v-container class="layers pt-4">
     <v-row>
       <v-col>
-        <v-select
-          v-model="selectedTags"
-          class="pb-1"
-          :label="$t('filterByTag')"
-          multiple
-          dense
-          outlined
-          hide-details
-          :items="layerTags"
-        />
-        <layer-list-controls
-          v-if="layersForTree"
-          :layers="layersForTree"
-          :selected-layer-ids="rasterLayerIds"
-          @active-layers-change="onActiveLayerChange"
-          @layer-sorting-change="onLayerSortingChange"
-        />
+        <v-expansion-panels v-model="openPanels" multiple>
+          <v-expansion-panel :key="0" :disabled="activeLayers.length === 0">
+            <v-expansion-panel-header>
+              Active layers
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <layer-list
+                chip
+                :layers="activeLayers"
+                @remove-layer="onRemoveLayer"
+              />
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        
+          <v-expansion-panel :key="1">
+            <v-expansion-panel-header>Available layers</v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-select
+                v-model="selectedTags"
+                class="pb-1"
+                :label="$t('filterByTag')"
+                multiple
+                dense
+                outlined
+                hide-details
+                :items="layerTags"
+              />
+              <layer-tree
+                :layers="availableLayers"
+                @select-layers="onSelectLayers"
+              />
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-col>
     </v-row>
   </v-container>
@@ -27,17 +44,20 @@
 <script>
   import { mapActions, mapGetters } from 'vuex'
 
-  const LayerListControls = () => import('~/components/LayerListControls/LayerListControls')
+  const LayerList = () => import('~/components/LayerList/LayerList')
+  const LayerTree = () => import('~/components/LayerTree/LayerTree')
 
   export default {
     name: 'Layer',
 
     components: {
-      LayerListControls,
+      LayerList,
+      LayerTree,
     },
 
     data: () => ({
       selectedTags: [],
+      openPanels: [ 1 ],
     }),
 
     computed: {
@@ -45,48 +65,74 @@
       ...mapGetters('data', [
         'displayLayers',
         'flattenedLayers',
+        'availableFlattenedLayers',
         'layerTags',
+        'availableDisplayLayers',
       ]),
       ...mapGetters('map', [
         'rasterLayerIds',
         'rasterLayers',
       ]),
 
-      layersForTree() {
+      availableLayers() {
         if (!this.selectedTags.length) {
-          return this.displayLayers
+          return this.availableDisplayLayers
         }
 
-        return this.flattenedLayers.filter(({ tags }) =>
+        return this.availableFlattenedLayers.filter(({ tags }) =>
           this.selectedTags.every(tag => tags.includes(tag)))
       },
+
+      activeLayers() {
+        return this.flattenedLayers.filter(layer => this.rasterLayerIds.includes(layer.id))
+      },
+    },
+
+    watch: {
+      activeLayers(newValue) {
+        const url = new URL(window.location.href)
+        url.searchParams.set('layers', newValue.map(({ id }) => id).join(','))
+        this.$router.replace(`/${ this.appConfig }/?${ url.searchParams.toString() }`)
+      },
+    },
+
+    mounted() {
+      if (this.activeLayers.length > 0) {
+        this.openPanels.push(0)
+      }
     },
 
     methods: {
       ...mapActions('data', [ 'setDisplayLayers', 'setSelectedLayers' ]),
       ...mapActions('map', [ 'addRasterLayer', 'removeRasterLayer' ]),
 
-      onActiveLayerChange(layers) {
-        this.updateRasterLayers(layers)
-        this.setUrlParams(layers)
+      onSelectLayers(layerIds) {
+        const layers = layerIds
+          .map(layerId => this.flattenedLayers.find(({ id }) => id === layerId))
+        
+        if (layers.length) {
+          this.addRasterLayer({ layers })
+        }
+
+        if (this.openPanels.includes(0) === false) {
+          this.openPanels.push(0)
+        }
       },
 
-      onLayerSortingChange(layers) {
-        this.setDisplayLayers({ layers })
-      },
+      onRemoveLayer(layerId) {
+        const layerToRemove = this.flattenedLayers.find(({ id }) => id === layerId)
 
-      setUrlParams(layers) {
-        const url = new URL(window.location.href)
-        url.searchParams.set('layers', layers.map(({ id }) => id).join(','))
-        this.$router.replace(`/${ this.appConfig }/?${ url.searchParams.toString() }`)
-      },
+        if (layerToRemove) {
+          const layers = [ layerToRemove ]
+          this.removeRasterLayer({ layers })
+        }
 
-      updateRasterLayers(layers) {
-        this.setSelectedLayers({ layers })
-
-        this.rasterLayers.length > layers.length
-          ? this.removeRasterLayer({ layers })
-          : this.addRasterLayer({ layers })
+        if (this.activeLayers.length === 0) {
+          const index = this.openPanels.indexOf(0)
+          this.openPanels = index !== -1 
+            ? this.openPanels.filter(panel => panel !== 0)
+            : this.openPanels
+        }
       },
     },
   }
