@@ -15,7 +15,7 @@
               />
             </v-expansion-panel-content>
           </v-expansion-panel>
-        
+
           <v-expansion-panel :key="1">
             <v-expansion-panel-header>Available layers</v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -109,7 +109,7 @@
       onSelectLayers(layerIds) {
         const layers = layerIds
           .map(layerId => this.flattenedLayers.find(({ id }) => id === layerId))
-        
+
         if (layers.length) {
           this.addRasterLayer({ layers })
         }
@@ -129,7 +129,7 @@
 
         if (this.activeLayers.length === 0) {
           const index = this.openPanels.indexOf(0)
-          this.openPanels = index !== -1 
+          this.openPanels = index !== -1
             ? this.openPanels.filter(panel => panel !== 0)
             : this.openPanels
         }
