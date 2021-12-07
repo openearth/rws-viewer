@@ -103,7 +103,7 @@
     },
 
     methods: {
-      ...mapActions('data', [ 'setDisplayLayers' ]),
+      ...mapActions('data', [ 'setDisplayLayers', 'setSelectedLayers' ]),
       ...mapActions('map', [ 'addRasterLayer', 'removeRasterLayer' ]),
 
       onSelectLayers(layerIds) {

@@ -6,6 +6,7 @@
       slot="map"
       :access-token="accessToken"
       :padding="{ left: mapLeftPadding }"
+      mapbox-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
       @styledata="setMapLoaded"
     >
       <v-mapbox-layer

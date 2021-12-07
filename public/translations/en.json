@@ -1,10 +1,17 @@
 {
-  "layers": "Layers",
   "download": "Download",
+  "downloadData": "Download data",
+  "downloadDesc": "Choose a layer to download.",
+  "downloadUnavailable": "Downloading data is not yet available for this layer.",
+  "drawPolygon": "Draw polygon",
+  "drawRectangle": "Draw rectangle",
   "favourites": "Favourites",
   "filterByTag": "Filter by tag",
-  "predefinedSelection": "Use predefined selection",
+  "layers": "Layers",
+  "noLayersSelected": "Select one or more layers",
   "noSelection": "No selection",
-  "drawRectangle": "Draw rectangle",
-  "drawPolygon": "Draw polygon"
+  "predefinedSelection": "Use predefined selection",
+  "layerSelection": "Select from visible layers",
+  "select": "Select",
+  "selectDesc": "Select a portion of the map to download. Either by drawing, or choosing a predefined section."
 }

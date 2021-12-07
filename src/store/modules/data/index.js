@@ -10,6 +10,7 @@ export default {
     flattenedLayers: [],
     layerTags: [],
     layerDialogOpen: false,
+    selectedLayers: [],
   }),
 
   getters: {
@@ -19,6 +20,8 @@ export default {
     layerDialogOpen: state => state.layerDialogOpen,
     availableDisplayLayers: (state, getters, rootState, rootGetters) => omitLayers(state.displayLayers, rootGetters['map/rasterLayerIds']),
     availableFlattenedLayers: (state, getters, rootState, rootGetters) => getters.flattenedLayers.filter(layer => !rootGetters['map/rasterLayerIds'].includes(layer.id)),
+    selectedLayers: state => state.selectedLayers,
+    downloadAvailable: state => state.selectedLayers.some(layer => layer?.downloadUrl !== null),
   },
 
   mutations: {
@@ -37,12 +40,15 @@ export default {
     SET_LAYER_DIALOG_OPEN(state, { open }) {
       state.layerDialogOpen = open
     },
+    SET_SELECTED_LAYERS(state, { layers }) {
+      state.selectedLayers = layers
+    },
   },
 
   actions: {
-    getAppData({ commit, dispatch }, route) {
+    async getAppData({ commit, dispatch }, route) {
       const platform = route?.params?.config
-      const { layers, name } = configRepo.getConfig(platform)
+      const { layers, name } = await configRepo.getConfig(platform)
 
       dispatch('app/setAppName', { name }, { root: true })
       // commit('SET_ORIGINAL_LAYERS', { layers })
@@ -56,6 +62,7 @@ export default {
       const layersById = getLayersById(layers, initialLayerIds)
       if (layersById.length) {
         dispatch('map/setRasterLayers', { layers: layersById }, { root: true })
+        dispatch('data/setSelectedLayers', { layers: layersById }, { root: true })
       }
 
       const tags = getLayersTags(flattenedLayers)
@@ -72,6 +79,10 @@ export default {
 
     setLayerDialogOpen({ commit }, { open }) {
       commit('SET_LAYER_DIALOG_OPEN', { open })
+    },
+
+    setSelectedLayers({ commit }, { layers }) {
+      commit('SET_SELECTED_LAYERS', { layers })
     },
   },
 }
