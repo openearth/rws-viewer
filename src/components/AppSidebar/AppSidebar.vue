@@ -18,6 +18,7 @@
           :key="tab.name"
           :to="`/${appConfig}${tab.page}`"
           :ripple="false"
+          exact-path
         >
           {{ $t(tab.name) }}
           <v-icon>{{ tab.icon }}</v-icon>
