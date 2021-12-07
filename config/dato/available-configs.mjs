@@ -1,8 +1,6 @@
 import fs from 'fs/promises'
 import slugify from '@sindresorhus/slugify'
 
-
-
 export default function handleAvailableConfigs(options) {
   const { publicDir } = options
 
@@ -17,4 +15,3 @@ export default function handleAvailableConfigs(options) {
 
   }
 }
-
