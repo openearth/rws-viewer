@@ -209,7 +209,6 @@
         this.setDrawnFeature(feature)
       },
 
-      // Work in progress
       onDownloadClick() {
         const urls = buildDownloadUrl(this.selectedLayerData, this.selectionCoordinates)
 
@@ -225,8 +224,8 @@
       async generateZipFile(urls) {
         let zip = new JSZip()
 
-        return Promise.all(urls.map((url, index) => {
-          const filename = `${ this.selectedLayerData[index].layer }.csv`
+        return Promise.all(urls.map(({ url, fileType }, index) => {
+          const filename = `${ this.selectedLayerData[index].layer }.${ fileType }`
 
           return JSZipUtils.getBinaryContent(url)
             .then(data => zip.file(filename, data, { binary: true }))
