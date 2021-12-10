@@ -5,12 +5,10 @@ export default {
   namespaced: true,
 
   state: () => ({
-    // originalLayers: [],
     displayLayers: [],
     flattenedLayers: [],
     layerTags: [],
     layerDialogOpen: false,
-    selectedLayers: [],
   }),
 
   getters: {
@@ -20,14 +18,9 @@ export default {
     layerDialogOpen: state => state.layerDialogOpen,
     availableDisplayLayers: (state, getters, rootState, rootGetters) => omitLayers(state.displayLayers, rootGetters['map/rasterLayerIds']),
     availableFlattenedLayers: (state, getters, rootState, rootGetters) => getters.flattenedLayers.filter(layer => !rootGetters['map/rasterLayerIds'].includes(layer.id)),
-    selectedLayers: state => state.selectedLayers,
-    downloadAvailable: state => state.selectedLayers.some(layer => layer?.downloadUrl !== null),
   },
 
   mutations: {
-    // SET_ORIGINAL_LAYERS(state, { layers }) {
-    //   state.originalLayers = Object.freeze(layers)
-    // },
     SET_DISPLAY_LAYERS(state, { layers }) {
       state.displayLayers = Object.freeze(layers)
     },
@@ -40,9 +33,6 @@ export default {
     SET_LAYER_DIALOG_OPEN(state, { open }) {
       state.layerDialogOpen = open
     },
-    SET_SELECTED_LAYERS(state, { layers }) {
-      state.selectedLayers = layers
-    },
   },
 
   actions: {
@@ -51,7 +41,6 @@ export default {
       const { layers, name } = await configRepo.getConfig(platform)
 
       dispatch('app/setAppName', { name }, { root: true })
-      // commit('SET_ORIGINAL_LAYERS', { layers })
       commit('SET_DISPLAY_LAYERS', { layers })
 
       const flattenedLayers = flattenLayers(layers)
@@ -62,16 +51,11 @@ export default {
       const layersById = getLayersById(layers, initialLayerIds)
       if (layersById.length) {
         dispatch('map/setRasterLayers', { layers: layersById }, { root: true })
-        dispatch('data/setSelectedLayers', { layers: layersById }, { root: true })
       }
 
       const tags = getLayersTags(flattenedLayers)
       commit('SET_LAYER_TAGS', { tags })
     },
-
-    // resetDisplayLayers({ commit, state }) {
-    //   commit('SET_DISPLAY_LAYERS', { layers: state.originalLayers })
-    // },
 
     setDisplayLayers({ commit }, { layers }) {
       commit('SET_DISPLAY_LAYERS', { layers })
@@ -79,10 +63,6 @@ export default {
 
     setLayerDialogOpen({ commit }, { open }) {
       commit('SET_LAYER_DIALOG_OPEN', { open })
-    },
-
-    setSelectedLayers({ commit }, { layers }) {
-      commit('SET_SELECTED_LAYERS', { layers })
     },
   },
 }
