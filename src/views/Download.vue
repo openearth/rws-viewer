@@ -1,20 +1,20 @@
 <template>
   <v-container class="download pt-4">
-    <template v-if="!downloadAvailable && !selectedLayersList.length">
+    <template v-if="!downloadIsAvailable && !activeLayersList.length">
       <v-row>
         <v-col>
           <p>{{ $t('noLayersSelected') }}</p>
         </v-col>
       </v-row>
     </template>
-    <template v-if="!downloadAvailable && selectedLayersList.length">
+    <template v-if="!downloadIsAvailable && activeLayersList.length">
       <v-row>
         <v-col>
           <p>{{ $t('downloadUnavailable') }}</p>
         </v-col>
       </v-row>
     </template>
-    <template v-if="downloadAvailable && selectedLayersList.length">
+    <template v-if="downloadIsAvailable && activeLayersList.length">
       <v-row>
         <v-col>
           <h3>{{ $t('select') }}</h3>
@@ -78,7 +78,7 @@
           <v-select
             v-model="selectedLayer"
             :label="$t('layerSelection')"
-            :items="selectedLayersList"
+            :items="activeLayersList"
             dense
             outlined
             hide-details
@@ -117,8 +117,16 @@
     }),
 
     computed: {
-      ...mapGetters('map', [ 'drawMode', 'drawnFeature', 'rasterLayers' ]),
-      ...mapGetters('data', [ 'selectedLayers', 'downloadAvailable' ]),
+      ...mapGetters('map', [ 'drawMode', 'drawnFeature', 'rasterLayerIds' ]),
+      ...mapGetters('data', [ 'flattenedLayers' ]),
+
+      activeLayers() {
+        return this.flattenedLayers.filter(layer => this.rasterLayerIds.includes(layer.id))
+      },
+
+      downloadIsAvailable() {
+        return this.activeLayers.some(layer => layer?.downloadUrl !== null)
+      },
 
       drawnFeatureCoordinates() {
         return this.drawnFeature?.geometry?.coordinates
@@ -135,19 +143,15 @@
         return Object.freeze([ noSelectionObj, ...this.preDefinedAreas ])
       },
 
-      selectedLayersList() {
-        return this.selectedLayers.map(layer => ({
-          text: layer.name,
-          value: layer.id,
+      activeLayersList() {
+        return this.activeLayers.map(({ id, name }) => ({
+          text: name,
+          value: id,
         }))
       },
 
       selectedLayerData() {
-        return this.selectedLayers.find(layer => layer.id === this.selectedLayer)
-      },
-
-      selectionData() {
-        return this.rasterLayers.find(layer => layer.id === this.selectedLayer)
+        return this.activeLayers.find(layer => layer.id === this.selectedLayer)
       },
 
       selectionCoordinates() {
