@@ -215,26 +215,24 @@
 
         this.isGeneratingDownload = true
 
-        urls.forEach((url, index) => {
-          const zip = new JSZip()
-          let filename = `${ this.selectedLayerData[index].layer }.csv`
-
-          JSZipUtils.getBinaryContent(url, (err, data) => {
-            if (err) {
-              throw err
-            }
-
-            zip.file(filename, data, { binary: true })
-
-            if (index + 1 === urls.length) {
-              zip.generateAsync({ type: 'blob' })
-                .then((content) => {
-                  saveAs(content, 'layers.zip')
-                  this.isGeneratingDownload = false
-                })
-            }
+        this.generateZipFile(urls)
+          .then((content) => {
+            saveAs(content, 'test.zip')
+            this.isGeneratingDownload = false
           })
-        })
+      },
+
+      async generateZipFile(urls) {
+        let zip = new JSZip()
+
+        return Promise.all(urls.map((url, index) => {
+          const filename = `${ this.selectedLayerData[index].layer }.csv`
+
+          return JSZipUtils.getBinaryContent(url)
+            .then(data => zip.file(filename, data, { binary: true }))
+            .catch(err => console.log(err))
+        }))
+          .then(() => zip.generateAsync({ type: 'blob' }))
       },
     },
   }
