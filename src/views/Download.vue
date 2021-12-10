@@ -217,7 +217,7 @@
 
         this.generateZipFile(urls)
           .then((content) => {
-            saveAs(content, 'test.zip')
+            saveAs(content, 'layers.zip')
             this.isGeneratingDownload = false
           })
       },
