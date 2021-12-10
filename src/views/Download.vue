@@ -76,10 +76,11 @@
       <v-row>
         <v-col>
           <v-select
-            v-model="selectedLayer"
+            v-model="downloadLayers"
             :label="$t('layerSelection')"
             :items="activeLayersList"
             dense
+            multiple
             outlined
             hide-details
           />
@@ -91,10 +92,14 @@
             color="primary"
             block
             :ripple="false"
-            :disabled="!selectedLayer"
+            :disabled="!downloadLayers.length || isGeneratingDownload"
+            :loading="isGeneratingDownload"
             @click="onDownloadClick"
           >
             {{ $t('downloadData') }}
+            <template #loader>
+              <span>Generating download...</span>
+            </template>
           </v-btn>
         </v-col>
       </v-row>
@@ -103,6 +108,9 @@
 </template>
 
 <script>
+  import JSZip from 'jszip'
+  import JSZipUtils from 'jszip-utils'
+  import { saveAs } from 'file-saver'
   import { mapActions, mapGetters } from 'vuex'
   import metaRepo from '~/repo/metaRepo'
   import buildDownloadUrl from '~/lib/build-download-url'
@@ -113,7 +121,8 @@
     data: () => ({
       preDefinedAreas: [],
       selectedArea: null,
-      selectedLayer: null,
+      downloadLayers: [],
+      isGeneratingDownload: false,
     }),
 
     computed: {
@@ -124,14 +133,14 @@
         return this.flattenedLayers.filter(layer => this.rasterLayerIds.includes(layer.id))
       },
 
-      downloadIsAvailable() {
-        return this.activeLayers.some(layer => layer?.downloadUrl !== null)
-      },
-
       drawnFeatureCoordinates() {
         return this.drawnFeature?.geometry?.coordinates
           ? Array.from(this.drawnFeature?.geometry?.coordinates).map(coordinates => coordinates.flat())
           : []
+      },
+
+      downloadIsAvailable() {
+        return this.activeLayers.some(layer => layer?.downloadUrl !== null)
       },
 
       formattedAreas() {
@@ -151,11 +160,22 @@
       },
 
       selectedLayerData() {
-        return this.activeLayers.find(layer => layer.id === this.selectedLayer)
+        return this.downloadLayers.map(id => this.activeLayers.find(layer => layer.id === id))
       },
 
       selectionCoordinates() {
         return this.drawnFeatureCoordinates.toString().replace(/,/g, ' ')
+      },
+    },
+
+    watch: {
+      rasterLayerIds: {
+        handler: function (val, oldVal) {
+          if (val !== oldVal) {
+            // if rasterLayerIds change, reset selected layers in dropdown.
+            this.downloadLayers = []
+          }
+        },
       },
     },
 
@@ -179,17 +199,42 @@
 
       onAreaSelection(id) {
         this.setDrawMode({ mode: null })
+
         if (id === NO_SELECTION_ID) {
           this.clearDrawnFeature()
           return
         }
+
         const feature = this.preDefinedAreas.find(area => area.id === id)
         this.setDrawnFeature(feature)
       },
 
+      // Work in progress
       onDownloadClick() {
-        const url = buildDownloadUrl(this.selectedLayerData, this.selectionCoordinates)
-        window.location.href = url
+        const urls = buildDownloadUrl(this.selectedLayerData, this.selectionCoordinates)
+
+        this.isGeneratingDownload = true
+
+        urls.forEach((url, index) => {
+          const zip = new JSZip()
+          let filename = `${ this.selectedLayerData[index].layer }.csv`
+
+          JSZipUtils.getBinaryContent(url, (err, data) => {
+            if (err) {
+              throw err
+            }
+
+            zip.file(filename, data, { binary: true })
+
+            if (index + 1 === urls.length) {
+              zip.generateAsync({ type: 'blob' })
+                .then((content) => {
+                  saveAs(content, 'layers.zip')
+                  this.isGeneratingDownload = false
+                })
+            }
+          })
+        })
       },
     },
   }

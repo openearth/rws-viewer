@@ -15,7 +15,7 @@ const filterTemplate = `
   </ogc:Filter>
 `
 
-export default function(layerData = {}, coordinates = '') {
+function createLayerUrl({ layerData, coordinates }) {
   const { downloadUrl, layer } = layerData
   const coordinatesArray = coordinates.split(' ')
   const validCoordinates = ((coordinatesArray.length / 2) - 1) >= 3 // 3 = triangle, 4 = rectangle, 5+ = polygon
@@ -47,4 +47,8 @@ export default function(layerData = {}, coordinates = '') {
   })
 
   return `${ downloadUrl }?${ params }`
+}
+
+export default function(layerData = [], coordinates = '') {
+  return layerData.map(layer => createLayerUrl({ layerData: layer, coordinates }))
 }
