@@ -1,5 +1,7 @@
 import { stringify } from 'query-string'
 
+const PLACEHOLDER = '{{COORDINATES}}'
+
 const filterTemplate = `
   <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
     <ogc:Intersects>
@@ -7,7 +9,7 @@ const filterTemplate = `
       <gml:Polygon xmlns:gml="http://www.opengis.net/gml" srsName="EPSG:4326">
         <gml:exterior>
           <gml:LinearRing>
-            <gml:posList>{{COORDINATES}}</gml:posList>
+            <gml:posList>${ PLACEHOLDER }</gml:posList>
           </gml:LinearRing>
         </gml:exterior>
       </gml:Polygon>
@@ -52,7 +54,7 @@ function createLayerUrl({ layerData, coordinates }) {
   }
 
   if (validCoordinates) {
-    filter = filterTemplate.replace('{{COORDINATES}}', coordinates)
+    filter = filterTemplate.replace(PLACEHOLDER, coordinates)
   }
 
   return { url: `${ downloadUrl }?${ params }`, fileType }
