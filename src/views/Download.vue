@@ -96,11 +96,22 @@
             :loading="isGeneratingDownload"
             @click="onDownloadClick"
           >
-            {{ $t('downloadData') }}
+            {{ buttonText }}
             <template #loader>
-              <span>Generating download...</span>
+              <span>Preparing download...</span>
             </template>
           </v-btn>
+          <transition name="fade">
+            <v-alert
+              v-if="downloadLayers.length"
+              class="mt-2"
+              dense
+              outlined
+              type="info"
+            >
+              Generating the file may take a while
+            </v-alert>
+          </transition>
         </v-col>
       </v-row>
     </template>
@@ -131,6 +142,12 @@
 
       activeLayers() {
         return this.flattenedLayers.filter(layer => this.rasterLayerIds.includes(layer.id))
+      },
+
+      buttonText() {
+        return this.selectedArea
+          ? this.$tc('downloadDataSelection', this.downloadLayers.length)
+          : this.$tc('downloadData', this.downloadLayers.length)
       },
 
       drawnFeatureCoordinates() {
