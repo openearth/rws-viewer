@@ -1,4 +1,6 @@
 {
+  "activeLayers": "Actieve lagen",
+  "availableLayers": "Beschikbare lagen",
   "download": "Download",
   "downloadData": "Download data",
   "downloadDesc": "Kies een laag om te downloaden.",
