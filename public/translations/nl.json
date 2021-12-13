@@ -1,8 +1,8 @@
 {
   "download": "Download",
   "downloadData": "Geen laag geselecteerd | Download laag (.zip) | Download {count} lagen (.zip)",
-  "downloadDataSelection": "Geen laag geselecteerd | Download laag selectie (.zip) | Download selectie uit {count} lagen (.zip)",
-  "downloadDesc": "Kies een laag om te downloaden.",
+  "downloadDataSelection": "Geen laag geselecteerd | Download sectie uit laag (.zip) | Download sectie uit {count} lagen (.zip)",
+  "downloadDesc": "Kies één of meerdere lagen om te downloaden.",
   "downloadUnavailable": "Downloaden van data is nog niet beschikbaar voor deze laag.",
   "drawPolygon": "Teken veelhoek",
   "drawRectangle": "Teken rechthoek",
@@ -14,5 +14,5 @@
   "predefinedSelection": "Gebruik vooraf gedefinieerde selectie",
   "layerSelection": "Selecteer uit zichtbare lagen",
   "select": "Selecteer",
-  "selectDesc": "Selecteer een deel van de kaart om te downloaden. Door te tekenen, of een gedefinieerde sectie te kiezen."
+  "selectDesc": "Selecteer een deel van de kaart om te downloaden. Dit kan door te tekenen, of een voorgedefinieerd sectie te kiezen."
 }
