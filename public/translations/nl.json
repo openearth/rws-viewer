@@ -1,7 +1,7 @@
 {
   "download": "Download",
   "downloadData": "Geen laag geselecteerd | Download laag (.zip) | Download {count} lagen (.zip)",
-  "downloadDataSelection": "Geen laag geselecteerd | Download sectie uit laag (.zip) | Download sectie uit {count} lagen (.zip)",
+  "downloadDataSection": "Geen laag geselecteerd | Download sectie uit laag (.zip) | Download sectie uit {count} lagen (.zip)",
   "downloadDesc": "Kies één of meerdere lagen om te downloaden.",
   "downloadUnavailable": "Downloaden van data is nog niet beschikbaar voor deze laag.",
   "drawPolygon": "Teken veelhoek",

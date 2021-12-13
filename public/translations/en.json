@@ -1,7 +1,7 @@
 {
   "download": "Download",
   "downloadData": "No layer selected | Download layer (.zip) | Download {count} layers (.zip)",
-  "downloadDataSelection": "No layer selected | Download layer section (.zip) | Download section from {count} layers (.zip)",
+  "downloadDataSection": "No layer selected | Download layer section (.zip) | Download section from {count} layers (.zip)",
   "downloadDesc": "Choose one or more layers to download.",
   "downloadUnavailable": "Downloading data is not yet available for this layer.",
   "drawPolygon": "Draw polygon",

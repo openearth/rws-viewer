@@ -146,7 +146,7 @@
 
       buttonText() {
         return this.selectedArea
-          ? this.$tc('downloadDataSelection', this.downloadLayers.length)
+          ? this.$tc('downloadDataSection', this.downloadLayers.length)
           : this.$tc('downloadData', this.downloadLayers.length)
       },
 
