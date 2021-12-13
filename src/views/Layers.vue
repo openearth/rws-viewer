@@ -5,7 +5,7 @@
         <v-expansion-panels v-model="openPanels" multiple>
           <v-expansion-panel :key="0" :disabled="activeLayers.length === 0">
             <v-expansion-panel-header>
-              Active layers
+              {{ $t('activeLayers') }}
             </v-expansion-panel-header>
             <v-expansion-panel-content>
               <layer-list
@@ -17,7 +17,9 @@
           </v-expansion-panel>
 
           <v-expansion-panel :key="1">
-            <v-expansion-panel-header>Available layers</v-expansion-panel-header>
+            <v-expansion-panel-header>
+              {{ $t('availableLayers') }}
+            </v-expansion-panel-header>
             <v-expansion-panel-content>
               <v-select
                 v-model="selectedTags"

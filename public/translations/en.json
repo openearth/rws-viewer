@@ -1,4 +1,6 @@
 {
+  "activeLayers": "Active layers",
+  "availableLayers": "Available layers",
   "download": "Download",
   "downloadData": "No layer selected | Download layer (.zip) | Download {count} layers (.zip)",
   "downloadDataSection": "No layer selected | Download layer section (.zip) | Download section from {count} layers (.zip)",

@@ -1,5 +1,5 @@
 import configRepo from '~/repo/configRepo'
-import { flattenLayers, getLayersTags, getLayersById, omitLayers } from '~/lib/layer-helpers'
+import { flattenLayers, getLayersTags, getLayersById, omitLayers } from '~/lib/layer-helpers.mjs'
 
 export default {
   namespaced: true,
