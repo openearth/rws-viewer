@@ -201,13 +201,11 @@
     },
 
     watch: {
-      rasterLayerIds: {
-        handler: function (val, oldVal) {
-          if (val !== oldVal) {
-            // if rasterLayerIds change, reset selected layers in dropdown.
-            this.downloadLayers = []
-          }
-        },
+      rasterLayerIds(val, oldVal) {
+        if (val !== oldVal) {
+          // if rasterLayerIds change, reset selected layers in dropdown.
+          this.downloadLayers = []
+        }
       },
     },
 
