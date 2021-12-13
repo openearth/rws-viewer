@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
-import { VALID_PLATFORMS } from '../lib/constants'
+import { VALID_VIEWER_CONFIGS } from '../lib/constants'
 
 let hasHadFirstRoute = false
 
@@ -37,9 +37,9 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const storedConfig = store.getters['app/viewerConfig']
-  const config = VALID_PLATFORMS.includes(to.params.config)
+  const config = VALID_VIEWER_CONFIGS.includes(to.params.config)
       ? to.params.config
-      : VALID_PLATFORMS[0]
+      : VALID_VIEWER_CONFIGS[0]
 
   if (!storedConfig) {
     store.commit('app/SET_VIEWER_CONFIG', config)
