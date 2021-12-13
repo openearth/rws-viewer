@@ -84,6 +84,17 @@
             outlined
             hide-details
           />
+          <transition name="fade" mode="out-in">
+            <v-alert
+              v-if="!allUrlsAreValid"
+              class="mt-2 mb-0"
+              dense
+              outlined
+              type="error"
+            >
+              One or more layers cannot be downloaded
+            </v-alert>
+          </transition>
         </v-col>
       </v-row>
       <v-row>
@@ -92,7 +103,7 @@
             color="primary"
             block
             :ripple="false"
-            :disabled="!downloadLayers.length || isGeneratingDownload"
+            :disabled="!downloadLayers.length || isGeneratingDownload || !allUrlsAreValid"
             :loading="isGeneratingDownload"
             @click="onDownloadClick"
           >
@@ -103,7 +114,7 @@
           </v-btn>
           <transition name="fade">
             <v-alert
-              v-if="downloadLayers.length"
+              v-if="downloadLayers.length && allUrlsAreValid"
               class="mt-2"
               dense
               outlined
@@ -142,6 +153,10 @@
 
       activeLayers() {
         return this.flattenedLayers.filter(layer => this.rasterLayerIds.includes(layer.id))
+      },
+
+      allUrlsAreValid() {
+        return this.selectedLayerData.every(({ downloadUrl }) => Boolean(downloadUrl))
       },
 
       buttonText() {

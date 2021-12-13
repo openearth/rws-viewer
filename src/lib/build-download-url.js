@@ -7,7 +7,9 @@ import {
 
 function buildDownloadUrl({ layerData = {}, coordinates = '' }) {
   const { downloadUrl } = layerData
-  const outputType = isWcsLayer(layerData) && 'tiff' || isWfsLayer(layerData) && 'csv'
+  const isWcsType = isWcsLayer(layerData)
+  const isWfsType = isWfsLayer(layerData)
+  const outputType = isWcsType && 'tiff' || isWfsType && 'csv'
   const filter = createDownloadFilter(coordinates)
   const params = createDownloadParameters({ layerData, filter })
 
