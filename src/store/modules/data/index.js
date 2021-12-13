@@ -2,6 +2,7 @@ import { uniqBy, uniq, difference } from 'ramda'
 import configRepo from '~/repo/configRepo'
 import { flattenLayers, getLayersTags, getLayersById, omitLayers } from '~/lib/layer-helpers'
 import router from '../../../router'
+import slugify from '@sindresorhus/slugify'
 
 export default {
   namespaced: true,
@@ -21,6 +22,7 @@ export default {
     layerDialogOpen: state => state.layerDialogOpen,
     availableDisplayLayers: (state, getters, rootState, rootGetters) => omitLayers(getters.displayLayers, rootGetters['map/rasterLayerIds']),
     availableFlattenedLayers: (state, getters, rootState, rootGetters) => getters.flattenedLayers.filter(layer => !rootGetters['map/rasterLayerIds'].includes(layer.id)),
+    loadedViewerConfigs: state => state.displayLayers.map(({ name }) => slugify(name)),
   },
 
   mutations: {
