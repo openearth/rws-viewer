@@ -14,6 +14,8 @@
         text
         dark
         :input-value="active"
+        :loading="isLoading(category)"
+        :disabled="isLoading(category)"
         @click="toggleCategory(category)"
       >
         {{ category }}
@@ -31,17 +33,30 @@
     name: 'CategorySwitcher',
     data: () => ({
       categories: CATEGORIES,
+      loading: [],
     }),
     computed: {
-      ...mapGetters('data', [ 'rawDisplayLayers' ]),
+      ...mapGetters('data', [ 'rawDisplayLayers', 'loadedViewerConfigs' ]),
       value() {
         return this.rawDisplayLayers.map(item => slugify(item.name))
       },
     },
     methods: {
-      ...mapActions('data', [ 'addViewerData' ]),
+      ...mapActions('data', [ 'addViewerData', 'removeViewerData' ]),
       toggleCategory(category) {
-        this.addViewerData(category)
+        if (this.loadedViewerConfigs.includes(category)) {
+          this.removeViewerData(category)
+        } else {
+          this.loading.push(category)
+          this.addViewerData(category)
+            .finally(() => {
+              const index = this.loading.indexOf(category)
+              this.loading.splice(index, 1)
+            })
+        }
+      },
+      isLoading(category) {
+        return this.loading.indexOf(category) !== -1
       },
     },
   }

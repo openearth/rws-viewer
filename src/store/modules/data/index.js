@@ -85,6 +85,30 @@ export default {
       return { layers: viewerLayers, name }
     },
 
+    removeViewerData({ state, commit }, viewer) {
+      const viewerLayers = state.displayLayers.find(layer => slugify(layer.name) === viewer)
+
+      const flattenedViewerLayers = flattenLayers(viewerLayers)
+      const flattenedViewerLayerIds = flattenedViewerLayers.map(({ id }) => id)
+      const flattenedViewerLayersToRemain = state.flattenedLayers.filter(layer => flattenedViewerLayerIds.includes(layer.id) === false)
+      commit('SET_FLATTENED_LAYERS', { layers: flattenedViewerLayersToRemain })
+
+      const displayLayersToRemain = state.displayLayers.filter(layer => slugify(layer.name) !== viewer)
+      commit('SET_DISPLAY_LAYERS', { layers: displayLayersToRemain })
+
+      const viewerTags = getLayersTags(flattenedViewerLayers)
+      const tagsToRemain = state.layerTags.filter(tag => viewerTags.includes(tag) === false)
+      commit('SET_LAYER_TAGS', { tags: tagsToRemain })
+
+      const currentRoute = router.currentRoute
+      const config = currentRoute.params.config
+        .split(',')
+        .filter(name => name !== viewer)
+        .join(',')
+      commit('app/SET_VIEWER_CONFIG', config, { root: true })
+      router.replace({ ...currentRoute, ...{ params: { ...currentRoute.params, ...{ config } } } })
+    },
+
     setDisplayLayers({ commit }, { layers }) {
       commit('SET_DISPLAY_LAYERS', { layers })
     },
