@@ -12,11 +12,11 @@ export default {
   }),
 
   getters: {
-    displayLayers: state => state.displayLayers,
+    displayLayers: state => state.displayLayers.length === 1 ? state.displayLayers[0].children : state.displayLayers,
     flattenedLayers: state => state.flattenedLayers,
     layerTags: state => state.layerTags,
     layerDialogOpen: state => state.layerDialogOpen,
-    availableDisplayLayers: (state, getters, rootState, rootGetters) => omitLayers(state.displayLayers, rootGetters['map/rasterLayerIds']),
+    availableDisplayLayers: (state, getters, rootState, rootGetters) => omitLayers(getters.displayLayers, rootGetters['map/rasterLayerIds']),
     availableFlattenedLayers: (state, getters, rootState, rootGetters) => getters.flattenedLayers.filter(layer => !rootGetters['map/rasterLayerIds'].includes(layer.id)),
   },
 
