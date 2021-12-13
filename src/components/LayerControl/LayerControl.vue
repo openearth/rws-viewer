@@ -8,13 +8,6 @@
       >
         {{ name }}
       </span>
-      <div v-if="isLayer" class="d-flex align-center ml-3">
-        <v-btn icon @click.stop="$emit('show-info', id)">
-          <v-icon>
-            mdi-information
-          </v-icon>
-        </v-btn>
-      </div>
     </div>
     <v-expand-transition>
       <div v-if="isLayer && selected">
@@ -26,7 +19,7 @@
           :max="1"
           :step="0.1"
           label="Opacity"
-          @end="$emit('update-layer-opacity', { id, opacity: layerOpacity })"
+          @end="onOpacityChange"
         />
       </div>
     </v-expand-transition>
@@ -58,9 +51,11 @@
         required: true,
       },
     },
+
     data: () => ({
       layerOpacity: 1,
     }),
+
     watch: {
       selected: {
         handler(selected) {
@@ -68,6 +63,12 @@
             this.layerOpacity = 1
           }
         },
+      },
+    },
+
+    methods: {
+      onOpacityChange() {
+        this.$emit('update-layer-opacity', { id: this.id, opacity: this.layerOpacity })
       },
     },
   }

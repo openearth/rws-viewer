@@ -6,6 +6,16 @@
       close
       @click:close="onClose(layer.id)"
     >
+      <v-btn
+        class="ml-n1 mr-1"
+        icon
+        x-small
+        @click.stop="onClick(layer.id)"
+      >
+        <v-icon>
+          mdi-information
+        </v-icon>
+      </v-btn>
       {{ layer.name }}
     </v-chip>
   </div>
@@ -34,6 +44,10 @@
     },
     setup(props, context) {
       return {
+        onClick(layerId) {
+          context.emit('show-layer-info', layerId)
+        },
+
         onClose(layerId) {
           context.emit('remove-layer', layerId)
         },

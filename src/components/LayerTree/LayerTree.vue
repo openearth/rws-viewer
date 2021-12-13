@@ -12,7 +12,7 @@
         :name="item.name"
         :selected="selected"
         :parent-ids="item.parentIds.toString()"
-        :is-layer="false"
+        :is-layer="Boolean(item.layer)"
       />
     </template>
   </v-treeview>

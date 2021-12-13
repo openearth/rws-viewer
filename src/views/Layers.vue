@@ -12,6 +12,7 @@
                 chip
                 :layers="activeLayers"
                 @remove-layer="onRemoveLayer"
+                @show-layer-info="onShowLayerInfo"
               />
             </v-expansion-panel-content>
           </v-expansion-panel>
@@ -105,7 +106,7 @@
     },
 
     methods: {
-      ...mapActions('data', [ 'setDisplayLayers', 'setSelectedLayers' ]),
+      ...mapActions('data', [ 'setDisplayLayers', 'setLayerDialogOpen', 'setSelectedLayers' ]),
       ...mapActions('map', [ 'addRasterLayer', 'removeRasterLayer' ]),
 
       onSelectLayers(layerIds) {
@@ -135,6 +136,11 @@
             ? this.openPanels.filter(panel => panel !== 0)
             : this.openPanels
         }
+      },
+
+      onShowLayerInfo(layerId) {
+        console.log({ layerId })
+        this.setLayerDialogOpen({ open: true })
       },
     },
   }
