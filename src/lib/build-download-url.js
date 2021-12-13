@@ -44,7 +44,6 @@ function createLayerUrl({ layerData, coordinates }) {
   const validCoordinates = ((coordinatesArray.length / 2) - 1) >= 3 // 3 = triangle, 4 = rectangle, 5+ = polygon
   const isWfsLayer = Boolean(downloadUrl && downloadUrl.endsWith('wfs'))
   const isWcsLayer = Boolean(downloadUrl && downloadUrl.endsWith('wcs'))
-  const params = isWcsLayer && wcsParams(layer) || isWfsLayer && wfsParams(layer, filter)
   const fileType = isWcsLayer && 'tiff' || isWfsLayer && 'csv'
   let filter = null
 
@@ -56,6 +55,8 @@ function createLayerUrl({ layerData, coordinates }) {
   if (validCoordinates) {
     filter = filterTemplate.replace(PLACEHOLDER, coordinates)
   }
+
+  const params = isWcsLayer && wcsParams(layer) || isWfsLayer && wfsParams(layer, filter)
 
   return { url: `${ downloadUrl }?${ params }`, fileType }
 }
