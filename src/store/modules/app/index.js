@@ -28,7 +28,7 @@ export default {
   },
 
   actions: {
-    setviewerName({ commit }, { name }) {
+    setViewerName({ commit }, { name }) {
       document.title = name
       commit('SET_VIEWER_NAME', { name })
     },
