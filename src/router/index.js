@@ -36,13 +36,13 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const storedConfig = store.getters['app/appConfig']
+  const storedConfig = store.getters['app/viewerConfig']
   const config = VALID_PLATFORMS.includes(to.params.config)
       ? to.params.config
       : VALID_PLATFORMS[0]
 
   if (!storedConfig) {
-    store.commit('app/SET_APP_CONFIG', config)
+    store.commit('app/SET_VIEWER_CONFIG', config)
   }
 
   if (!to.params.config) {

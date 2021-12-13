@@ -1,5 +1,5 @@
 <template>
-  <app-shell :header-title="appName">
+  <app-shell :header-title="viewerName">
     <locale-switcher slot="header-right" />
 
     <mapbox-map
@@ -51,7 +51,7 @@
     }),
 
     computed: {
-      ...mapGetters('app', [ 'appName', 'appNavigationOpen', 'appNavigationWidth' ]),
+      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
       ...mapGetters('map', [ 'rasterLayers', 'drawMode', 'drawnFeature' ]),
       mapLeftPadding() {
         return this.appNavigationOpen ? this.appNavigationWidth : 0

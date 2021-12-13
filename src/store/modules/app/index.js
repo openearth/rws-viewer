@@ -4,33 +4,33 @@ export default {
   state: () => ({
     appNavigationOpen: true,
     appNavigationWidth: 440,
-    appConfig: '',
-    appName: '',
+    viewerConfig: '',
+    viewerName: '',
   }),
 
   getters: {
     appNavigationOpen: state => state.appNavigationOpen,
     appNavigationWidth: state => state.appNavigationWidth,
-    appName: state => state.appName,
-    appConfig: state => state.appConfig,
+    viewerName: state => state.viewerName,
+    viewerConfig: state => state.viewerConfig,
   },
 
   mutations: {
-    SET_APP_NAME(state, { name }) {
-      state.appName = name
+    SET_VIEWER_NAME(state, { name }) {
+      state.viewerName = name
     },
     SET_APP_NAVIGATION_OPEN(state, { open }) {
       state.appNavigationOpen = open
     },
-    SET_APP_CONFIG(state, config) {
-      state.appConfig = config
+    SET_VIEWER_CONFIG(state, config) {
+      state.viewerConfig = config
     },
   },
 
   actions: {
-    setAppName({ commit }, { name }) {
+    setviewerName({ commit }, { name }) {
       document.title = name
-      commit('SET_APP_NAME', { name })
+      commit('SET_VIEWER_NAME', { name })
     },
 
     setNavigationOpen({ commit }, { open }) {

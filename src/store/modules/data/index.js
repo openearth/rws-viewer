@@ -40,7 +40,7 @@ export default {
       const platform = route?.params?.config
       const { layers, name } = await configRepo.getConfig(platform)
 
-      dispatch('app/setAppName', { name }, { root: true })
+      dispatch('app/setviewerName', { name }, { root: true })
       commit('SET_DISPLAY_LAYERS', { layers })
 
       const flattenedLayers = flattenLayers(layers)
