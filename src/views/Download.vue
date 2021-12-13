@@ -92,7 +92,7 @@
               outlined
               type="error"
             >
-              One or more layers cannot be downloaded
+              {{ $t('preventDownload') }}
             </v-alert>
           </transition>
         </v-col>
@@ -109,18 +109,18 @@
           >
             {{ buttonText }}
             <template #loader>
-              <span>Preparing download...</span>
+              <span>{{ $t('preparingDownload') }}</span>
             </template>
           </v-btn>
           <transition name="fade">
             <v-alert
               v-if="downloadLayers.length && allUrlsAreValid"
-              class="mt-2"
+              class="mt-2 mb-0"
               dense
               outlined
               type="info"
             >
-              Generating the file may take a while
+              {{ $t('downloadNotice') }}
             </v-alert>
           </transition>
         </v-col>
