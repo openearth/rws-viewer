@@ -3,7 +3,7 @@
     <locale-switcher slot="header-right" />
 
     <v-fade-transition mode="out-in">
-      <mapbox-legend />
+      <mapbox-legend v-if="rasterLayerIds.length" />
     </v-fade-transition>
 
     <mapbox-map
@@ -58,7 +58,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'rasterLayers', 'drawMode', 'drawnFeature' ]),
+      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'rasterLayerIds', 'rasterLayers' ]),
       mapLeftPadding() {
         return this.appNavigationOpen ? this.appNavigationWidth : 0
       },
