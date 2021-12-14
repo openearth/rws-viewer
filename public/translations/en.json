@@ -15,5 +15,12 @@
   "predefinedSelection": "Use predefined selection",
   "layerSelection": "Select from visible layers",
   "select": "Select",
-  "selectDesc": "Select a portion of the map to download. Either by drawing, or choosing a predefined section."
+  "selectDesc": "Select a portion of the map to download. Either by drawing, or choosing a predefined section.",
+  "selectLayersToView": "Select layers to view",
+  "chooseLayers": "Choose layers",
+  "close": "Close",
+  "searchInAvailableLayerNames": "Search in available layer names",
+  "expandAll": "Expand all",
+  "collapseAll": "Collapse all",
+  "onlyActiveLayers": "Only active layers"
 }
