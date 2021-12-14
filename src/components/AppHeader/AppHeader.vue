@@ -12,7 +12,7 @@
     </v-toolbar-title>
 
     <v-spacer />
-    <CategorySwitcher />    
+    <category-switcher />    
     <v-spacer />
 
     <slot name="right" />
