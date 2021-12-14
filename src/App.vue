@@ -2,6 +2,10 @@
   <app-shell :header-title="appName">
     <locale-switcher slot="header-right" />
 
+    <v-fade-transition mode="out-in">
+      <mapbox-legend />
+    </v-fade-transition>
+
     <mapbox-map
       slot="map"
       :access-token="accessToken"
@@ -33,7 +37,8 @@
 
   const LayerInfoDialog = () => import('~/components/LayerInfoDialog/LayerInfoDialog')
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
-  import LocaleSwitcher from './components/LocaleSwitcher/LocaleSwitcher'
+  import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
+  import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
 
   const AppShell = () => import('~/components/AppShell/AppShell')
 
@@ -41,9 +46,10 @@
     components: {
       AppShell,
       LayerInfoDialog,
-      MapboxMap,
-      MapboxDrawControl,
       LocaleSwitcher,
+      MapboxDrawControl,
+      MapboxLegend,
+      MapboxMap,
     },
 
     data: () => ({
