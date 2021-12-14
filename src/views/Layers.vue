@@ -1,45 +1,9 @@
 <template>
   <v-container class="layers pt-4">
-    <v-row>
-      <v-col>
-        <v-expansion-panels v-model="openPanels" multiple>
-          <v-expansion-panel :key="0" :disabled="activeLayers.length === 0">
-            <v-expansion-panel-header>
-              {{ $t('activeLayers') }}
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <layer-list
-                chip
-                :layers="activeLayers"
-                @remove-layer="onRemoveLayer"
-              />
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-
-          <v-expansion-panel :key="1">
-            <v-expansion-panel-header>
-              {{ $t('availableLayers') }}
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <v-select
-                v-model="selectedTags"
-                class="pb-1"
-                :label="$t('filterByTag')"
-                multiple
-                dense
-                outlined
-                hide-details
-                :items="layerTags"
-              />
-              <layer-tree
-                :layers="availableLayers"
-                @select-layers="onSelectLayers"
-              />
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </v-col>
-    </v-row>
+    <layer-chooser
+      @select-layers="onSelectLayers"
+      @remove-layers="onRemoveLayer"
+    />
   </v-container>
 </template>
 
@@ -47,44 +11,17 @@
   import { equals } from 'ramda'
   import { mapActions, mapGetters } from 'vuex'
 
-  const LayerList = () => import('~/components/LayerList/LayerList')
-  const LayerTree = () => import('~/components/LayerTree/LayerTree')
+  const LayerChooser = () => import('~/components/LayerChooser/LayerChooser.vue')
 
   export default {
     name: 'Layers',
 
-    components: {
-      LayerList,
-      LayerTree,
-    },
-
-    data: () => ({
-      selectedTags: [],
-      openPanels: [ 1 ],
-    }),
+    components: { LayerChooser },
 
     computed: {
       ...mapGetters('app', [ 'viewerConfig' ]),
-      ...mapGetters('data', [
-        'displayLayers',
-        'flattenedLayers',
-        'availableFlattenedLayers',
-        'layerTags',
-        'availableDisplayLayers',
-      ]),
-      ...mapGetters('map', [
-        'rasterLayerIds',
-        'rasterLayers',
-      ]),
-
-      availableLayers() {
-        if (!this.selectedTags.length) {
-          return this.availableDisplayLayers
-        }
-
-        return this.availableFlattenedLayers.filter(({ tags }) =>
-          this.selectedTags.every(tag => tags.includes(tag)))
-      },
+      ...mapGetters('data', [ 'flattenedLayers', 'layerTags' ]),
+      ...mapGetters('map', [ 'rasterLayerIds', 'rasterLayers' ]),
 
       activeLayers() {
         return this.flattenedLayers.filter(layer => this.rasterLayerIds.includes(layer.id))
@@ -103,14 +40,7 @@
       },
     },
 
-    mounted() {
-      if (this.activeLayers.length > 0) {
-        this.openPanels.push(0)
-      }
-    },
-
     methods: {
-      ...mapActions('data', [ 'setDisplayLayers', 'setSelectedLayers' ]),
       ...mapActions('map', [ 'addRasterLayer', 'removeRasterLayer' ]),
 
       onSelectLayers(layerIds) {
@@ -120,25 +50,14 @@
         if (layers.length) {
           this.addRasterLayer({ layers })
         }
-
-        if (this.openPanels.includes(0) === false) {
-          this.openPanels.push(0)
-        }
       },
 
-      onRemoveLayer(layerId) {
-        const layerToRemove = this.flattenedLayers.find(({ id }) => id === layerId)
+      onRemoveLayer(layerIds) {
+        const layers = layerIds
+          .map(layerId => this.flattenedLayers.find(({ id }) => id === layerId))
 
-        if (layerToRemove) {
-          const layers = [ layerToRemove ]
+        if (layers.length) {
           this.removeRasterLayer({ layers })
-        }
-
-        if (this.activeLayers.length === 0) {
-          const index = this.openPanels.indexOf(0)
-          this.openPanels = index !== -1
-            ? this.openPanels.filter(panel => panel !== 0)
-            : this.openPanels
         }
       },
     },
