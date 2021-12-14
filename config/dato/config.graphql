@@ -13,16 +13,16 @@ query ($first: IntType, $skip: IntType = 0) {
         title
       }
       metadata {
-        title
-        content
+        key: title
+        value: content
       }
     }
     parent {
       id
     }
     metadata {
-      title
-      content
+      key: title
+      value: content
     }
   }
   _allMenusMeta {
