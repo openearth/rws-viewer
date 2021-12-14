@@ -1,8 +1,9 @@
 import { uniqBy, uniq, difference } from 'ramda'
 import configRepo from '~/repo/configRepo'
-import { flattenLayers, getLayersTags, getLayersById, omitLayers } from '~/lib/layer-helpers'
+import { flattenLayers, getLayersTags, getLayersById, omitLayers } from '~/lib/layer-helpers.mjs'
 import router from '../../../router'
 import slugify from '@sindresorhus/slugify'
+
 
 export default {
   namespaced: true,
