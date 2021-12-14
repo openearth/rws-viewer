@@ -1,28 +1,55 @@
 <template>
   <v-card
-    class="map-legend overflow-y-auto"
-    flat
-    min-width="300"
-    max-width="350"
+    class="map-legend"
+    :class="{ 'map-legend--open': showLegend }"
+    elevation="4"
+    tile
     :max-height="maxLegendHeight"
+    width="350"
   >
-    <v-expansion-panels>
-      <v-expansion-panel
-        v-for="(layer, index) in activeLayers"
-        :key="index"
+    <v-card-title class="map-legend__title">
+      {{ $tc('legends', activeLayers.length) }}
+
+      <v-btn
+        class="map-legend__button"
+        :class="{ 'map-legend__button--active': showLegend }"
+        icon
+        @click="toggleLegend"
       >
-        <v-expansion-panel-header>
-          {{ layer.name }}
-        </v-expansion-panel-header>
-        <v-expansion-panel-content eager>
-          <img
-            alt=""
-            :src="legendUrl(layer)"
-            style="width: auto;max-width: 100%;height: auto;"
-          >
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
+        <v-icon>mdi-chevron-down</v-icon>
+      </v-btn>
+    </v-card-title>
+
+    <v-card-text v-if="activeLayers.length >= 2" class="map-legend__content">
+      <v-expansion-panels>
+        <v-expansion-panel
+          v-for="(layer, index) in activeLayers"
+          :key="index"
+        >
+          <v-expansion-panel-header>
+            {{ layer.name }}
+          </v-expansion-panel-header>
+          <v-expansion-panel-content eager>
+            <img
+              class="map-legend__image"
+              alt=""
+              :src="legendUrl(layer)"
+            >
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-card-text>
+
+    <v-card-text v-else class="map-legend__content">
+      <p class="body-1 mb-2">
+        {{ activeLayers[0].name }}
+      </p>
+      <img
+        class="map-legend__image"
+        alt=""
+        :src="legendUrl(activeLayers[0])"
+      >
+    </v-card-text>
   </v-card>
 </template>
 
@@ -34,6 +61,7 @@
     data: () => ({
       maxLegendHeight: 'calc(100vh - 115px)', // subtracts toolbar, margins and paddings.
       selectedLegend: null,
+      showLegend: false,
     }),
 
     computed: {
@@ -49,15 +77,56 @@
       legendUrl(layer) {
         return buildLegendUrl(layer)
       },
+
+      toggleLegend() {
+        this.showLegend = !this.showLegend
+      },
     },
   }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
   .map-legend {
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
     position: absolute;
     right: $spacing-default;
-    bottom: $spacing-large;
-    background-color: transparent;
+    transform: translateY(calc(100% - 60px));
+    transition: transform .3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 2;
+  }
+
+  .map-legend--open {
+    transform: translateY(0%);
+  }
+
+  .map-legend__button {
+    transform: rotate(-180deg);
+    transition: transform .4s cubic-bezier(0.25, 0.8, 0.5, 1);
+  }
+
+  .map-legend__button--active {
+    transform: rotate(0deg);
+  }
+
+  .map-legend__title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: $spacing-small;
+    padding-bottom: 0;
+  }
+
+  .map-legend__content.v-card__text {
+    padding-top: $spacing-small;
+    overflow-y: auto;
+  }
+
+  .map-legend__image {
+    height: auto;
+    max-width: 100%;
+    width: auto;
   }
 </style>
