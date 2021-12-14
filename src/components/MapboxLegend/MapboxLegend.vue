@@ -15,13 +15,11 @@
           {{ layer.name }}
         </v-expansion-panel-header>
         <v-expansion-panel-content eager>
-          <div v-if="layer.url">
-            <img
-              alt=""
-              :src="legendUrl(layer)"
-              style="width: auto;max-width: 100%;height: auto;"
-            >
-          </div>
+          <img
+            alt=""
+            :src="legendUrl(layer)"
+            style="width: auto;max-width: 100%;height: auto;"
+          >
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
