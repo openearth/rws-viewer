@@ -1,4 +1,4 @@
-import { difference, head, update } from 'ramda'
+import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import mapLayerOpacity from '~/lib/map-layer-opacity'
 
@@ -68,12 +68,11 @@ export default {
     addRasterLayer({ commit, state }, { layers }) {
       const wmsLayers = layers.map(layer => buildWmsLayer(layer))
       const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
-      const diffObjects = difference(mappedWmsLayers, state.rasterLayers)
-      const layer = head(diffObjects)
+      const layersToAdd = difference(mappedWmsLayers, state.rasterLayers)
 
-      if (layer) {
+      layersToAdd.forEach(layer => {
         commit('ADD_RASTER_LAYER', { layer })
-      }
+      })
     },
 
     removeRasterLayer({ commit }, { layers }) {
