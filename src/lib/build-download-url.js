@@ -1,38 +1,24 @@
-import { stringify } from 'query-string'
+import {
+  createDownloadFilter,
+  createDownloadParameters,
+  isWcsLayer,
+  isWfsLayer,
+} from '~/lib/download-helpers'
 
-const filterTemplate = `
-  <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
-    <ogc:Intersects>
-      <ogc:PropertyName/>
-      <gml:Polygon xmlns:gml="http://www.opengis.net/gml" srsName="EPSG:4326">
-        <gml:exterior>
-          <gml:LinearRing>
-            <gml:posList>{{COORDINATES}}</gml:posList>
-          </gml:LinearRing>
-        </gml:exterior>
-      </gml:Polygon>
-    </ogc:Intersects>
-  </ogc:Filter>
-`
+function buildDownloadUrl({ layerData = {}, coordinates = '' }) {
+  const { downloadUrl } = layerData
+  const isWcsType = isWcsLayer(layerData)
+  const isWfsType = isWfsLayer(layerData)
+  const outputType = isWcsType && 'tiff' || isWfsType && 'csv'
+  const filter = createDownloadFilter(coordinates)
+  const params = createDownloadParameters({ layerData, filter })
 
-export default function(layerData = {}, coordinates = []) {
-  let filter = null
-
-  if (coordinates && coordinates.length) {
-    filter = filterTemplate.replace('{{COORDINATES}}', coordinates)
+  return {
+    url: `${ downloadUrl }?${ params }`,
+    fileType: outputType,
   }
+}
 
-  const params = stringify({
-    'typeName': layerData.layer,
-    'request': 'GetFeature',
-    'Content-Disposition': 'attachment',
-    'filename': layerData.layer + '.csv',
-    'srsName': 'EPSG:4326',
-    'service': 'WFS',
-    'version': '1.1.0',
-    'outputFormat': 'csv',
-    ...(coordinates.length && { filter: filter }),
-  })
-
-  return `${ layerData.downloadUrl }?${ params }`
+export default function(layerData = [], coordinates = '') {
+  return layerData.map(layer => buildDownloadUrl({ layerData: layer, coordinates }))
 }
