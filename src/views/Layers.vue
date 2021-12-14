@@ -44,13 +44,14 @@
 </template>
 
 <script>
+  import { equals } from 'ramda'
   import { mapActions, mapGetters } from 'vuex'
 
   const LayerList = () => import('~/components/LayerList/LayerList')
   const LayerTree = () => import('~/components/LayerTree/LayerTree')
 
   export default {
-    name: 'Layer',
+    name: 'Layers',
 
     components: {
       LayerList,
@@ -63,7 +64,7 @@
     }),
 
     computed: {
-      ...mapGetters('app', [ 'appConfig' ]),
+      ...mapGetters('app', [ 'viewerConfig' ]),
       ...mapGetters('data', [
         'displayLayers',
         'flattenedLayers',
@@ -91,10 +92,14 @@
     },
 
     watch: {
-      activeLayers(newValue) {
+      activeLayers(newValue, oldValue) {
+        if (equals(newValue, oldValue)) {
+          return
+        }
+
         const url = new URL(window.location.href)
         url.searchParams.set('layers', newValue.map(({ id }) => id).join(','))
-        this.$router.replace(`/${ this.appConfig }/?${ url.searchParams.toString() }`)
+        this.$router.replace(`/${ this.viewerConfig }/?${ url.searchParams.toString() }`)
       },
     },
 

@@ -1,5 +1,9 @@
+import { uniqBy, uniq, difference } from 'ramda'
 import configRepo from '~/repo/configRepo'
 import { flattenLayers, getLayersTags, getLayersById, omitLayers } from '~/lib/layer-helpers.mjs'
+import router from '../../../router'
+import slugify from '@sindresorhus/slugify'
+
 
 export default {
   namespaced: true,
@@ -12,12 +16,14 @@ export default {
   }),
 
   getters: {
-    displayLayers: state => state.displayLayers,
+    rawDisplayLayers: state => state.displayLayers,
+    displayLayers: (state, getters) => getters.rawDisplayLayers.length === 1 ? getters.rawDisplayLayers[0].children : getters.rawDisplayLayers,
     flattenedLayers: state => state.flattenedLayers,
     layerTags: state => state.layerTags,
     layerDialogOpen: state => state.layerDialogOpen,
-    availableDisplayLayers: (state, getters, rootState, rootGetters) => omitLayers(state.displayLayers, rootGetters['map/rasterLayerIds']),
+    availableDisplayLayers: (state, getters, rootState, rootGetters) => omitLayers(getters.displayLayers, rootGetters['map/rasterLayerIds']),
     availableFlattenedLayers: (state, getters, rootState, rootGetters) => getters.flattenedLayers.filter(layer => !rootGetters['map/rasterLayerIds'].includes(layer.id)),
+    loadedViewerConfigs: state => state.displayLayers.map(({ name }) => slugify(name)),
   },
 
   mutations: {
@@ -36,25 +42,72 @@ export default {
   },
 
   actions: {
-    async getAppData({ commit, dispatch }, route) {
-      const platform = route?.params?.config
-      const { layers, name } = await configRepo.getConfig(platform)
+    async getAppData({ dispatch }, route) {
+      const viewer = route?.params?.config
+      const { layers, name } = await dispatch('addViewerData', viewer)
 
-      dispatch('app/setAppName', { name }, { root: true })
-      commit('SET_DISPLAY_LAYERS', { layers })
-
-      const flattenedLayers = flattenLayers(layers)
-      commit('SET_FLATTENED_LAYERS', { layers: flattenedLayers })
+      dispatch('app/setViewerName', { name }, { root: true })
 
       const searchParams = new URLSearchParams(window.location.search)
       const initialLayerIds = (searchParams.get('layers') || '').split(',')
       const layersById = getLayersById(layers, initialLayerIds)
       if (layersById.length) {
         dispatch('map/setRasterLayers', { layers: layersById }, { root: true })
+      }      
+    },
+
+    async addViewerData({ commit, state }, viewer) {
+      const { layers: viewerLayers, name } = await configRepo.getConfig(viewer)
+
+      const stateLayers = state.displayLayers
+      commit('SET_DISPLAY_LAYERS', { layers: [ ...stateLayers, ...viewerLayers ] })
+
+      const stateFlattenedLayers = state.flattenedLayers
+      const flattenedViewerLayers = flattenLayers(viewerLayers)
+      const flattenedLayers = uniqBy(layer => layer.id, [ ...stateFlattenedLayers, ...flattenedViewerLayers ])
+      commit('SET_FLATTENED_LAYERS', { layers: flattenedLayers })
+
+      const stateTags = state.layerTags
+      const viewerTags = getLayersTags(flattenedViewerLayers)
+      const tags = uniq([ ...stateTags, ...viewerTags ])
+      commit('SET_LAYER_TAGS', { tags })
+
+      const currentRoute = router.currentRoute
+      const viewersInRoute = currentRoute.params.config.split(',')
+      const newViewerParts = viewer.split(',')
+      const viewerPartsToAdd = difference(newViewerParts, viewersInRoute)
+      if (viewerPartsToAdd.length) {
+        const config = [ currentRoute.params.config, viewerPartsToAdd.join(',') ].join(',')
+        const params = { ...currentRoute.params, config }
+        commit('app/SET_VIEWER_CONFIG', params.config, { root: true })
+        router.replace({ ...currentRoute, ...{ params } })
       }
 
-      const tags = getLayersTags(flattenedLayers)
-      commit('SET_LAYER_TAGS', { tags })
+      return { layers: viewerLayers, name }
+    },
+
+    removeViewerData({ state, commit }, viewer) {
+      const viewerLayers = state.displayLayers.find(layer => slugify(layer.name) === viewer)
+
+      const flattenedViewerLayers = flattenLayers(viewerLayers)
+      const flattenedViewerLayerIds = flattenedViewerLayers.map(({ id }) => id)
+      const flattenedViewerLayersToRemain = state.flattenedLayers.filter(layer => flattenedViewerLayerIds.includes(layer.id) === false)
+      commit('SET_FLATTENED_LAYERS', { layers: flattenedViewerLayersToRemain })
+
+      const displayLayersToRemain = state.displayLayers.filter(layer => slugify(layer.name) !== viewer)
+      commit('SET_DISPLAY_LAYERS', { layers: displayLayersToRemain })
+
+      const viewerTags = getLayersTags(flattenedViewerLayers)
+      const tagsToRemain = state.layerTags.filter(tag => viewerTags.includes(tag) === false)
+      commit('SET_LAYER_TAGS', { tags: tagsToRemain })
+
+      const currentRoute = router.currentRoute
+      const config = currentRoute.params.config
+        .split(',')
+        .filter(name => name !== viewer)
+        .join(',')
+      commit('app/SET_VIEWER_CONFIG', config, { root: true })
+      router.replace({ ...currentRoute, ...{ params: { ...currentRoute.params, ...{ config } } } })
     },
 
     setDisplayLayers({ commit }, { layers }) {

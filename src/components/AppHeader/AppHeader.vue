@@ -12,6 +12,8 @@
     </v-toolbar-title>
 
     <v-spacer />
+    <category-switcher />    
+    <v-spacer />
 
     <slot name="right" />
   </v-app-bar>
@@ -19,9 +21,11 @@
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
+  import CategorySwitcher from '../CategorySwitcher/CategorySwitcher.vue'
 
   export default {
     name: 'AppHeader',
+    components: { CategorySwitcher },
     props: {
       title: {
         type: String,
