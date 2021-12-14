@@ -3,11 +3,10 @@
     class="map-legend"
     :class="{ 'map-legend--open': showLegend }"
     elevation="4"
-    tile
     :max-height="maxLegendHeight"
     width="350"
   >
-    <v-card-title class="map-legend__title">
+    <v-card-title class="map-legend__title subtitle-2">
       {{ $tc('legends', activeLayers.length) }}
 
       <v-btn
@@ -116,7 +115,7 @@
     align-items: center;
     justify-content: space-between;
     padding-top: $spacing-small;
-    padding-bottom: 0;
+    padding-bottom: $spacing-small;
   }
 
   .map-legend__content.v-card__text {
