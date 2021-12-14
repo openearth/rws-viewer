@@ -12,9 +12,17 @@ query ($first: IntType, $skip: IntType = 0) {
       tags {
         title
       }
+      metadata {
+        title
+        content
+      }
     }
     parent {
       id
+    }
+    metadata {
+      title
+      content
     }
   }
   _allMenusMeta {
