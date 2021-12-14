@@ -4,7 +4,7 @@
     flat
     min-width="300"
     max-width="350"
-    max-height="65vh"
+    :max-height="maxLegendHeight"
   >
     <v-expansion-panels>
       <v-expansion-panel
@@ -34,6 +34,7 @@
 
   export default {
     data: () => ({
+      maxLegendHeight: 'calc(100vh - 115px)', // subtracts toolbar, margins and paddings.
       selectedLegend: null,
     }),
 
