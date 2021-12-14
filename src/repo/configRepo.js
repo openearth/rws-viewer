@@ -1,18 +1,31 @@
-import { VALID_PLATFORMS } from '~/lib/constants'
+import { VALID_VIEWER_CONFIGS } from '~/lib/constants'
 import axios from 'axios'
 
-const configRepo = {
-  async getConfig(platform) {
-    const isValidPlatform = platform && VALID_PLATFORMS.includes(platform)
-    const platformToUse = isValidPlatform ? platform : VALID_PLATFORMS[0]
+async function getViewerData(viewer) {
+  const fileName = `${ viewer }.json`
+  const { data } = await axios(`/data/${ fileName }`)
+  return data
+}
 
-    if (!isValidPlatform) {
-      console.warn(`No (valid) platform provided, falling back to ${ platformToUse }`)
+const configRepo = {
+  async getConfig(viewers) {
+    const validViewers = viewers
+      .split(',')
+      .filter(viewer => VALID_VIEWER_CONFIGS.includes(viewer))
+
+    if (validViewers.length === 0) {
+      const viewerToUse = VALID_VIEWER_CONFIGS[0]
+      validViewers.push(viewerToUse)
+      console.warn(`No (valid) viewer provided, falling back to ${ viewerToUse.name }`)
     }
 
-    const fileName = `${ platformToUse }.json`
-    const { data } = await axios(`/data/${ fileName }`)
-    return data
+    return Promise.all(validViewers.map(getViewerData))
+      .then(viewersData => {
+        return {
+          name: viewersData[0].name,
+          layers: viewersData,
+        }
+      })
   },
 }
 
