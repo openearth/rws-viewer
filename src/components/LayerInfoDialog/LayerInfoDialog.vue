@@ -1,19 +1,19 @@
 <template>
   <v-dialog
     scrollable
-    :value="layerDialogOpen"
+    :value="open"
     width="600"
-    @click:outside="$emit('close-dialog')"
+    @click:outside="close"
   >
     <v-card>
       <v-app-bar class="pr-1 pl-2" flat>
         <v-toolbar-title>
-          Fusce sed malesuada leo
+          {{ title }}
         </v-toolbar-title>
 
         <v-spacer />
 
-        <v-btn icon @click="onClickClose">
+        <v-btn icon @click="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-app-bar>
@@ -22,20 +22,14 @@
 
       <div class="px-2 py-2 flex-grow-1 overflow-y-auto">
         <v-card-text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          Donec eleifend, mi id condimentum bibendum, purus enim iaculis lacus,
-          vitae posuere mauris risus non mauris. Vivamus eget mattis sem.
-          Nunc volutpat, nulla et semper elementum, magna odio sagittis ex,
-          vitae sodales ligula justo ut est. Donec semper metus odio,
-          id cursus neque cursus vel. Nunc sapien justo, convallis porta sollicitudin vitae,
-          porttitor nec ligula. Phasellus ullamcorper, nisl ac mattis gravida,
-          nibh sem sagittis quam, ut aliquet nulla est quis ligula.
-          Vestibulum molestie mi id libero commodo vehicula. Aliquam et porttitor ex.
-          Etiam posuere, nibh sit amet tristique mattis, lectus purus pretium dolor,
-          auctor dignissim tortor velit at urna. Suspendisse mi libero,
-          porta nec turpis ut, porta placerat eros. Proin ullamcorper,
-          eros ut vulputate egestas, nunc ex pharetra risus, et vulputate diam felis sed elit.
-          Integer eget egestas nisi, ac euismod erat.
+          <dl class="layer-info-dialog__metadata">
+            <div v-for="item in content" :key="item.key">
+              <dt class="font-weight-bold">
+                {{ item.key }}
+              </dt>
+              <dd v-html="item.value" />
+            </div>
+          </dl>
         </v-card-text>
       </div>
     </v-card>
@@ -43,18 +37,38 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters } from 'vuex'
-
   export default {
-    computed: {
-      ...mapGetters('data', [ 'layerDialogOpen' ]),
+    props: {
+      open: {
+        type: Boolean,
+        default: false,
+      },
+      title: {
+        type: String,
+        default: '',
+      },
+      content: {
+        type: Array,
+        default: () => [],
+      },
     },
-
     methods: {
-      ...mapActions('data', [ 'setLayerDialogOpen' ]),
-      onClickClose() {
-        this.setLayerDialogOpen({ open: false })
+      close() {
+        this.$emit('close')
       },
     },
   }
 </script>
+
+<style lang="scss">
+.layer-info-dialog__metadata {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  row-gap: $spacing-smaller;
+  column-gap: $spacing-default;
+}
+
+.layer-info-dialog__metadata div {
+  display: contents;
+}
+</style>
