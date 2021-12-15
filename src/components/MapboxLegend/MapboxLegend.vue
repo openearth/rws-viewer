@@ -4,7 +4,8 @@
     :class="{ 'map-legend--open': showLegend }"
     elevation="4"
     :max-height="maxLegendHeight"
-    width="350"
+    width="360"
+    :max-width="maxLegendWidth"
   >
     <v-card-title
       class="map-legend__title subtitle-2"
@@ -60,6 +61,7 @@
   export default {
     data: () => ({
       maxLegendHeight: 'calc(100vh - 115px)', // subtracts toolbar, margins and paddings.
+      maxLegendWidth: 'calc(100vw - 32px)', // subtracts padding.
       selectedLegend: null,
       showLegend: false,
     }),
