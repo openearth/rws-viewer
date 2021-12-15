@@ -60,7 +60,7 @@
 
   export default {
     data: () => ({
-      maxLegendHeight: 'calc(100vh - 115px)', // subtracts toolbar, margins and paddings.
+      maxLegendHeight: 'calc(100vh - 106px)', // subtracts toolbar, margin and padding.
       maxLegendWidth: 'calc(100vw - 32px)', // subtracts padding.
       selectedLegend: null,
       showLegend: false,
@@ -95,7 +95,8 @@
     overflow: hidden;
     position: absolute;
     right: $spacing-default;
-    transform: translateY(calc(100% - 60px));
+    bottom: $spacing-medium;
+    transform: translateY(calc(100% - 48px + #{$spacing-medium}));
     transition: transform .3s cubic-bezier(0.25, 0.8, 0.25, 1);
     z-index: 2;
   }
