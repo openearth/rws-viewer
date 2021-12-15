@@ -20,7 +20,7 @@
     </v-card-title>
 
     <v-card-text v-if="activeLayers.length >= 2" class="map-legend__content">
-      <v-expansion-panels>
+      <v-expansion-panels multiple>
         <v-expansion-panel
           v-for="(layer, index) in activeLayers"
           :key="index"
