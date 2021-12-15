@@ -6,17 +6,18 @@
     :max-height="maxLegendHeight"
     width="350"
   >
-    <v-card-title class="map-legend__title subtitle-2">
+    <v-card-title
+      class="map-legend__title subtitle-2"
+      @click="toggleLegend"
+    >
       {{ $tc('legends', activeLayers.length) }}
 
-      <v-btn
+      <v-icon
         class="map-legend__button"
         :class="{ 'map-legend__button--active': showLegend }"
-        icon
-        @click="toggleLegend"
       >
-        <v-icon>mdi-chevron-down</v-icon>
-      </v-btn>
+        mdi-chevron-down
+      </v-icon>
     </v-card-title>
 
     <v-card-text v-if="activeLayers.length >= 2" class="map-legend__content">
@@ -119,7 +120,7 @@
   }
 
   .map-legend__content.v-card__text {
-    padding-top: $spacing-small;
+    padding-top: $spacing-tiny;
     overflow-y: auto;
   }
 
