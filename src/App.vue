@@ -42,7 +42,6 @@
       AppShell,
       MapboxMap,
       MapboxDrawControl,
-      LayerInfoDialog,
       LocaleSwitcher,
       MapboxDrawControl,
       MapboxLegend,
