@@ -42,7 +42,7 @@ function getPaginatedData(token, variables, query) {
     let allKey
 
     try {
-      allKey = Object.keys(response.data).find(key => keyRegex.test(key))
+      allKey = Object.keys(response.data.data).find(key => keyRegex.test(key))
     } catch (error) {
       console.log({ query, variables, responseData: response })
       console.log(response)
@@ -50,30 +50,30 @@ function getPaginatedData(token, variables, query) {
     }
 
     if (allKey) {
-      const { count } = response.data[allKey]
+      const { count } = response.data.data[allKey]
       const [ , originalKey ] = allKey.match(keyRegex).map(camelCase)
-      const itemsInResponse = response.data[originalKey]
+      const itemsInResponse = response.data.data[originalKey]
       const remainingAmount = count - itemsInResponse.length
       const totalRemainingRequests = Math.ceil(
         remainingAmount / itemsInResponse.length,
       )
 
-      const promises = times(totalRemainingRequests, iteration => {
+      const promises = times(iteration => {
         const skip = iteration * variables.first + itemsInResponse.length
         const currentDate = new Date().toString()
         return executeFetch(token, { ...variables, skip, currentDate }, query)
-      })
+      }, totalRemainingRequests)
 
       await Promise.all(promises).then(responses =>
         responses.forEach(res => {
-          response.data[originalKey] = [
-            ...response.data[originalKey],
-            ...res.data[originalKey],
+          response.data.data[originalKey] = [
+            ...response.data.data[originalKey],
+            ...res.data.data[originalKey],
           ]
         }),
       )
 
-      delete response.data[allKey]
+      delete response.data.data[allKey]
     }
     return response
   }

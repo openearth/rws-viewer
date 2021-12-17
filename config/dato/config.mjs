@@ -29,10 +29,14 @@ export default function handleMenu(options) {
   const { publicDir } = options
 
   return async function execute({ data }) {
-    const { menu } = data
+    const { menus } = data
     const rootPages = page => page.parent === null
-    
-    buildChildrenTree(menu)
+    try {
+      buildChildrenTree(menus)
+    } catch (error) {
+      console.log(error)
+      process.exit(1)
+    }
 
     const removeParentProperty = menu => {
       const { parent, children = [], ...item } = menu
@@ -42,7 +46,8 @@ export default function handleMenu(options) {
       }
     }
     
-    menu
+    try {
+    menus
       .filter(rootPages)
       .map(removeParentProperty)
       .forEach(root => {
@@ -52,6 +57,10 @@ export default function handleMenu(options) {
           JSON.stringify(root, null, 2),
         )
       })
+    } catch (error) {
+      console.log(error)
+      process.exit(1)
     }
   }
+}
 

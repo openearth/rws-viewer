@@ -1,5 +1,5 @@
 query ($first: IntType, $skip: IntType = 0) {
-  menu: allMenus(first: $first, skip: $skip) {
+  menus: allMenus(first: $first, skip: $skip) {
     id
     name
     children: layers {
