@@ -99,9 +99,9 @@
 <script>
   import { difference } from 'ramda'
   import { mapGetters, mapActions } from 'vuex'
-  import LayerInfoDialog from '../LayerInfoDialog/LayerInfoDialog'
+  import LayerInfoDialog from '~/components/LayerInfoDialog/LayerInfoDialog'
   import addParentIdToLayers from '~/lib/add-parent-id-to-layers'
-  const LayerControl = () => import('~/components/LayerControl/LayerControl.vue')
+  const LayerControl = () => import('~/components/LayerControl/LayerControl')
 
   export default {
     components: { LayerControl, LayerInfoDialog },
@@ -185,10 +185,6 @@
 
 .layer-chooser__only-active-switch {
   margin-right: auto !important;
-}
-
-.layer-chooser__tree {
-  
 }
 
 .layer-chooser .v-treeview-node__checkbox {
