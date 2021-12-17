@@ -156,7 +156,7 @@
       },
 
       allUrlsAreValid() {
-        return this.selectedLayerData.every(({ downloadUrl }) => Boolean(downloadUrl))
+        return this.selectedLayerData.every((layer) => Boolean(layer.downloadUrl) || Boolean(layer.url))
       },
 
       buttonText() {

@@ -1,8 +1,10 @@
 import { stringify } from 'query-string'
-
-const PLACEHOLDER_HANDLE = '[[COORDINATES]]'
-const WFS_LAYER_TYPE = 'wfs'
-const WCS_LAYER_TYPE = 'wcs'
+import {
+  COORDINATES_HANDLE,
+  WCS_LAYER_TYPE,
+  WFS_LAYER_TYPE,
+  WMS_LAYER_TYPE,
+} from '~/lib/constants'
 
 const FILTER_TEMPLATE = `
   <ogc:Filter xmlns:ogc="http://www.opengis.net/ogc">
@@ -11,7 +13,7 @@ const FILTER_TEMPLATE = `
       <gml:Polygon xmlns:gml="http://www.opengis.net/gml" srsName="EPSG:4326">
         <gml:exterior>
           <gml:LinearRing>
-            <gml:posList>${ PLACEHOLDER_HANDLE }</gml:posList>
+            <gml:posList>${ COORDINATES_HANDLE }</gml:posList>
           </gml:LinearRing>
         </gml:exterior>
       </gml:Polygon>
@@ -19,9 +21,11 @@ const FILTER_TEMPLATE = `
   </ogc:Filter>
 `
 
-export const isWfsLayer = (layer = {}) => Boolean(layer?.downloadUrl.endsWith(WFS_LAYER_TYPE))
+export const hasWcsTypeUrl = (layer = {}) => Boolean(layer?.downloadUrl.endsWith(WCS_LAYER_TYPE))
 
-export const isWcsLayer = (layer = {}) => Boolean(layer?.downloadUrl.endsWith(WCS_LAYER_TYPE))
+export const hasWfsTypeUrl = (layer = {}) => Boolean(layer?.downloadUrl.endsWith(WFS_LAYER_TYPE))
+
+export const hasWmsTypeUrl = (layer = {}) => Boolean(layer?.url.endsWith(WMS_LAYER_TYPE))
 
 const createWfsParameters = ({ layer = '', filter = '' }) => stringify({
   'typeName': layer,
@@ -50,7 +54,7 @@ export function createDownloadFilter(coordinates = '') {
   let filter = null
 
   if (validCoordinates) {
-    filter = FILTER_TEMPLATE.replace(PLACEHOLDER_HANDLE, coordinates)
+    filter = FILTER_TEMPLATE.replace(COORDINATES_HANDLE, coordinates)
   }
 
   return filter
@@ -58,10 +62,11 @@ export function createDownloadFilter(coordinates = '') {
 
 export function createDownloadParameters({ layerData = {}, filter = '' }) {
   const { layer } = layerData
-  const isWfsType = isWfsLayer(layerData)
-  const isWcsType = isWcsLayer(layerData)
+  const isWcsType = hasWcsTypeUrl(layerData)
+  const isWfsType = hasWfsTypeUrl(layerData)
+  const isWmsType = hasWmsTypeUrl(layerData)
 
-  if (!isWfsType && !isWcsType) {
+  if (!isWcsType && !isWfsType && !isWmsType) {
     console.warn('No valid `downloadUrl` present for layer: ', layer)
     return null
   }
@@ -70,7 +75,7 @@ export function createDownloadParameters({ layerData = {}, filter = '' }) {
     return createWcsParameters(layer)
   }
 
-  if (isWfsType) {
+  if (isWfsType || isWmsType) {
     return createWfsParameters({ layer, filter })
   }
 }
