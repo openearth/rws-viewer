@@ -20,5 +20,13 @@
   "preventDownload": "Eén of meerdere lagen kunnen niet worden gedownload",
   "layerSelection": "Selecteer uit zichtbare lagen",
   "select": "Selecteer",
-  "selectDesc": "Selecteer een deel van de kaart om te downloaden. Dit kan door te tekenen, of een voorgedefinieerd sectie te kiezen."
+  "selectDesc": "Selecteer een deel van de kaart om te downloaden. Dit kan door te tekenen, of een voorgedefinieerd sectie te kiezen.",
+  "selectLayersToView": "Selecteer lagen om te bekijken",
+  "chooseLayers": "Lagen kiezen",
+  "close": "Sluiten",
+  "searchInAvailableLayerNames": "Zoeken op beschikbare laag naam",
+  "expandAll": "Klap alles uit",
+  "collapseAll": "Klap alles in",
+  "onlyActiveLayers": "Toon enkel actieve lagen"
+  
 }

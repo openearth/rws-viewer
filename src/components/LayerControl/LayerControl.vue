@@ -8,12 +8,18 @@
       >
         {{ name }}
       </span>
-      <div v-if="isLayer" class="d-flex align-center ml-3">
-        <v-btn icon @click.stop="$emit('show-info', id)">
+      <div v-if="hasMetadata" class="d-flex align-center ml-3">
+        <v-btn icon @click.stop="showInfo = true">
           <v-icon>
             mdi-information
           </v-icon>
         </v-btn>
+        <slot
+          name="info"
+          :isOpen="showInfo"
+          :open="() => showInfo = true"
+          :close="() => showInfo = false"
+        />
       </div>
     </div>
     <v-expand-transition>
@@ -34,6 +40,7 @@
 </template>
 
 <script>
+  
   export default {
     name: 'LayerControl',
     props: {
@@ -57,9 +64,14 @@
         type: Boolean,
         required: true,
       },
+      hasMetadata: {
+        type: Boolean,
+        default: false,
+      },
     },
     data: () => ({
       layerOpacity: 1,
+      showInfo: false,
     }),
     watch: {
       selected: {

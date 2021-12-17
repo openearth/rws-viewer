@@ -12,7 +12,6 @@ export default {
     displayLayers: [],
     flattenedLayers: [],
     layerTags: [],
-    layerDialogOpen: false,
   }),
 
   getters: {
@@ -20,7 +19,6 @@ export default {
     displayLayers: (state, getters) => getters.rawDisplayLayers.length === 1 ? getters.rawDisplayLayers[0].children : getters.rawDisplayLayers,
     flattenedLayers: state => state.flattenedLayers,
     layerTags: state => state.layerTags,
-    layerDialogOpen: state => state.layerDialogOpen,
     availableDisplayLayers: (state, getters, rootState, rootGetters) => omitLayers(getters.displayLayers, rootGetters['map/rasterLayerIds']),
     availableFlattenedLayers: (state, getters, rootState, rootGetters) => getters.flattenedLayers.filter(layer => !rootGetters['map/rasterLayerIds'].includes(layer.id)),
     loadedViewerConfigs: state => state.displayLayers.map(({ name }) => slugify(name)),
@@ -35,9 +33,6 @@ export default {
     },
     SET_LAYER_TAGS(state, { tags }) {
       state.layerTags = Object.freeze(tags)
-    },
-    SET_LAYER_DIALOG_OPEN(state, { open }) {
-      state.layerDialogOpen = open
     },
   },
 
@@ -112,10 +107,6 @@ export default {
 
     setDisplayLayers({ commit }, { layers }) {
       commit('SET_DISPLAY_LAYERS', { layers })
-    },
-
-    setLayerDialogOpen({ commit }, { open }) {
-      commit('SET_LAYER_DIALOG_OPEN', { open })
     },
   },
 }

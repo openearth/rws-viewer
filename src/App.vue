@@ -25,17 +25,12 @@
         @change="setDrawnFeature"
       />
     </mapbox-map>
-    <layer-info-dialog
-      @close-dialog="onCloseDialog"
-    />
   </app-shell>
 </template>
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
   import { MapboxMap } from '@deltares/vue-components'
-
-  const LayerInfoDialog = () => import('~/components/LayerInfoDialog/LayerInfoDialog')
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
   import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
@@ -45,6 +40,8 @@
   export default {
     components: {
       AppShell,
+      MapboxMap,
+      MapboxDrawControl,
       LayerInfoDialog,
       LocaleSwitcher,
       MapboxDrawControl,
@@ -69,12 +66,8 @@
     },
 
     methods: {
-      ...mapActions('data', [ 'getAppData', 'setLayerDialogOpen' ]),
+      ...mapActions('data', [ 'getAppData' ]),
       ...mapActions('map', [ 'setDrawnFeature', 'setMapLoaded' ]),
-
-      onCloseDialog() {
-        this.setLayerDialogOpen({ open: false })
-      },
     },
   }
 </script>

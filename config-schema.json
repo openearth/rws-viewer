@@ -1,0 +1,102 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Viewer config schema",
+  "definitions": {
+    "folder": {
+      "type": "object",
+      "required": ["id", "name", "children"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this structure level"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human readable name of the structure level"
+        },
+        "metadata": {
+          "type": "array",
+          "description": "List of metadata objects for this structure level",
+          "items": {
+            "type": "object",
+            "required": ["key", "value"],
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Human readable title of the metadata term"
+              },
+              "value": {
+                "type": "string",
+                "description": "String of HTML content, describing the term"
+              }
+            }
+          }
+        },
+        "children": {
+          "type": "array",
+          "description": "List which can contain a nested structure levels or layer objects",
+          "items": {
+            "anyOf": [
+              { "$ref": "#/definitions/layer" },
+              { "$ref": "#/definitions/folder" }
+            ]
+          }
+        }
+      }
+    },
+    "layer": {
+      "type": "object",
+      "required": ["id", "name", "url", "layer"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier of the label"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human readable name of the layer"
+        },
+        "url": {
+          "type": "string",
+          "description": "Url of the service to display the data"
+        },
+        "layer": {
+          "type": "string",
+          "description": "Layer to be displayed available on the service"
+        },
+        "downloadUrl": {
+          "type": "string",
+          "description": "Url of the service to download the data"
+        },
+        "downloadLayer": {
+          "type": "string",
+          "description": "Layer to be downloaded available on the service"
+        },
+        "metadata": {
+          "type": "array",
+          "description": "List of metadata objects for this layer",
+          "items": {
+            "type": "object",
+            "required": ["key", "value"],
+            "additionalProperties": false,
+            "properties": {
+              "key": {
+                "type": "string",
+                "description": "Human readable title of the metadata term"
+              },
+              "value": {
+                "type": "string",
+                "description": "String of HTML content, describing the term"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "type": "object",
+  "$ref": "#/definitions/folder"
+}
