@@ -2,6 +2,10 @@
   <app-shell :header-title="viewerName">
     <locale-switcher slot="header-right" />
 
+    <v-fade-transition mode="out-in">
+      <mapbox-legend v-if="rasterLayerIds.length" />
+    </v-fade-transition>
+
     <mapbox-map
       slot="map"
       :access-token="accessToken"
@@ -28,7 +32,8 @@
   import { mapActions, mapGetters } from 'vuex'
   import { MapboxMap } from '@deltares/vue-components'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
-  import LocaleSwitcher from './components/LocaleSwitcher/LocaleSwitcher'
+  import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
+  import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
 
   const AppShell = () => import('~/components/AppShell/AppShell')
 
@@ -37,7 +42,11 @@
       AppShell,
       MapboxMap,
       MapboxDrawControl,
+      LayerInfoDialog,
       LocaleSwitcher,
+      MapboxDrawControl,
+      MapboxLegend,
+      MapboxMap,
     },
 
     data: () => ({
@@ -46,7 +55,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'rasterLayers', 'drawMode', 'drawnFeature' ]),
+      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'rasterLayerIds', 'rasterLayers' ]),
       mapLeftPadding() {
         return this.appNavigationOpen ? this.appNavigationWidth : 0
       },
