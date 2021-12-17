@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex align-center">
       <span
-        class="sortable-handle py-0"
+        class="sortable-handle py-3"
         :data-id="id"
         :data-parent-ids="parentIds"
       >
@@ -26,7 +26,7 @@
       <div v-if="isLayer && selected">
         <v-slider
           v-model="layerOpacity"
-          class="pr-5"
+          class="pt-2 pb-5 pr-5"
           hide-details
           :ripple="false"
           :max="1"
