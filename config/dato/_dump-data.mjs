@@ -17,24 +17,37 @@ function fetchDataFromQueryFile(variables = {}) {
   return async function execute(queryFile) {
     const handlerFile = queryFile.replace('.graphql', '.mjs')
     let processData = () => {}
+    const throwError = errors => {
+      console.log(`Error in ${ queryFile }`)
+      console.log(JSON.stringify(errors, null, 2))
+      process.exit(1)
+    }
     try {
       const { default: module } = await import(handlerFile)
-      processData = data =>
-        module({ publicDir: PUBLIC_DIR })(data)
+      processData = data => data.errors
+        ? throwError(data.errors)
+        : module({ publicDir: PUBLIC_DIR })(data)
     } catch (error) {
       const fileName = queryFile.replace(__dirname, '' )
       console.log(
         `WARNING: ${ fileName } does not have handler file. Add ${ queryFile.replace('.graphql', '.mjs') }`,
       )
       console.log(error)
+      process.exit(1)
     }
 
     return readFile(queryFile)
-      .then(queryApi(process.env.DATO_API_TOKEN, variables))
+      .then(query => 
+          queryApi(process.env.DATO_API_TOKEN, variables)(query)
+            .catch((error) => {
+              console.log(error)
+              process.exit(1)
+            }))
       .then(processData)
       .catch(error => {
         console.log(`Error handling ${ queryFile.replace(__dirname, '') }`)
         console.trace(error.message)
+        process.exit(1)
       })
   }
 }
