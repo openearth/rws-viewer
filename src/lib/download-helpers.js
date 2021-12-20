@@ -1,8 +1,11 @@
 import { stringify } from 'query-string'
 import {
   COORDINATES_HANDLE,
+  WCS_LAYER_FORMATS,
   WCS_LAYER_TYPE,
+  WFS_LAYER_FORMATS,
   WFS_LAYER_TYPE,
+  WMS_LAYER_FORMATS,
   WMS_LAYER_TYPE,
 } from '~/lib/constants'
 
@@ -78,4 +81,55 @@ export function createDownloadParameters({ layerData = {}, filter = '' }) {
   if (isWfsType || isWmsType) {
     return createWfsParameters({ layer, filter })
   }
+}
+
+export function getDownloadFormats(layerData = {}) {
+  const { layer } = layerData
+  const isWcsType = hasWcsTypeUrl(layerData)
+  const isWfsType = hasWfsTypeUrl(layerData)
+  const isWmsType = hasWmsTypeUrl(layerData)
+
+  if (!isWcsType && !isWfsType && !isWmsType) {
+    console.warn('No valid type present in `downloadUrl` or `url` for layer: ', layer)
+    return null
+  }
+
+  if (isWcsType) {
+    return WCS_LAYER_FORMATS
+  }
+
+  if (isWfsType) {
+    return WFS_LAYER_FORMATS
+  }
+
+  if (isWmsType) {
+    return WMS_LAYER_FORMATS
+  }
+}
+
+// @TODO: check and cross-check format (key) with file extensions (value).
+export const mapFormatToFileExtension = {
+  'application/gml+xml': 'xml',
+  'application/gml+xml; version=3.2': 'xml',
+  'application/json': 'json',
+  'application/vnd.google-earth.kml xml': 'xml',
+  'application/vnd.google-earth.kml+xml': 'xml',
+  'application/x-gzip': 'zip',
+  'application/x-netcdf': 'netcdf',
+  'application/x-netcdf4': 'netcdf4',
+  'csv': 'csv',
+  'GML2': 'gml',
+  'gml3': 'gml',
+  'gml32': 'gml',
+  'image/jpeg': 'jpeg',
+  'image/png': 'png',
+  'image/tiff': 'tiff',
+  'json': 'json',
+  'KML': 'kml',
+  'SHAPE-ZIP': 'zip',
+  'text/csv': 'csv',
+  'text/plain': 'txt',
+  'text/xml; subtype=gml/2.1.2': 'xml',
+  'text/xml; subtype=gml/3.1.1': 'xml',
+  'text/xml; subtype=gml/3.2': 'xml',
 }

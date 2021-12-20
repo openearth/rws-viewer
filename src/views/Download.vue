@@ -91,6 +91,7 @@
             multiple
             outlined
             hide-details
+            @change="setDownloadLayerFormats"
           />
           <transition name="fade" mode="out-in">
             <v-alert
@@ -103,6 +104,43 @@
               {{ $t('preventDownload') }}
             </v-alert>
           </transition>
+        </v-col>
+      </v-row>
+      <template v-if="downloadLayers.length">
+        <v-row>
+          <v-col>
+            <h4>{{ $t('formats') }}</h4>
+            <p class="body-2 mb-0">
+              {{ $t('formatsDesc') }}
+            </p>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <template v-for="(id, index) in downloadLayers">
+              <v-row :key="index">
+                <v-col>
+                  <p class="body-1 mb-3 grey--text">
+                    <v-icon>mdi-layers-outline</v-icon>
+                    {{ getLayerNameById(id) }}
+                  </p>
+                  <v-select
+                    v-model="downloadLayersFormats[index]"
+                    :label="$t('layerFormats')"
+                    :items="downloadFormats[index]"
+                    dense
+                    outlined
+                    hide-details
+                  />
+                </v-col>
+              </v-row>
+            </template>
+          </v-col>
+        </v-row>
+      </template>
+      <v-row>
+        <v-col>
+          <v-divider class="my-4" />
         </v-col>
       </v-row>
       <v-row>
@@ -144,15 +182,18 @@
   import { mapActions, mapGetters } from 'vuex'
   import metaRepo from '~/repo/metaRepo'
   import buildDownloadUrl from '~/lib/build-download-url'
+  import { getDownloadFormats } from '~/lib/download-helpers'
 
   const NO_SELECTION_ID = 'NO_SELECTION_ID'
 
   export default {
     data: () => ({
+      downloadLayersFormats: [],
+      downloadLayers: [],
+      downloadFormats: [],
+      isGeneratingDownload: false,
       preDefinedAreas: [],
       selectedArea: null,
-      downloadLayers: [],
-      isGeneratingDownload: false,
     }),
 
     computed: {
@@ -227,6 +268,15 @@
     methods: {
       ...mapActions('map', [ 'setDrawMode', 'setDrawnFeature', 'clearDrawnFeature' ]),
 
+      setDownloadLayerFormats() {
+        this.downloadFormats = this.selectedLayerData.map(layer => getDownloadFormats(layer))
+      },
+
+      getLayerNameById(id) {
+        const layer = this.flattenedLayers.find(layer => layer.id === id)
+        return layer?.name
+      },
+
       async onDrawModeSelect(mode) {
         // We need to wait for clearing the feature
         // before we can start drawing again
@@ -248,7 +298,11 @@
       },
 
       onDownloadClick() {
-        const urls = buildDownloadUrl(this.selectedLayerData, this.selectionCoordinates)
+        const urls = buildDownloadUrl({
+          layers: this.selectedLayerData,
+          coordinates: this.selectionCoordinates,
+          formats: this.downloadLayersFormats,
+        })
 
         this.isGeneratingDownload = true
 
