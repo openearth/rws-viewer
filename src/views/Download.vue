@@ -180,7 +180,7 @@
       },
 
       downloadIsAvailable() {
-        return this.activeLayers.some(layer => layer?.downloadUrl !== null)
+        return this.activeLayers.some(layer => Boolean(layer.downloadUrl) || Boolean(layer.url))
       },
 
       formattedAreas() {
