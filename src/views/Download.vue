@@ -1,19 +1,27 @@
 <template>
   <v-container class="download pt-4">
-    <template v-if="!downloadIsAvailable && !activeLayersList.length">
-      <v-row>
-        <v-col>
-          <p>{{ $t('noLayersSelected') }}</p>
-        </v-col>
-      </v-row>
-    </template>
-    <template v-if="!downloadIsAvailable && activeLayersList.length">
-      <v-row>
-        <v-col>
-          <p>{{ $t('downloadUnavailable') }}</p>
-        </v-col>
-      </v-row>
-    </template>
+    <v-row v-if="!downloadIsAvailable && !activeLayersList.length">
+      <v-col>
+        <v-alert
+          dense
+          outlined
+          type="info"
+        >
+          {{ $t('noLayersSelected') }}
+        </v-alert>
+      </v-col>
+    </v-row>
+    <v-row v-if="!downloadIsAvailable && activeLayersList.length">
+      <v-col>
+        <v-alert
+          dense
+          outlined
+          type="error"
+        >
+          {{ $t('downloadUnavailable') }}
+        </v-alert>
+      </v-col>
+    </v-row>
     <template v-if="downloadIsAvailable && activeLayersList.length">
       <v-row>
         <v-col>
