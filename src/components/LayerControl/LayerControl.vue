@@ -40,7 +40,6 @@
 </template>
 
 <script>
-  
   export default {
     name: 'LayerControl',
     props: {

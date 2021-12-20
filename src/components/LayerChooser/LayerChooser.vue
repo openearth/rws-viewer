@@ -8,7 +8,6 @@
       clearable
       :disabled="onlyActive"
     />
-          
     <div class="layer-chooser__filter-options">
       <v-switch
         v-model="onlyActive"
@@ -52,20 +51,20 @@
           </v-icon>
           <v-icon v-else>
             <template v-if="selected">
-              {{ open 
-                ? `mdi-folder-open${selected ? '' : '-outline'}` 
+              {{ open
+                ? `mdi-folder-open${selected ? '' : '-outline'}`
                 : `mdi-folder${selected ? '-check' : '-outline'}`
               }}
             </template>
             <template v-else-if="indeterminate">
-              {{ open 
-                ? `mdi-folder-open` 
+              {{ open
+                ? `mdi-folder-open`
                 : `mdi-folder`
               }}
             </template>
             <template v-else>
-              {{ open 
-                ? `mdi-folder-open-outline` 
+              {{ open
+                ? `mdi-folder-open-outline`
                 : `mdi-folder-outline`
               }}
             </template>
@@ -117,7 +116,7 @@
       ...mapGetters('data', [ 'displayLayers' ]),
       ...mapGetters('map', [ 'rasterLayerIds' ]),
       layersWithParents() {
-        return addParentIdToLayers(this.displayLayers) 
+        return addParentIdToLayers(this.displayLayers)
       },
       search() {
         return this.onlyActive ? ':active-only' : this.searchString
