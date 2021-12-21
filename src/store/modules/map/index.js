@@ -28,6 +28,7 @@ export default {
       state.rasterLayers = layers
     },
     ADD_RASTER_LAYER(state, { layer }) {
+      state.rasterLayers = [ layer, ...state.rasterLayers ]
     },
     MOVE_RASTER_LAYER(state, { fromIndex, toIndex }) {
       var element = state.rasterLayers[fromIndex]
