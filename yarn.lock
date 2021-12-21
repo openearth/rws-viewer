@@ -10446,6 +10446,11 @@ vue-cli-plugin-vuetify@^2.4.3:
     semver "^7.1.2"
     shelljs "^0.8.3"
 
+vue-dndrop@^1.1.12:
+  version "1.1.12"
+  resolved "https://registry.yarnpkg.com/vue-dndrop/-/vue-dndrop-1.1.12.tgz#ece2ea7664d0aea168dbc00a9fef89731c9c18ce"
+  integrity sha512-tdWNTUOtMwU4mZl85eeL8plDTU2nKwan/iuJ9gFGnnNWSQbcDvPtcfsfFdp9JBzHvAWglIaU1V3Ro1kS17eSNA==
+
 vue-eslint-parser@^7.10.0:
   version "7.11.0"
   resolved "https://registry.yarnpkg.com/vue-eslint-parser/-/vue-eslint-parser-7.11.0.tgz#214b5dea961007fcffb2ee65b8912307628d0daf"
