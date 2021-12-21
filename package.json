@@ -10,6 +10,7 @@
     "node": ">=15.0.0"
   },
   "scripts": {
+    "postinstall": "patch-package",
     "dato": "node ./config/dato/_dump-data.mjs",
     "prebuild": "yarn dato",
     "build": "vue-cli-service build",
@@ -44,6 +45,8 @@
     "mapbox-gl": "^2.5.1",
     "mapbox-gl-draw-rectangle-mode": "^1.0.4",
     "mkdirp": "^1.0.4",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
     "ramda": "^0.27.1",
     "rimraf": "^3.0.2",
     "sortablejs": "^1.14.0",
