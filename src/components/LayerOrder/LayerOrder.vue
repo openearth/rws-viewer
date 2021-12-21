@@ -20,14 +20,14 @@
     </v-card-title>
 
     <v-card-text class="layer-order__content">
-      <Container @drop="onDrop">
-        <Draggable v-for="layer in activeLayers.reverse()" :key="layer.id">
+      <Container :get-ghost-parent="getGhostParent" @drop="onDrop">
+        <Draggable v-for="layer in activeLayers" :key="layer.id">
           <v-list-item>
             <v-list-item-icon>
               <v-icon v-text="'mdi-reorder-horizontal'" />
             </v-list-item-icon>
             <v-list-item-content>
-              <v-list-item-title>{{ layer.id }} - {{ layer.name }}</v-list-item-title>
+              <v-list-item-title>{{ layer.name }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </Draggable>
@@ -59,17 +59,16 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'setRasterLayers' ]),
+      ...mapActions('map', [ 'moveRasterLayer' ]),
       togglePanel(){
         this.show = !this.show
       },
       onDrop(dropResult) {
-        const newArray = [ ...this.rasterLayerIds ]
-        const itemToMove = newArray.splice(dropResult.removedIndex, 1)[0]
-        newArray.splice(dropResult.addedIndex, 0, itemToMove)
-        const layers = newArray.map(id => this.flattenedLayers.find(layer => layer.id === id))
+        this.moveRasterLayer({ fromIndex: dropResult.removedIndex, toIndex: dropResult.addedIndex })
         
-        this.setRasterLayers({ layers })
+      },
+      getGhostParent() {
+        return document.body.querySelector('main')
       },
     },
   }
@@ -116,6 +115,11 @@
   .layer-order__content.v-card__text {
     padding-top: $spacing-tiny;
     overflow-y: auto;
+  }
+
+  .layer-order__content {
+    z-index: 0;
+    position: relative;
   }
 
   @include lg-screen {
