@@ -28,7 +28,11 @@ export default {
       state.rasterLayers = layers
     },
     ADD_RASTER_LAYER(state, { layer }) {
-      state.rasterLayers = [ ...state.rasterLayers, layer ]
+    },
+    MOVE_RASTER_LAYER(state, { fromIndex, toIndex }) {
+      var element = state.rasterLayers[fromIndex]
+      state.rasterLayers.splice(fromIndex, 1)
+      state.rasterLayers.splice(toIndex, 0, element)
     },
     REMOVE_RASTER_LAYER(state, { layer }) {
       state.rasterLayers = state.rasterLayers.filter(rasterLayer => rasterLayer.id !== layer.id)
@@ -77,6 +81,10 @@ export default {
 
     removeRasterLayer({ commit }, { layers }) {
       layers.forEach(layer => commit('REMOVE_RASTER_LAYER', { layer }))
+    },
+
+    moveRasterLayer({ commit }, { fromIndex, toIndex }) {
+      commit('MOVE_RASTER_LAYER', { fromIndex, toIndex })
     },
 
     setDrawMode({ commit, state }, { mode }) {
