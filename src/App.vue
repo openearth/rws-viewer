@@ -3,6 +3,9 @@
     <locale-switcher slot="header-right" />
 
     <v-fade-transition mode="out-in">
+      <layer-order />
+    </v-fade-transition>
+    <v-fade-transition mode="out-in">
       <mapbox-legend v-if="rasterLayerIds.length" />
     </v-fade-transition>
 
@@ -31,17 +34,18 @@
 <script>
   import { mapActions, mapGetters } from 'vuex'
   import { MapboxMap } from '@deltares/vue-components'
+  import AppShell from './components/AppShell/AppShell'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
   import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
-
-  const AppShell = () => import('~/components/AppShell/AppShell')
+  import LayerOrder from '~/components/LayerOrder/LayerOrder.vue'
 
   export default {
     components: {
       AppShell,
       MapboxMap,
       MapboxDrawControl,
+      LayerOrder,
       LocaleSwitcher,
       MapboxDrawControl,
       MapboxLegend,
