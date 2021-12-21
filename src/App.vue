@@ -3,7 +3,7 @@
     <locale-switcher slot="header-right" />
 
     <v-fade-transition mode="out-in">
-      <layer-order />
+      <layer-order v-if="rasterLayerIds.length" />
     </v-fade-transition>
     <v-fade-transition mode="out-in">
       <mapbox-legend v-if="rasterLayerIds.length" />

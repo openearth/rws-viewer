@@ -46,7 +46,7 @@
     components: { Container, Draggable },
 
     data: () => ({
-      show: true,
+      show: false,
     }),
 
     computed: {
