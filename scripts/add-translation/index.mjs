@@ -64,7 +64,8 @@ await Promise.all(files.map(async file => {
   const content = await fs.readFile(filePath)
   const json = JSON.parse(content)
   json[answers.key] = answers[locale]
-  const updatedContent = JSON.stringify(json, null, 2)
+  const sortedJson = Object.keys(json).sort().reduce((collection, key) => ({ ...collection, [key]: json[key] }), {})
+  const updatedContent = JSON.stringify(sortedJson, null, 2)
   await fs.writeFile(filePath, `${ updatedContent }\n`, { encoding: 'utf-8' })
 }))
 .then(() => {
