@@ -17,8 +17,9 @@
       @styledata="setMapLoaded"
     >
       <v-mapbox-layer
-        v-for="layer in rasterLayers"
+        v-for="(layer, index) in rasterLayers"
         :key="layer.id"
+        :before="rasterLayerIds[index - 1]"
         :options="layer"
         :opacity="layer.opacity"
       />
