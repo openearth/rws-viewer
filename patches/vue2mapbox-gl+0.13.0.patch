@@ -1,0 +1,15 @@
+diff --git a/node_modules/vue2mapbox-gl/src/components/v-mapbox-layer.js b/node_modules/vue2mapbox-gl/src/components/v-mapbox-layer.js
+index 22e18eb..15bf8ee 100644
+--- a/node_modules/vue2mapbox-gl/src/components/v-mapbox-layer.js
++++ b/node_modules/vue2mapbox-gl/src/components/v-mapbox-layer.js
+@@ -127,6 +127,10 @@ export default {
+     },
+     opacity() {
+       this.setOpacity();
++    },
++    before(newValue) {
++      const map = this.getMap()
++      map.moveLayer(this.options.id, newValue)
+     }
+   }
+ };
