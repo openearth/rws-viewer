@@ -20,23 +20,56 @@
     </v-card-title>
 
     <v-card-text class="layer-order__content">
-      <p>foo</p>
+      <Container @drop="onDrop">
+        <Draggable v-for="layer in activeLayers.reverse()" :key="layer.id">
+          <v-list-item>
+            <v-list-item-icon>
+              <v-icon v-text="'mdi-reorder-horizontal'" />
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>{{ layer.id }} - {{ layer.name }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </Draggable>
+      </Container>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
+  import { Container, Draggable } from 'vue-dndrop'
+
   export default {
+    name: 'LayerOrder',
+
+    components: { Container, Draggable },
+
     data: () => ({
       show: true,
     }),
+
     computed: {
       ...mapGetters('app', [ 'appNavigationWidth' ]),
+      ...mapGetters('map', [ 'rasterLayerIds' ]),
+      ...mapGetters('data', [ 'flattenedLayers' ]),
+      activeLayers() {
+        return this.rasterLayerIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
+      },
     },
+
     methods: {
+      ...mapActions('map', [ 'setRasterLayers' ]),
       togglePanel(){
         this.show = !this.show
+      },
+      onDrop(dropResult) {
+        const newArray = [ ...this.rasterLayerIds ]
+        const itemToMove = newArray.splice(dropResult.removedIndex, 1)[0]
+        newArray.splice(dropResult.addedIndex, 0, itemToMove)
+        const layers = newArray.map(id => this.flattenedLayers.find(layer => layer.id === id))
+        
+        this.setRasterLayers({ layers })
       },
     },
   }
