@@ -117,7 +117,13 @@
         </v-row>
         <v-row>
           <v-col>
-            <template v-for="(id, index) in downloadLayers">
+            <download-format-chooser
+              v-for="(id, index) in downloadLayers"
+              :key="id"
+              v-model="downloadLayersFormats[index]"
+              :layer-id="id"
+            />
+            <!-- <template v-for="(id, index) in downloadLayers">
               <v-row :key="index">
                 <v-col>
                   <p class="body-1 mb-3 grey--text">
@@ -134,7 +140,7 @@
                   />
                 </v-col>
               </v-row>
-            </template>
+            </template> -->
           </v-col>
         </v-row>
       </template>
@@ -180,6 +186,7 @@
   import JSZipUtils from 'jszip-utils'
   import { saveAs } from 'file-saver'
   import { mapActions, mapGetters } from 'vuex'
+  import DownloadFormatChooser from '~/components/DownloadFormatChooser/DownloadFormatChooser.vue'
   import metaRepo from '~/repo/metaRepo'
   import buildDownloadUrl from '~/lib/build-download-url'
   import { getDownloadFormats } from '~/lib/download-helpers'
@@ -187,6 +194,8 @@
   const NO_SELECTION_ID = 'NO_SELECTION_ID'
 
   export default {
+    components: { DownloadFormatChooser }, 
+
     data: () => ({
       downloadLayersFormats: [],
       downloadLayers: [],
