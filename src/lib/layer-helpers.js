@@ -1,4 +1,15 @@
-import { compose, flatten, map, props, uniq, sort, filter, includes, prop, isEmpty } from 'ramda'
+import {
+  compose,
+  filter,
+  flatten,
+  includes,
+  isEmpty,
+  map,
+  prop,
+  props,
+  sort,
+  uniq,
+} from 'ramda'
 
 const existsIn = list => value => includes(value, list)
 const idIncludedIn = ids => compose(existsIn(ids), prop('id'))
@@ -29,9 +40,9 @@ export const getLayersTags = compose(
   map(props([ 'tags' ])),
 )
 
-export const getLayersById = (layers, ids) => 
+export const getLayersById = (layers, ids) =>
   compose(
-    collection => ids.map(id => collection.find(layer => layer.id === id)),
+    filter(idIncludedIn(ids)),
     flatten,
     pickLayersRecursive,
   )(layers)
@@ -39,15 +50,17 @@ export const getLayersById = (layers, ids) =>
 export const omitLayers = (layers, ids) => {
   const nonMatchingLayer = layer => ids.includes(layer.id) === false
   const withChildren = layer => isEmpty(layer.children) === false
-  
+
   const removeMatchingChildren = layer => {
     let children
+
     if (layer.children) {
       children = layer.children
-          .filter(nonMatchingLayer)
-          .map(removeMatchingChildren)
-          .filter(withChildren)
+        .filter(nonMatchingLayer)
+        .map(removeMatchingChildren)
+        .filter(withChildren)
     }
+
     return {
       ...layer,
       ...(children ? { children } : {}),
@@ -55,6 +68,6 @@ export const omitLayers = (layers, ids) => {
   }
 
   return layers
-      .map(removeMatchingChildren)
-      .filter(withChildren)
+    .map(removeMatchingChildren)
+    .filter(withChildren)
 }

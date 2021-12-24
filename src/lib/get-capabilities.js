@@ -1,5 +1,5 @@
-import { map, flatten, uniq, pipe } from 'ramda'
 import axios from 'axios'
+import { map, uniq, pipe } from 'ramda'
 import { getType } from '~/lib/service-helpers'
 import {
   WCS_LAYER_TYPE,
@@ -8,11 +8,10 @@ import {
 } from '~/lib/constants'
 
 const getTagContent = tag => tag.textContent
-const getTags = tagName => root => 
+const getTags = tagName => root =>
   [ ...root ]
     .map(el => [ ...el.getElementsByTagName(tagName) ])
     .flat()
-
 
 function createParameters(type) {
   switch (type) {
@@ -55,10 +54,9 @@ export function getSupportedOutputFormats(type, capabilities) {
   switch (type) {
     case WCS_LAYER_TYPE:
       return formatSupported()
-      
     case WMS_LAYER_TYPE:
     case WFS_LAYER_TYPE:
-      return outputFormats()  
+      return outputFormats()
     default:
       throw new Error(`Could not create output formats for ${ type }`)
   }

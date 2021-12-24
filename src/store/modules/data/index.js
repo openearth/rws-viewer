@@ -1,9 +1,8 @@
-import { uniqBy, uniq, difference } from 'ramda'
-import configRepo from '~/repo/configRepo'
-import { flattenLayers, getLayersTags, getLayersById, omitLayers } from '~/lib/layer-helpers.mjs'
-import router from '../../../router'
 import slugify from '@sindresorhus/slugify'
-
+import { uniqBy, uniq, difference } from 'ramda'
+import router from '../../../router'
+import configRepo from '~/repo/configRepo'
+import { flattenLayers, getLayersTags, getLayersById, omitLayers } from '~/lib/layer-helpers.js'
 
 export default {
   namespaced: true,
@@ -46,9 +45,10 @@ export default {
       const searchParams = new URLSearchParams(window.location.search)
       const initialLayerIds = (searchParams.get('layers') || '').split(',')
       const layersById = getLayersById(layers, initialLayerIds)
+
       if (layersById.length) {
         dispatch('map/setRasterLayers', { layers: layersById }, { root: true })
-      }      
+      }
     },
 
     async addViewerData({ commit, state }, viewer) {
@@ -71,6 +71,7 @@ export default {
       const viewersInRoute = currentRoute.params.config.split(',')
       const newViewerParts = viewer.split(',')
       const viewerPartsToAdd = difference(newViewerParts, viewersInRoute)
+
       if (viewerPartsToAdd.length) {
         const config = [ currentRoute.params.config, viewerPartsToAdd.join(',') ].join(',')
         const params = { ...currentRoute.params, config }
@@ -102,6 +103,7 @@ export default {
         .filter(name => name !== viewer)
         .join(',')
       commit('app/SET_VIEWER_CONFIG', config, { root: true })
+
       router.replace({ ...currentRoute, ...{ params: { ...currentRoute.params, ...{ config } } } })
     },
 
