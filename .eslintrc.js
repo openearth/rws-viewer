@@ -21,6 +21,7 @@ module.exports = {
     'brace-style': [ 'warn', '1tbs' ],
     'curly': [ 'warn', 'all' ],
     'comma-dangle': [ 'error', 'always-multiline' ],
+    'eol-last': [ 'error', 'always' ],
     'jsx-quotes': [ 'error', 'prefer-double' ],
     'keyword-spacing': [ 'warn', { 'before': true, 'after': true } ],
     'semi': [ 'error', 'never' ],
@@ -34,6 +35,5 @@ module.exports = {
     'vue/no-unused-components': 'warn',
     'vue/script-indent': [ 'error', 2, { baseIndent: 1 } ],
     'vue/no-v-html': 'off',
-    'eol-last': [ 'error', 'always' ],
   },
 }
