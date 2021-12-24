@@ -301,7 +301,7 @@
       async generateZipFile(urls) {
         let zip = new JSZip()
 
-        return Promise.all(urls.map(({ url, fileType }, index) => {
+        return Promise.all(urls.map(async ({ url, fileType }, index) => {
           const filename = `${ this.selectedLayerData[index].layer }.${ fileType }`
 
           return JSZipUtils.getBinaryContent(url)
