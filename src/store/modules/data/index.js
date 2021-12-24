@@ -15,11 +15,15 @@ export default {
 
   getters: {
     rawDisplayLayers: state => state.displayLayers,
-    displayLayers: (state, getters) => getters.rawDisplayLayers.length === 1 ? getters.rawDisplayLayers[0].children : getters.rawDisplayLayers,
+    displayLayers: (state, getters) => getters.rawDisplayLayers.length === 1
+      ? getters.rawDisplayLayers[0].children
+      : getters.rawDisplayLayers,
     flattenedLayers: state => state.flattenedLayers,
     layerTags: state => state.layerTags,
-    availableDisplayLayers: (state, getters, rootState, rootGetters) => omitLayers(getters.displayLayers, rootGetters['map/rasterLayerIds']),
-    availableFlattenedLayers: (state, getters, rootState, rootGetters) => getters.flattenedLayers.filter(layer => !rootGetters['map/rasterLayerIds'].includes(layer.id)),
+    availableDisplayLayers: (state, getters, rootState, rootGetters) =>
+      omitLayers(getters.displayLayers, rootGetters['map/rasterLayerIds']),
+    availableFlattenedLayers: (state, getters, rootState, rootGetters) =>
+      getters.flattenedLayers.filter(layer => !rootGetters['map/rasterLayerIds'].includes(layer.id)),
     loadedViewerConfigs: state => state.displayLayers.map(({ name }) => slugify(name)),
   },
 
@@ -87,7 +91,9 @@ export default {
 
       const flattenedViewerLayers = flattenLayers(viewerLayers)
       const flattenedViewerLayerIds = flattenedViewerLayers.map(({ id }) => id)
-      const flattenedViewerLayersToRemain = state.flattenedLayers.filter(layer => flattenedViewerLayerIds.includes(layer.id) === false)
+      const flattenedViewerLayersToRemain = state.flattenedLayers.filter(layer =>
+        flattenedViewerLayerIds.includes(layer.id) === false,
+      )
       commit('SET_FLATTENED_LAYERS', { layers: flattenedViewerLayersToRemain })
 
       const displayLayersToRemain = state.displayLayers.filter(layer => slugify(layer.name) !== viewer)
