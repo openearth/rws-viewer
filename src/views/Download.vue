@@ -210,7 +210,7 @@
       ...mapGetters('data', [ 'flattenedLayers' ]),
 
       activeLayers() {
-        return this.flattenedLayers.filter(layer => this.rasterLayerIds.includes(layer.id))
+        return this.rasterLayerIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
       },
 
       allUrlsAreValid() {
