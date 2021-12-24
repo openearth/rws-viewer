@@ -38,7 +38,17 @@ const answers = await inquirer.prompt([
   })),
   { name: 'key', type: 'input', message: 'What key do you want to use?', default: ({ en }) => toCamelCase(en), validate: value => Object.keys(enContents).indexOf(value) === -1 || `The key ${ value } already exists` },
   { name: 'sure', type: 'confirm', message: 'Do you want to update the locale files?' },
-  { name: 'copy', type: 'confirm', message: ({ key }) => `Do you want to copy $t('${ key }') to the clipboard?` },
+  { 
+    name: 'copy',
+    type: 'list',
+    message: 'What should we copy to your clipboard?',
+    default: 0,
+    choices: ({ key }) => [
+      `{{ $t('${ key }') }}`,
+      `$t('${ key }')`,
+      `this.$t('${ key }')`,
+      { name: 'Don\'t copy to clipboard', value: undefined } ],      
+    },
 ])
 
 if (answers.sure === false) {
@@ -54,17 +64,20 @@ await Promise.all(files.map(async file => {
   const content = await fs.readFile(filePath)
   const json = JSON.parse(content)
   json[answers.key] = answers[locale]
-  const updatedContent = JSON.stringify(json, null, 2)
+  const sortedJson = Object.keys(json).sort().reduce((collection, key) => ({ ...collection, [key]: json[key] }), {})
+  const updatedContent = JSON.stringify(sortedJson, null, 2)
   await fs.writeFile(filePath, `${ updatedContent }\n`, { encoding: 'utf-8' })
 }))
 .then(() => {
   console.log('')
   console.log('All locale files are updated.')
+  console.log('')
   if (answers['copy']) {
-    pbcopy(`$t('${ answers.key }')`)
-    console.log(`$t('${ answers.key }') is copied to your clipboard`)
+    pbcopy(answers['copy'])
+    console.log(`${ answers['copy'] } is copied to your clipboard`)
     console.log('')
   } else {
+  console.log('')
   console.log('Use the new key like this:')
   console.log('')
   console.log(`  $t('${ answers.key }')`)

@@ -31,7 +31,7 @@ export const getLayersTags = compose(
 
 export const getLayersById = (layers, ids) => 
   compose(
-    filter(idIncludedIn(ids)),
+    collection => ids.map(id => collection.find(layer => layer.id === id)),
     flatten,
     pickLayersRecursive,
   )(layers)
