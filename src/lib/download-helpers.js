@@ -80,16 +80,15 @@ export function createDownloadParameters({ layerData = {}, filter = '', format =
   }
 }
 
-// @TODO: check and cross-check format (key) with file extensions (value).
 export const mapFormatToFileExtension = {
-  'application/gml+xml': 'xml',
-  'application/gml+xml; version=3.2': 'xml',
+  'application/gml+xml': 'gml',
+  'application/gml+xml; version=3.2': 'gml',
   'application/json': 'json',
-  'application/vnd.google-earth.kml xml': 'xml',
-  'application/vnd.google-earth.kml+xml': 'xml',
-  'application/x-gzip': 'zip',
-  'application/x-netcdf': 'netcdf',
-  'application/x-netcdf4': 'netcdf4',
+  'application/vnd.google-earth.kml xml': 'kml',
+  'application/vnd.google-earth.kml+xml': 'kml',
+  'application/x-gzip': 'gz',
+  'application/x-netcdf': 'nc',
+  'application/x-netcdf4': 'nc',
   'csv': 'csv',
   'GML2': 'gml',
   'gml3': 'gml',
