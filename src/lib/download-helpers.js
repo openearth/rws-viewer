@@ -1,11 +1,8 @@
 import { stringify } from 'query-string'
 import {
   COORDINATES_HANDLE,
-  WCS_LAYER_FORMATS,
   WCS_LAYER_TYPE,
-  WFS_LAYER_FORMATS,
   WFS_LAYER_TYPE,
-  WMS_LAYER_FORMATS,
   WMS_LAYER_TYPE,
 } from '~/lib/constants'
 
