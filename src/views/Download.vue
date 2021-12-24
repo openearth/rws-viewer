@@ -91,7 +91,6 @@
             multiple
             outlined
             hide-details
-            @change="setDownloadLayerFormats"
           />
           <transition name="fade" mode="out-in">
             <v-alert
@@ -123,24 +122,6 @@
               v-model="downloadLayersFormats[index]"
               :layer-id="id"
             />
-            <!-- <template v-for="(id, index) in downloadLayers">
-              <v-row :key="index">
-                <v-col>
-                  <p class="body-1 mb-3 grey--text">
-                    <v-icon>mdi-layers-outline</v-icon>
-                    {{ getLayerNameById(id) }}
-                  </p>
-                  <v-select
-                    v-model="downloadLayersFormats[index]"
-                    :label="$t('layerFormats')"
-                    :items="downloadFormats[index]"
-                    dense
-                    outlined
-                    hide-details
-                  />
-                </v-col>
-              </v-row>
-            </template> -->
           </v-col>
         </v-row>
       </template>
@@ -189,12 +170,11 @@
   import DownloadFormatChooser from '~/components/DownloadFormatChooser/DownloadFormatChooser.vue'
   import metaRepo from '~/repo/metaRepo'
   import buildDownloadUrl from '~/lib/build-download-url'
-  import { getDownloadFormats } from '~/lib/download-helpers'
 
   const NO_SELECTION_ID = 'NO_SELECTION_ID'
 
   export default {
-    components: { DownloadFormatChooser }, 
+    components: { DownloadFormatChooser },
 
     data: () => ({
       downloadLayersFormats: [],
@@ -276,10 +256,6 @@
 
     methods: {
       ...mapActions('map', [ 'setDrawMode', 'setDrawnFeature', 'clearDrawnFeature' ]),
-
-      setDownloadLayerFormats() {
-        this.downloadFormats = this.selectedLayerData.map(layer => getDownloadFormats(layer))
-      },
 
       getLayerNameById(id) {
         const layer = this.flattenedLayers.find(layer => layer.id === id)

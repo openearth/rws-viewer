@@ -34,7 +34,7 @@ function getDownloadUrl(layerData = {}) {
 function getUrlAndOutputType({ layer = {}, coordinates = '', format }) {
   const url = getDownloadUrl(layer)
   const filter = createDownloadFilter(coordinates)
-  const params = createDownloadParameters({ layerData: layer, filter })
+  const params = createDownloadParameters({ layerData: layer, filter, format })
 
   return {
     url: `${ url }?${ params }`,

@@ -30,25 +30,25 @@ export const hasWfsTypeUrl = (layer = {}) => Boolean(layer?.downloadUrl.endsWith
 
 export const hasWmsTypeUrl = (layer = {}) => Boolean(layer?.url.endsWith(WMS_LAYER_TYPE))
 
-const createWfsParameters = ({ layer = '', filter = '' }) => stringify({
+const createWfsParameters = ({ layer = '', filter = '', format = '' }) => stringify({
   'typeName': layer,
   'request': 'GetFeature',
   'Content-Disposition': 'attachment',
-  'filename': layer + '.csv',
+  'filename': `${ layer }.${ format }`,
   'srsName': 'EPSG:4326',
   'service': 'WFS',
   'version': '1.1.0',
-  'outputFormat': 'csv',
+  'outputFormat': format,
   'GetLayers': layer,
   ...(filter && { 'filter': filter }),
 })
 
-const createWcsParameters = (layer = '') => stringify({
+const createWcsParameters = ({ layer = '', format = '' }) => stringify({
   'request': 'GetCoverage',
   'CoverageId': layer,
   'service': 'WCS',
   'version': '2.0.1',
-  'format': 'image/tiff',
+  'format': format,
 })
 
 export function createDownloadFilter(coordinates = '') {
@@ -63,7 +63,7 @@ export function createDownloadFilter(coordinates = '') {
   return filter
 }
 
-export function createDownloadParameters({ layerData = {}, filter = '' }) {
+export function createDownloadParameters({ layerData = {}, filter = '', format = '' }) {
   const { layer } = layerData
   const isWcsType = hasWcsTypeUrl(layerData)
   const isWfsType = hasWfsTypeUrl(layerData)
@@ -75,35 +75,11 @@ export function createDownloadParameters({ layerData = {}, filter = '' }) {
   }
 
   if (isWcsType) {
-    return createWcsParameters(layer)
+    return createWcsParameters({ layer, format })
   }
 
   if (isWfsType || isWmsType) {
-    return createWfsParameters({ layer, filter })
-  }
-}
-
-export function getDownloadFormats(layerData = {}) {
-  const { layer } = layerData
-  const isWcsType = hasWcsTypeUrl(layerData)
-  const isWfsType = hasWfsTypeUrl(layerData)
-  const isWmsType = hasWmsTypeUrl(layerData)
-
-  if (!isWcsType && !isWfsType && !isWmsType) {
-    console.warn('No valid type present in `downloadUrl` or `url` for layer: ', layer)
-    return null
-  }
-
-  if (isWcsType) {
-    return WCS_LAYER_FORMATS
-  }
-
-  if (isWfsType) {
-    return WFS_LAYER_FORMATS
-  }
-
-  if (isWmsType) {
-    return WMS_LAYER_FORMATS
+    return createWfsParameters({ layer, filter, format })
   }
 }
 
