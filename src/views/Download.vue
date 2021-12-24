@@ -1,19 +1,27 @@
 <template>
   <v-container class="download pt-4">
-    <template v-if="!downloadIsAvailable && !activeLayersList.length">
-      <v-row>
-        <v-col>
-          <p>{{ $t('noLayersSelected') }}</p>
-        </v-col>
-      </v-row>
-    </template>
-    <template v-if="!downloadIsAvailable && activeLayersList.length">
-      <v-row>
-        <v-col>
-          <p>{{ $t('downloadUnavailable') }}</p>
-        </v-col>
-      </v-row>
-    </template>
+    <v-row v-if="!downloadIsAvailable && !activeLayersList.length">
+      <v-col>
+        <v-alert
+          dense
+          outlined
+          type="info"
+        >
+          {{ $t('noLayersSelected') }}
+        </v-alert>
+      </v-col>
+    </v-row>
+    <v-row v-if="!downloadIsAvailable && activeLayersList.length">
+      <v-col>
+        <v-alert
+          dense
+          outlined
+          type="error"
+        >
+          {{ $t('downloadUnavailable') }}
+        </v-alert>
+      </v-col>
+    </v-row>
     <template v-if="downloadIsAvailable && activeLayersList.length">
       <v-row>
         <v-col>
@@ -97,6 +105,31 @@
           </transition>
         </v-col>
       </v-row>
+      <template v-if="downloadLayers.length">
+        <v-row>
+          <v-col>
+            <h4>{{ $t('formats') }}</h4>
+            <p class="body-2 mb-0">
+              {{ $t('formatsDesc') }}
+            </p>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <download-format-chooser
+              v-for="(id, index) in downloadLayers"
+              :key="id"
+              v-model="downloadLayersFormats[index]"
+              :layer-id="id"
+            />
+          </v-col>
+        </v-row>
+      </template>
+      <v-row>
+        <v-col>
+          <v-divider class="my-4" />
+        </v-col>
+      </v-row>
       <v-row>
         <v-col>
           <v-btn
@@ -134,17 +167,22 @@
   import JSZipUtils from 'jszip-utils'
   import { saveAs } from 'file-saver'
   import { mapActions, mapGetters } from 'vuex'
+  import DownloadFormatChooser from '~/components/DownloadFormatChooser/DownloadFormatChooser.vue'
   import metaRepo from '~/repo/metaRepo'
   import buildDownloadUrl from '~/lib/build-download-url'
 
   const NO_SELECTION_ID = 'NO_SELECTION_ID'
 
   export default {
+    components: { DownloadFormatChooser },
+
     data: () => ({
+      downloadLayersFormats: [],
+      downloadLayers: [],
+      downloadFormats: [],
+      isGeneratingDownload: false,
       preDefinedAreas: [],
       selectedArea: null,
-      downloadLayers: [],
-      isGeneratingDownload: false,
     }),
 
     computed: {
@@ -156,7 +194,7 @@
       },
 
       allUrlsAreValid() {
-        return this.selectedLayerData.every((layer) => Boolean(layer.downloadUrl) || Boolean(layer.url))
+        return this.selectedLayerData.every(layer => Boolean(layer.downloadUrl) || Boolean(layer.url))
       },
 
       buttonText() {
@@ -172,7 +210,7 @@
       },
 
       downloadIsAvailable() {
-        return this.activeLayers.some(layer => layer?.downloadUrl !== null)
+        return this.activeLayers.some(layer => Boolean(layer.downloadUrl) || Boolean(layer.url))
       },
 
       formattedAreas() {
@@ -219,6 +257,11 @@
     methods: {
       ...mapActions('map', [ 'setDrawMode', 'setDrawnFeature', 'clearDrawnFeature' ]),
 
+      getLayerNameById(id) {
+        const layer = this.flattenedLayers.find(layer => layer.id === id)
+        return layer?.name
+      },
+
       async onDrawModeSelect(mode) {
         // We need to wait for clearing the feature
         // before we can start drawing again
@@ -240,7 +283,11 @@
       },
 
       onDownloadClick() {
-        const urls = buildDownloadUrl(this.selectedLayerData, this.selectionCoordinates)
+        const urls = buildDownloadUrl({
+          layers: this.selectedLayerData,
+          coordinates: this.selectionCoordinates,
+          formats: this.downloadLayersFormats,
+        })
 
         this.isGeneratingDownload = true
 

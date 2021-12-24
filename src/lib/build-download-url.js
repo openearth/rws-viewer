@@ -8,6 +8,7 @@ import {
   hasWcsTypeUrl,
   hasWfsTypeUrl,
   hasWmsTypeUrl,
+  mapFormatToFileExtension,
 } from '~/lib/download-helpers'
 
 function getDownloadUrl(layerData = {}) {
@@ -30,23 +31,19 @@ function getDownloadUrl(layerData = {}) {
   }
 }
 
-function getUrlAndOutputType({ layer = {}, coordinates = '' }) {
+function getUrlAndOutputType({ layer = {}, coordinates = '', format }) {
   const url = getDownloadUrl(layer)
-
-  const isWcsType = hasWcsTypeUrl(layer)
-  const isWfsType = hasWfsTypeUrl(layer)
-  const isWmsType = hasWmsTypeUrl(layer)
-
-  const outputType = isWcsType && 'tiff' || isWfsType && 'csv' || isWmsType && 'csv'
   const filter = createDownloadFilter(coordinates)
-  const params = createDownloadParameters({ layerData: layer, filter })
+  const params = createDownloadParameters({ layerData: layer, filter, format })
 
   return {
     url: `${ url }?${ params }`,
-    fileType: outputType,
+    fileType: mapFormatToFileExtension[format],
   }
 }
 
-export default function(layerData = [], coordinates = '') {
-  return layerData.map(layer => getUrlAndOutputType({ layer, coordinates }))
+export default function({ layers = [], coordinates = '', formats = [] }) {
+  return layers.map((layer, index) => (
+    getUrlAndOutputType({ layer, coordinates, format: formats[index] })),
+  )
 }

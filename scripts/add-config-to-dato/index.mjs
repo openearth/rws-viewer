@@ -1,7 +1,7 @@
 import path from 'node:path'
 import { promises as fs } from 'node:fs'
 import { map, pipe, not, prop, flatten, uniq, filter, forEach, props, keys } from 'ramda'
-import { flattenLayers } from '../../src/lib/layer-helpers.mjs'
+import { flattenLayers } from '../../src/lib/layer-helpers.js'
 import { removeIdsFromStructure, replaceLayerWithId } from './menu-helpers.mjs'
 import { getTagsFromDato, getLayersFromDato, addTagToDato, addLayerToDato, addStructureToDato } from './dato.mjs'
 
