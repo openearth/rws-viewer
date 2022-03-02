@@ -16,14 +16,17 @@ const getTags = tagName => root =>
 function createParameters(type) {
   switch (type) {
     case WCS_LAYER_TYPE:
+      console.log('type case wcs', type)
       return 'service=WCS&request=GetCapabilities'
-    case WMS_LAYER_TYPE:
+    case WMS_LAYER_TYPE: //TODO: fix switch doesn't work correct always fells at WFS category
     case WFS_LAYER_TYPE:
+      console.log('type case wfs', type)
       return 'service=WFS&request=GetCapabilities'
     default:
       throw new Error(`Could not create parameters for ${ type }`)
   }
 }
+
 
 export async function getCapabilities(service, type) {
   const _type = type || getType(service)
@@ -31,6 +34,16 @@ export async function getCapabilities(service, type) {
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
 
   const { data } = await axios(`${ servicePath }?${ createParameters(_type) }`)
+  return new DOMParser().parseFromString(data, 'text/xml')
+}
+
+export async function getWmsCapabilities(service) {
+  
+  const serviceUrl = new URL(service)
+  const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
+  
+  const { data } = await axios(`${ servicePath }?service=WMS&version=1.1.1&request=GetCapabilities`)
+
   return new DOMParser().parseFromString(data, 'text/xml')
 }
 
