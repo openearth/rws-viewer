@@ -47,6 +47,7 @@
         { name: 'layers', page: '/', icon: 'mdi-layers' },
         { name: 'download', page: '/download', icon: 'mdi-download' },
         { name: 'favourites', page: '/favourites', icon: 'mdi-star' },
+        { name: 'filters', page:'/filters', icon: 'mdi-clock-time-three' },
       ],
     }),
     computed: {

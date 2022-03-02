@@ -8,6 +8,7 @@ let hasHadFirstRoute = false
 const Download = () => import('../views/Download.vue')
 const Favourites = () => import('../views/Favourites.vue')
 const Layers = () => import('../views/Layers.vue')
+const Filters = () => import('../views/Filters.vue')
 
 Vue.use(VueRouter)
 
@@ -26,6 +27,11 @@ const routes = [
     path: '/:config/favourites',
     name: 'favourites',
     component: Favourites,
+  },
+  {
+    path: '/:config/filters',
+    name: 'filters',
+    component: Filters,
   },
 ]
 

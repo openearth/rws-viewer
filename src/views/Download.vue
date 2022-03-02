@@ -246,7 +246,6 @@
         }
       },
     },
-
     created() {
       metaRepo
         .getPredefinedAreas()

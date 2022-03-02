@@ -10,6 +10,7 @@ export default {
     rasterLayers: [],
     drawMode: null,
     drawnFeature: null,
+    timeOption: false,
   }),
 
   getters: {
@@ -18,6 +19,7 @@ export default {
     rasterLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
     drawnFeature: state => state.drawnFeature,
+    timeOption: state => state.timeOption,
   },
 
   mutations: {
@@ -55,6 +57,12 @@ export default {
       layerToUpdate.opacity = opacity
 
       state.rasterLayers = update(index, layerToUpdate, state.rasterLayers)
+    },
+    SET_TIME_OPTION_ON(state) {
+      state.timeOption = true
+    },
+    SET_TIME_OPTION_FALSE(state) {
+      state.timeOption = false
     },
   },
 

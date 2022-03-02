@@ -46,6 +46,9 @@
     >
       <template #prepend="{selected, open, item, indeterminate}">
         <div class="layer-chooser__list-icon">
+          <v-icon v-if="item.timeFilter">
+            {{ selected ? 'mdi-clock-time-three' : 'mdi-clock-time-three-outline' }}
+          </v-icon>
           <v-icon v-if="item.layer">
             {{ selected ? 'mdi-layers' : 'mdi-layers-outline' }}
           </v-icon>
