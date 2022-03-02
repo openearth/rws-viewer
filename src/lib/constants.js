@@ -4,6 +4,9 @@ export const CATEGORIES = require('../../public/data/app.json').categories
 
 export const COORDINATES_HANDLE = '[[COORDINATES]]'
 
+export const NEDERLANDS_MAP_CENTER = [ 5.2913, 52.1326 ] // LONG, LAT
+export const WADDEN_SEA_MAP_CENTER = [ 5.787, 53.198 ]
+
 // Layer types
 export const OWS_LAYER_TYPE = 'ows'
 export const WCS_LAYER_TYPE = 'wcs'

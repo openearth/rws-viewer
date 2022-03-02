@@ -1,6 +1,7 @@
 import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import mapLayerOpacity from '~/lib/map-layer-opacity'
+import { NEDERLANDS_MAP_CENTER } from '~/lib/constants'
 
 export default {
   namespaced: true,
@@ -10,6 +11,7 @@ export default {
     rasterLayers: [],
     drawMode: null,
     drawnFeature: null,
+    mapCenter: NEDERLANDS_MAP_CENTER,
   }),
 
   getters: {
@@ -18,6 +20,7 @@ export default {
     rasterLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
     drawnFeature: state => state.drawnFeature,
+    mapCenter: state => state.mapCenter,
   },
 
   mutations: {
@@ -55,6 +58,9 @@ export default {
       layerToUpdate.opacity = opacity
 
       state.rasterLayers = update(index, layerToUpdate, state.rasterLayers)
+    },
+    SET_MAP_CENTER(state, coords) {
+      state.mapCenter = coords
     },
   },
 
@@ -106,6 +112,10 @@ export default {
 
     updateRasterLayerOpacity({ commit }, { id, opacity }) {
       commit('UPDATE_RASTER_LAYER_OPACITY', { id, opacity })
+    },
+
+    setMapCenter({ commit }, coords) {
+      commit('SET_MAP_CENTER', coords)
     },
   },
 }
