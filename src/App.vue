@@ -15,6 +15,7 @@
       :padding="{ left: mapLeftPadding }"
       mapbox-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
       :center="mapCenter"
+      :zoom="mapZoom"
       @styledata="setMapLoaded"
     >
       <v-mapbox-layer
@@ -60,7 +61,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'rasterLayerIds', 'rasterLayers', 'mapCenter' ]),
+      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'rasterLayerIds', 'rasterLayers', 'mapCenter', 'mapZoom' ]),
       mapLeftPadding() {
         return this.appNavigationOpen ? this.appNavigationWidth : 0
       },

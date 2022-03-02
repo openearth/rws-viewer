@@ -1,7 +1,7 @@
 import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import mapLayerOpacity from '~/lib/map-layer-opacity'
-import { NEDERLANDS_MAP_CENTER } from '~/lib/constants'
+import { NEDERLANDS_MAP_CENTER, NEDERLANDAS_MAP_ZOOM } from '~/lib/constants'
 
 export default {
   namespaced: true,
@@ -12,6 +12,7 @@ export default {
     drawMode: null,
     drawnFeature: null,
     mapCenter: NEDERLANDS_MAP_CENTER,
+    mapZoom: NEDERLANDAS_MAP_ZOOM,
   }),
 
   getters: {
@@ -21,6 +22,7 @@ export default {
     drawMode: state => state.drawMode,
     drawnFeature: state => state.drawnFeature,
     mapCenter: state => state.mapCenter,
+    mapZoom: state => state.mapZoom,
   },
 
   mutations: {
@@ -61,6 +63,9 @@ export default {
     },
     SET_MAP_CENTER(state, coords) {
       state.mapCenter = coords
+    },
+    SET_MAP_ZOOM(state, zoom) {
+      state.mapZoom = zoom
     },
   },
 
@@ -116,6 +121,10 @@ export default {
 
     setMapCenter({ commit }, coords) {
       commit('SET_MAP_CENTER', coords)
+    },
+    
+    setMapZoom({ commit }, zoom) {
+      commit('SET_MAP_ZOOM', zoom)
     },
   },
 }
