@@ -9,6 +9,8 @@ query ($first: IntType, $skip: IntType = 0) {
       layer
       downloadUrl
       downloadLayer
+      timeFilter
+      columnFilter
       tags {
         title
       }
