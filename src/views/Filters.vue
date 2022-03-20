@@ -73,8 +73,8 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
-  import { getWmsCapabilities } from '~/lib/get-capabilities'
+  import { mapGetters, mapActions } from 'vuex'
+  import { getWmsCapabilities, getLayerTimeExtent } from '~/lib/get-capabilities'
 
   export default {
     
@@ -94,7 +94,6 @@
         return this.rasterLayerIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
       },
       timeIsAvailable() {
-        console.log('this.activeLayers', this.activeLayers)
         return true
       },
       activeLayersList() {
@@ -112,10 +111,21 @@
     watch: {
       selectedLayer() {
         if (this.selectedLayer) {
-          const { url } = this.selectedLayer
-          getWmsCapabilities(url)
+          const { url, layer } = this.selectedLayer
+          this.requestCapabilities(url, layer)
+          
         }
        
+      },
+    },
+    methods: {
+      ...mapActions('data', [ 'setTimeExtent' ] ),
+      async requestCapabilities(url, layer) {
+        const layerWithoutWorkspace = layer.split(':').pop()
+        const response = await getWmsCapabilities(url)
+        const capabilities = response.WMT_MS_Capabilities.Capability
+        const timeExtent = getLayerTimeExtent(capabilities, layerWithoutWorkspace)
+        this.setTimeExtent(timeExtent)
       },
     },
 

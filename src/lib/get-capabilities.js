@@ -1,11 +1,17 @@
 import axios from 'axios'
-import { map, uniq, pipe } from 'ramda'
+import { map, uniq, pipe, find, propEq } from 'ramda'
 import { getType } from '~/lib/service-helpers'
+import extractTimeExtentFromCapabilities from  '@/lib/extract-time-extent-from-capabilities'
+const convert = require('xml-js')
+
+
 import {
   WCS_LAYER_TYPE,
   WFS_LAYER_TYPE,
   WMS_LAYER_TYPE,
 } from '~/lib/constants'
+
+
 
 const getTagContent = tag => tag.textContent
 const getTags = tagName => root =>
@@ -34,7 +40,7 @@ export async function getCapabilities(service, type) {
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
 
   const { data } = await axios(`${ servicePath }?${ createParameters(_type) }`)
-  return new DOMParser().parseFromString(data, 'text/xml')
+  return JSON.parse(convert.xml2json(data, { compact: true, spaces: 2 }))
 }
 
 export async function getWmsCapabilities(service) {
@@ -44,7 +50,7 @@ export async function getWmsCapabilities(service) {
   
   const { data } = await axios(`${ servicePath }?service=WMS&version=1.1.1&request=GetCapabilities`)
 
-  return new DOMParser().parseFromString(data, 'text/xml')
+  return JSON.parse(convert.xml2json(data, { compact: true, spaces: 2 }))
 }
 
 export function getSupportedOutputFormats(type, capabilities) {
@@ -74,3 +80,9 @@ export function getSupportedOutputFormats(type, capabilities) {
       throw new Error(`Could not create output formats for ${ type }`)
   }
 }
+
+export function getLayerTimeExtent(capabilities, layer) {
+  const timeExtent = extractTimeExtentFromCapabilities(capabilities, layer)
+  return timeExtent
+}
+

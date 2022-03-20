@@ -1,8 +1,9 @@
 <template>
-  <v-sheet
+  <v-card
     v-if="timings.length"
-    class="time-slider px-2 py-4"
+    class="time-slider pa-1"
     elevation="2"
+    width="1600"
     rounded
   >
     <div
@@ -41,7 +42,7 @@
     <v-slider
       v-if="mode === 'simple-slider'"
       v-model="simpleSliderValue"
-      class="px-2"
+      class="slider-format px-2"
       :tick-labels="sliderTicks"
       :max="sliderTicks.length ? sliderTicks.length - 1 : 0"
       :step="1"
@@ -70,7 +71,7 @@
         />
       </div>
     </div>
-  </v-sheet>
+  </v-card>
 </template>
 
 <script>
@@ -153,10 +154,6 @@
         immediate: true,
       },
     },
-    mounted() { 
-      console.log('time-slider component was loaded')
-    },
-
     methods: {
       onInput(timing) {
         const timingClone = { ...timing }
@@ -196,7 +193,19 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" >
+.v-input {
+  font-size: 12 !important;
+}
+
+.time-slider {
+  position:absolute;
+  z-index: 5;
+  max-width: 5000;
+  bottom: 1;
+  top: 5px;
+  left: 470px;
+}
 .timeline {
   &_bar {
     position: relative;
