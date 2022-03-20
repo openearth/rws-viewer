@@ -85,7 +85,9 @@
     watch: {
       //Set as default timestamp the last value of the timeExtent array
       formattedTimeExtent() { 
-        this.setSelectedTimestamp(this.formattedTimeExtent[this.formattedTimeExtent.length -1].t1)
+        if (this.formattedTimeExtent.length) {
+          this.setSelectedTimestamp(this.formattedTimeExtent[this.formattedTimeExtent.length -1].t1)
+        }
       },
     },
     mounted() {

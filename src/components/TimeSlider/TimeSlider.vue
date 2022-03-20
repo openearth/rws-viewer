@@ -3,7 +3,7 @@
     v-if="timings.length"
     class="time-slider pa-1"
     elevation="2"
-    width="1600"
+    width="1400"
     rounded
   >
     <div
@@ -194,10 +194,10 @@
 </script>
 
 <style lang="scss" >
-.v-input {
-  font-size: 12 !important;
-}
 
+.v-slider__tick-label {
+  font-size: 10px;
+}
 .time-slider {
   position:absolute;
   z-index: 5;

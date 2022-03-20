@@ -47,6 +47,9 @@ export default {
     SET_SELECTED_TIMESTAMP(state, timestamp) {
       state.selectedTimestamp = timestamp
     },
+    RESET_TIME_EXTENT(state) {
+      state.timeExtent = []
+    },
   },
 
   actions: {
@@ -134,5 +137,8 @@ export default {
       const timestampISO = timestamp.toISOString()
       commit('SET_SELECTED_TIMESTAMP', timestampISO)
     }, 
+    resetTimeExtent({ commit }) {
+      commit('RESET_TIME_EXTENT')
+    },
   },
 }

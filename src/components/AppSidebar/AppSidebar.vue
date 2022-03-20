@@ -19,6 +19,7 @@
           :to="`/${viewerConfig}${tab.page}`"
           :ripple="false"
           exact-path
+          @click="removeTimeSlider"
         >
           {{ $t(tab.name) }}
           <v-icon>{{ tab.icon }}</v-icon>
@@ -37,7 +38,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapActions, mapGetters } from 'vuex'
 
   export default {
     name: 'AppSidebar',
@@ -52,6 +53,15 @@
     }),
     computed: {
       ...mapGetters('app', [ 'appNavigationOpen', 'appNavigationWidth', 'viewerConfig' ]),
+    },
+    methods: {
+      ...mapActions('data', [ 'resetTimeExtent' ]),
+      removeTimeSlider(event) {
+        const tab = event
+        if (tab !== 'filters') {
+          this.resetTimeExtent()
+        }
+      },
     },
   }
 </script>
