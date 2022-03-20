@@ -1,6 +1,7 @@
 import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import mapLayerOpacity from '~/lib/map-layer-opacity'
+import mapLayersWithTimeFilter from '~/lib/mapLayersWithTimeFilter'
 
 export default {
   namespaced: true,
@@ -17,6 +18,20 @@ export default {
     mapLoaded: state => state.mapLoaded,
     rasterLayers: state => (state.mapLoaded && state.rasterLayers) || [],
     rasterLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
+    wmsLayers (state, getters, rootState)  {
+      const { rasterLayers } = state
+      const { selectedTimestamp } = rootState.data
+      if (!rasterLayers) {
+        return []
+      }
+      
+      const mappedTimeFilterLayers = mapLayersWithTimeFilter(rasterLayers, selectedTimestamp)
+      
+      const wmsLayers = mappedTimeFilterLayers.map(layer => buildWmsLayer(layer))
+      //const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
+      return wmsLayers
+    },
+    wmsLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
     drawnFeature: state => state.drawnFeature,
     timeOption: state => state.timeOption,
@@ -72,17 +87,25 @@ export default {
     },
 
     setRasterLayers({ commit, state }, { layers }) {
-      const wmsLayers = layers.map(layer => buildWmsLayer(layer))
-      const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
+  /*     const wmsLayers = layers.map(layer => buildWmsLayer(layer))
+      const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers) */
 
-      commit('SET_RASTER_LAYERS', { layers: mappedWmsLayers })
+      //commit('SET_RASTER_LAYERS', { layers: mappedWmsLayers })
+      commit('SET_RASTER_LAYERS', { layers: layers })
     },
 
     addRasterLayer({ commit, state }, { layers }) {
-      const wmsLayers = layers.map(layer => buildWmsLayer(layer))
+/*       const wmsLayers = layers.map(layer => buildWmsLayer(layer))
+     
       const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
       const layersToAdd = difference(mappedWmsLayers, state.rasterLayers)
-
+      console.log('layersToAdd', layersToAdd)
+      layersToAdd.forEach(layer => {
+        commit('ADD_RASTER_LAYER', { layer })
+      }) */
+      console.log('layers', layers)
+      const layersToAdd = difference(layers , state.rasterLayers)
+      console.log('layersToAdd', layersToAdd)
       layersToAdd.forEach(layer => {
         commit('ADD_RASTER_LAYER', { layer })
       })

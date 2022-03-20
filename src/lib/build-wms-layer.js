@@ -16,7 +16,7 @@ export default ({ url: rawUrl = defaultUrl, id, layer, style = '', paint = {}, t
     style,
     width: 256,
     height: 256,
-    ...(time && time),
+    ...(time) && { time: time },
     srs: 'EPSG:3857',
     transparent: true,
     bbox: '{bbox-epsg-3857}',
@@ -24,7 +24,7 @@ export default ({ url: rawUrl = defaultUrl, id, layer, style = '', paint = {}, t
     encode: false,
     ...searchParamsObject,
   })
-
+  
   return {
     id,
     layer,
