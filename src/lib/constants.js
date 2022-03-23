@@ -10,7 +10,7 @@ const OTHER_VIEWER_CONFIGS = [
   {
     name: 'bob-viewer',
     source: 'api',
-    path: '/.netlify/functions/monitoring-status',
+    path: '/.netlify/functions/bob-viewer',
   },
 ]
 
