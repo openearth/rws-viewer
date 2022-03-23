@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import store from '../store'
 import { VALID_VIEWER_CONFIGS } from '../lib/constants'
 
+const validViewerConfigNames = VALID_VIEWER_CONFIGS.map(({ name }) => name)
 let hasHadFirstRoute = false
 
 const Download = () => import('../views/Download.vue')
@@ -13,17 +14,17 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/:config',
+    path: '/:configNames',
     name: 'layers',
     component: Layers,
   },
   {
-    path: '/:config/download',
+    path: '/:configNames/download',
     name: 'download',
     component: Download,
   },
   {
-    path: '/:config/favourites',
+    path: '/:configNames/favourites',
     name: 'favourites',
     component: Favourites,
   },
@@ -36,19 +37,20 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const storedConfig = store.getters['app/viewerConfig']
-  const config = VALID_VIEWER_CONFIGS.includes(to.params.config)
-      ? to.params.config
-      : VALID_VIEWER_CONFIGS[0]
+  const storedConfigNames = store.getters['app/viewerConfigNames']
 
-  if (!storedConfig) {
-    store.commit('app/SET_VIEWER_CONFIG', config)
+  const configNames = validViewerConfigNames.includes(to.params.configNames)
+      ? to.params.configNames
+      : validViewerConfigNames[0]
+
+  if (!storedConfigNames) {
+    store.commit('app/SET_VIEWER_CONFIG_NAMES', configNames)
   }
 
-  if (!to.params.config) {
-    return next({ ...to, path: `/${ config }${ to.path }` })
-  } 
-    
+  if (!to.params.configNames) {
+    return next({ ...to, path: `/${ configNames }${ to.path }` })
+  }
+
   next()
 })
 

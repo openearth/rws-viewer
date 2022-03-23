@@ -4,7 +4,7 @@ export default {
   state: () => ({
     appNavigationOpen: true,
     appNavigationWidth: 440,
-    viewerConfig: '',
+    viewerConfigNames: '',
     viewerName: '',
   }),
 
@@ -12,7 +12,8 @@ export default {
     appNavigationOpen: state => state.appNavigationOpen,
     appNavigationWidth: state => state.appNavigationWidth,
     viewerName: state => state.viewerName,
-    viewerConfig: state => state.viewerConfig,
+    // @TODO :: This may be redundant if we can just use route.params.configNames instead of this
+    viewerConfigNames: state => state.viewerConfigNames,
   },
 
   mutations: {
@@ -22,8 +23,8 @@ export default {
     SET_APP_NAVIGATION_OPEN(state, { open }) {
       state.appNavigationOpen = open
     },
-    SET_VIEWER_CONFIG(state, config) {
-      state.viewerConfig = config
+    SET_VIEWER_CONFIG_NAMES(state, configNames) {
+      state.viewerConfigNames = configNames
     },
   },
 

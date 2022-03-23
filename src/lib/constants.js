@@ -1,6 +1,22 @@
-export const VALID_VIEWER_CONFIGS = require('../../public/data/available-configs.json')
+const DATO_VIEWER_CONFIGS = require('../../public/datoData/available-configs.json')
+  .map(name => ({ name, source: 'dato' }))
 
-export const CATEGORIES = require('../../public/data/app.json').categories
+const OTHER_VIEWER_CONFIGS = [
+  {
+    name: 'some-other-viewer',
+    source: 'file',
+    path: '/data/some-other-viewer.json',
+  },
+  {
+    name: 'bob-viewer',
+    source: 'api',
+    path: '/.netlify/functions/bob-viewer',
+  },
+]
+
+export const VALID_VIEWER_CONFIGS = [ ...DATO_VIEWER_CONFIGS, ...OTHER_VIEWER_CONFIGS ]
+
+export const CATEGORIES = require('../../public/datoData/app.json').categories
 
 export const COORDINATES_HANDLE = '[[COORDINATES]]'
 
