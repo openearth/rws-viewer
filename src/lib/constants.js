@@ -3,9 +3,9 @@ const DATO_VIEWER_CONFIGS = require('../../public/datoData/available-configs.jso
 
 const OTHER_VIEWER_CONFIGS = [
   {
-    name: 'some-new-viewer',
+    name: 'some-other-viewer',
     source: 'file',
-    path: 'path/to/file',
+    path: '/data/some-other-viewer.json',
   },
 ]
 
