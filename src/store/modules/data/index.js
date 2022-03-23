@@ -41,7 +41,7 @@ export default {
 
   actions: {
     async getAppData({ dispatch }, route) {
-      const viewer = route?.params?.configName
+      const viewer = route?.params?.configNames
       const { layers, name } = await dispatch('addViewerData', viewer)
 
       dispatch('app/setViewerName', { name }, { root: true })
@@ -72,14 +72,14 @@ export default {
       commit('SET_LAYER_TAGS', { tags })
 
       const currentRoute = router.currentRoute
-      const viewersInRoute = currentRoute.params.configName.split(',')
+      const viewersInRoute = currentRoute.params.configNames.split(',')
       const newViewerParts = viewer.split(',')
       const viewerPartsToAdd = difference(newViewerParts, viewersInRoute)
 
       if (viewerPartsToAdd.length) {
-        const configName = [ currentRoute.params.configName, viewerPartsToAdd.join(',') ].join(',')
-        const params = { ...currentRoute.params, configName }
-        commit('app/SET_VIEWER_CONFIG_NAME', params.configName, { root: true })
+        const configNames = [ currentRoute.params.configNames, viewerPartsToAdd.join(',') ].join(',')
+        const params = { ...currentRoute.params, configNames }
+        commit('app/SET_VIEWER_CONFIG_NAMES', params.configNames, { root: true })
         router.replace({ ...currentRoute, ...{ params } })
       }
 
@@ -104,13 +104,13 @@ export default {
       commit('SET_LAYER_TAGS', { tags: tagsToRemain })
 
       const currentRoute = router.currentRoute
-      const config = currentRoute.params.configName
+      const newConfigNames = currentRoute.params.configNames
         .split(',')
         .filter(name => name !== viewer)
         .join(',')
-      commit('app/SET_VIEWER_CONFIG_NAME', config, { root: true })
+      commit('app/SET_VIEWER_CONFIG_NAMES', newConfigNames, { root: true })
 
-      router.replace({ ...currentRoute, ...{ params: { ...currentRoute.params, ...{ config } } } })
+      router.replace({ ...currentRoute, ...{ params: { ...currentRoute.params, ...{ configNames: newConfigNames } } } })
     },
 
     setDisplayLayers({ commit }, { layers }) {

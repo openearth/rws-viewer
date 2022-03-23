@@ -14,17 +14,17 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/:configName',
+    path: '/:configNames',
     name: 'layers',
     component: Layers,
   },
   {
-    path: '/:configName/download',
+    path: '/:configNames/download',
     name: 'download',
     component: Download,
   },
   {
-    path: '/:configName/favourites',
+    path: '/:configNames/favourites',
     name: 'favourites',
     component: Favourites,
   },
@@ -37,18 +37,18 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const storedConfigName = store.getters['app/viewerConfigName']
+  const storedConfigNames = store.getters['app/viewerConfigNames']
 
-  const configName = validViewerConfigNames.includes(to.params.configName)
-      ? to.params.configName
+  const configNames = validViewerConfigNames.includes(to.params.configNames)
+      ? to.params.configNames
       : validViewerConfigNames[0]
 
-  if (!storedConfigName) {
-    store.commit('app/SET_VIEWER_CONFIG_NAME', configName)
+  if (!storedConfigNames) {
+    store.commit('app/SET_VIEWER_CONFIG_NAMES', configNames)
   }
 
-  if (!to.params.configName) {
-    return next({ ...to, path: `/${ configName }${ to.path }` })
+  if (!to.params.configNames) {
+    return next({ ...to, path: `/${ configNames }${ to.path }` })
   }
 
   next()

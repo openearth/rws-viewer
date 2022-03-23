@@ -4,7 +4,7 @@ export default {
   state: () => ({
     appNavigationOpen: true,
     appNavigationWidth: 440,
-    viewerConfigName: '',
+    viewerConfigNames: '',
     viewerName: '',
   }),
 
@@ -12,7 +12,7 @@ export default {
     appNavigationOpen: state => state.appNavigationOpen,
     appNavigationWidth: state => state.appNavigationWidth,
     viewerName: state => state.viewerName,
-    viewerConfigName: state => state.viewerConfigName,
+    viewerConfigNames: state => state.viewerConfigNames,
   },
 
   mutations: {
@@ -22,8 +22,8 @@ export default {
     SET_APP_NAVIGATION_OPEN(state, { open }) {
       state.appNavigationOpen = open
     },
-    SET_VIEWER_CONFIG_NAME(state, configName) {
-      state.viewerConfigName = configName
+    SET_VIEWER_CONFIG_NAMES(state, configNames) {
+      state.viewerConfigNames = configNames
     },
   },
 
