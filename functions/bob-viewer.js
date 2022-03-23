@@ -1,6 +1,6 @@
 const data = {
   'id': '0001',
-  'name': 'Some other Viewer',
+  'name': 'The Bob Viewer',
   'metadata': [],
   'children': [
     {
