@@ -2,7 +2,8 @@ import { VALID_VIEWER_CONFIGS } from '~/lib/constants'
 import axios from 'axios'
 
 function getViewerDataFromApi(path) {
-  console.log(path)
+  return axios(path)
+    .then(({ data }) => data)
 }
 
 function getViewerDataFromFile(path) {

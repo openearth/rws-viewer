@@ -7,6 +7,11 @@ const OTHER_VIEWER_CONFIGS = [
     source: 'file',
     path: '/data/some-other-viewer.json',
   },
+  {
+    name: 'bob-viewer',
+    source: 'api',
+    path: '/.netlify/functions/monitoring-status',
+  },
 ]
 
 export const VALID_VIEWER_CONFIGS = [ ...DATO_VIEWER_CONFIGS, ...OTHER_VIEWER_CONFIGS ]

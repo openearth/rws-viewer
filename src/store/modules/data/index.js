@@ -77,9 +77,6 @@ export default {
       const viewersInRoute = currentRoute.params.configNames.split(',')
       const newViewerParts = viewerConfigNames.split(',')
       const viewerPartsToAdd = difference(newViewerParts, viewersInRoute)
-      console.log('viewersInRoute', viewersInRoute)
-      console.log('newViewerParts', newViewerParts)
-      console.log('viewerPartsToAdd', viewerPartsToAdd)
 
       if (viewerPartsToAdd.length) {
         const configNames = [ currentRoute.params.configNames, viewerPartsToAdd.join(',') ].join(',')
