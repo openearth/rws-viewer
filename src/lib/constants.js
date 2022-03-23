@@ -6,6 +6,17 @@ const OTHER_VIEWER_CONFIGS = [
     name: 'some-other-viewer',
     source: 'file',
     path: '/data/some-other-viewer.json',
+    // SUGGESTION FOR PER-VIEWER APP CONFIG
+    // initialMap: {
+    //   zoom: 5,
+    //   center: [ dsnmakvms, damskmfds ],
+    // },
+    // categories: [
+    //   'biota',
+    //   'chemie',
+    //   'fysisch',
+    //   'gebruik',
+    // ],
   },
   {
     name: 'bob-viewer',
