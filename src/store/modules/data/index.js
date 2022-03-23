@@ -41,7 +41,7 @@ export default {
 
   actions: {
     async getAppData({ dispatch }, route) {
-      const viewer = route?.params?.config
+      const viewer = route?.params?.configName
       const { layers, name } = await dispatch('addViewerData', viewer)
 
       dispatch('app/setViewerName', { name }, { root: true })
@@ -72,14 +72,14 @@ export default {
       commit('SET_LAYER_TAGS', { tags })
 
       const currentRoute = router.currentRoute
-      const viewersInRoute = currentRoute.params.config.split(',')
+      const viewersInRoute = currentRoute.params.configName.split(',')
       const newViewerParts = viewer.split(',')
       const viewerPartsToAdd = difference(newViewerParts, viewersInRoute)
 
       if (viewerPartsToAdd.length) {
-        const config = [ currentRoute.params.config, viewerPartsToAdd.join(',') ].join(',')
-        const params = { ...currentRoute.params, config }
-        commit('app/SET_VIEWER_CONFIG', params.config, { root: true })
+        const configName = [ currentRoute.params.configName, viewerPartsToAdd.join(',') ].join(',')
+        const params = { ...currentRoute.params, configName }
+        commit('app/SET_VIEWER_CONFIG_NAME', params.configName, { root: true })
         router.replace({ ...currentRoute, ...{ params } })
       }
 
@@ -104,11 +104,11 @@ export default {
       commit('SET_LAYER_TAGS', { tags: tagsToRemain })
 
       const currentRoute = router.currentRoute
-      const config = currentRoute.params.config
+      const config = currentRoute.params.configName
         .split(',')
         .filter(name => name !== viewer)
         .join(',')
-      commit('app/SET_VIEWER_CONFIG', config, { root: true })
+      commit('app/SET_VIEWER_CONFIG_NAME', config, { root: true })
 
       router.replace({ ...currentRoute, ...{ params: { ...currentRoute.params, ...{ config } } } })
     },

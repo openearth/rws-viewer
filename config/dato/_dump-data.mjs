@@ -9,7 +9,7 @@ import queryApi from './_query-api.mjs'
 dotenv.config()
 
 const __dirname = new URL('.', import.meta.url).pathname
-const PUBLIC_DIR = path.join(__dirname, '../..', 'public/data')
+const PUBLIC_DIR = path.join(__dirname, '../..', 'public/datoData')
 
 const readFile = file => fs.readFile(file, { encoding: 'utf-8' })
 
@@ -37,7 +37,7 @@ function fetchDataFromQueryFile(variables = {}) {
     }
 
     return readFile(queryFile)
-      .then(query => 
+      .then(query =>
           queryApi(process.env.DATO_API_TOKEN, variables)(query)
             .catch((error) => {
               console.log(error)

@@ -19,7 +19,7 @@
     components: { LayerChooser },
 
     computed: {
-      ...mapGetters('app', [ 'viewerConfig' ]),
+      ...mapGetters('app', [ 'viewerConfigName' ]),
       ...mapGetters('data', [ 'flattenedLayers', 'layerTags' ]),
       ...mapGetters('map', [ 'rasterLayerIds', 'rasterLayers' ]),
 
@@ -36,7 +36,7 @@
 
         const url = new URL(window.location.href)
         url.searchParams.set('layers', newValue.map(({ id }) => id).join(','))
-        this.$router.replace(`/${ this.viewerConfig }/?${ url.searchParams.toString() }`)
+        this.$router.replace(`/${ this.viewerConfigName }/?${ url.searchParams.toString() }`)
       },
     },
 

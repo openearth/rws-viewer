@@ -16,7 +16,7 @@
       <template v-for="tab in tabs">
         <v-tab
           :key="tab.name"
-          :to="`/${viewerConfig}${tab.page}`"
+          :to="`/${viewerConfigName}${tab.page}`"
           :ripple="false"
           exact-path
         >
@@ -50,7 +50,7 @@
       ],
     }),
     computed: {
-      ...mapGetters('app', [ 'appNavigationOpen', 'appNavigationWidth', 'viewerConfig' ]),
+      ...mapGetters('app', [ 'appNavigationOpen', 'appNavigationWidth', 'viewerConfigName' ]),
     },
   }
 </script>

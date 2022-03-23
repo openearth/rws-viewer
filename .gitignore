@@ -23,4 +23,4 @@ pnpm-debug.log*
 *.sw?
 
 # Generated files
-public/data/**/*.json
+public/datoData/**/*.json
