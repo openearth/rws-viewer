@@ -12,6 +12,7 @@ export default {
     appNavigationOpen: state => state.appNavigationOpen,
     appNavigationWidth: state => state.appNavigationWidth,
     viewerName: state => state.viewerName,
+    // @TODO :: This may be redundant if we can just use route.params.configNames instead of this
     viewerConfigNames: state => state.viewerConfigNames,
   },
 

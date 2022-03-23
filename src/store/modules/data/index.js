@@ -40,10 +40,12 @@ export default {
   },
 
   actions: {
-    async getAppData({ dispatch }, route) {
-      const viewer = route?.params?.configNames
-      const { layers, name } = await dispatch('addViewerData', viewer)
+    async getAppData({ commit, dispatch }, route) {
+      const viewerConfigNames = route?.params?.configNames
+      const { layers, name } = await dispatch('addViewerData', viewerConfigNames)
 
+      // Commit the names on first load
+      commit('app/SET_VIEWER_CONFIG_NAMES', viewerConfigNames, { root: true })
       dispatch('app/setViewerName', { name }, { root: true })
 
       const searchParams = new URLSearchParams(window.location.search)
@@ -55,8 +57,8 @@ export default {
       }
     },
 
-    async addViewerData({ commit, state }, viewer) {
-      const { layers: viewerLayers, name } = await configRepo.getConfig(viewer)
+    async addViewerData({ commit, state }, viewerConfigNames) {
+      const { layers: viewerLayers, name } = await configRepo.getConfig(viewerConfigNames)
 
       const stateLayers = state.displayLayers
       commit('SET_DISPLAY_LAYERS', { layers: [ ...stateLayers, ...viewerLayers ] })
@@ -73,8 +75,11 @@ export default {
 
       const currentRoute = router.currentRoute
       const viewersInRoute = currentRoute.params.configNames.split(',')
-      const newViewerParts = viewer.split(',')
+      const newViewerParts = viewerConfigNames.split(',')
       const viewerPartsToAdd = difference(newViewerParts, viewersInRoute)
+      console.log('viewersInRoute', viewersInRoute)
+      console.log('newViewerParts', newViewerParts)
+      console.log('viewerPartsToAdd', viewerPartsToAdd)
 
       if (viewerPartsToAdd.length) {
         const configNames = [ currentRoute.params.configNames, viewerPartsToAdd.join(',') ].join(',')
