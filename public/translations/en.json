@@ -14,10 +14,12 @@
   "drawRectangle": "Draw rectangle",
   "expandAll": "Expand all",
   "favourites": "Favourites",
-  "filters": "Filters",
   "filterByTag": "Filter by tag",
+  "filters": "Filters",
   "formats": "Formats",
   "formatsDesc": "Choose download format for each layer.",
+  "labelFilter": "Predifined filter",
+  "labelLayerWithTime": "Select from visible layers with clock icon",
   "layerFormats": "Choose format",
   "layerOrder": "Layer order",
   "layerSelection": "Select from visible layers",
@@ -33,5 +35,7 @@
   "searchInAvailableLayerNames": "Search in available layer names",
   "select": "Select",
   "selectDesc": "Select a portion of the map to download. Either by drawing, or choosing a predefined section.",
+  "selectFilter": "Select a value from list below to query the layer",
+  "selectLayerWithTime": "Select a layer from the list to enable the time component",
   "selectLayersToView": "Select layers to view"
 }

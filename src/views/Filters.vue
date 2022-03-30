@@ -7,7 +7,7 @@
           outlined
           type="info"
         >
-          Please select a layer with time option
+          {{ $t('selectLayerWithTime') }}
         </v-alert>
       </v-col>
     </v-row>
@@ -35,7 +35,7 @@
         <v-col>
           <v-select
             v-model="selectedLayerCode"
-            label="Select from visible layers with time option"
+            :label="$t('labelLayerWithTime')"
             :items="activeLayersList"
             dense
             outlined
@@ -52,7 +52,7 @@
         <v-col>
           <h3>{{ $t('select') }}</h3>
           <p class="body-2 mb-0">
-            Select a filter from the list
+            {{ $t('selectFilter') }}
           </p>
         </v-col>
       </v-row>
@@ -60,7 +60,7 @@
         <v-col>
           <v-select
             v-model="queryFilter"
-            label="Predifined filter"
+            :label="$t('labelFilter')"
             :items="activeLayersList"
             dense
             outlined
