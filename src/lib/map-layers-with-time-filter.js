@@ -1,12 +1,13 @@
 /**
- * For every layer with timeFilter true
- * adds the selectedTimestamp
+ * Reads the layers.
+ * If layer has time filter set to true
+ * then adds extra property time equal to timestamp
  * 
+ * Warning!! since we have one timeslider all layers with time
  * 
  *  */
 
 export default (layers, timestamp) => {
-  console.log('in function', layers, timestamp)
   if (!layers.length ) {
     return []
   }
@@ -15,9 +16,7 @@ export default (layers, timestamp) => {
   }
 
   return layers.map(layer => {
-    console.log('layer in function', layer)
     if (layer?.timeFilter) {
-      console.log('layer has timefilter', layer)
       return {
         ...layer,
         time: timestamp,

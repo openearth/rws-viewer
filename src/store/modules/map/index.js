@@ -1,7 +1,7 @@
 import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import mapLayerOpacity from '~/lib/map-layer-opacity'
-import mapLayersWithTimeFilter from '~/lib/mapLayersWithTimeFilter'
+import mapLayersWithTimeFilter from '~/lib/map-layers-with-time-filter'
 
 export default {
   namespaced: true,
@@ -103,9 +103,9 @@ export default {
       layersToAdd.forEach(layer => {
         commit('ADD_RASTER_LAYER', { layer })
       }) */
-      console.log('layers', layers)
+     
       const layersToAdd = difference(layers , state.rasterLayers)
-      console.log('layersToAdd', layersToAdd)
+     
       layersToAdd.forEach(layer => {
         commit('ADD_RASTER_LAYER', { layer })
       })

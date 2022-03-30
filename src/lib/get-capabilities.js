@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { map, uniq, pipe, find, propEq } from 'ramda'
 import { getType } from '~/lib/service-helpers'
-import extractTimeExtentFromCapabilities from  '@/lib/extract-time-extent-from-capabilities'
+import extractTimeExtentFromCapabilities from  '~/lib/extract-time-extent-from-capabilities'
 const convert = require('xml-js')
 
 
@@ -22,11 +22,9 @@ const getTags = tagName => root =>
 function createParameters(type) {
   switch (type) {
     case WCS_LAYER_TYPE:
-      console.log('type case wcs', type)
       return 'service=WCS&request=GetCapabilities'
-    case WMS_LAYER_TYPE: //TODO: fix switch doesn't work correct always fells at WFS category
+    case WMS_LAYER_TYPE: //TODO: fix switch doesn't work correct as always fall under WFS category
     case WFS_LAYER_TYPE:
-      console.log('type case wfs', type)
       return 'service=WFS&request=GetCapabilities'
     default:
       throw new Error(`Could not create parameters for ${ type }`)
@@ -44,7 +42,7 @@ export async function getCapabilities(service, type) {
 }
 
 export async function getWmsCapabilities(service) {
-  
+  //the getcapabilities returns the capabilities of the layers in the workspace.
   const serviceUrl = new URL(service)
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
   

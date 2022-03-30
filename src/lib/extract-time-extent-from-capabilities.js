@@ -1,11 +1,7 @@
 /* 
- NOTE: Same getCapabilities request has different format in the response (Thredd or Geoserver)
-       and even in the same type of server.
-
+ Reads the capabilities of the workspace and finds the time extend of the activeLayer
 */
-import removeSpaceFromTime from './formatTime/remove-space-from-time'
-import getTimeExtentCaseP1d from './get-time-extent-case-p1d'
-
+import removeSpaceFromTime from './timeFunctions/remove-space-from-time'
 
 export default ((capabilities, activeLayer) => {
   if (!capabilities || !activeLayer) {
@@ -14,37 +10,19 @@ export default ((capabilities, activeLayer) => {
   let allLayers
   let layer
   let extent
+
+  allLayers = capabilities.Layer.Layer
   
-  if (capabilities.Layer.Layer.Layer) {
-    console.log('case Thredds')
-    allLayers = capabilities.Layer.Layer.Layer
-    layer = allLayers.find(
-      (layer) => layer.Name._text === activeLayer,
-    )
-    console.log('layer from GetCapabilities', layer)
-    try {
-        extent = Array.isArray(layer.Extent) ? layer.Extent[1]._text.split(',') 
-                                             : layer.Extent._text.endsWith('P1D') 
-                                             ? getTimeExtentCaseP1d(layer.Extent._text.split('/'))
-                                             : layer.Extent._text.split(',')
-    } catch (error){
-      console.log('Something went wrong when tried to retrieve the timeExtent from the capabilities')
-    } 
-    
-  } else {
-    console.log('case Geoserver')
-    allLayers = capabilities.Layer.Layer
-    
-    layer = allLayers.find(
-      (layer) => layer.Name._text === activeLayer,
-    )
-    
-    try {
-      extent =  Array.isArray(layer.Extent) ? layer.Extent[0]._text.split(',') : layer.Extent._text.split(',') 
-    } catch (error){
-      console.log('Something went wrong when tried to retrieve the timeExtent from the capabilities')
-    }
+  layer = allLayers.find(
+    (layer) => layer.Name._text === activeLayer,
+  )
+  
+  try {
+    extent =  Array.isArray(layer.Extent) ? layer.Extent[0]._text.split(',') : layer.Extent._text.split(',') 
+  } catch (error){
+    console.log('Something went wrong when tried to retrieve the timeExtent from the capabilities')
   }
+  
   if (!extent){
     return []
   }
