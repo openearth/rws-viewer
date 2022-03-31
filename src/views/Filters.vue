@@ -1,33 +1,22 @@
 <template>
   <v-container class="download pt-4">
-    <v-row v-if="!timeIsAvailable && !activeLayersList.length">
+    <v-row v-if="!activeLayersList.length">
       <v-col>
         <v-alert
           dense
           outlined
           type="info"
         >
-          {{ $t('selectLayerWithTime') }}
+          {{ $t('filterViewMessage') }}
         </v-alert>
       </v-col>
     </v-row>
-    <v-row v-if="!timeIsAvailable && activeLayersList.length">
-      <v-col>
-        <v-alert
-          dense
-          outlined
-          type="error"
-        >
-          This layer does not provide the time option
-        </v-alert>
-      </v-col>
-    </v-row>
-    <template v-if="timeIsAvailable && activeLayersList.length">
+    <template v-if="activeLayersList.length">
       <v-row>
         <v-col>
           <h3>{{ $t('select') }}</h3>
           <p class="body-2 mb-0">
-            Select a layer from the list to enable the time component
+            {{ $t('selectLayerWithTime') }}
           </p>
         </v-col>
       </v-row>
@@ -75,7 +64,7 @@
 <script>
   import { mapGetters, mapActions } from 'vuex'
   import { getWmsCapabilities, getLayerTimeExtent } from '~/lib/get-capabilities'
-
+  //Filters view should open only if layers with time option are in wms layers list.
   export default {
     
     // GetCapabilities request when layer is selected.
@@ -88,13 +77,12 @@
       selectedLayerCode: null,
     }),
     computed: {
-      ...mapGetters('map', [ 'drawMode', 'drawnFeature', 'rasterLayerIds' ]),
+      ...mapGetters('map', [ 'rasterLayerWithTimeIds'  ]),
       ...mapGetters('data', [ 'flattenedLayers' ]),
-      activeLayers() {
-        return this.rasterLayerIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
-      },
-      timeIsAvailable() {
-        return true
+     
+      activeLayers() { 
+        //ActiveLayers with time option
+        return this.rasterLayerWithTimeIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
       },
       activeLayersList() {
         return this.activeLayers.map(({ id, name }) => ({

@@ -11,20 +11,31 @@ export default {
     rasterLayers: [],
     drawMode: null,
     drawnFeature: null,
-    timeOption: false,
+    //perhaps add activeLayerToFilter ?
   }),
 
   getters: {
     mapLoaded: state => state.mapLoaded,
-    rasterLayers: state => (state.mapLoaded && state.rasterLayers) || [],
-    rasterLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
-    wmsLayers (state, getters, rootState)  {
+    rasterLayers: state => (state.mapLoaded && state.rasterLayers) || [], //layers that have been added on map
+    rasterLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),//id of layers that have been added on map
+    rasterLayerWithTimeIds (state, getters) {
+      if (!getters.rasterLayers) {
+        return []
+      }
+      return getters.rasterLayers.filter(layer => layer?.timeFilter).map(({ id })=>id)
+    },
+    wmsLayers (state, getters, rootState)  { // derive from raster layers; mapbox layers format
+      
       const { rasterLayers } = state
+      
       const { selectedTimestamp } = rootState.data
       if (!rasterLayers) {
         return []
       }
-      
+      //If a layer has the timeOption true then add to it the selectdTimestamp
+      // WRONG!! If I do that then I fall to the trap that all the layers with time option will have 
+      // the same timestamp.
+      // Introduce idLayerToFilter
       const mappedTimeFilterLayers = mapLayersWithTimeFilter(rasterLayers, selectedTimestamp)
       
       const wmsLayers = mappedTimeFilterLayers.map(layer => buildWmsLayer(layer))
@@ -34,7 +45,6 @@ export default {
     wmsLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
     drawnFeature: state => state.drawnFeature,
-    timeOption: state => state.timeOption,
   },
 
   mutations: {
@@ -72,12 +82,6 @@ export default {
       layerToUpdate.opacity = opacity
 
       state.rasterLayers = update(index, layerToUpdate, state.rasterLayers)
-    },
-    SET_TIME_OPTION_ON(state) {
-      state.timeOption = true
-    },
-    SET_TIME_OPTION_FALSE(state) {
-      state.timeOption = false
     },
   },
 
