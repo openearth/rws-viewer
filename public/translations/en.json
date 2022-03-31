@@ -15,6 +15,7 @@
   "expandAll": "Expand all",
   "favourites": "Favourites",
   "filterByTag": "Filter by tag",
+  "filterViewMessage": "Select one or more layers with clock icon to enable the filters",
   "filters": "Filters",
   "formats": "Formats",
   "formatsDesc": "Choose download format for each layer.",
