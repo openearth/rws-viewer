@@ -73,7 +73,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers' ]),
+      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filtersLayerId' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       mapLeftPadding() {
         return this.appNavigationOpen ? this.appNavigationWidth : 0
@@ -83,7 +83,7 @@
       },
       showTimeslider() {
         const { name } = this.$route
-        return this.timeExtent.length && name === 'filters' ? true : false
+        return this.filtersLayerId && name === 'filters' ? true : false
       },
     },
     watch: {

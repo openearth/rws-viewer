@@ -35,8 +35,8 @@ export default {
    
       const mappedFilteredLayers = mapLayersWithFilter(rasterLayers, filtersLayerId, selectedTimestamp, cqlFilter)
       const wmsLayers = mappedFilteredLayers.map(layer => buildWmsLayer(layer))
-      //const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
-      return wmsLayers
+      const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
+      return mappedWmsLayers
     },
     wmsLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
@@ -83,6 +83,9 @@ export default {
     SET_FILTERS_LAYER_ID(state, id) {
       state.filtersLayerId = id
     },
+    REMOVE_FILTERS_LAYER_ID(state) {
+      state.filtersLayerId = null
+    },
   },
 
   actions: {
@@ -107,7 +110,7 @@ export default {
       layersToAdd.forEach(layer => {
         commit('ADD_RASTER_LAYER', { layer })
       }) */
-     
+      
       const layersToAdd = difference(layers , state.rasterLayers)
      
       layersToAdd.forEach(layer => {
@@ -117,6 +120,10 @@ export default {
 
     removeRasterLayer({ commit }, { layers }) {
       layers.forEach(layer => commit('REMOVE_RASTER_LAYER', { layer }))
+    },
+    //TODO: I dont like this implementation 
+    removeFiltersLayerId({ commit }) {
+      commit('REMOVE_FILTERS_LAYER_ID')
     },
 
     moveRasterLayer({ commit }, { fromIndex, toIndex }) {
