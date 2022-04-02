@@ -13,6 +13,7 @@ export default {
     layerTags: [],
     timeExtent: [], // if a layer has a timeOption it has also a timeExtend as retrieved from capabilities
     selectedTimestamp: null, // needed in ISOstring format
+    cqlFilter: null,
   }),
 
   getters: {
@@ -29,6 +30,7 @@ export default {
     loadedViewerConfigs: state => state.displayLayers.map(({ name }) => slugify(name)),
     timeExtent: state => state.timeExtent,
     selectedTimestamp: state => state.selectedTimestamp,
+    cqlFilter: state => state.cqlFilter,
   },
 
   mutations: {
@@ -46,6 +48,9 @@ export default {
     },
     SET_SELECTED_TIMESTAMP(state, timestamp) {
       state.selectedTimestamp = timestamp
+    },
+    SET_CQL_FILTER(state, filter) {
+      state.cqlFilter = filter
     },
     RESET_TIME_EXTENT(state) {
       state.timeExtent = []
@@ -140,5 +145,8 @@ export default {
     resetTimeExtent({ commit }) {
       commit('RESET_TIME_EXTENT')
     },
+    setCQLFilter({ commit }, filter) {
+      commit('SET_CQL_FILTER', filter)
+    }, 
   },
 }

@@ -1,7 +1,7 @@
 import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import mapLayerOpacity from '~/lib/map-layer-opacity'
-import mapLayersWithTimeFilter from '~/lib/map-layers-with-time-filter'
+import mapLayersWithFilter from '~/lib/map-layers-with-filter'
 
 export default {
   namespaced: true,
@@ -11,7 +11,7 @@ export default {
     rasterLayers: [],
     drawMode: null,
     drawnFeature: null,
-    //perhaps add activeLayerToFilter ?
+    filtersLayerId: null, // id of active layer to filter
   }),
 
   getters: {
@@ -26,25 +26,22 @@ export default {
     },
     wmsLayers (state, getters, rootState)  { // derive from raster layers; mapbox layers format
       
-      const { rasterLayers } = state
+      const { rasterLayers, filtersLayerId } = state
       
-      const { selectedTimestamp } = rootState.data
+      const { selectedTimestamp, cqlFilter } = rootState.data
       if (!rasterLayers) {
         return []
       }
-      //If a layer has the timeOption true then add to it the selectdTimestamp
-      // WRONG!! If I do that then I fall to the trap that all the layers with time option will have 
-      // the same timestamp.
-      // Introduce idLayerToFilter
-      const mappedTimeFilterLayers = mapLayersWithTimeFilter(rasterLayers, selectedTimestamp)
-      
-      const wmsLayers = mappedTimeFilterLayers.map(layer => buildWmsLayer(layer))
+   
+      const mappedFilteredLayers = mapLayersWithFilter(rasterLayers, filtersLayerId, selectedTimestamp, cqlFilter)
+      const wmsLayers = mappedFilteredLayers.map(layer => buildWmsLayer(layer))
       //const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
       return wmsLayers
     },
     wmsLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
     drawnFeature: state => state.drawnFeature,
+    filtersLayerId: state => state.filtersLayerId,
   },
 
   mutations: {
@@ -82,6 +79,9 @@ export default {
       layerToUpdate.opacity = opacity
 
       state.rasterLayers = update(index, layerToUpdate, state.rasterLayers)
+    },
+    SET_FILTERS_LAYER_ID(state, id) {
+      state.filtersLayerId = id
     },
   },
 
@@ -141,6 +141,9 @@ export default {
 
     updateRasterLayerOpacity({ commit }, { id, opacity }) {
       commit('UPDATE_RASTER_LAYER_OPACITY', { id, opacity })
+    },
+    setFiltersLayerId({ commit }, id) {
+      commit('SET_FILTERS_LAYER_ID', id)
     },
   },
 }

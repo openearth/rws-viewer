@@ -18,7 +18,7 @@
       @styledata="setMapLoaded"
     >
       <time-slider
-        v-if="timeExtent.length"
+        v-if="showTimeslider"
         :timings="formattedTimeExtent"
         :value="formattedTimeExtent[formattedTimeExtent.length -1]"
         mode="simple-slider"
@@ -80,6 +80,10 @@
       },
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
+      },
+      showTimeslider() {
+        const { name } = this.$route
+        return this.timeExtent.length && name === 'filters' ? true : false
       },
     },
     watch: {

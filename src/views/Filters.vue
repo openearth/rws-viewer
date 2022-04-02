@@ -29,6 +29,7 @@
             dense
             outlined
             hide-details
+            @change="setIdOfFilteredLayer"
           />
         </v-col>
       </v-row>
@@ -48,12 +49,13 @@
       <v-row>
         <v-col>
           <v-select
-            v-model="queryFilter"
+            v-model="filterValue"
             :label="$t('labelFilter')"
-            :items="activeLayersList"
+            :items="hardCodedValues"
             dense
             outlined
             hide-details
+            @change="setFilter"
           />
         </v-col>
       </v-row>
@@ -68,12 +70,9 @@
   export default {
     
     // GetCapabilities request when layer is selected.
-    // When timeselection is enabled then do: timeoption on
-    //timeIsAvailable make it work properly
-    //GetCapabilities fix it.
-    //Read the filters list to pass it in
+    
     data: () => ({
-      queryFilter: null,
+      filterValue: null,
       selectedLayerCode: null,
     }),
     computed: {
@@ -81,7 +80,7 @@
       ...mapGetters('data', [ 'flattenedLayers' ]),
      
       activeLayers() { 
-        //ActiveLayers with time option
+        //ActiveLayers with timeFilter true
         return this.rasterLayerWithTimeIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
       },
       activeLayersList() {
@@ -93,27 +92,53 @@
       selectedLayer() {
         return this.flattenedLayers.find(layer => layer.id === this.selectedLayerCode)
       },
-
-
+      //TODO: use this parameter for the dropdown list
+      allowedValuesToFilter() {
+        if (!this.selectedLayer) {
+          return []
+        }
+        const { columnFilter } = this.selectedLayer
+        return columnFilter.allowedValues
+      },
+      filterName() {
+        if (!this.selectedLayer) {
+          return []
+        }
+        const { columnFilter } = this.selectedLayer
+        return columnFilter.name
+      },
+      //TODO: remove eventually this computed property. 
+      hardCodedValues() {
+        if (!this.selectedLayer) {
+          return []
+        }
+        return [ 'Clupea harengus', 'Crangon crangon','Pleuronectes platessa', 'Osmerus eperlanus' ]
+      },
     },
     watch: {
       selectedLayer() {
         if (this.selectedLayer) {
           const { url, layer } = this.selectedLayer
           this.requestCapabilities(url, layer)
-          
         }
-       
       },
     },
     methods: {
-      ...mapActions('data', [ 'setTimeExtent' ] ),
+      ...mapActions('data', [ 'setTimeExtent', 'setCQLFilter' ] ),
+      ...mapActions('map', [ 'setFiltersLayerId' ]),
       async requestCapabilities(url, layer) {
         const layerWithoutWorkspace = layer.split(':').pop()
         const response = await getWmsCapabilities(url)
         const capabilities = response.WMT_MS_Capabilities.Capability
         const timeExtent = getLayerTimeExtent(capabilities, layerWithoutWorkspace)
         this.setTimeExtent(timeExtent)
+      },
+      setFilter(value) {
+        const filter = `${ this.filterName }='${ value }'`
+        this.setCQLFilter(filter)
+      },
+      setIdOfFilteredLayer(id) {
+        this.setFiltersLayerId(id)
       },
     },
 

@@ -19,7 +19,6 @@
           :to="`/${viewerConfig}${tab.page}`"
           :ripple="false"
           exact-path
-          @click="removeTimeSlider"
         >
           {{ $t(tab.name) }}
           <v-icon>{{ tab.icon }}</v-icon>
@@ -56,12 +55,12 @@
     },
     methods: {
       ...mapActions('data', [ 'resetTimeExtent' ]),
-      removeTimeSlider(event) {
+      /*       removeTimeSlider(event) {
         const tab = event
         if (tab !== 'filters') {
           this.resetTimeExtent()
         }
-      },
+      }, */
     },
   }
 </script>
