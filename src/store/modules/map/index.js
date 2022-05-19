@@ -2,6 +2,8 @@ import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import mapLayerOpacity from '~/lib/map-layer-opacity'
 import mapLayersWithFilter from '~/lib/map-layers-with-filter'
+import { getWmsCapabilities, getFormatOfLayer } from '~/lib/get-capabilities'
+
 
 export default {
   namespaced: true,
@@ -51,7 +53,7 @@ export default {
     SET_RASTER_LAYERS(state, { layers }) {
       state.rasterLayers = layers
     },
-    ADD_RASTER_LAYER(state, { layer }) {
+    ADD_RASTER_LAYER(state, layer) {
       state.rasterLayers = [ layer, ...state.rasterLayers ]
     },
     MOVE_RASTER_LAYER(state, { fromIndex, toIndex }) {
@@ -77,7 +79,6 @@ export default {
       }
 
       layerToUpdate.opacity = opacity
-
       state.rasterLayers = update(index, layerToUpdate, state.rasterLayers)
     },
     SET_FILTERS_LAYER_ID(state, id) {
@@ -112,10 +113,14 @@ export default {
       }) */
       
       const layersToAdd = difference(layers , state.rasterLayers)
-     
-      layersToAdd.forEach(layer => {
-        commit('ADD_RASTER_LAYER', { layer })
-      })
+      
+      
+      layersToAdd.forEach((layer) => {
+        getWmsCapabilities(layer.url)
+          .then(capabilities => getFormatOfLayer(capabilities, layer.layer))
+          .then(format => commit('ADD_RASTER_LAYER',  { ...layer, ...{ format: format } } ),
+          )
+      })  
     },
 
     removeRasterLayer({ commit }, { layers }) {
