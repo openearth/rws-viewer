@@ -15,8 +15,12 @@
   "expandAll": "Klap alles uit",
   "favourites": "Favorieten",
   "filterByTag": "Filteren op zoekterm",
+  "filterViewMessage": "Selecteer een of meer lagen met het klokpictogram om de filters in te schakelen",
+  "filters": "Filters",
   "formats": "Indelingen",
   "formatsDesc": "Selecteer download indeling voor elke laag.",
+  "labelFilter": "Vooraf gedefinieerd filter",
+  "labelLayerWithTime": "Selecteer uit zichtbare lagen met klokpictogram",
   "layerFormats": "Selecteer uit beschikbare indelingen",
   "layerOrder": "Lagen volgorde",
   "layerSelection": "Selecteer uit zichtbare lagen",
@@ -32,5 +36,7 @@
   "searchInAvailableLayerNames": "Zoeken op beschikbare laag naam",
   "select": "Selecteer",
   "selectDesc": "Selecteer een deel van de kaart om te downloaden. Dit kan door te tekenen, of een voorgedefinieerd sectie te kiezen.",
+  "selectFilter": "Selecteer een waarde van de onderstaande lijst om de laag te bevra",
+  "selectLayerWithTime": "Selecteer een laag uit de lijst om de tijdcomponent in te schakelen",
   "selectLayersToView": "Selecteer lagen om te bekijken"
 }

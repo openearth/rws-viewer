@@ -37,7 +37,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapActions, mapGetters } from 'vuex'
 
   export default {
     name: 'AppSidebar',
@@ -47,10 +47,20 @@
         { name: 'layers', page: '/', icon: 'mdi-layers' },
         { name: 'download', page: '/download', icon: 'mdi-download' },
         { name: 'favourites', page: '/favourites', icon: 'mdi-star' },
+        { name: 'filters', page:'/filters', icon: 'mdi-clock-time-three' },
       ],
     }),
     computed: {
       ...mapGetters('app', [ 'appNavigationOpen', 'appNavigationWidth', 'viewerConfig' ]),
+    },
+    methods: {
+      ...mapActions('data', [ 'resetTimeExtent' ]),
+      /*       removeTimeSlider(event) {
+        const tab = event
+        if (tab !== 'filters') {
+          this.resetTimeExtent()
+        }
+      }, */
     },
   }
 </script>

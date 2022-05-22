@@ -11,6 +11,9 @@ export default {
     displayLayers: [],
     flattenedLayers: [],
     layerTags: [],
+    timeExtent: [], // if a layer has a timeOption it has also a timeExtend as retrieved from capabilities
+    selectedTimestamp: null, // needed in ISOstring format
+    cqlFilter: null,
   }),
 
   getters: {
@@ -25,6 +28,9 @@ export default {
     availableFlattenedLayers: (state, getters, rootState, rootGetters) =>
       getters.flattenedLayers.filter(layer => !rootGetters['map/rasterLayerIds'].includes(layer.id)),
     loadedViewerConfigs: state => state.displayLayers.map(({ name }) => slugify(name)),
+    timeExtent: state => state.timeExtent,
+    selectedTimestamp: state => state.selectedTimestamp,
+    cqlFilter: state => state.cqlFilter,
   },
 
   mutations: {
@@ -36,6 +42,18 @@ export default {
     },
     SET_LAYER_TAGS(state, { tags }) {
       state.layerTags = Object.freeze(tags)
+    },
+    SET_TIME_EXTENT(state, extent) {
+      state.timeExtent = extent
+    },
+    SET_SELECTED_TIMESTAMP(state, timestamp) {
+      state.selectedTimestamp = timestamp
+    },
+    SET_CQL_FILTER(state, filter) {
+      state.cqlFilter = filter
+    },
+    RESET_TIME_EXTENT(state) {
+      state.timeExtent = []
     },
   },
 
@@ -116,5 +134,19 @@ export default {
     setDisplayLayers({ commit }, { layers }) {
       commit('SET_DISPLAY_LAYERS', { layers })
     },
+
+    setTimeExtent( { commit }, extent) {
+      commit('SET_TIME_EXTENT', extent)
+    },
+    setSelectedTimestamp( { commit }, timestamp) {
+      const timestampISO = timestamp.toISOString()
+      commit('SET_SELECTED_TIMESTAMP', timestampISO)
+    }, 
+    resetTimeExtent({ commit }) {
+      commit('RESET_TIME_EXTENT')
+    },
+    setCQLFilter({ commit }, filter) {
+      commit('SET_CQL_FILTER', filter)
+    }, 
   },
 }

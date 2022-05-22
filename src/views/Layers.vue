@@ -41,7 +41,7 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'addRasterLayer', 'removeRasterLayer' ]),
+      ...mapActions('map', [ 'addRasterLayer', 'removeRasterLayer', 'removeFiltersLayerId' ]),
 
       onSelectLayers(layerIds) {
         const layers = layerIds
@@ -58,6 +58,7 @@
 
         if (layers.length) {
           this.removeRasterLayer({ layers })
+          this.removeFiltersLayerId()
         }
       },
     },

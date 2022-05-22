@@ -45,11 +45,8 @@
       @input="handleInput"
     >
       <template #prepend="{selected, open, item, indeterminate}">
-        <div class="layer-chooser__list-icon">
-          <v-icon v-if="item.layer">
-            {{ selected ? 'mdi-layers' : 'mdi-layers-outline' }}
-          </v-icon>
-          <v-icon v-else>
+        <div v-if="!item.layer">
+          <v-icon>
             <template v-if="selected">
               {{ open
                 ? `mdi-folder-open${selected ? '' : '-outline'}`
@@ -69,6 +66,20 @@
               }}
             </template>
           </v-icon>
+        </div>
+        <div v-else>
+          <v-row no-gutters>
+            <v-col class="ml-n5">
+              <v-icon v-if="item.timeFilter">
+                {{ selected ? 'mdi-clock-time-three' : 'mdi-clock-time-three-outline' }}
+              </v-icon>
+            </v-col>
+            <v-col>
+              <v-icon v-if="item.layer">
+                {{ selected ? 'mdi-layers' : 'mdi-layers-outline' }}
+              </v-icon>
+            </v-col>  
+          </v-row>
         </div>
       </template>
       <template #label="{ item, selected }">
