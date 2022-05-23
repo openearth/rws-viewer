@@ -8,7 +8,6 @@ const convert = require('xml-js')
 import {
   WCS_LAYER_TYPE,
   WFS_LAYER_TYPE,
-  WMS_LAYER_TYPE,
 } from '~/lib/constants'
 
 
@@ -41,13 +40,14 @@ function createParameters(type) {
 
 
  
-//TODO: remove hardcode type wfs
-
 export async function getCapabilities(service, type) {
-  //const _type = type || getType(service)
+  /**
+   * GetCapabilities wfs or wcs based on the input type
+   * create parameters and make the request
+   * parse it as a dom element
+   */
   const _type = type
   const serviceUrl = new URL(service)
-  
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
   const { data } = await axios(`${ servicePath }?${ createParameters(_type) }`)
   return new DOMParser().parseFromString(data, 'text/xml')
@@ -65,7 +65,7 @@ export async function getWmsCapabilities(service) {
   const { data } = await axios(`${ servicePath }?service=WMS&version=1.3.0&request=GetCapabilities`)
 
   return new DOMParser().parseFromString(data, 'text/xml')
-  //TODO: 
+  //TODO: see how to read/modify as DOM for clean code
   //return JSON.parse(convert.xml2json(data, { compact: true, spaces: 2 }))
 }
 
@@ -82,10 +82,10 @@ export function getSupportedOutputFormats(type, capabilities) {
 
   const formatSupported = pipe(
       () => capabilities,
+      el => el.getElementsByTagName('wcs:Capabilities'),
       getTags('wcs:ServiceMetadata'),
       getTags('wcs:formatSupported'),
       map(getTagContent),
-      uniq,
     )
 
   if (type === WCS_LAYER_TYPE) {
@@ -102,7 +102,7 @@ export function getLayerTimeExtent(capabilities, layer) {
   return timeExtent
 }
 
-export function getFormatOfLayer(capabilities, layer) {
+export function getLayerServiceType(capabilities, layer) {
 /**
  * function that reads the wms capabilities response of the workpspace
  * find the given layer
@@ -119,8 +119,8 @@ export function getFormatOfLayer(capabilities, layer) {
     map(getTagContent),
   )()
  
- return [ 'features', 'wfs' ].some(val => keywords.includes(val)) ? 'wfs' 
-        :keywords.includes('wcs') ? 'wcs' 
+ return [ 'features', 'wfs', 'FEATURES', 'WFS' ].some(val => keywords.includes(val)) ? 'wfs' 
+        :[ 'WCS', 'GeoTIFF', 'wcs' ].some(val => keywords.includes(val)) ? 'wcs' 
         : null
 }
 
