@@ -65,23 +65,20 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex'
-  import { getWmsCapabilities, getLayerTimeExtent } from '~/lib/get-capabilities'
   //Filters view should open only if layers with time option are in wms layers list.
   export default {
-    
-    // GetCapabilities request when layer is selected.
     
     data: () => ({
       filterValue: null,
       selectedLayerCode: null,
     }),
     computed: {
-      ...mapGetters('map', [ 'rasterLayerWithTimeIds'  ]),
+      ...mapGetters('map', [ 'rasterLayerWithTimeIds', 'rasterLayers', 'rasterLayers'  ]),
       ...mapGetters('data', [ 'flattenedLayers' ]),
      
       activeLayers() { 
         //ActiveLayers with timeFilter true
-        return this.rasterLayerWithTimeIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
+        return this.rasterLayerWithTimeIds.map(id => this.rasterLayers.find(layer => layer.id === id))
       },
       activeLayersList() {
         return this.activeLayers.map(({ id, name }) => ({
@@ -90,7 +87,7 @@
         }))
       },
       selectedLayer() {
-        return this.flattenedLayers.find(layer => layer.id === this.selectedLayerCode)
+        return this.rasterLayers.find(layer => layer.id === this.selectedLayerCode)
       },
       //TODO: use this parameter for the dropdown list
       allowedValuesToFilter() {
@@ -118,21 +115,14 @@
     watch: {
       selectedLayer() {
         if (this.selectedLayer) {
-          const { url, layer } = this.selectedLayer
-          this.requestCapabilities(url, layer)
+          console.log('this.selectedLayer', this.selectedLayer)
+          this.setTimeExtent(this.selectedLayer.timeExtent)
         }
       },
     },
     methods: {
       ...mapActions('data', [ 'setTimeExtent', 'setCQLFilter' ] ),
       ...mapActions('map', [ 'setFiltersLayerId' ]),
-      async requestCapabilities(url, layer) {
-        const layerWithoutWorkspace = layer.split(':').pop()
-        const response = await getWmsCapabilities(url)
-        const capabilities = response.WMT_MS_Capabilities.Capability
-        const timeExtent = getLayerTimeExtent(capabilities, layerWithoutWorkspace)
-        this.setTimeExtent(timeExtent)
-      },
       setFilter(value) {
         const filter = `${ this.filterName }='${ value }'`
         this.setCQLFilter(filter)

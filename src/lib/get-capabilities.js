@@ -1,8 +1,6 @@
 import axios from 'axios'
 import { map, uniq, pipe, find, propEq } from 'ramda'
-import { getType } from '~/lib/service-helpers'
-import extractTimeExtentFromCapabilities from  '~/lib/extract-time-extent-from-capabilities'
-const convert = require('xml-js')
+
 
 
 import {
@@ -13,19 +11,25 @@ import {
 
 
 const getTagContent = tag => tag.textContent
-
 const getParentNode = tag => tag.parentNode
-
-
+const textToArray = text => text.split(',')
 
 const getTags = tagName => root =>
   [ ...root ]
     .map(el => [ ...el.getElementsByTagName(tagName) ])
     .flat()
 
-const findLayer = id => layers =>
-  [ ...layers ]
-    .find(layer => layer.textContent === id)
+const findLayer = id => (layers) => {
+  
+  let layer = layers.find(layer => layer.textContent === id)
+  if (layer) {
+    return layer
+  } else {
+    const idWithoutWorkspace = id.split(':')[1]
+    layer = layers.find(layer => layer.textContent === idWithoutWorkspace)
+    return layer
+  } 
+}
 
 
 
@@ -55,7 +59,7 @@ export async function getCapabilities(service, type) {
 
 export async function getWmsCapabilities(service) {
   /** 
- * The getWmsCapabilitis is made when a layer is clicked. The 
+ * The getWmsCapabilitis is made when a layer is clicked.  
  * 
  * */ 
   //the getcapabilities returns the capabilities of the layers in the workspace. need to search for the layer first
@@ -65,13 +69,12 @@ export async function getWmsCapabilities(service) {
   const { data } = await axios(`${ servicePath }?service=WMS&version=1.3.0&request=GetCapabilities`)
 
   return new DOMParser().parseFromString(data, 'text/xml')
-  //TODO: see how to read/modify as DOM for clean code
-  //return JSON.parse(convert.xml2json(data, { compact: true, spaces: 2 }))
+
 }
 
 export function getSupportedOutputFormats(type, capabilities) {
   
-  //wfs works correct
+  //wfs
   const outputFormats = pipe(
       () => [ ...capabilities.querySelectorAll('[name="outputFormat"]') ],
       getTags('ows:AllowedValues'),
@@ -79,7 +82,7 @@ export function getSupportedOutputFormats(type, capabilities) {
       map(getTagContent),
       uniq,
     )
-
+  //wcs
   const formatSupported = pipe(
       () => capabilities,
       el => el.getElementsByTagName('wcs:Capabilities'),
@@ -97,16 +100,12 @@ export function getSupportedOutputFormats(type, capabilities) {
 
 }
 
-export function getLayerTimeExtent(capabilities, layer) {
-  const timeExtent = extractTimeExtentFromCapabilities(capabilities, layer)
-  return timeExtent
-}
-
+//TODO: I am altering this function to get also the timeExtent if is is there.
 export function getLayerServiceType(capabilities, layer) {
 /**
  * function that reads the wms capabilities response of the workpspace
  * find the given layer
- * reads the layer properties like keywords and extent. 
+ * reads the layer keywords. 
  * TODO: extent is read in the getLayerTimeExtent. Eventually read it here?
  *  * */
   const keywords = pipe(
@@ -116,11 +115,25 @@ export function getLayerServiceType(capabilities, layer) {
     getParentNode,
     el => el.getElementsByTagName('KeywordList'),
     getTags('Keyword'),
-    map(getTagContent),
+    map(getTagContent),  
   )()
- 
- return [ 'features', 'wfs', 'FEATURES', 'WFS' ].some(val => keywords.includes(val)) ? 'wfs' 
+  console.log('keywords', keywords )
+  const serviceType = [ 'features', 'wfs', 'FEATURES', 'WFS' ].some(val => keywords.includes(val)) ? 'wfs' 
         :[ 'WCS', 'GeoTIFF', 'wcs' ].some(val => keywords.includes(val)) ? 'wcs' 
         : null
+
+  const timeExtent = pipe(
+    () => [ ...capabilities.querySelectorAll('[queryable="1"]') ],
+    getTags('Name'),
+    findLayer(layer),
+    getParentNode,
+    el =>[ ...el.getElementsByTagName('Dimension') ],
+    map(getTagContent),
+    map(textToArray),
+    (array) => array.flat(),
+  )()
+  
+  return { serviceType, timeExtent }
 }
+
 

@@ -134,10 +134,11 @@ export default {
     setDisplayLayers({ commit }, { layers }) {
       commit('SET_DISPLAY_LAYERS', { layers })
     },
-
+    //sets as timeExtent the timeExtent of the selectedLayer
     setTimeExtent( { commit }, extent) {
       commit('SET_TIME_EXTENT', extent)
     },
+    //sets the selectedTimeStamp of the time slider
     setSelectedTimestamp( { commit }, timestamp) {
       const timestampISO = timestamp.toISOString()
       commit('SET_SELECTED_TIMESTAMP', timestampISO)

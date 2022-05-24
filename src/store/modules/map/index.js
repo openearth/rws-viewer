@@ -117,7 +117,7 @@ export default {
       layersToAdd.forEach((layer) => {
         getWmsCapabilities(layer.url)
           .then(capabilities => getLayerServiceType(capabilities, layer.layer))
-          .then(serviceType => commit('ADD_RASTER_LAYER',  { ...layer, ...{ serviceType: serviceType } } ),
+          .then(({ serviceType, timeExtent }) => commit('ADD_RASTER_LAYER',  { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent } } ),
           )
       })  
     },
