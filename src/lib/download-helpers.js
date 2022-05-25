@@ -49,8 +49,7 @@ export function createDownloadFilter(coordinates = '') {
 }
 
 export function createDownloadParameters({ layerData = {}, filter = '', format = '' }) {
-  const { layer, serviceType } = layerData
-  
+  const { layer, serviceType, downloadLayer } = layerData
   if (!serviceType) {
     console.warn('No valid `downloadUrl` present for layer: ', layer)
     return null
@@ -60,7 +59,11 @@ export function createDownloadParameters({ layerData = {}, filter = '', format =
     return createWcsParameters({ layer, format })
   }
 
-  if (serviceType === 'wfs') {
+  if (serviceType === 'wfs' && downloadLayer) {
+    return createWfsParameters({ layer:downloadLayer, filter, format }) 
+  }
+
+  if (serviceType === 'wfs' && !downloadLayer) {
     return createWfsParameters({ layer, filter, format })
   }
 }
