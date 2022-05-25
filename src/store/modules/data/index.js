@@ -59,7 +59,6 @@ export default {
 
   actions: {
     async getAppData({ dispatch }, route) {
-      console.log('getAppData')
       const viewer = route?.params?.config
       const { layers, name } = await dispatch('addViewerData', viewer)
 
@@ -70,7 +69,7 @@ export default {
       const layersById = getLayersById(layers, initialLayerIds)
 
       if (layersById.length) {
-        dispatch('map/setRasterLayers', { layers: layersById }, { root: true })
+        dispatch('map/addRasterLayer', { layers: layersById }, { root: true })
       }
     },
 

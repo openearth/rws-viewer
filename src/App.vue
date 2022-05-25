@@ -24,7 +24,7 @@
         mode="simple-slider"
         @input="onTimingSelection"
       />
-      <v-mapbox-layer
+      <map-layer
         v-for="(layer, index) in wmsLayers"
         :key="layer.id"
         :before="wmsLayerIds[index - 1]"
@@ -44,6 +44,7 @@
   import { mapActions, mapGetters } from 'vuex'
   import { MapboxMap } from '@deltares/vue-components'
   import AppShell from './components/AppShell/AppShell'
+  import MapLayer from './components/MapLayer/MapLayer.js'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
   import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
@@ -56,6 +57,7 @@
     components: {
       AppShell,
       MapboxMap,
+      MapLayer,
       MapboxDrawControl,
       LayerOrder,
       LocaleSwitcher,

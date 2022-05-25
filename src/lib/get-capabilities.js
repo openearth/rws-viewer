@@ -117,7 +117,6 @@ export function getLayerProperties(capabilities, layer) {
     getTags('Keyword'),
     map(getTagContent),  
   )()
-  console.log('keywords', keywords )
   const serviceType = [ 'features', 'wfs', 'FEATURES', 'WFS' ].some(val => keywords.includes(val)) ? 'wfs' 
         :[ 'WCS', 'GeoTIFF', 'wcs' ].some(val => keywords.includes(val)) ? 'wcs' 
         : null

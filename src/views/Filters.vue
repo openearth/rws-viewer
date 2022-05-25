@@ -115,7 +115,6 @@
     watch: {
       selectedLayer() {
         if (this.selectedLayer) {
-          console.log('this.selectedLayer', this.selectedLayer)
           this.setTimeExtent(this.selectedLayer.timeExtent)
         }
       },

@@ -18,7 +18,7 @@ export default {
 
   getters: {
     mapLoaded: state => state.mapLoaded,
-    rasterLayers: state => (state.mapLoaded && state.rasterLayers) || [], //layers that have been added on map
+    rasterLayers: state => (state.mapLoaded && state.rasterLayers) || [], //layers that have been added on map (not in wmsLayers format) TODO: the rasterLayers name is not reprsentative since they are not all rasterLayers
     rasterLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),//id of layers that have been added on map
     rasterLayerWithTimeIds (state, getters) {
       if (!getters.rasterLayers) {
@@ -38,6 +38,7 @@ export default {
       const mappedFilteredLayers = mapLayersWithFilter(rasterLayers, filtersLayerId, selectedTimestamp, cqlFilter)
       const wmsLayers = mappedFilteredLayers.map(layer => buildWmsLayer(layer))
       const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
+      
       return mappedWmsLayers
     },
     wmsLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
@@ -99,12 +100,11 @@ export default {
       const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers) */
 
       //commit('SET_RASTER_LAYERS', { layers: mappedWmsLayers })
-      console.log('layers in setRasterLayers', layers)
+      
       commit('SET_RASTER_LAYERS', { layers: layers })
     },
 
     addRasterLayer({ commit, state }, { layers }) {
-      console.log('layers in addRasterLayer', layers)
 /*       const wmsLayers = layers.map(layer => buildWmsLayer(layer))
      
       const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
