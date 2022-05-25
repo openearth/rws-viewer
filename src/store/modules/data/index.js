@@ -11,7 +11,7 @@ export default {
     displayLayers: [],
     flattenedLayers: [],
     layerTags: [],
-    timeExtent: [], // if a layer has a timeOption it has also a timeExtend as retrieved from capabilities
+    timeExtent: [], //array with isoString format, timeExtent of the selected layer in the filters tab
     selectedTimestamp: null, // needed in ISOstring format
     cqlFilter: null,
   }),
@@ -59,6 +59,7 @@ export default {
 
   actions: {
     async getAppData({ dispatch }, route) {
+      console.log('getAppData')
       const viewer = route?.params?.config
       const { layers, name } = await dispatch('addViewerData', viewer)
 

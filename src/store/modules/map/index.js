@@ -2,7 +2,7 @@ import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import mapLayerOpacity from '~/lib/map-layer-opacity'
 import mapLayersWithFilter from '~/lib/map-layers-with-filter'
-import { getWmsCapabilities, getLayerServiceType } from '~/lib/get-capabilities'
+import { getWmsCapabilities, getLayerProperties } from '~/lib/get-capabilities'
 
 
 export default {
@@ -99,10 +99,12 @@ export default {
       const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers) */
 
       //commit('SET_RASTER_LAYERS', { layers: mappedWmsLayers })
+      console.log('layers in setRasterLayers', layers)
       commit('SET_RASTER_LAYERS', { layers: layers })
     },
 
     addRasterLayer({ commit, state }, { layers }) {
+      console.log('layers in addRasterLayer', layers)
 /*       const wmsLayers = layers.map(layer => buildWmsLayer(layer))
      
       const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
@@ -116,7 +118,7 @@ export default {
   
       layersToAdd.forEach((layer) => {
         getWmsCapabilities(layer.url)
-          .then(capabilities => getLayerServiceType(capabilities, layer.layer))
+          .then(capabilities => getLayerProperties(capabilities, layer.layer))
           .then(({ serviceType, timeExtent }) => commit('ADD_RASTER_LAYER',  { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent } } ),
           )
       })  

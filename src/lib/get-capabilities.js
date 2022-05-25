@@ -101,7 +101,7 @@ export function getSupportedOutputFormats(type, capabilities) {
 }
 
 //TODO: I am altering this function to get also the timeExtent if is is there.
-export function getLayerServiceType(capabilities, layer) {
+export function getLayerProperties(capabilities, layer) {
 /**
  * function that reads the wms capabilities response of the workpspace
  * find the given layer
