@@ -29,7 +29,6 @@
             dense
             outlined
             hide-details
-            @change="setIdOfFilteredLayer"
           />
         </v-col>
       </v-row>
@@ -51,7 +50,7 @@
           <v-select
             v-model="filterValue"
             :label="$t('labelFilter')"
-            :items="hardCodedValues"
+            :items="allowedValuesToFilter"
             dense
             outlined
             hide-details
@@ -89,9 +88,11 @@
       selectedLayer() {
         return this.rasterLayers.find(layer => layer.id === this.selectedLayerCode)
       },
-      //TODO: use this parameter for the dropdown list
       allowedValuesToFilter() {
         if (!this.selectedLayer) {
+          return []
+        }
+        if (!this.selectedLayer.columnFilter) {
           return []
         }
         const { columnFilter } = this.selectedLayer
@@ -104,18 +105,17 @@
         const { columnFilter } = this.selectedLayer
         return columnFilter.name
       },
-      //TODO: remove eventually this computed property. 
-      hardCodedValues() {
-        if (!this.selectedLayer) {
-          return []
-        }
-        return [ 'Clupea harengus', 'Crangon crangon','Pleuronectes platessa', 'Osmerus eperlanus' ]
-      },
+
     },
     watch: {
       selectedLayer() {
         if (this.selectedLayer) {
           this.setTimeExtent(this.selectedLayer.timeExtent)
+        }
+      },
+      selectedLayerCode( ) {
+        if (this.selectedLayerCode) {
+          this.setIdOfFilteredLayer(this.selectedLayerCode)
         }
       },
     },
@@ -127,6 +127,7 @@
         this.setCQLFilter(filter)
       },
       setIdOfFilteredLayer(id) {
+        console.log('setFilterLayerId', id)
         this.setFiltersLayerId(id)
       },
     },
