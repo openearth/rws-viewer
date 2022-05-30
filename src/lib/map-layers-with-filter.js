@@ -12,21 +12,15 @@ export default (layers, filtersLayerId, timestamp, filter) => {
   if (!filtersLayerId) {
     return layers
   }
-//TODO: see a more simple implementation
+
   return layers.map(layer => {
     if (layer.id === filtersLayerId) {
-      if (filter) {
-              return {
+      return {
         ...layer,
         ...(timestamp) && { time: timestamp },
         ...(filter) && { filter: filter },
       }
-      } else {
-        return {
-             ...layer,
-        ...(timestamp) && { time: timestamp },
-        }
-      }
+      
 
     } else {
       return layer
