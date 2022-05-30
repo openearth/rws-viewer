@@ -186,11 +186,11 @@
     }),
 
     computed: {
-      ...mapGetters('map', [ 'drawMode', 'drawnFeature', 'rasterLayerIds' ]),
+      ...mapGetters('map', [ 'drawMode', 'drawnFeature', 'rasterLayerIds', 'rasterLayers' ]),
       ...mapGetters('data', [ 'flattenedLayers' ]),
 
       activeLayers() {
-        return this.rasterLayerIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
+        return this.rasterLayerIds.map(id => this.rasterLayers.find(layer => layer.id === id))
       },
 
       allUrlsAreValid() {

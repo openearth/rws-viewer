@@ -2,6 +2,8 @@ import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import mapLayerOpacity from '~/lib/map-layer-opacity'
 import mapLayersWithFilter from '~/lib/map-layers-with-filter'
+import { getWmsCapabilities, getLayerProperties } from '~/lib/get-capabilities'
+
 
 export default {
   namespaced: true,
@@ -16,7 +18,7 @@ export default {
 
   getters: {
     mapLoaded: state => state.mapLoaded,
-    rasterLayers: state => (state.mapLoaded && state.rasterLayers) || [], //layers that have been added on map
+    rasterLayers: state => (state.mapLoaded && state.rasterLayers) || [], //layers that have been added on map (not in wmsLayers format) TODO: the rasterLayers name is not reprsentative since they are not all rasterLayers
     rasterLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),//id of layers that have been added on map
     rasterLayerWithTimeIds (state, getters) {
       if (!getters.rasterLayers) {
@@ -36,6 +38,7 @@ export default {
       const mappedFilteredLayers = mapLayersWithFilter(rasterLayers, filtersLayerId, selectedTimestamp, cqlFilter)
       const wmsLayers = mappedFilteredLayers.map(layer => buildWmsLayer(layer))
       const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers)
+      
       return mappedWmsLayers
     },
     wmsLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
@@ -51,7 +54,7 @@ export default {
     SET_RASTER_LAYERS(state, { layers }) {
       state.rasterLayers = layers
     },
-    ADD_RASTER_LAYER(state, { layer }) {
+    ADD_RASTER_LAYER(state, layer) {
       state.rasterLayers = [ layer, ...state.rasterLayers ]
     },
     MOVE_RASTER_LAYER(state, { fromIndex, toIndex }) {
@@ -77,7 +80,6 @@ export default {
       }
 
       layerToUpdate.opacity = opacity
-
       state.rasterLayers = update(index, layerToUpdate, state.rasterLayers)
     },
     SET_FILTERS_LAYER_ID(state, id) {
@@ -98,6 +100,7 @@ export default {
       const mappedWmsLayers = mapLayerOpacity(state.rasterLayers, wmsLayers) */
 
       //commit('SET_RASTER_LAYERS', { layers: mappedWmsLayers })
+      
       commit('SET_RASTER_LAYERS', { layers: layers })
     },
 
@@ -112,10 +115,13 @@ export default {
       }) */
       
       const layersToAdd = difference(layers , state.rasterLayers)
-     
-      layersToAdd.forEach(layer => {
-        commit('ADD_RASTER_LAYER', { layer })
-      })
+  
+      layersToAdd.forEach((layer) => {
+        getWmsCapabilities(layer.url)
+          .then(capabilities => getLayerProperties(capabilities, layer.layer))
+          .then(({ serviceType, timeExtent }) => commit('ADD_RASTER_LAYER',  { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent } } ),
+          )
+      })  
     },
 
     removeRasterLayer({ commit }, { layers }) {

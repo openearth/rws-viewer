@@ -20,6 +20,8 @@ export default (layers, filtersLayerId, timestamp, filter) => {
         ...(timestamp) && { time: timestamp },
         ...(filter) && { filter: filter },
       }
+    } else {
+      return layer
     }
   })
 }

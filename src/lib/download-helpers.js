@@ -1,9 +1,6 @@
 import { stringify } from 'query-string'
 import {
   COORDINATES_HANDLE,
-  WCS_LAYER_TYPE,
-  WFS_LAYER_TYPE,
-  WMS_LAYER_TYPE,
 } from '~/lib/constants'
 
 const FILTER_TEMPLATE = `
@@ -20,23 +17,14 @@ const FILTER_TEMPLATE = `
     </ogc:Intersects>
   </ogc:Filter>
 `
-
-export const hasWcsTypeUrl = (layer = {}) => Boolean(layer?.downloadUrl.endsWith(WCS_LAYER_TYPE))
-
-export const hasWfsTypeUrl = (layer = {}) => Boolean(layer?.downloadUrl.endsWith(WFS_LAYER_TYPE))
-
-export const hasWmsTypeUrl = (layer = {}) => Boolean(layer?.url.endsWith(WMS_LAYER_TYPE))
-
 const createWfsParameters = ({ layer = '', filter = '', format = '' }) => stringify({
   'typeName': layer,
-  'request': 'GetFeature',
   'Content-Disposition': 'attachment',
-  'filename': `${ layer }.${ format }`,
+  'request': 'GetFeature',
   'srsName': 'EPSG:4326',
   'service': 'WFS',
   'version': '1.1.0',
   'outputFormat': format,
-  'GetLayers': layer,
   ...(filter && { 'filter': filter }),
 })
 
@@ -61,21 +49,21 @@ export function createDownloadFilter(coordinates = '') {
 }
 
 export function createDownloadParameters({ layerData = {}, filter = '', format = '' }) {
-  const { layer } = layerData
-  const isWcsType = hasWcsTypeUrl(layerData)
-  const isWfsType = hasWfsTypeUrl(layerData)
-  const isWmsType = hasWmsTypeUrl(layerData)
-
-  if (!isWcsType && !isWfsType && !isWmsType) {
+  const { layer, serviceType, downloadLayer } = layerData
+  if (!serviceType) {
     console.warn('No valid `downloadUrl` present for layer: ', layer)
     return null
   }
 
-  if (isWcsType) {
+  if (serviceType === 'wcs') {
     return createWcsParameters({ layer, format })
   }
 
-  if (isWfsType || isWmsType) {
+  if (serviceType === 'wfs' && downloadLayer) {
+    return createWfsParameters({ layer:downloadLayer, filter, format }) 
+  }
+
+  if (serviceType === 'wfs' && !downloadLayer) {
     return createWfsParameters({ layer, filter, format })
   }
 }
@@ -105,3 +93,4 @@ export const mapFormatToFileExtension = {
   'text/xml; subtype=gml/3.1.1': 'xml',
   'text/xml; subtype=gml/3.2': 'xml',
 }
+
