@@ -12,6 +12,8 @@
   "downloadUnavailable": "Het downloaden van data is nog niet beschikbaar voor één of meerdere lagen.",
   "drawPolygon": "Teken veelhoek",
   "drawRectangle": "Teken rechthoek",
+  "selectFeature": "Selecteer feature",
+  "selectMultipleFeatures": "Selecteer meerdere features",
   "expandAll": "Klap alles uit",
   "favourites": "Favorieten",
   "filterByTag": "Filteren op zoekterm",

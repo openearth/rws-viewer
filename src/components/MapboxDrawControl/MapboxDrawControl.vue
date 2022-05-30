@@ -44,6 +44,7 @@
 
     methods: {
       deferredMountedTo(map) {
+        window.map = map
         const modes = MapboxDraw.modes
         modes.draw_rectangle = DrawRectangle
 

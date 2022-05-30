@@ -52,6 +52,26 @@
             {{ $t('drawPolygon') }}
           </v-btn>
         </v-col>
+        <v-col>
+          <v-btn
+            :color="selectMode === 'select' ? 'primary' : null"
+            block
+            :ripple="false"
+            @click="onSelectModeSelect('select')"
+          >
+            {{ $t('selectFeature') }}
+          </v-btn>
+        </v-col>
+        <v-col>
+          <v-btn
+            :color="selectMode === 'selectMultiple' ? 'primary' : null"
+            block
+            :ripple="false"
+            @click="onSelectModeSelect('selectMultiple')"
+          >
+            {{ $t('selectMultipleFeatures') }}
+          </v-btn>
+        </v-col>
       </v-row>
       <v-row>
         <v-col>
@@ -186,7 +206,7 @@
     }),
 
     computed: {
-      ...mapGetters('map', [ 'drawMode', 'drawnFeature', 'activeFlattenedLayerIds', 'activeFlattenedLayers' ]),
+      ...mapGetters('map', [ 'drawMode', 'selectMode', 'drawnFeature', 'rasterLayerIds', 'activeFlattenedLayerIds', 'activeFlattenedLayers' ]),
       ...mapGetters('data', [ 'flattenedLayers' ]),
 
       activeLayers() {
@@ -254,7 +274,7 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'setDrawMode', 'setDrawnFeature', 'clearDrawnFeature' ]),
+      ...mapActions('map', [ 'setDrawMode', 'setSelectMode', 'setDrawnFeature', 'clearDrawnFeature' ]),
 
       getLayerNameById(id) {
         const layer = this.flattenedLayers.find(layer => layer.id === id)
@@ -267,6 +287,10 @@
         await this.clearDrawnFeature()
         this.selectedArea = null
         this.setDrawMode({ mode })
+      },
+
+      onSelectModeSelect (mode) {
+        this.setSelectMode({ mode })
       },
 
       onAreaSelection(id) {

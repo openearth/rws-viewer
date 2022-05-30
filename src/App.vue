@@ -1,7 +1,7 @@
 <template>
   <app-shell :header-title="viewerName">
     <locale-switcher slot="header-right" />
-    
+
     <v-fade-transition mode="out-in">
       <layer-order v-if="wmsLayerIds.length" />
     </v-fade-transition>
@@ -18,6 +18,7 @@
       :center="mapCenter"
       :zoom="mapZoom"
       @styledata="setMapLoaded"
+      @load="handleMapLoad"
     >
       <time-slider
         v-if="showTimeslider"
@@ -38,6 +39,10 @@
         :drawn-feature="drawnFeature"
         @change="setDrawnFeature"
       />
+      <mapbox-select-feature-control
+        :select-mode="selectMode"
+        @click="handleFeatureClick"
+      />
     </mapbox-map>
   </app-shell>
 </template>
@@ -50,9 +55,12 @@
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
   import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
-  import LayerOrder from '~/components/LayerOrder/LayerOrder.vue'
+  import LayerOrder from '~/components/LayerOrder/LayerOrder'
   import TimeSlider from '~/components/TimeSlider'
-  
+  import MapboxSelectFeatureControl from '~/components/MapboxSelectFeatureControl/MapboxSelectFeatureControl'
+  import { multiPolygon2Polygon } from '~/lib/convert-polygon'
+  import getFeatureInfo from '~/lib/get-feature-info'
+
   export default {
     components: {
       AppShell,
@@ -62,6 +70,7 @@
       LayerOrder,
       LocaleSwitcher,
       MapboxDrawControl,
+      MapboxSelectFeatureControl,
       MapboxLegend,
       MapboxMap,
       TimeSlider,
@@ -75,7 +84,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom' ]),
+      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'selectMode', 'filteredLayerId', 'mapCenter', 'mapZoom' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       mapLeftPadding() {
         return this.appNavigationOpen ? this.appNavigationWidth : 0
@@ -90,14 +99,20 @@
     },
     watch: {
       //Set as default timestamp the last value of the timeExtent array
-      formattedTimeExtent() { 
+      formattedTimeExtent() {
         if (this.formattedTimeExtent.length) {
           this.setSelectedTimestamp(this.formattedTimeExtent[this.formattedTimeExtent.length -1].t1)
         }
       },
+
+      drawnFeature(value) {
+        if (value) {
+          console.log(value)
+        }
+      },
     },
     mounted() {
-      this.$router.onReady(this.getAppData)    
+      this.$router.onReady(this.getAppData)
     },
 
     methods: {
@@ -118,6 +133,21 @@
       onTimingSelection(event) {
         const timestamp = event
         this.setSelectedTimestamp(timestamp.t1)
+      },
+      async handleFeatureClick(clickData) {
+        const feature = await getFeatureInfo({
+          layer: 'sovongebieden',
+          ...clickData,
+        })
+
+        if (feature) {
+          this.setDrawnFeature(multiPolygon2Polygon(feature))
+        }
+      },
+      handleMapLoad(event) {
+        const map = event.target
+
+        map.on('click', this.handleMapClick)
       },
     },
   }
