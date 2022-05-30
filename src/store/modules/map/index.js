@@ -10,6 +10,7 @@ export default {
     mapLoaded: false,
     rasterLayers: [],
     drawMode: null,
+    selectMode: null,
     drawnFeature: null,
     filtersLayerId: null, // id of active layer to filter
   }),
@@ -40,6 +41,7 @@ export default {
     },
     wmsLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
+    selectMode: state => state.selectMode,
     drawnFeature: state => state.drawnFeature,
     filtersLayerId: state => state.filtersLayerId,
   },
@@ -64,6 +66,9 @@ export default {
     },
     SET_DRAW_MODE(state, { mode }) {
       state.drawMode = mode
+    },
+    SET_SELECT_MODE(state, { mode }) {
+      state.selectMode = mode
     },
     SET_DRAWN_FEATURE(state, feature) {
       state.drawnFeature = Object.freeze(feature)
@@ -133,6 +138,11 @@ export default {
     setDrawMode({ commit, state }, { mode }) {
       const modeToCommit = state.drawMode === mode ? null : mode
       commit('SET_DRAW_MODE', { mode: modeToCommit })
+    },
+
+    setSelectMode({ commit, state }, { mode }) {
+      const modeToCommit = state.selectMode === mode ? null : mode
+      commit('SET_SELECT_MODE', { mode: modeToCommit })
     },
 
     setDrawnFeature({ commit, state }, feature) {

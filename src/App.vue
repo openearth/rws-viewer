@@ -16,6 +16,7 @@
       :padding="{ left: mapLeftPadding }"
       mapbox-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
       @styledata="setMapLoaded"
+      @load="handleMapLoad"
     >
       <time-slider
         v-if="showTimeslider"
@@ -36,6 +37,10 @@
         :drawn-feature="drawnFeature"
         @change="setDrawnFeature"
       />
+      <mapbox-select-feature-control
+        :select-mode="selectMode" 
+        @click="handleFeatureClick"
+      />
     </mapbox-map>
   </app-shell>
 </template>
@@ -47,10 +52,11 @@
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
   import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
-  import LayerOrder from '~/components/LayerOrder/LayerOrder.vue'
+  import LayerOrder from '~/components/LayerOrder/LayerOrder'
   import TimeSlider from '~/components/TimeSlider'
-  
-
+  import MapboxSelectFeatureControl from '~/components/MapboxSelectFeatureControl/MapboxSelectFeatureControl'
+  import { multiPolygon2Polygon } from '~/lib/convert-polygon'
+  import getFeatureInfo from '~/lib/get-feature-info'
 
   export default {
     components: {
@@ -60,6 +66,7 @@
       LayerOrder,
       LocaleSwitcher,
       MapboxDrawControl,
+      MapboxSelectFeatureControl,
       MapboxLegend,
       MapboxMap,
       TimeSlider,
@@ -73,7 +80,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filtersLayerId' ]),
+      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'selectMode', 'wmsLayerIds', 'wmsLayers', 'filtersLayerId' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       mapLeftPadding() {
         return this.appNavigationOpen ? this.appNavigationWidth : 0
@@ -91,6 +98,12 @@
       formattedTimeExtent() { 
         if (this.formattedTimeExtent.length) {
           this.setSelectedTimestamp(this.formattedTimeExtent[this.formattedTimeExtent.length -1].t1)
+        }
+      },
+
+      drawnFeature(value) {
+        if (value) {
+          console.log(value)
         }
       },
     },
@@ -116,6 +129,21 @@
       onTimingSelection(event) {
         const timestamp = event
         this.setSelectedTimestamp(timestamp.t1)
+      },
+      async handleFeatureClick(clickData) {
+        const feature = await getFeatureInfo({
+          layer: 'sovongebieden',
+          ...clickData,
+        })
+
+        if (feature) {
+          this.setDrawnFeature(multiPolygon2Polygon(feature))
+        }
+      },
+      handleMapLoad(event) {
+        const map = event.target
+
+        map.on('click', this.handleMapClick)
       },
     },
   }
