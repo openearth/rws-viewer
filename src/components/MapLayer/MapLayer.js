@@ -30,21 +30,7 @@ export default {
       isInitialized: false,
     }
   },
-  watch: {
-    opacity() {
-      this.setOpacity()
-    },
-  },
-  mounted() {
-    // only execute when map is available and layer is not already initialized
-    if (this.getMap()) {
-      this.rerender()
-      this.isInitialized = true
-    }
-  },
-  destroyed() {
-    this.removeLayer()
-  },
+
   methods: {
     deferredMountedTo() {
       // only execute when layer is not already initialized
@@ -53,20 +39,9 @@ export default {
         this.isInitialized = true
       }
     },
-    removeLayer() {
-      const map = this.getMap()
-      if (map) {
-        const layer = map.getLayer(this.options.id)
-
-        if (layer) {
-          map.removeLayer(this.options.id)
-          try {
-            map.removeSource(layer.source)
-          } catch {
-            console.warn('could not remove source', layer.source)
-          }
-        }
-      }
+    rerender() {
+      this.removeLayer()
+      this.addLayer()
     },
     addLayer() {
       const map = this.getMap()
@@ -80,14 +55,43 @@ export default {
         this.setOpacity()
       }
     },
+    removeLayer() {
+      const map = this.getMap()
+      if (map) {
+        const layer = map.getLayer(this.options.id)
+        if (layer) {
+          map.removeLayer(this.options.id)
+          try {
+            map.removeSource(layer.source)
+          } catch {
+            console.warn('could not remove source', layer.source)
+          }
+        }
+      }
+    },
+
     setOpacity() {
       const map = this.getMap()
       const { id, type } = this.options
       map.setPaintProperty(id, `${ type }-opacity`, this.opacity)
     },
-    rerender() {
-      this.removeLayer()
-      this.addLayer()
+
+  },
+  mounted() {
+    // only execute when map is available and layer is not already initialized
+    
+    if (this.getMap()) {
+      console.log('rerender this.options', this.options)
+      this.rerender()
+      this.isInitialized = true
+    }
+  },
+  destroyed() {
+    this.removeLayer()
+  },
+  watch: {
+    opacity() {
+      this.setOpacity()
     },
   },
 }

@@ -127,7 +127,6 @@
         this.setCQLFilter(filter)
       },
       setIdOfFilteredLayer(id) {
-        console.log('setFilterLayerId', id)
         this.setFiltersLayerId(id)
       },
     },
