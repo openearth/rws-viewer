@@ -1,3 +1,0 @@
-const filterMap = {
-  species: 'taxonname',
-}
