@@ -124,6 +124,7 @@
       },
       async handleFeatureClick(clickData) {
         const feature = await getFeatureInfo({
+          // TODO: get layer based on selected layer
           layer: 'sovongebieden',
           ...clickData,
         })

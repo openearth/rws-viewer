@@ -63,6 +63,7 @@
           </v-btn>
         </v-col>
         <v-col>
+          <!-- TODO: add functionality to select multiple polygons from drawing a rectangle -->
           <v-btn
             :color="selectMode === 'selectMultiple' ? 'primary' : null"
             block
