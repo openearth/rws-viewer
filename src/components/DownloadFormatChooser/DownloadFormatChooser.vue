@@ -42,10 +42,10 @@
     }),
 
     computed: {
-      ...mapGetters('map', [ 'rasterLayers' ]),
+      ...mapGetters('map', [ 'activeFlattenedLayers' ]),
       layerToDownload() {
-        //was changed from flattenedLayers.find to rasterLayers.find. 
-        return this.rasterLayers.find(({ id }) => this.layerId === id)
+        //was changed from flattenedLayers.find to activeFlattenedLayers.find. 
+        return this.activeFlattenedLayers.find(({ id }) => this.layerId === id)
       },
     },
 

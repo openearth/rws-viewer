@@ -34,7 +34,7 @@
     <v-treeview
       ref="tree"
       class="layer-chooser__tree"
-      :value="rasterLayerIds"
+      :value="activeFlattenedLayerIds"
       hoverable
       selectable
       dense
@@ -125,7 +125,7 @@
 
     computed: {
       ...mapGetters('data', [ 'displayLayers' ]),
-      ...mapGetters('map', [ 'rasterLayerIds' ]),
+      ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
       layersWithParents() {
         return addParentIdToLayers(this.displayLayers)
       },
@@ -148,8 +148,8 @@
     methods: {
       ...mapActions('map', [ 'updateRasterLayerOpacity' ]),
       handleInput(newValue) {
-        const added = difference(newValue, this.rasterLayerIds)
-        const removed =  difference(this.rasterLayerIds, newValue)
+        const added = difference(newValue, this.activeFlattenedLayerIds)
+        const removed =  difference(this.activeFlattenedLayerIds, newValue)
 
         added.length && this.$emit('select-layers', added)
         removed.length && this.$emit('remove-layers', removed)
@@ -163,9 +163,9 @@
       activeFilter(item, input, textKey) {
         switch (input) {
         case ':active-only':
-          return this.rasterLayerIds.includes(item.id)
+          return this.activeFlattenedLayerIds.includes(item.id)
         case ':in-active-only':
-          return this.rasterLayerIds.includes(item.id) === false
+          return this.activeFlattenedLayerIds.includes(item.id) === false
         default:
           return item.layer
             ? item[textKey].toLowerCase().indexOf(input.toLowerCase()) > -1

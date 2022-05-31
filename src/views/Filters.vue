@@ -72,12 +72,11 @@
       selectedLayerCode: null,
     }),
     computed: {
-      ...mapGetters('map', [ 'rasterLayerWithTimeIds', 'rasterLayers', 'rasterLayers'  ]),
-      ...mapGetters('data', [ 'flattenedLayers' ]),
+      ...mapGetters('map', [ 'activeFlattenedLayersIdsWithTimeOption', 'activeFlattenedLayers'  ]),
      
       activeLayers() { 
         //ActiveLayers with timeFilter true
-        return this.rasterLayerWithTimeIds.map(id => this.rasterLayers.find(layer => layer.id === id))
+        return this.activeFlattenedLayersIdsWithTimeOption.map(id => this.activeFlattenedLayers.find(layer => layer.id === id))
       },
       activeLayersList() {
         return this.activeLayers.map(({ id, name }) => ({
@@ -86,7 +85,7 @@
         }))
       },
       selectedLayer() {
-        return this.rasterLayers.find(layer => layer.id === this.selectedLayerCode)
+        return this.activeFlattenedLayers.find(layer => layer.id === this.selectedLayerCode)
       },
       allowedValuesToFilter() {
         if (!this.selectedLayer) {
