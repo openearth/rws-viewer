@@ -57,7 +57,6 @@
   import LayerOrder from '~/components/LayerOrder/LayerOrder'
   import TimeSlider from '~/components/TimeSlider'
   import MapboxSelectFeatureControl from '~/components/MapboxSelectFeatureControl/MapboxSelectFeatureControl'
-  import { multiPolygon2Polygon } from '~/lib/convert-polygon'
   import getFeatureInfo from '~/lib/get-feature-info'
 
   export default {
