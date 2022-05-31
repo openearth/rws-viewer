@@ -75,7 +75,15 @@
       </v-row>
       <v-row>
         <v-col>
+          <v-text-field
+            v-if="featureSelected"
+            :value="featureSelected"
+            flat
+            label="Name selected feature"
+            readonly
+          />
           <v-select
+            v-else
             v-model="selectedArea"
             :label="$t('predefinedSelection')"
             :items="formattedAreas"
@@ -125,7 +133,7 @@
           </transition>
         </v-col>
       </v-row>
-      <template v-if="downloadLayers.length">
+      <template v-if="downloadLayers.length && !featureSelected">
         <v-row>
           <v-col>
             <h4>{{ $t('formats') }}</h4>
@@ -150,7 +158,7 @@
           <v-divider class="my-4" />
         </v-col>
       </v-row>
-      <v-row>
+      <v-row v-if="!featureSelected">
         <v-col>
           <v-btn
             color="primary"
@@ -178,6 +186,18 @@
           </transition>
         </v-col>
       </v-row>
+      <v-row v-else>
+        <v-col>
+          <v-btn
+            color="primary"
+            block
+            :ripple="false"
+            @click="downloadCsv"
+          >
+          Download csv
+          </v-btn>
+        </v-col>
+      </v-row>
     </template>
   </v-container>
 </template>
@@ -190,6 +210,7 @@
   import DownloadFormatChooser from '~/components/DownloadFormatChooser/DownloadFormatChooser.vue'
   import metaRepo from '~/repo/metaRepo'
   import buildDownloadUrl from '~/lib/build-download-url'
+  import _ from 'lodash'
 
   const NO_SELECTION_ID = 'NO_SELECTION_ID'
 
@@ -256,6 +277,12 @@
       selectionCoordinates() {
         return this.drawnFeatureCoordinates.toString().replace(/,/g, ' ')
       },
+
+      featureSelected () {
+        // TODO: naam should be coming from the config, as it could differ per layer
+        return _.get(this.drawnFeature, 'properties.naam')
+      },
+
     },
 
     watch: {
@@ -319,6 +346,20 @@
             saveAs(content, 'layers.zip')
             this.isGeneratingDownload = false
           })
+      },
+      downloadCsv () {
+        const url = `https://dd-eco-api-test.sovon.nl/api/v2/measurement/?&gebiednaam=${ this.featureSelected }&pagesize=4812&format=csv`
+        window.open(url)
+        // console.log(url)
+
+        // fetch(url)
+        //   .then(res => {
+        //     return res.blob()
+        //   })
+        //   .then(blob => {
+        //     const file = window.URL.createObjectURL(blob)
+        //     window.location.assign(file)
+        //   })
       },
 
       async generateZipFile(urls) {
