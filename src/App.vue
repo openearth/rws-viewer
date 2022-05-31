@@ -9,7 +9,6 @@
       <mapbox-legend v-if="wmsLayerIds.length" />
     </v-fade-transition>
 
-
     <mapbox-map
       slot="map"
       :access-token="accessToken"
@@ -27,9 +26,9 @@
         @input="onTimingSelection"
       />
       <v-mapbox-layer
-        v-for="(layer) in wmsLayers"
+        v-for="(layer, index) in wmsLayers"
         :key="layer.id"
-        :before="'gl-draw-polygon-fill-inactive.cold'"
+        :before="wmsLayerIds[index - 1] || 'gl-draw-polygon-fill-inactive.cold'"
         :options="layer"
         :opacity="layer.opacity"
       />
