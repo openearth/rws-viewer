@@ -9,30 +9,35 @@
 
     data: () => ({
       internalFeatureId: undefined,
+      map: null,
     }),
+
+    watch: {
+      selectMode(value) {
+        this.map[value ? 'on' : 'off']('click', this.handleMapClick)
+      },
+    },
 
     methods: {
       deferredMountedTo(map) {
-        map.on('click', this.handleMapClick)
+        this.map = map
       },
 
       handleMapClick(event) {
-        if (this.selectMode) {
-          const map = event.target
-          const bounds = map.getBounds()
-          const canvas = map.getCanvas()
-  
-          const { x, y } = event.point
-          const { width, height } = canvas
-  
-          this.$emit('click',{
-            bounds,
-            x,
-            y,
-            width,
-            height,
-          })
-        }
+        const map = event.target
+        const bounds = map.getBounds()
+        const canvas = map.getCanvas()
+
+        const { x, y } = event.point
+        const { width, height } = canvas
+
+        this.$emit('click',{
+          bounds,
+          x,
+          y,
+          width,
+          height,
+        })
       },
     },
 

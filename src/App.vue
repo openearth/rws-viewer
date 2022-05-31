@@ -16,7 +16,6 @@
       :padding="{ left: mapLeftPadding }"
       mapbox-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
       @styledata="setMapLoaded"
-      @load="handleMapLoad"
     >
       <time-slider
         v-if="showTimeslider"
@@ -26,9 +25,9 @@
         @input="onTimingSelection"
       />
       <v-mapbox-layer
-        v-for="(layer, index) in wmsLayers"
+        v-for="(layer ) in wmsLayers"
         :key="layer.id"
-        :before="wmsLayerIds[index - 1]"
+        :before="'gl-draw-polygon-fill-inactive.cold'"
         :options="layer"
         :opacity="layer.opacity"
       />
@@ -100,12 +99,6 @@
           this.setSelectedTimestamp(this.formattedTimeExtent[this.formattedTimeExtent.length -1].t1)
         }
       },
-
-      drawnFeature(value) {
-        if (value) {
-          console.log(value)
-        }
-      },
     },
     mounted() {
       this.$router.onReady(this.getAppData)    
@@ -137,13 +130,8 @@
         })
 
         if (feature) {
-          this.setDrawnFeature(multiPolygon2Polygon(feature))
+          this.setDrawnFeature(feature)
         }
-      },
-      handleMapLoad(event) {
-        const map = event.target
-
-        map.on('click', this.handleMapClick)
       },
     },
   }
