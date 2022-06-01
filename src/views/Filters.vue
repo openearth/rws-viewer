@@ -1,6 +1,6 @@
 <template>
   <v-container class="download pt-4">
-    <v-row v-if="!activeLayersList.length">
+    <v-row v-if="!availableLayersList.length">
       <v-col>
         <v-alert
           dense
@@ -11,7 +11,7 @@
         </v-alert>
       </v-col>
     </v-row>
-    <template v-if="activeLayersList.length">
+    <template v-if="availableLayersList.length">
       <v-row>
         <v-col>
           <h3>{{ $t('select') }}</h3>
@@ -25,7 +25,7 @@
           <v-select
             v-model="selectedLayerCode"
             :label="$t('labelLayerWithTime')"
-            :items="activeLayersList"
+            :items="availableLayersList"
             dense
             outlined
             hide-details
@@ -73,13 +73,13 @@
     }),
     computed: {
       ...mapGetters('map', [ 'activeFlattenedLayersIdsWithTimeOption', 'activeFlattenedLayers'  ]),
-     
-      activeLayers() { 
-        //ActiveLayers with timeFilter true
+      ...mapGetters('data', [ 'selectedTimestamp' ]),
+      availableLayers() { 
+        //availableLayers with timeFilter true
         return this.activeFlattenedLayersIdsWithTimeOption.map(id => this.activeFlattenedLayers.find(layer => layer.id === id))
       },
-      activeLayersList() {
-        return this.activeLayers.map(({ id, name }) => ({
+      availableLayersList() {
+        return this.availableLayers.map(({ id, name }) => ({
           text: name,
           value: id,
         }))
@@ -117,16 +117,23 @@
           this.setIdOfFilteredLayer(this.selectedLayerCode)
         }
       },
+      selectedTimestamp() { 
+        if (this.selectedTimestamp) {
+          this.reloadLayerOnMap()
+        }
+      },
     },
     methods: {
       ...mapActions('data', [ 'setTimeExtent', 'setCQLFilter' ] ),
-      ...mapActions('map', [ 'setFiltersLayerId' ]),
+      ...mapActions('map', [ 'setfilteredLayerId', 'reloadLayerOnMap' ]),
       setFilter(value) {
         const filter = `${ this.filterName }='${ value }'`
         this.setCQLFilter(filter)
+        this.reloadLayerOnMap()
+
       },
       setIdOfFilteredLayer(id) {
-        this.setFiltersLayerId(id)
+        this.setfilteredLayerId(id)
       },
     },
 

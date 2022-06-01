@@ -69,7 +69,7 @@ export default {
       const layersById = getLayersById(layers, initialLayerIds)
 
       if (layersById.length) {
-        dispatch('map/addRasterLayer', { layers: layersById }, { root: true })
+        dispatch('map/loadLayerOnMap', { layers: layersById }, { root: true })
       }
     },
 

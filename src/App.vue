@@ -26,7 +26,7 @@
       />
       <map-layer
         v-for="(layer, index) in wmsLayers"
-        :key="layer.request"
+        :key="layer.id"
         :before="wmsLayerIds[index - 1]"
         :options="layer"
         :opacity="layer.opacity"
@@ -51,8 +51,6 @@
   import LayerOrder from '~/components/LayerOrder/LayerOrder.vue'
   import TimeSlider from '~/components/TimeSlider'
   
-
-
   export default {
     components: {
       AppShell,
@@ -75,7 +73,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filtersLayerId' ]),
+      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       mapLeftPadding() {
         return this.appNavigationOpen ? this.appNavigationWidth : 0
@@ -85,7 +83,7 @@
       },
       showTimeslider() {
         const { name } = this.$route
-        return this.filtersLayerId && name === 'filters' ? true : false
+        return this.filteredLayerId && name === 'filters' ? true : false
       },
     },
     watch: {
