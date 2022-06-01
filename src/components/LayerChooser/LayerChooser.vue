@@ -146,7 +146,7 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'updateRasterLayerOpacity' ]),
+      ...mapActions('map', [ 'updateWmsLayerOpacity' ]),
       handleInput(newValue) {
         const added = difference(newValue, this.activeFlattenedLayerIds)
         const removed =  difference(this.activeFlattenedLayerIds, newValue)
@@ -173,7 +173,7 @@
         }
       },
       updateLayerOpacity({ id, opacity }) {
-        this.updateRasterLayerOpacity({ id, opacity })
+        this.updateWmsLayerOpacity({ id, opacity })
       },
     },
   }

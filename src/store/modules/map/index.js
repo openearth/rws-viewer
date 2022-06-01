@@ -1,6 +1,5 @@
 import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
-import mapLayerOpacity from '~/lib/map-layer-opacity'
 import addFilterAttributesToLayer from '~/lib/add-filter-attributes-to-layer'
 import { getWmsCapabilities, getLayerProperties } from '~/lib/get-capabilities'
 
@@ -28,21 +27,6 @@ export default {
       return getters.activeFlattenedLayers.filter(layer => layer?.timeFilter).map(({ id })=>id)
     },
     wmsLayers: state => state.wmsLayers,
-/*     wmsLayers (state, getters, rootState)  { 
-      
-      const { activeFlattenedLayers, filteredLayerId } = state
-      
-      const { selectedTimestamp, cqlFilter } = rootState.data
-      if (!activeFlattenedLayers) {
-        return []
-      }
-   
-      const mappedFilteredLayers = mapLayersWithFilter(activeFlattenedLayers, filteredLayerId, selectedTimestamp, cqlFilter)
-      const wmsLayers = mappedFilteredLayers.map(layer => buildWmsLayer(layer))
-      const mappedWmsLayers = mapLayerOpacity(state.activeFlattenedLayers, wmsLayers)
-      
-      return mappedWmsLayers
-    }, */
     wmsLayerIds: state => (state.activeFlattenedLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
     drawnFeature: state => state.drawnFeature,
@@ -79,16 +63,16 @@ export default {
     SET_DRAWN_FEATURE(state, feature) {
       state.drawnFeature = Object.freeze(feature)
     },
-    UPDATE_RASTER_LAYER_OPACITY(state, { id, opacity }) {
-      const layerToUpdate = state.activeFlattenedLayers.find(layer => layer.id === id)
-      const index = state.activeFlattenedLayers.findIndex(layer => layer.id === id)
+    UPDATE_WMS_LAYER_OPACITY(state, { id, opacity }) {
+      const layerToUpdate = state.wmsLayers.find(layer => layer.id === id)
+      const index = state.wmsLayers.findIndex(layer => layer.id === id)
 
       if (!layerToUpdate) {
         return
       }
 
       layerToUpdate.opacity = opacity
-      state.activeFlattenedLayers = update(index, layerToUpdate, state.activeFlattenedLayers)
+      state.wmsLayers = update(index, layerToUpdate, state.wmsLayers)
     },
     SET_FILTERS_LAYER_ID(state, id) {
       state.filteredLayerId = id
@@ -103,17 +87,9 @@ export default {
       commit('SET_MAP_LOADED')
     },
     loadLayerOnMap({ commit, state }, { layers }) {
-/*       const wmsLayers = layers.map(layer => buildWmsLayer(layer))
-     
-      const mappedWmsLayers = mapLayerOpacity(state.activeFlattenedLayers, wmsLayers)
-      const layersToAdd = difference(mappedWmsLayers, state.activeFlattenedLayers)
-      console.log('layersToAdd', layersToAdd)
-      layersToAdd.forEach(layer => {
-        commit('ADD_ACTIVE_FLATTENED_LAYER', { layer })
-      }) */
       
       const layersToAdd = difference(layers , state.activeFlattenedLayers)
-      console.log('layerToAdd', layersToAdd)
+      
       layersToAdd.forEach((layer) => {
         getWmsCapabilities(layer.url)
           .then(capabilities => getLayerProperties(capabilities, layer.layer))
@@ -128,7 +104,7 @@ export default {
       /* If a layer has the time option true, 
       then in the filter tab the user can load on 
       the map the layer with a new time or a new cql filter */
-      //remove layer from map to reload it with extra attributes
+     
       const { filteredLayerId, activeFlattenedLayers } = state
       commit('REMOVE_WMS_LAYER', filteredLayerId)
       const { selectedTimestamp, cqlFilter } = rootState.data
@@ -142,7 +118,7 @@ export default {
         commit('REMOVE_WMS_LAYER', layer.id)
       })
     },
-    //TODO: I dont like this implementation 
+    
     removefilteredLayerId({ commit }) {
       commit('REMOVE_FILTERS_LAYER_ID')
     },
@@ -167,8 +143,8 @@ export default {
       commit('SET_DRAWN_FEATURE', null)
     },
 
-    updateRasterLayerOpacity({ commit }, { id, opacity }) {
-      commit('UPDATE_RASTER_LAYER_OPACITY', { id, opacity })
+    updateWmsLayerOpacity({ commit }, { id, opacity }) {
+      commit('UPDATE_WMS_LAYER_OPACITY', { id, opacity })
     },
     setfilteredLayerId({ commit }, id) {
       commit('SET_FILTERS_LAYER_ID', id)

@@ -50,8 +50,7 @@ export default {
 
     addLayer() {
       const map = this.getMap()
-      console.log('this.options', this.options, 'this.before',this.before)
-
+      
       if (this.before && map.getLayer(this.before)) {
         map.addLayer(this.options, this.before)
       } else {
