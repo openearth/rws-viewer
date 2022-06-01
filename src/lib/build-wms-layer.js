@@ -36,6 +36,5 @@ export default ({ url: rawUrl = defaultUrl, id, layer, style = '', paint = {}, t
       tileSize,
     },
     paint,
-    request: tile,
   }
 }
