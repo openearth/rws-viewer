@@ -3,7 +3,7 @@
     v-if="timings.length"
     class="time-slider pa-1"
     elevation="2"
-    width="75%"
+    width="68%"
     rounded
   >
     <div
