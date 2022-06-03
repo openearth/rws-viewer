@@ -12,7 +12,6 @@
     <mapbox-map
       slot="map"
       :access-token="accessToken"
-      :padding="{ left: mapLeftPadding }"
       mapbox-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
       :center="mapCenter"
       :zoom="mapZoom"
@@ -83,9 +82,6 @@
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
       ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'selectMode', 'filteredLayerId', 'mapCenter', 'mapZoom' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
-      mapLeftPadding() {
-        return this.appNavigationOpen ? this.appNavigationWidth : 0
-      },
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
       },
