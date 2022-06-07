@@ -93,9 +93,9 @@ export default {
       layersToAdd.forEach((layer) => {
         getWmsCapabilities(layer.url)
           .then(capabilities => getLayerProperties(capabilities, layer.layer))
-          .then(({ serviceType, timeExtent }) => {
-            commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent } } )
-            commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent } }))
+          .then(({ serviceType, timeExtent, wmsVersion }) => {
+            commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion } } )
+            commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion } }))
           }, 
           )
       })  

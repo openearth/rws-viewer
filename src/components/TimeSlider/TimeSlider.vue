@@ -196,7 +196,7 @@
 <style lang="scss" >
 
 .v-slider__tick-label {
-  font-size: 10px;//calc(.4 * (1.4vh + 1.1vw));
+  font-size: calc(.33 * (1.4vh + 0.9vw));
 }
 .time-slider {
   position:absolute;
