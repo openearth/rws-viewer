@@ -113,7 +113,7 @@ export default {
   mounted() {
     const map = this.getMap()
     // We can immediately initialize if we have the map ready
-    if (map && map.isStyleLoaded()) {
+    if (map) {
       this.renderLayer()
       this.isInitialized = true
     }
