@@ -107,13 +107,10 @@ export function getLayerProperties(capabilities, layer) {
  * reads the layer keywords. 
  * 
  *  * */
-  console.log('capabilities', capabilities, 'layer to search for', layer)
+
   const wmsVersion = pipe(
     () => capabilities.querySelector('WMS_Capabilities'),
     el => el.getAttribute('version'),
-    
-    
-    
   )()
   
   const keywords = pipe(
