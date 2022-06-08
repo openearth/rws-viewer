@@ -68,10 +68,10 @@
 
     computed: {
       ...mapGetters('data', [ 'flattenedLayers' ]),
-      ...mapGetters('map', [ 'rasterLayerIds' ]),
+      ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
 
       activeLayers() {
-        return this.rasterLayerIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
+        return this.activeFlattenedLayerIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
       },
     },
 

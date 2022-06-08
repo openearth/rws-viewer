@@ -24,9 +24,9 @@ export default {
     flattenedLayers: state => state.flattenedLayers,
     layerTags: state => state.layerTags,
     availableDisplayLayers: (state, getters, rootState, rootGetters) =>
-      omitLayers(getters.displayLayers, rootGetters['map/rasterLayerIds']),
+      omitLayers(getters.displayLayers, rootGetters['map/activeFlattenedLayerIds']),
     availableFlattenedLayers: (state, getters, rootState, rootGetters) =>
-      getters.flattenedLayers.filter(layer => !rootGetters['map/rasterLayerIds'].includes(layer.id)),
+      getters.flattenedLayers.filter(layer => !rootGetters['map/activeFlattenedLayerIds'].includes(layer.id)),
     loadedViewerConfigs: state => state.displayLayers.map(({ name }) => slugify(name)),
     timeExtent: state => state.timeExtent,
     selectedTimestamp: state => state.selectedTimestamp,
@@ -69,7 +69,7 @@ export default {
       const layersById = getLayersById(layers, initialLayerIds)
 
       if (layersById.length) {
-        dispatch('map/addRasterLayer', { layers: layersById }, { root: true })
+        dispatch('map/loadLayerOnMap', { layers: layersById }, { root: true })
       }
     },
 

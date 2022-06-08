@@ -66,7 +66,7 @@ export async function getWmsCapabilities(service) {
   const serviceUrl = new URL(service)
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
   
-  const { data } = await axios(`${ servicePath }?service=WMS&version=1.3.0&request=GetCapabilities`)
+  const { data } = await axios(`${ servicePath }?service=WMS&request=GetCapabilities`)
 
   return new DOMParser().parseFromString(data, 'text/xml')
 
@@ -100,14 +100,19 @@ export function getSupportedOutputFormats(type, capabilities) {
 
 }
 
-//TODO: I am altering this function to get also the timeExtent if is is there.
 export function getLayerProperties(capabilities, layer) {
 /**
  * function that reads the wms capabilities response of the workpspace
  * find the given layer
  * reads the layer keywords. 
- * TODO: extent is read in the getLayerTimeExtent. Eventually read it here?
+ * 
  *  * */
+
+  const wmsVersion = pipe(
+    () => capabilities.querySelector('WMS_Capabilities'),
+    el => el.getAttribute('version'),
+  )()
+  
   const keywords = pipe(
     () => [ ...capabilities.querySelectorAll('[queryable="1"]') ],
     getTags('Name'),
@@ -131,8 +136,7 @@ export function getLayerProperties(capabilities, layer) {
     map(textToArray),
     (array) => array.flat(),
   )()
-  
-  return { serviceType, timeExtent }
+  return { serviceType, timeExtent, wmsVersion }
 }
 
 

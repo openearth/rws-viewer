@@ -59,8 +59,8 @@ router.beforeEach((to, from, next) => {
 })
 
 router.beforeEach((to, from, next) => {
-  const rasterLayerIds = store.getters['map/rasterLayerIds']
-  const layers = rasterLayerIds.join(',')
+  const activeFlattenedLayerIds = store.getters['map/activeFlattenedLayerIds']
+  const layers = activeFlattenedLayerIds.join(',')
 
   if (hasHadFirstRoute === false) {
     hasHadFirstRoute = true

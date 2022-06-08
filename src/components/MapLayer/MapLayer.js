@@ -1,73 +1,106 @@
 import { isNil } from '~/lib/helpers.js'
 
 export default {
-  name: 'map-layer',
+  name: 'v-mapbox-layer',
+
   inject: [ 'getMap' ],
-  render() {
-    return null
-  },
+
+  render: () => null,
+
   props: {
     options: {
-      default: () => {
-        return {}
-      },
-      type: [ Object, String ],
+      type: Object,
+      default: () => ({}),
     },
-    // allows to place a layer before another
+
+    // Allows to place a layer before another
     before: {
       type: String,
-      required: false,
+      default: undefined,
     },
+
+    clickable: {
+      type: Boolean,
+      default: false,
+    },
+
     opacity: {
       type: Number,
       required: false,
       validator: val => val >= 0 && val <= 1,
     },
   },
-  data() {
-    return {
-      // used to determine if mounted or deferredMountedTo should be used
-      isInitialized: false,
-    }
-  },
+
+  data: () => ({
+    isInitialized: false,
+  }),
 
   methods: {
     deferredMountedTo() {
-      // only execute when layer is not already initialized
       if (!this.isInitialized) {
-        this.rerender()
+        this.renderLayer()
         this.isInitialized = true
       }
     },
-    rerender() {
+
+    renderLayer() {
       this.removeLayer()
       this.addLayer()
     },
+
     addLayer() {
       const map = this.getMap()
-
+      
       if (this.before && map.getLayer(this.before)) {
         map.addLayer(this.options, this.before)
       } else {
         map.addLayer(this.options)
       }
+
+      if (this.clickable) {
+        const layerId = this.options.id
+        map.on('click', layerId, this.clickFn)
+        map.on('mouseenter', layerId, this.mouseEnterFn)
+        map.on('mouseleave', layerId, this.mouseLeaveFn)
+      }
+
       if (!isNil(this.opacity)) {
         this.setOpacity()
       }
     },
+
     removeLayer() {
       const map = this.getMap()
       if (map) {
-        const layer = map.getLayer(this.options.id)
+        const layerId = this.options.id
+        const layer = map.getLayer(layerId)
         if (layer) {
-          map.removeLayer(this.options.id)
-          try {
-            map.removeSource(layer.source)
-          } catch {
-            console.warn('could not remove source', layer.source)
+          const layerSource = layer.source
+          map.removeLayer(layerId)
+          if (layerSource && !map.getStyle().layers.some(({ source }) => source === layerSource)) {
+            map.removeSource(layerSource)
+          }
+          if (this.clickable) {
+            map.off('click', layerId, this.clickFn)
+            map.off('mouseenter', layerId, this.mouseEnterFn)
+            map.off('mouseleave', layerId, this.mouseLeaveFn)
           }
         }
       }
+    },
+
+    clickFn(e) {
+      this.$emit('click', e)
+    },
+
+    mouseEnterFn() {
+      const map = this.getMap()
+      map.getCanvas().style.cursor = 'pointer'
+    },
+
+    mouseLeaveFn() {
+      const map = this.getMap()
+      map.getCanvas().style.cursor = ''
     },
 
     setOpacity() {
@@ -75,21 +108,28 @@ export default {
       const { id, type } = this.options
       map.setPaintProperty(id, `${ type }-opacity`, this.opacity)
     },
-
   },
+
   mounted() {
-    // only execute when map is available and layer is not already initialized
-    
-    if (this.getMap()) {
-      console.log('rerender this.options', this.options)
-      this.rerender()
+    const map = this.getMap()
+    // We can immediately initialize if we have the map ready
+    if (map) {
+      this.renderLayer()
       this.isInitialized = true
     }
   },
+
   destroyed() {
     this.removeLayer()
   },
+
   watch: {
+    options: {
+      deep: true,
+      handler() {
+        this.renderLayer()
+      },
+    },
     opacity() {
       this.setOpacity()
     },

@@ -21,10 +21,10 @@
     computed: {
       ...mapGetters('app', [ 'viewerConfig' ]),
       ...mapGetters('data', [ 'flattenedLayers', 'layerTags' ]),
-      ...mapGetters('map', [ 'rasterLayerIds', 'rasterLayers' ]),
+      ...mapGetters('map', [ 'activeFlattenedLayerIds', 'activeFlattenedLayers' ]),
 
       activeLayers() {
-        return this.rasterLayerIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
+        return this.activeFlattenedLayerIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
       },
     },
 
@@ -41,14 +41,14 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'addRasterLayer', 'removeRasterLayer', 'removeFiltersLayerId' ]),
+      ...mapActions('map', [ 'loadLayerOnMap', 'removeLayerFromMap', 'removefilteredLayerId' ]),
 
       onSelectLayers(layerIds) {
         const layers = layerIds
           .map(layerId => this.flattenedLayers.find(({ id }) => id === layerId))
 
         if (layers.length) {
-          this.addRasterLayer({ layers })
+          this.loadLayerOnMap({ layers })
         }
       },
 
@@ -57,8 +57,8 @@
           .map(layerId => this.flattenedLayers.find(({ id }) => id === layerId))
 
         if (layers.length) {
-          this.removeRasterLayer({ layers })
-          this.removeFiltersLayerId()
+          this.removeLayerFromMap({ layers })
+          this.removefilteredLayerId()
         }
       },
     },

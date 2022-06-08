@@ -1,6 +1,6 @@
 <template>
   <v-container class="download pt-4">
-    <v-row v-if="!activeLayersList.length">
+    <v-row v-if="!availableLayersList.length">
       <v-col>
         <v-alert
           dense
@@ -11,7 +11,7 @@
         </v-alert>
       </v-col>
     </v-row>
-    <template v-if="activeLayersList.length">
+    <template v-if="availableLayersList.length">
       <v-row>
         <v-col>
           <h3>{{ $t('select') }}</h3>
@@ -25,7 +25,7 @@
           <v-select
             v-model="selectedLayerCode"
             :label="$t('labelLayerWithTime')"
-            :items="activeLayersList"
+            :items="availableLayersList"
             dense
             outlined
             hide-details
@@ -72,21 +72,20 @@
       selectedLayerCode: null,
     }),
     computed: {
-      ...mapGetters('map', [ 'rasterLayerWithTimeIds', 'rasterLayers', 'rasterLayers'  ]),
-      ...mapGetters('data', [ 'flattenedLayers' ]),
-     
-      activeLayers() { 
-        //ActiveLayers with timeFilter true
-        return this.rasterLayerWithTimeIds.map(id => this.rasterLayers.find(layer => layer.id === id))
+      ...mapGetters('map', [ 'activeFlattenedLayersIdsWithTimeOption', 'activeFlattenedLayers'  ]),
+      ...mapGetters('data', [ 'selectedTimestamp' ]),
+      availableLayers() { 
+        //availableLayers with timeFilter true
+        return this.activeFlattenedLayersIdsWithTimeOption.map(id => this.activeFlattenedLayers.find(layer => layer.id === id))
       },
-      activeLayersList() {
-        return this.activeLayers.map(({ id, name }) => ({
+      availableLayersList() {
+        return this.availableLayers.map(({ id, name }) => ({
           text: name,
           value: id,
         }))
       },
       selectedLayer() {
-        return this.rasterLayers.find(layer => layer.id === this.selectedLayerCode)
+        return this.activeFlattenedLayers.find(layer => layer.id === this.selectedLayerCode)
       },
       allowedValuesToFilter() {
         if (!this.selectedLayer) {
@@ -118,16 +117,23 @@
           this.setIdOfFilteredLayer(this.selectedLayerCode)
         }
       },
+      selectedTimestamp() { 
+        if (this.selectedTimestamp) {
+          this.reloadLayerOnMap()
+        }
+      },
     },
     methods: {
       ...mapActions('data', [ 'setTimeExtent', 'setCQLFilter' ] ),
-      ...mapActions('map', [ 'setFiltersLayerId' ]),
+      ...mapActions('map', [ 'setfilteredLayerId', 'reloadLayerOnMap' ]),
       setFilter(value) {
         const filter = `${ this.filterName }='${ value }'`
         this.setCQLFilter(filter)
+        this.reloadLayerOnMap()
+
       },
       setIdOfFilteredLayer(id) {
-        this.setFiltersLayerId(id)
+        this.setfilteredLayerId(id)
       },
     },
 
