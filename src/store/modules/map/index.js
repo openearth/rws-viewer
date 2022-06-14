@@ -13,15 +13,16 @@ export default {
     drawMode: null,
     selectMode: null,
     drawnFeature: null,
-    filteredLayerId: null, // id of active layer to filter
-    wmsLayers: [], 
+    filtersLayerId: null, // id of active layer to filter
+    selectedLayerForSelection: null,
+    wmsLayers: [],
     mapCenter: NEDERLANDS_MAP_CENTER,
     mapZoom: NEDERLANDAS_MAP_ZOOM,
   }),
 
   getters: {
     mapLoaded: state => state.mapLoaded,
-    activeFlattenedLayers: state => (state.mapLoaded && state.activeFlattenedLayers) || [], 
+    activeFlattenedLayers: state => (state.mapLoaded && state.activeFlattenedLayers) || [],
     activeFlattenedLayerIds: state => (state.activeFlattenedLayers || []).map(({ id }) => id),
     activeFlattenedLayersIdsWithTimeOption (state, getters) {
       if (!getters.activeFlattenedLayers) {
@@ -34,9 +35,10 @@ export default {
     drawMode: state => state.drawMode,
     selectMode: state => state.selectMode,
     drawnFeature: state => state.drawnFeature,
-    filteredLayerId: state => state.filteredLayerId,
     mapCenter: state => state.mapCenter,
     mapZoom: state => state.mapZoom,
+    filtersLayerId: state => state.filtersLayerId,
+    selectedLayerForSelection: state => state.selectedLayerForSelection,
   },
 
   mutations: {
@@ -95,6 +97,9 @@ export default {
     SET_MAP_ZOOM(state, zoom) {
       state.mapZoom = zoom
     },
+    SET_SELECTED_LAYER_FOR_SELECTION(state, layer) {
+      state.selectedLayerForSelection = layer
+    },
   },
 
   actions: {
@@ -102,29 +107,29 @@ export default {
       commit('SET_MAP_LOADED')
     },
     loadLayerOnMap({ commit, state }, { layers }) {
-      
+
       const layersToAdd = difference(layers , state.activeFlattenedLayers)
-      
+
       layersToAdd.forEach((layer) => {
         getWmsCapabilities(layer.url)
           .then(capabilities => getLayerProperties(capabilities, layer.layer))
           .then(({ serviceType, timeExtent, wmsVersion }) => {
             commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion } } )
             commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion } }))
-          }, 
+          },
           )
-      })  
+      })
     },
     reloadLayerOnMap({ commit, state, rootState }) {
-      /* If a layer has the time option true, 
-      then in the filter tab the user can load on 
+      /* If a layer has the time option true,
+      then in the filter tab the user can load on
       the map the layer with a new time or a new cql filter */
-     
+
       const { filteredLayerId, activeFlattenedLayers } = state
       commit('REMOVE_WMS_LAYER', filteredLayerId)
       const { selectedTimestamp, cqlFilter } = rootState.data
       const layer = addFilterAttributesToLayer(activeFlattenedLayers, filteredLayerId, selectedTimestamp, cqlFilter )
-      
+
       commit('ADD_WMS_LAYER', buildWmsLayer(layer))
     },
     removeLayerFromMap({ commit }, { layers }) {
@@ -133,7 +138,7 @@ export default {
         commit('REMOVE_WMS_LAYER', layer.id)
       })
     },
-    
+
     removefilteredLayerId({ commit }) {
       commit('REMOVE_FILTERS_LAYER_ID')
     },
@@ -156,6 +161,11 @@ export default {
       if (state.drawMode) {
         commit('SET_DRAW_MODE', { mode: null })
       }
+
+      if (state.selectMode) {
+        commit('SET_SELECT_MODE', { mode: null })
+      }
+
       commit('SET_DRAWN_FEATURE', feature)
     },
 
@@ -166,9 +176,15 @@ export default {
     updateWmsLayerOpacity({ commit }, { id, opacity }) {
       commit('UPDATE_WMS_LAYER_OPACITY', { id, opacity })
     },
-    setfilteredLayerId({ commit }, id) {
+
+    setFiltersLayerId({ commit }, id) {
       commit('SET_FILTERS_LAYER_ID', id)
     },
+
+    setSelectedLayerForSelection({ commit }, layer) {
+      commit('SET_SELECTED_LAYER_FOR_SELECTION', layer)
+    },
+
     setMapCenter({ commit }, coords) {
       commit('SET_MAP_CENTER', coords)
     },

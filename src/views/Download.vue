@@ -33,6 +33,21 @@
       </v-row>
       <v-row>
         <v-col>
+          <v-select
+            v-model="selectedArea"
+            :label="$t('predefinedSelection')"
+            :items="formattedAreas"
+            item-text="properties.mpnomsch"
+            item-value="id"
+            dense
+            outlined
+            hide-details
+            @change="onAreaSelection"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
           <v-btn
             :color="drawMode === 'rectangle' ? 'primary' : null"
             block
@@ -62,30 +77,17 @@
             {{ $t('selectFeature') }}
           </v-btn>
         </v-col>
-        <v-col>
-          <!-- TODO: add functionality to select multiple polygons from drawing a rectangle -->
-          <v-btn
-            :color="selectMode === 'selectMultiple' ? 'primary' : null"
-            block
-            :ripple="false"
-            @click="onSelectModeSelect('selectMultiple')"
-          >
-            {{ $t('selectMultipleFeatures') }}
-          </v-btn>
-        </v-col>
       </v-row>
-      <v-row>
+      <v-row v-if="selectMode === 'select'">
         <v-col>
           <v-select
-            v-model="selectedArea"
-            :label="$t('predefinedSelection')"
-            :items="formattedAreas"
-            item-text="properties.mpnomsch"
-            item-value="id"
+            v-model="selectedLayer"
+            :label="$t('chooseLayer')"
+            :items="activeLayersList"
             dense
             outlined
             hide-details
-            @change="onAreaSelection"
+            @change="handleSelectionLayerSelect"
           />
         </v-col>
       </v-row>
@@ -198,6 +200,7 @@
     components: { DownloadFormatChooser },
 
     data: () => ({
+      selectedLayer: null,
       downloadLayersFormats: [],
       downloadLayers: [],
       downloadFormats: [],
@@ -207,7 +210,7 @@
     }),
 
     computed: {
-      ...mapGetters('map', [ 'drawMode', 'selectMode', 'drawnFeature', 'rasterLayerIds', 'activeFlattenedLayerIds', 'activeFlattenedLayers' ]),
+      ...mapGetters('map', [ 'drawMode', 'selectMode', 'drawnFeature', 'rasterLayerIds', 'activeFlattenedLayerIds', 'activeFlattenedLayers', 'selectedLayerForSelection']),
       ...mapGetters('data', [ 'flattenedLayers' ]),
 
       activeLayers() {
@@ -275,7 +278,11 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'setDrawMode', 'setSelectMode', 'setDrawnFeature', 'clearDrawnFeature' ]),
+      ...mapActions('map', [ 'setDrawMode', 'setSelectMode', 'setDrawnFeature', 'clearDrawnFeature', 'setSelectedLayerForSelection' ]),
+
+      handleSelectionLayerSelect(id) {
+        this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === id))
+      },
 
       getLayerNameById(id) {
         const layer = this.flattenedLayers.find(layer => layer.id === id)
@@ -290,7 +297,13 @@
         this.setDrawMode({ mode })
       },
 
-      onSelectModeSelect (mode) {
+      async onSelectModeSelect (mode) {
+        // We need to wait for clearing the feature
+        // before we can start drawing again
+        await this.clearDrawnFeature()
+        this.selectedArea = null
+        this.selectedLayer = this.activeLayersList[0].value
+        this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === this.activeLayersList[0].value))
         this.setSelectMode({ mode })
       },
 

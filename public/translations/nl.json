@@ -13,7 +13,7 @@
   "drawPolygon": "Teken veelhoek",
   "drawRectangle": "Teken rechthoek",
   "selectFeature": "Selecteer feature",
-  "selectMultipleFeatures": "Selecteer meerdere features",
+  "chooseLayer": "Kies een laag voor de selectie",
   "expandAll": "Klap alles uit",
   "favourites": "Favorieten",
   "filterByTag": "Filteren op zoekterm",
