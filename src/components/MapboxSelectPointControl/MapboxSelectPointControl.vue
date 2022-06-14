@@ -1,7 +1,7 @@
 <script>
   export default {
     props: {
-      selectMode: {
+      drawMode: {
         type: String,
         default: null,
       },
@@ -13,7 +13,7 @@
     }),
 
     watch: {
-      selectMode(value) {
+      drawMode(value) {
         if (this.map) {
           this.map[value ? 'on' : 'off']('click', this.handleMapClick)
         }

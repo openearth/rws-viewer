@@ -69,16 +69,16 @@
         </v-col>
         <v-col>
           <v-btn
-            :color="selectMode === 'select' ? 'primary' : null"
+            :color="drawMode === 'static' ? 'primary' : null"
             block
             :ripple="false"
-            @click="onSelectModeSelect('select')"
+            @click="onDrawModeSelect('static')"
           >
-            {{ $t('selectFeature') }}
+            {{ $t('selectFeatures') }}
           </v-btn>
         </v-col>
       </v-row>
-      <v-row v-if="selectMode === 'select'">
+      <v-row v-if="drawMode === 'static'">
         <v-col>
           <v-select
             v-model="selectedLayer"
@@ -210,7 +210,7 @@
     }),
 
     computed: {
-      ...mapGetters('map', [ 'drawMode', 'selectMode', 'drawnFeature', 'rasterLayerIds', 'activeFlattenedLayerIds', 'activeFlattenedLayers', 'selectedLayerForSelection']),
+      ...mapGetters('map', [ 'drawMode', 'selectMode', 'drawnFeatures', 'rasterLayerIds', 'activeFlattenedLayerIds', 'activeFlattenedLayers', 'selectedLayerForSelection']),
       ...mapGetters('data', [ 'flattenedLayers' ]),
 
       activeLayers() {
@@ -227,10 +227,13 @@
           : this.$tc('downloadData', this.downloadLayers.length)
       },
 
-      drawnFeatureCoordinates() {
-        return this.drawnFeature?.geometry?.coordinates
-          ? Array.from(this.drawnFeature?.geometry?.coordinates).map(coordinates => coordinates.flat())
-          : []
+      // TODO: fix this
+      drawnFeaturesCoordinates() {
+        return this.drawnFeatures.map(feature => {
+          return feature?.geometry?.coordinates
+            ? Array.from(feature?.geometry?.coordinates).map(coordinates => coordinates.flat())
+            : []
+        })
       },
 
       downloadIsAvailable() {
@@ -258,7 +261,7 @@
       },
 
       selectionCoordinates() {
-        return this.drawnFeatureCoordinates.toString().replace(/,/g, ' ')
+        return this.drawnFeaturesCoordinates.map(featureCoordinates => featureCoordinates.toString().replace(/,/g, ' '))
       },
     },
 
@@ -278,7 +281,7 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'setDrawMode', 'setSelectMode', 'setDrawnFeature', 'clearDrawnFeature', 'setSelectedLayerForSelection' ]),
+      ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'cleardrawnFeatures', 'setSelectedLayerForSelection' ]),
 
       handleSelectionLayerSelect(id) {
         this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === id))
@@ -292,31 +295,28 @@
       async onDrawModeSelect(mode) {
         // We need to wait for clearing the feature
         // before we can start drawing again
-        await this.clearDrawnFeature()
+        await this.cleardrawnFeatures()
         this.selectedArea = null
-        this.setDrawMode({ mode })
-      },
 
-      async onSelectModeSelect (mode) {
-        // We need to wait for clearing the feature
-        // before we can start drawing again
-        await this.clearDrawnFeature()
-        this.selectedArea = null
-        this.selectedLayer = this.activeLayersList[0].value
-        this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === this.activeLayersList[0].value))
-        this.setSelectMode({ mode })
+        if (mode === 'static') {
+          this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === this.activeLayersList[0].value))
+          this.selectedLayer = this.activeLayersList[0].value
+        }
+
+        this.setDrawMode({ mode })
       },
 
       onAreaSelection(id) {
         this.setDrawMode({ mode: null })
 
         if (id === NO_SELECTION_ID) {
-          this.clearDrawnFeature()
+          this.cleardrawnFeatures()
           return
         }
 
         const feature = this.preDefinedAreas.find(area => area.id === id)
-        this.setDrawnFeature(feature)
+        this.cleardrawnFeatures()
+        this.addDrawnFeature(feature)
       },
 
       onDownloadClick() {

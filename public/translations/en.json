@@ -11,7 +11,7 @@
   "downloadNotice": "Generating the file may take a while",
   "downloadUnavailable": "Downloading data is not yet available for one or more layers.",
   "drawPolygon": "Draw polygon",
-  "selectFeature": "Select feature",
+  "selectFeatures": "Select features",
   "chooseLayer": "Choose a layer for the selection",
   "drawRectangle": "Draw rectangle",
   "expandAll": "Expand all",

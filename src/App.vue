@@ -33,11 +33,11 @@
       />
       <mapbox-draw-control
         :draw-mode="drawMode"
-        :drawn-feature="drawnFeature"
-        @change="setDrawnFeature"
+        :drawn-features="drawnFeatures"
+        @change="addDrawnFeature"
       />
-      <mapbox-select-feature-control
-        :select-mode="selectMode"
+      <mapbox-select-point-control
+        :draw-mode="drawMode"
         @click="handleFeatureClick"
       />
     </mapbox-map>
@@ -54,7 +54,7 @@
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
   import LayerOrder from '~/components/LayerOrder/LayerOrder'
   import TimeSlider from '~/components/TimeSlider'
-  import MapboxSelectFeatureControl from '~/components/MapboxSelectFeatureControl/MapboxSelectFeatureControl'
+  import MapboxSelectPointControl from '~/components/MapboxSelectPointControl/MapboxSelectPointControl'
   import getFeatureInfo from '~/lib/get-feature-info'
 
   export default {
@@ -66,7 +66,7 @@
       LayerOrder,
       LocaleSwitcher,
       MapboxDrawControl,
-      MapboxSelectFeatureControl,
+      MapboxSelectPointControl,
       MapboxLegend,
       MapboxMap,
       TimeSlider,
@@ -80,7 +80,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'selectMode', 'filteredLayerId', 'mapCenter', 'mapZoom', 'selectedLayerForSelection' ]),
+      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filtersLayerId', 'selectMode', 'filteredLayerId', 'mapCenter', 'mapZoom', 'selectedLayerForSelection' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
@@ -104,7 +104,7 @@
 
     methods: {
       ...mapActions('data', [ 'getAppData', 'setSelectedTimestamp' ]),
-      ...mapActions('map', [ 'setDrawnFeature', 'setMapLoaded' ]),
+      ...mapActions('map', [ 'addDrawnFeature', 'removeDrawnFeature', 'setMapLoaded' ]),
       formatTimeExtent(extent) {
         if (extent.length) {
           const formattedTimeExtent = extent.map(s => ({
@@ -129,7 +129,11 @@
         })
 
         if (feature) {
-          this.setDrawnFeature(feature)
+          if (this.drawnFeatures.find(f => f.properties.gebiedid === feature.properties.gebiedid)) {
+            this.removeDrawnFeature(feature)
+          } else {
+            this.addDrawnFeature(feature)
+          }
         }
       },
     },
