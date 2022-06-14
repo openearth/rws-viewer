@@ -1,6 +1,7 @@
 <script>
   import MapboxDraw from '@mapbox/mapbox-gl-draw'
   import DrawRectangle from 'mapbox-gl-draw-rectangle-mode'
+  import StaticMode from '@mapbox/mapbox-gl-draw-static-mode'
 
   export default {
     props: {
@@ -8,15 +9,23 @@
         type: String,
         default: null,
       },
-      drawnFeature: {
-        type: Object,
+      drawnFeatures: {
+        type: Array,
         default: null,
       },
     },
 
-    data: () => ({
-      internalFeatureId: undefined,
-    }),
+    computed: {
+      combinedFeatures() {
+        return {
+          features: this.drawnFeatures.map(feature => ({
+            ...feature,
+            id: feature.properties.gebiedid,
+          })),
+          type: 'FeatureCollection',
+        }
+      },
+    },
 
     watch: {
       drawMode(mode) {
@@ -27,17 +36,11 @@
         }
       },
 
-      drawnFeature(feature) {
-        // If the id is the same the update came from an operation
-        // done within this component, so no updates necessary
-        if (feature && this.internalFeatureId === feature.id) {
-          return
-        }
-        // Otherwise we clear all drawn features and update if necessary
+      combinedFeatures(featureCollection) {
         this.mbDraw.deleteAll()
-        this.internalFeatureId = feature?.id
-        if (feature) {
-          this.mbDraw.add(feature)
+
+        if (featureCollection.features.length) {
+          this.mbDraw.add(featureCollection)
         }
       },
     },
@@ -47,6 +50,7 @@
         window.map = map
         const modes = MapboxDraw.modes
         modes.draw_rectangle = DrawRectangle
+        modes.draw_static = StaticMode
 
         const mbDraw = new MapboxDraw({
           displayControlsDefault: false,
@@ -64,8 +68,6 @@
         const onChangeFn = () => {
           const { features } = this.mbDraw.getAll()
           const feature = features[0]
-          // We track the id of the feature so we know when to delete or replace it
-          this.internalFeatureId = feature?.id
           this.$emit('change', feature)
         }
 

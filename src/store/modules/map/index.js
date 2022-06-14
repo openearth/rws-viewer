@@ -10,8 +10,7 @@ export default {
     mapLoaded: false,
     rasterLayers: [],
     drawMode: null,
-    selectMode: null,
-    drawnFeature: null,
+    drawnFeatures: [],
     filtersLayerId: null, // id of active layer to filter
     selectedLayerForSelection: null,
   }),
@@ -42,8 +41,7 @@ export default {
     },
     wmsLayerIds: state => (state.rasterLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
-    selectMode: state => state.selectMode,
-    drawnFeature: state => state.drawnFeature,
+    drawnFeatures: state => state.drawnFeatures,
     filtersLayerId: state => state.filtersLayerId,
     selectedLayerForSelection: state => state.selectedLayerForSelection,
   },
@@ -69,11 +67,19 @@ export default {
     SET_DRAW_MODE(state, { mode }) {
       state.drawMode = mode
     },
-    SET_SELECT_MODE(state, { mode }) {
-      state.selectMode = mode
+    ADD_DRAWN_FEATURE(state, feature) {
+      if (!state.drawnFeatures.find(f => f.properties.gebiedid === feature.properties.gebiedid)) {
+        state.drawnFeatures = [
+          ...state.drawnFeatures,
+          feature,
+        ]
+      }
     },
-    SET_DRAWN_FEATURE(state, feature) {
-      state.drawnFeature = Object.freeze(feature)
+    REMOVE_DRAWN_FEATURE(state, feature) {
+      state.drawnFeatures = state.drawnFeatures.filter(f => f.properties.gebiedid !== feature.properties.gebiedid)
+    },
+    SET_DRAWN_FEATURES(state, feature) {
+      state.drawnFeatures = Object.freeze(feature)
     },
     UPDATE_RASTER_LAYER_OPACITY(state, { id, opacity }) {
       const layerToUpdate = state.rasterLayers.find(layer => layer.id === id)
@@ -145,25 +151,20 @@ export default {
       commit('SET_DRAW_MODE', { mode: modeToCommit })
     },
 
-    setSelectMode({ commit, state }, { mode }) {
-      const modeToCommit = state.selectMode === mode ? null : mode
-      commit('SET_SELECT_MODE', { mode: modeToCommit })
+    addDrawnFeature({ commit }, feature) {
+      commit('ADD_DRAWN_FEATURE', feature)
     },
 
-    setDrawnFeature({ commit, state }, feature) {
-      if (state.drawMode) {
-        commit('SET_DRAW_MODE', { mode: null })
-      }
-      
-      if (state.selectMode) {
-        commit('SET_SELECT_MODE', { mode: null })
-      }
-
-      commit('SET_DRAWN_FEATURE', feature)
+    removeDrawnFeature({ commit }, feature) {
+      commit('REMOVE_DRAWN_FEATURE', feature)
     },
 
-    clearDrawnFeature({ commit }) {
-      commit('SET_DRAWN_FEATURE', null)
+    setDrawnFeatures({ commit }, features) {
+      commit('SET_DRAWN_FEATURES', features)
+    },
+
+    cleardrawnFeatures({ commit }) {
+      commit('SET_DRAWN_FEATURES', [])
     },
 
     updateRasterLayerOpacity({ commit }, { id, opacity }) {
