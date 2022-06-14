@@ -14,7 +14,9 @@
 
     watch: {
       selectMode(value) {
-        this.map[value ? 'on' : 'off']('click', this.handleMapClick)
+        if (this.map) {
+          this.map[value ? 'on' : 'off']('click', this.handleMapClick)
+        }
       },
     },
 

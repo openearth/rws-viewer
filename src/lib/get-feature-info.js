@@ -1,6 +1,6 @@
-import geoServerUrl from './build-geoserver-url'
+import buildGeoServerUrl from './build-geoserver-url'
 
-export default async function getFeatureInfo({ bounds, x, y, width, height, layer }) {
+export default async function getFeatureInfo({ url, bounds, x, y, width, height, layer }) {
   const bbox = [
     bounds._sw.lng,
     bounds._sw.lat,
@@ -8,8 +8,8 @@ export default async function getFeatureInfo({ bounds, x, y, width, height, laye
     bounds._ne.lat,
   ].join()
 
-  const url = await geoServerUrl({
-    url: 'https://datahuiswadden.openearth.nl/geoserver/wms',
+  const geoServerUrl = await buildGeoServerUrl({
+    url,
     request: 'GetFeatureInfo',
     service: 'WMS',
     info_format: 'application/json',
@@ -23,9 +23,7 @@ export default async function getFeatureInfo({ bounds, x, y, width, height, laye
     bbox,
   })
 
-  console.log(url)
-
-  return fetch(url)
+  return fetch(geoServerUrl)
     .then(response => response.json())
     .then(({ features }) => features[0])
     .then((feature) => ({

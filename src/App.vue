@@ -76,7 +76,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'selectMode', 'wmsLayerIds', 'wmsLayers', 'filtersLayerId' ]),
+      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'selectMode', 'wmsLayerIds', 'wmsLayers', 'filtersLayerId', 'selectedLayerForSelection' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
@@ -119,8 +119,8 @@
       },
       async handleFeatureClick(clickData) {
         const feature = await getFeatureInfo({
-          // TODO: get layer based on selected layer
-          layer: 'sovongebieden',
+          url: this.selectedLayerForSelection.url,
+          layer: this.selectedLayerForSelection.layer,
           ...clickData,
         })
 

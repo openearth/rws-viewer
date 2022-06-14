@@ -12,7 +12,7 @@
   "downloadUnavailable": "Downloading data is not yet available for one or more layers.",
   "drawPolygon": "Draw polygon",
   "selectFeature": "Select feature",
-  "selectMultipleFeatures": "Select multiple features",
+  "chooseLayer": "Choose a layer for the selection",
   "drawRectangle": "Draw rectangle",
   "expandAll": "Expand all",
   "favourites": "Favourites",

@@ -13,6 +13,7 @@ export default {
     selectMode: null,
     drawnFeature: null,
     filtersLayerId: null, // id of active layer to filter
+    selectedLayerForSelection: null,
   }),
 
   getters: {
@@ -44,6 +45,7 @@ export default {
     selectMode: state => state.selectMode,
     drawnFeature: state => state.drawnFeature,
     filtersLayerId: state => state.filtersLayerId,
+    selectedLayerForSelection: state => state.selectedLayerForSelection,
   },
 
   mutations: {
@@ -90,6 +92,9 @@ export default {
     },
     REMOVE_FILTERS_LAYER_ID(state) {
       state.filtersLayerId = null
+    },
+    SET_SELECTED_LAYER_FOR_SELECTION(state, layer) {
+      state.selectedLayerForSelection = layer
     },
   },
 
@@ -149,6 +154,11 @@ export default {
       if (state.drawMode) {
         commit('SET_DRAW_MODE', { mode: null })
       }
+      
+      if (state.selectMode) {
+        commit('SET_SELECT_MODE', { mode: null })
+      }
+
       commit('SET_DRAWN_FEATURE', feature)
     },
 
@@ -159,8 +169,13 @@ export default {
     updateRasterLayerOpacity({ commit }, { id, opacity }) {
       commit('UPDATE_RASTER_LAYER_OPACITY', { id, opacity })
     },
+
     setFiltersLayerId({ commit }, id) {
       commit('SET_FILTERS_LAYER_ID', id)
+    },
+
+    setSelectedLayerForSelection({ commit }, layer) {
+      commit('SET_SELECTED_LAYER_FOR_SELECTION', layer)
     },
   },
 }
