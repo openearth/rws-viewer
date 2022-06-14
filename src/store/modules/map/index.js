@@ -90,15 +90,17 @@ export default {
       
       const layersToAdd = difference(layers , state.activeFlattenedLayers)
       
-      layersToAdd.forEach((layer) => {
-        getWmsCapabilities(layer.url)
-          .then(capabilities => getLayerProperties(capabilities, layer.layer))
-          .then(({ serviceType, timeExtent, wmsVersion }) => {
-            commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion } } )
-            commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion } }))
-          }, 
-          )
-      })  
+      layersToAdd
+        .filter((layer) => layer && layer.url)
+        .forEach((layer) => {
+          getWmsCapabilities(layer.url)
+            .then(capabilities => getLayerProperties(capabilities, layer.layer))
+            .then(({ serviceType, timeExtent, wmsVersion }) => {
+              commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion } } )
+              commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion } }))
+            }, 
+            )
+        })  
     },
     reloadLayerOnMap({ commit, state, rootState }) {
       /* If a layer has the time option true, 
