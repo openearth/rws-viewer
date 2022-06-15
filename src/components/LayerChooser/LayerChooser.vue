@@ -180,6 +180,22 @@
 </script>
 
 <style lang="scss">
+.v-treeview-node__checkbox {
+  display: none !important;
+}
+
+.v-treeview-node--leaf .v-treeview-node__checkbox {
+  display: block !important;
+}
+
+.v-treeview-node__content {
+  margin-left: 36px !important
+}
+
+.v-treeview-node--leaf .v-treeview-node__content {
+  margin-left: 6px !important;
+}
+
 .layer-chooser__dialog {
   width: 90vw;
   max-width: 960px;
