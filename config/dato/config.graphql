@@ -9,6 +9,7 @@ query ($first: IntType, $skip: IntType = 0) {
       layer
       downloadUrl
       downloadLayer
+      externalApiUrl
       timeFilter
       columnFilter
       tags {
