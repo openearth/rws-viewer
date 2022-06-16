@@ -284,6 +284,7 @@
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'cleardrawnFeatures', 'setSelectedLayerForSelection' ]),
 
       handleSelectionLayerSelect(id) {
+        console.log(id)
         this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === id))
       },
 
@@ -299,6 +300,7 @@
         this.selectedArea = null
 
         if (mode === 'static') {
+          console.log(this.activeLayers.find(layer => layer.id === this.activeLayersList[0].value))
           this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === this.activeLayersList[0].value))
           this.selectedLayer = this.activeLayersList[0].value
         }

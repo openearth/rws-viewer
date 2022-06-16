@@ -12,7 +12,7 @@ export default {
     activeFlattenedLayers: [],
     drawMode: null,
     drawnFeatures: [],
-    filtersLayerId: null, // id of active layer to filter
+    filteredLayerId: null, // id of active layer to filter
     selectedLayerForSelection: null,
     wmsLayers: [],
     mapCenter: NEDERLANDS_MAP_CENTER,
@@ -36,7 +36,7 @@ export default {
     drawnFeature: state => state.drawnFeatures,
     mapCenter: state => state.mapCenter,
     mapZoom: state => state.mapZoom,
-    filtersLayerId: state => state.filtersLayerId,
+    filteredLayerId: state => state.filteredLayerId,
     selectedLayerForSelection: state => state.selectedLayerForSelection,
   },
 

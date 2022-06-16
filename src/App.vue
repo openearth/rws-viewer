@@ -80,7 +80,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filtersLayerId', 'selectMode', 'filteredLayerId', 'mapCenter', 'mapZoom', 'selectedLayerForSelection' ]),
+      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'selectMode', 'filteredLayerId', 'mapCenter', 'mapZoom', 'selectedLayerForSelection' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
