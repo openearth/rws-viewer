@@ -9,6 +9,8 @@ const Download = () => import('../views/Download.vue')
 const Favourites = () => import('../views/Favourites.vue')
 const Layers = () => import('../views/Layers.vue')
 const Filters = () => import('../views/Filters.vue')
+const GeoserverDownload = () => import('../views/GeoserverDownload.vue')
+const ApiDownload = () => import('../views/ApiDownload.vue')
 
 Vue.use(VueRouter)
 
@@ -22,6 +24,22 @@ const routes = [
     path: '/:config/download',
     name: 'download',
     component: Download,
+    children: [
+      {
+        path: '/',
+        redirect: 'geoserver',
+      },
+      {
+        path: 'geoserver',
+        name: 'geoserver-download',
+        component: GeoserverDownload,
+      },
+      {
+        path: 'api',
+        name: 'api-download',
+        component: ApiDownload,
+      },
+    ],
   },
   {
     path: '/:config/favourites',
