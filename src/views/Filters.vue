@@ -1,6 +1,6 @@
 <template>
   <v-container class="download pt-4">
-    <v-row v-if="!activeLayersList.length">
+    <v-row v-if="!availableLayersList.length">
       <v-col>
         <v-alert
           dense
@@ -11,7 +11,7 @@
         </v-alert>
       </v-col>
     </v-row>
-    <template v-if="activeLayersList.length">
+    <template v-if="availableLayersList.length">
       <v-row>
         <v-col>
           <h3>{{ $t('select') }}</h3>
@@ -25,11 +25,10 @@
           <v-select
             v-model="selectedLayerCode"
             :label="$t('labelLayerWithTime')"
-            :items="activeLayersList"
+            :items="availableLayersList"
             dense
             outlined
             hide-details
-            @change="setIdOfFilteredLayer"
           />
         </v-col>
       </v-row>
@@ -51,7 +50,7 @@
           <v-select
             v-model="filterValue"
             :label="$t('labelFilter')"
-            :items="hardCodedValues"
+            :items="allowedValuesToFilter"
             dense
             outlined
             hide-details
@@ -65,36 +64,34 @@
 
 <script>
   import { mapGetters, mapActions } from 'vuex'
-  import { getWmsCapabilities, getLayerTimeExtent } from '~/lib/get-capabilities'
   //Filters view should open only if layers with time option are in wms layers list.
   export default {
-    
-    // GetCapabilities request when layer is selected.
     
     data: () => ({
       filterValue: null,
       selectedLayerCode: null,
     }),
     computed: {
-      ...mapGetters('map', [ 'rasterLayerWithTimeIds'  ]),
-      ...mapGetters('data', [ 'flattenedLayers' ]),
-     
-      activeLayers() { 
-        //ActiveLayers with timeFilter true
-        return this.rasterLayerWithTimeIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
+      ...mapGetters('map', [ 'activeFlattenedLayersIdsWithTimeOption', 'activeFlattenedLayers'  ]),
+      ...mapGetters('data', [ 'selectedTimestamp' ]),
+      availableLayers() { 
+        //availableLayers with timeFilter true
+        return this.activeFlattenedLayersIdsWithTimeOption.map(id => this.activeFlattenedLayers.find(layer => layer.id === id))
       },
-      activeLayersList() {
-        return this.activeLayers.map(({ id, name }) => ({
+      availableLayersList() {
+        return this.availableLayers.map(({ id, name }) => ({
           text: name,
           value: id,
         }))
       },
       selectedLayer() {
-        return this.flattenedLayers.find(layer => layer.id === this.selectedLayerCode)
+        return this.activeFlattenedLayers.find(layer => layer.id === this.selectedLayerCode)
       },
-      //TODO: use this parameter for the dropdown list
       allowedValuesToFilter() {
         if (!this.selectedLayer) {
+          return []
+        }
+        if (!this.selectedLayer.columnFilter) {
           return []
         }
         const { columnFilter } = this.selectedLayer
@@ -107,38 +104,36 @@
         const { columnFilter } = this.selectedLayer
         return columnFilter.name
       },
-      //TODO: remove eventually this computed property. 
-      hardCodedValues() {
-        if (!this.selectedLayer) {
-          return []
-        }
-        return [ 'Clupea harengus', 'Crangon crangon','Pleuronectes platessa', 'Osmerus eperlanus' ]
-      },
+
     },
     watch: {
       selectedLayer() {
         if (this.selectedLayer) {
-          const { url, layer } = this.selectedLayer
-          this.requestCapabilities(url, layer)
+          this.setTimeExtent(this.selectedLayer.timeExtent)
+        }
+      },
+      selectedLayerCode( ) {
+        if (this.selectedLayerCode) {
+          this.setIdOfFilteredLayer(this.selectedLayerCode)
+        }
+      },
+      selectedTimestamp() { 
+        if (this.selectedTimestamp) {
+          this.reloadLayerOnMap()
         }
       },
     },
     methods: {
       ...mapActions('data', [ 'setTimeExtent', 'setCQLFilter' ] ),
-      ...mapActions('map', [ 'setFiltersLayerId' ]),
-      async requestCapabilities(url, layer) {
-        const layerWithoutWorkspace = layer.split(':').pop()
-        const response = await getWmsCapabilities(url)
-        const capabilities = response.WMT_MS_Capabilities.Capability
-        const timeExtent = getLayerTimeExtent(capabilities, layerWithoutWorkspace)
-        this.setTimeExtent(timeExtent)
-      },
+      ...mapActions('map', [ 'setfilteredLayerId', 'reloadLayerOnMap' ]),
       setFilter(value) {
         const filter = `${ this.filterName }='${ value }'`
         this.setCQLFilter(filter)
+        this.reloadLayerOnMap()
+
       },
       setIdOfFilteredLayer(id) {
-        this.setFiltersLayerId(id)
+        this.setfilteredLayerId(id)
       },
     },
 

@@ -22,7 +22,7 @@
         mode="simple-slider"
         @input="onTimingSelection"
       />
-      <v-mapbox-layer
+      <map-layer
         v-for="(layer, index) in wmsLayers"
         :key="layer.id"
         :before="wmsLayerIds[index - 1] || 'gl-draw-polygon-fill-inactive.cold'"
@@ -46,6 +46,7 @@
   import { mapActions, mapGetters } from 'vuex'
   import { MapboxMap } from '@deltares/vue-components'
   import AppShell from './components/AppShell/AppShell'
+  import MapLayer from './components/MapLayer/MapLayer.js'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
   import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
@@ -58,6 +59,7 @@
     components: {
       AppShell,
       MapboxMap,
+      MapLayer,
       MapboxDrawControl,
       LayerOrder,
       LocaleSwitcher,
@@ -76,14 +78,14 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filtersLayerId', 'selectedLayerForSelection' ]),
+      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
       },
       showTimeslider() {
         const { name } = this.$route
-        return this.filtersLayerId && name === 'filters' ? true : false
+        return this.filteredLayerId && name === 'filters' ? true : false
       },
     },
     watch: {

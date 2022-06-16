@@ -11,7 +11,7 @@ export default {
     displayLayers: [],
     flattenedLayers: [],
     layerTags: [],
-    timeExtent: [], // if a layer has a timeOption it has also a timeExtend as retrieved from capabilities
+    timeExtent: [], //array with isoString format, timeExtent of the selected layer in the filters tab
     selectedTimestamp: null, // needed in ISOstring format
     cqlFilter: null,
   }),
@@ -24,9 +24,9 @@ export default {
     flattenedLayers: state => state.flattenedLayers,
     layerTags: state => state.layerTags,
     availableDisplayLayers: (state, getters, rootState, rootGetters) =>
-      omitLayers(getters.displayLayers, rootGetters['map/rasterLayerIds']),
+      omitLayers(getters.displayLayers, rootGetters['map/activeFlattenedLayerIds']),
     availableFlattenedLayers: (state, getters, rootState, rootGetters) =>
-      getters.flattenedLayers.filter(layer => !rootGetters['map/rasterLayerIds'].includes(layer.id)),
+      getters.flattenedLayers.filter(layer => !rootGetters['map/activeFlattenedLayerIds'].includes(layer.id)),
     loadedViewerConfigs: state => state.displayLayers.map(({ name }) => slugify(name)),
     timeExtent: state => state.timeExtent,
     selectedTimestamp: state => state.selectedTimestamp,
@@ -69,7 +69,7 @@ export default {
       const layersById = getLayersById(layers, initialLayerIds)
 
       if (layersById.length) {
-        dispatch('map/setRasterLayers', { layers: layersById }, { root: true })
+        dispatch('map/loadLayerOnMap', { layers: layersById }, { root: true })
       }
     },
 
@@ -134,10 +134,11 @@ export default {
     setDisplayLayers({ commit }, { layers }) {
       commit('SET_DISPLAY_LAYERS', { layers })
     },
-
+    //sets as timeExtent the timeExtent of the selectedLayer
     setTimeExtent( { commit }, extent) {
       commit('SET_TIME_EXTENT', extent)
     },
+    //sets the selectedTimeStamp of the time slider
     setSelectedTimestamp( { commit }, timestamp) {
       const timestampISO = timestamp.toISOString()
       commit('SET_SELECTED_TIMESTAMP', timestampISO)

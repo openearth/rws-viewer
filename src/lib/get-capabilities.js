@@ -1,57 +1,80 @@
 import axios from 'axios'
 import { map, uniq, pipe, find, propEq } from 'ramda'
-import { getType } from '~/lib/service-helpers'
-import extractTimeExtentFromCapabilities from  '~/lib/extract-time-extent-from-capabilities'
-const convert = require('xml-js')
+
 
 
 import {
   WCS_LAYER_TYPE,
   WFS_LAYER_TYPE,
-  WMS_LAYER_TYPE,
 } from '~/lib/constants'
 
 
 
 const getTagContent = tag => tag.textContent
+const getParentNode = tag => tag.parentNode
+const textToArray = text => text.split(',')
+
 const getTags = tagName => root =>
   [ ...root ]
     .map(el => [ ...el.getElementsByTagName(tagName) ])
     .flat()
 
+const findLayer = id => (layers) => {
+  
+  let layer = layers.find(layer => layer.textContent === id)
+  if (layer) {
+    return layer
+  } else {
+    const idWithoutWorkspace = id.split(':')[1]
+    layer = layers.find(layer => layer.textContent === idWithoutWorkspace)
+    return layer
+  } 
+}
+
+
+
 function createParameters(type) {
-  switch (type) {
-    case WCS_LAYER_TYPE:
-      return 'service=WCS&request=GetCapabilities'
-    case WMS_LAYER_TYPE: //TODO: fix switch doesn't work correct as always fall under WFS category
-    case WFS_LAYER_TYPE:
-      return 'service=WFS&request=GetCapabilities'
-    default:
-      throw new Error(`Could not create parameters for ${ type }`)
+  if (type === WCS_LAYER_TYPE) {
+    return 'service=WCS&request=GetCapabilities'
+  }
+  if (type === WFS_LAYER_TYPE) {
+    return 'service=WFS&request=GetCapabilities'
   }
 }
 
 
+ 
 export async function getCapabilities(service, type) {
-  const _type = type || getType(service)
+  /**
+   * GetCapabilities wfs or wcs based on the input type
+   * create parameters and make the request
+   * parse it as a dom element
+   */
+  const _type = type
   const serviceUrl = new URL(service)
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
-
   const { data } = await axios(`${ servicePath }?${ createParameters(_type) }`)
-  return JSON.parse(convert.xml2json(data, { compact: true, spaces: 2 }))
+  return new DOMParser().parseFromString(data, 'text/xml')
 }
 
 export async function getWmsCapabilities(service) {
-  //the getcapabilities returns the capabilities of the layers in the workspace.
+  /** 
+ * The getWmsCapabilitis is made when a layer is clicked.  
+ * 
+ * */ 
+  //the getcapabilities returns the capabilities of the layers in the workspace. need to search for the layer first
   const serviceUrl = new URL(service)
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
   
-  const { data } = await axios(`${ servicePath }?service=WMS&version=1.1.1&request=GetCapabilities`)
+  const { data } = await axios(`${ servicePath }?service=WMS&request=GetCapabilities`)
 
-  return JSON.parse(convert.xml2json(data, { compact: true, spaces: 2 }))
+  return new DOMParser().parseFromString(data, 'text/xml')
+
 }
 
 export function getSupportedOutputFormats(type, capabilities) {
+  
+  //wfs
   const outputFormats = pipe(
       () => [ ...capabilities.querySelectorAll('[name="outputFormat"]') ],
       getTags('ows:AllowedValues'),
@@ -59,28 +82,61 @@ export function getSupportedOutputFormats(type, capabilities) {
       map(getTagContent),
       uniq,
     )
-
+  //wcs
   const formatSupported = pipe(
       () => capabilities,
+      el => el.getElementsByTagName('wcs:Capabilities'),
       getTags('wcs:ServiceMetadata'),
       getTags('wcs:formatSupported'),
       map(getTagContent),
-      uniq,
     )
 
-  switch (type) {
-    case WCS_LAYER_TYPE:
-      return formatSupported()
-    case WMS_LAYER_TYPE:
-    case WFS_LAYER_TYPE:
-      return outputFormats()
-    default:
-      throw new Error(`Could not create output formats for ${ type }`)
+  if (type === WCS_LAYER_TYPE) {
+    return formatSupported()
   }
+  if (type === WFS_LAYER_TYPE) {
+    return outputFormats()
+  }
+
 }
 
-export function getLayerTimeExtent(capabilities, layer) {
-  const timeExtent = extractTimeExtentFromCapabilities(capabilities, layer)
-  return timeExtent
+export function getLayerProperties(capabilities, layer) {
+/**
+ * function that reads the wms capabilities response of the workpspace
+ * find the given layer
+ * reads the layer keywords. 
+ * 
+ *  * */
+
+  const wmsVersion = pipe(
+    () => capabilities.querySelector('WMS_Capabilities'),
+    el => el.getAttribute('version'),
+  )()
+  
+  const keywords = pipe(
+    () => [ ...capabilities.querySelectorAll('[queryable="1"]') ],
+    getTags('Name'),
+    findLayer(layer),
+    getParentNode,
+    el => el.getElementsByTagName('KeywordList'),
+    getTags('Keyword'),
+    map(getTagContent),  
+  )()
+  const serviceType = [ 'features', 'wfs', 'FEATURES', 'WFS' ].some(val => keywords.includes(val)) ? 'wfs' 
+        :[ 'WCS', 'GeoTIFF', 'wcs' ].some(val => keywords.includes(val)) ? 'wcs' 
+        : null
+
+  const timeExtent = pipe(
+    () => [ ...capabilities.querySelectorAll('[queryable="1"]') ],
+    getTags('Name'),
+    findLayer(layer),
+    getParentNode,
+    el =>[ ...el.getElementsByTagName('Dimension') ],
+    map(getTagContent),
+    map(textToArray),
+    (array) => array.flat(),
+  )()
+  return { serviceType, timeExtent, wmsVersion }
 }
+
 

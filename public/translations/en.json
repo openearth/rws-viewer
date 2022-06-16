@@ -21,7 +21,7 @@
   "filters": "Filters",
   "formats": "Formats",
   "formatsDesc": "Choose download format for each layer.",
-  "labelFilter": "Predifined filter",
+  "labelFilter": "No predifined filter",
   "labelLayerWithTime": "Select from visible layers with clock icon",
   "layerFormats": "Choose format",
   "layerOrder": "Layer order",

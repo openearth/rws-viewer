@@ -210,11 +210,11 @@
     }),
 
     computed: {
-      ...mapGetters('map', [ 'drawMode', 'drawnFeatures', 'rasterLayerIds', 'selectedLayerForSelection' ]),
+      ...mapGetters('map', [ 'drawMode', 'drawnFeatures', 'activeFlattenedLayerIds', 'activeFlattenedLayers' ]),
       ...mapGetters('data', [ 'flattenedLayers' ]),
 
       activeLayers() {
-        return this.rasterLayerIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
+        return this.activeFlattenedLayerIds.map(id => this.activeFlattenedLayers.find(layer => layer.id === id))
       },
 
       allUrlsAreValid() {
@@ -266,9 +266,9 @@
     },
 
     watch: {
-      rasterLayerIds(val, oldVal) {
+      activeFlattenedLayerIds(val, oldVal) {
         if (val !== oldVal) {
-          // if rasterLayerIds change, reset selected layers in dropdown.
+          // if activeFlattenedLayerIds change, reset selected layers in dropdown.
           this.downloadLayers = []
         }
       },
