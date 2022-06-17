@@ -2,7 +2,7 @@ import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import addFilterAttributesToLayer from '~/lib/add-filter-attributes-to-layer'
 import { getWmsCapabilities, getLayerProperties } from '~/lib/get-capabilities'
-
+import { NEDERLANDS_MAP_CENTER, NEDERLANDAS_MAP_ZOOM } from '~/lib/constants'
 
 export default {
   namespaced: true,
@@ -14,6 +14,8 @@ export default {
     drawnFeature: null,
     filteredLayerId: null, // id of active layer to filter
     wmsLayers: [], 
+    mapCenter: NEDERLANDS_MAP_CENTER,
+    mapZoom: NEDERLANDAS_MAP_ZOOM,
   }),
 
   getters: {
@@ -31,6 +33,8 @@ export default {
     drawMode: state => state.drawMode,
     drawnFeature: state => state.drawnFeature,
     filteredLayerId: state => state.filteredLayerId,
+    mapCenter: state => state.mapCenter,
+    mapZoom: state => state.mapZoom,
   },
 
   mutations: {
@@ -79,6 +83,12 @@ export default {
     },
     REMOVE_FILTERS_LAYER_ID(state) {
       state.filteredLayerId = null
+    },
+    SET_MAP_CENTER(state, coords) {
+      state.mapCenter = coords
+    },
+    SET_MAP_ZOOM(state, zoom) {
+      state.mapZoom = zoom
     },
   },
 
@@ -148,6 +158,12 @@ export default {
     },
     setfilteredLayerId({ commit }, id) {
       commit('SET_FILTERS_LAYER_ID', id)
+    },
+    setMapCenter({ commit }, coords) {
+      commit('SET_MAP_CENTER', coords)
+    },
+    setMapZoom({ commit }, zoom) {
+      commit('SET_MAP_ZOOM', zoom)
     },
   },
 }
