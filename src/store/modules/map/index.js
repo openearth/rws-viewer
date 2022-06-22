@@ -171,7 +171,7 @@ export default {
       commit('SET_DRAWN_FEATURES', features)
     },
 
-    cleardrawnFeatures({ commit }) {
+    clearDrawnFeatures({ commit }) {
       commit('SET_DRAWN_FEATURES', [])
     },
 

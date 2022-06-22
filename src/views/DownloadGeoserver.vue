@@ -246,7 +246,7 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'cleardrawnFeatures', 'setSelectedLayerForSelection' ]),
+      ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
 
       getLayerNameById(id) {
         const layer = this.flattenedLayers.find(layer => layer.id === id)
@@ -256,7 +256,7 @@
       async onDrawModeSelect(mode) {
         // We need to wait for clearing the feature
         // before we can start drawing again
-        await this.cleardrawnFeatures()
+        await this.clearDrawnFeatures()
         this.selectedArea = null
 
         this.setDrawMode({ mode })
@@ -266,12 +266,12 @@
         this.setDrawMode({ mode: null })
 
         if (id === NO_SELECTION_ID) {
-          this.cleardrawnFeatures()
+          this.clearDrawnFeatures()
           return
         }
 
         const feature = this.preDefinedAreas.find(area => area.id === id)
-        this.cleardrawnFeatures()
+        this.clearDrawnFeatures()
         this.addDrawnFeature(feature)
       },
 

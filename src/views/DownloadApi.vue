@@ -112,7 +112,7 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'cleardrawnFeatures', 'setSelectedLayerForSelection' ]),
+      ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
 
       handleSelectionLayerSelect(id) {
         this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === id))
@@ -121,7 +121,7 @@
       async onDrawModeSelect(mode) {
         // We need to wait for clearing the feature
         // before we can start drawing again
-        await this.cleardrawnFeatures()
+        await this.clearDrawnFeatures()
         this.selectedArea = null
 
         this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === this.activeLayersList[0].value))
