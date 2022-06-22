@@ -51,7 +51,7 @@
 
   import { mapActions, mapGetters } from 'vuex'
   import metaRepo from '~/repo/metaRepo'
-  import { getExternalApiPropertyMapping, generateDownloadUrl } from '~/lib/external-api'
+  import { generateDownloadUrl } from '~/lib/external-api'
 
   export default {
     data: () => ({
@@ -69,7 +69,7 @@
             console.log(layer)
             return layer
           })
-          .filter(layer => layer.externalApiUrl)
+          .filter(layer => layer.externalApi)
       },
 
       activeLayersList() {
@@ -88,9 +88,9 @@
           return []
         }
         
-        const areaPropertyName = getExternalApiPropertyMapping(this.selectedLayer.externalApiUrl).area
+        const { area } = this.selectedLayer.externalApi.propertyMapping
 
-        return this.drawnFeatures.map(feature => feature.properties[areaPropertyName])
+        return this.drawnFeatures.map(feature => feature.properties[area])
       },
 
       downloadUrl() {
@@ -98,7 +98,9 @@
           return null
         }
 
-        return generateDownloadUrl(this.selectedLayer.externalApiUrl, { areas: this.selectedAreas })
+        const { url, propertyMapping } = this.selectedLayer.externalApi
+
+        return generateDownloadUrl(url, propertyMapping, { areas: this.selectedAreas })
       },
     },
 
