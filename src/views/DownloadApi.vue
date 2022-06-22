@@ -104,6 +104,15 @@
       },
     },
 
+    watch: {
+      selectedLayerForSelection() {
+        this.clearDrawnFeatures()
+      },
+      drawMode() {
+        this.clearDrawnFeatures()
+      },
+    },
+
     created() {
       metaRepo
         .getPredefinedAreas()
