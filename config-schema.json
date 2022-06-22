@@ -75,6 +75,20 @@
           "type": "string",
           "description": "Layer to be downloaded available on the service"
         },
+        "externalApi": {
+          "name": {
+            "type": "string",
+            "description": "Name of the external service"
+          },
+          "url": {
+            "type": "string",
+            "description": "Url of external service, used to download data"
+          },
+          "propertyMapping": {
+            "type": "object",
+            "description": "Mapping of properties to external service"
+          }
+        },
         "externalApiUrl": {
           "type": "string",
           "description": "Url of external service, used to download data"

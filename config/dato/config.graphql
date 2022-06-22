@@ -9,9 +9,14 @@ query ($first: IntType, $skip: IntType = 0) {
       layer
       downloadUrl
       downloadLayer
-      externalApiUrl
       timeFilter
       columnFilter
+      externalApi {
+        id
+        name
+        url
+        propertyMapping
+      }
       tags {
         title
       }

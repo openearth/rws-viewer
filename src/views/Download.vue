@@ -15,14 +15,14 @@
       <v-tabs v-if="showApiTab" fixed-tabs>
         <v-tab
           :to="{
-            name: 'geoserver-download'
+            name: 'download.geoserver'
           }"
         >
           Geoserver
         </v-tab>
         <v-tab
           :to="{
-            name: 'api-download'
+            name: 'download.api'
           }"
         >
           API
@@ -53,11 +53,11 @@
       },
 
       downloadIsAvailable() {
-        return this.activeLayers.some(layer => Boolean(layer.downloadUrl) || Boolean(layer.url))
+        return this.activeLayers.some(layer => Boolean(layer.url))
       },
 
       showApiTab() {
-        return this.activeLayers.some(layer => layer.externalApiUrl)
+        return this.activeLayers.some(layer => layer.externalApi)
       },
     },
   }

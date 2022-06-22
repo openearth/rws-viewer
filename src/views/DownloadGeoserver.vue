@@ -193,13 +193,12 @@
           : this.$tc('downloadData', this.downloadLayers.length)
       },
 
-      // TODO: fix this
-      drawnFeaturesCoordinates() {
-        return this.drawnFeatures.map(feature => {
-          return feature?.geometry?.coordinates
-            ? Array.from(feature?.geometry?.coordinates).map(coordinates => coordinates.flat())
-            : []
-        })
+      drawnFeatureCoordinates() {
+        const drawnFeature = this.drawnFeatures[0]
+
+        return drawnFeature?.geometry?.coordinates
+          ? Array.from(drawnFeature?.geometry?.coordinates).map(coordinates => coordinates.flat())
+          : []
       },
 
       downloadIsAvailable() {
@@ -227,7 +226,7 @@
       },
 
       selectionCoordinates() {
-        return this.drawnFeaturesCoordinates.map(featureCoordinates => featureCoordinates.toString().replace(/,/g, ' '))
+        return this.drawnFeatureCoordinates.toString().replace(/,/g, ' ')
       },
     },
 
