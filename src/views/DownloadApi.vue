@@ -49,6 +49,7 @@
     <v-btn
       color="primary"
       block
+      :disabled="isDownloading"
       @click="handleDownloadClick"
     >
       {{ $t('download') }}
@@ -65,6 +66,7 @@
   export default {
     data: () => ({
       selectedLayerId: null,
+      isDownloading: false,
     }),
 
     computed: {
@@ -98,16 +100,6 @@
         return this.drawnFeatures.map(feature => feature.properties[area])
       },
 
-      downloadUrl() {
-        if (!this.selectedLayer) {
-          return null
-        }
-
-        const { url, propertyMapping } = this.selectedLayer.externalApi
-
-        return generateDownloadUrl(url, propertyMapping, { areas: this.selectedAreas })
-      },
-
       drawnFeatureCoordinates() {
         const drawnFeature = this.drawnFeatures[0]
 
@@ -125,7 +117,7 @@
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
 
       getDownloadUrl({ url, propertyMapping, areas }) {
-        return generateDownloadUrl(url, propertyMapping, { areas })
+        return generateDownloadUrl({ url, propertyMapping, data: { areas } })
       },
 
       handleSelectionLayerSelect(id) {
@@ -163,6 +155,7 @@
       },
 
       async handleDownloadClick() {
+        const { externalApi } = this.selectedLayerForSelection
         let areas
 
         if (this.drawMode === 'static') {
@@ -171,11 +164,27 @@
           areas = await this.getSelectedAreas(this.selectedLayerForSelection)
         }
 
-        const downloadUrl = this.getDownloadUrl({ ...this.selectedLayerForSelection.externalApi, areas })
+        const downloadUrl = this.getDownloadUrl({ ...externalApi, areas })
 
-        console.log(downloadUrl)
+        console.log(this.selectedLayerForSelection)
 
-        window.location.href = downloadUrl
+        const options = {
+          headers: {
+            ...(externalApi.apiKey ? { 'x-api-key': process.env[externalApi.apiKey] } : {}),
+          },
+        }
+
+        fetch(downloadUrl, options)
+          .then( res => res.blob() )
+          .then( blob => {
+            var file = window.URL.createObjectURL(blob)
+
+            console.log(file)
+
+            window.location.assign(file)
+          })
+
+        // window.location.href = downloadUrl
       },
     },
   }

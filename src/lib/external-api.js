@@ -1,7 +1,11 @@
-export const generateDownloadUrl = (url, propertyMap, {
-  areas,
+export const generateDownloadUrl = ({
+  url,
+  propertyMapping,
+  data: { areas },
 }) => {
-  const areaFilter = `${ propertyMap.area }:in:[${ areas.map((area) => `"${ area }"`).join(',') }]`
+  const areaFilter = `${ propertyMapping.area }:in:[${ areas
+    .map((area) => `"${ area }"`)
+    .join(',') }]`
 
   return `${ url }?filter=${ areaFilter };&format=csv`
 }
