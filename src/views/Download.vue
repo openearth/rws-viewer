@@ -12,7 +12,11 @@
       </v-col>
     </v-row>
     <template v-else>
-      <v-tabs v-if="showApiTab" fixed-tabs>
+      <v-tabs
+        v-if="showApiTab"
+        fixed-tabs
+        @change="handleTabChange"
+      >
         <v-tab
           :to="{
             name: 'download.geoserver'
@@ -34,7 +38,7 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
     computed: {
@@ -57,6 +61,14 @@
 
       showApiTab() {
         return this.activeLayers.some(layer => layer.externalApi)
+      },
+    },
+    methods: {
+      ...mapActions('map', [ 'setDrawMode', 'clearDrawnFeatures' ]),
+
+      handleTabChange() {
+        this.setDrawMode({ mode: null })
+        this.clearDrawnFeatures()
       },
     },
   }

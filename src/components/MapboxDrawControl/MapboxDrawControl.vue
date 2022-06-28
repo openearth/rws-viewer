@@ -37,10 +37,12 @@
       },
 
       combinedFeatures(featureCollection) {
-        this.mbDraw.deleteAll()
-
-        if (featureCollection.features.length) {
-          this.mbDraw.add(featureCollection)
+        if (this.mbDraw) {
+          this.mbDraw.deleteAll()
+  
+          if (featureCollection.features.length) {
+            this.mbDraw.add(featureCollection)
+          }
         }
       },
     },
