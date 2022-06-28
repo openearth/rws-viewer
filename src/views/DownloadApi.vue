@@ -19,11 +19,21 @@
           {{ $t('selectFeatures') }}
         </v-btn>
       </v-col>
+      <v-col>
+        <v-btn
+          :color="drawMode === 'rectangle' ? 'primary' : null"
+          block
+          :ripple="false"
+          @click="onDrawModeSelect('rectangle')"
+        >
+          {{ $t('drawRectangle') }}
+        </v-btn>
+      </v-col>
     </v-row>
-    <v-row v-if="drawMode === 'static'">
+    <v-row v-if="['static', 'rectangle'].includes(drawMode)">
       <v-col>
         <v-select
-          :value="selectedLayerForSelection.id"
+          :value="selectedLayerForSelection && selectedLayerForSelection.id"
           :label="$t('chooseLayer')"
           :items="activeLayersList"
           dense
@@ -39,8 +49,7 @@
     <v-btn
       color="primary"
       block
-      :href="downloadUrl"
-      :disabled="!selectedAreas.length"
+      @click="handleDownloadClick"
     >
       {{ $t('download') }}
     </v-btn>
@@ -50,8 +59,8 @@
 <script>
 
   import { mapActions, mapGetters } from 'vuex'
-  import metaRepo from '~/repo/metaRepo'
   import { generateDownloadUrl } from '~/lib/external-api'
+  import getFeature from '~/lib/get-feature'
 
   export default {
     data: () => ({
@@ -65,10 +74,6 @@
       activeLayers() {
         return this.activeFlattenedLayerIds
           .map(id => this.activeFlattenedLayers.find(layer => layer.id === id))
-          .map(layer => {
-            console.log(layer)
-            return layer
-          })
           .filter(layer => layer.externalApi)
       },
 
@@ -88,7 +93,7 @@
           return []
         }
         
-        const { area } = this.selectedLayer.externalApi.propertyMapping
+        const { area } = this.selectedLayerForSelection.externalApi.propertyMapping
 
         return this.drawnFeatures.map(feature => feature.properties[area])
       },
@@ -102,29 +107,33 @@
 
         return generateDownloadUrl(url, propertyMapping, { areas: this.selectedAreas })
       },
-    },
 
-    watch: {
-      selectedLayerForSelection() {
-        this.clearDrawnFeatures()
-      },
-      drawMode() {
-        this.clearDrawnFeatures()
-      },
-    },
+      drawnFeatureCoordinates() {
+        const drawnFeature = this.drawnFeatures[0]
 
-    created() {
-      metaRepo
-        .getPredefinedAreas()
-        .then(areas => this.preDefinedAreas = areas)
-        .catch(err => console.error('Error getting predefined selections', err))
+        return drawnFeature?.geometry?.coordinates
+          ? Array.from(drawnFeature?.geometry?.coordinates).map(coordinates => coordinates.flat())
+          : []
+      },
+
+      selectionCoordinates() {
+        return this.drawnFeatureCoordinates.toString().replace(/,/g, ' ')
+      },
     },
 
     methods: {
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
 
+      getDownloadUrl({ url, propertyMapping, areas }) {
+        return generateDownloadUrl(url, propertyMapping, { areas })
+      },
+
       handleSelectionLayerSelect(id) {
         this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === id))
+
+        if (this.drawMode === 'static') {
+          this.clearDrawnFeatures()
+        }
       },
 
       async onDrawModeSelect(mode) {
@@ -137,6 +146,36 @@
         this.selectedLayerId = this.activeLayersList[0].value
 
         this.setDrawMode({ mode })
+      },
+
+      async getSelectedAreas(layer) {
+        const url = layer.url
+
+        const { features } = await getFeature({
+          url,
+          layer: layer.layer,
+          coordinates: this.selectionCoordinates,
+        })
+
+        const { area } = this.selectedLayerForSelection.externalApi.propertyMapping
+
+        return features.map(feature => feature.properties[area])
+      },
+
+      async handleDownloadClick() {
+        let areas
+
+        if (this.drawMode === 'static') {
+          areas = this.selectedAreas
+        } else if (this.drawMode === 'rectangle') {
+          areas = await this.getSelectedAreas(this.selectedLayerForSelection)
+        }
+
+        const downloadUrl = this.getDownloadUrl({ ...this.selectedLayerForSelection.externalApi, areas })
+
+        console.log(downloadUrl)
+
+        window.location.href = downloadUrl
       },
     },
   }
