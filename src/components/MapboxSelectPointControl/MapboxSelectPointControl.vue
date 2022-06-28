@@ -14,8 +14,10 @@
 
     watch: {
       drawMode(value) {
+        const isStatic = value === 'static'
+
         if (this.map) {
-          this.map[value ? 'on' : 'off']('click', this.handleMapClick)
+          this.map[isStatic ? 'on' : 'off']('click', this.handleMapClick)
         }
       },
     },
