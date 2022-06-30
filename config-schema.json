@@ -91,6 +91,10 @@
           "propertyMapping": {
             "type": "object",
             "description": "Mapping of properties to external service"
+          },
+          "filters": {
+            "type": "string",
+            "description": "Comma-separated list of filters to be applied to the data"
           }
         },
         "externalApiUrl": {

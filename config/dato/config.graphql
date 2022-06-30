@@ -17,6 +17,7 @@ query ($first: IntType, $skip: IntType = 0) {
         url
         propertyMapping
         apiKey
+        filters
       }
       tags {
         title

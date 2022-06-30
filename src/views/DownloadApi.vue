@@ -30,6 +30,7 @@
         </v-btn>
       </v-col>
     </v-row>
+
     <v-row v-if="['static', 'rectangle'].includes(drawMode)">
       <v-col>
         <v-select
@@ -44,12 +45,25 @@
       </v-col>
     </v-row>
 
+    <template v-if="selectedLayerAvailableFilters.length">
+      <v-divider class="my-4" />
+
+      <v-row>
+        <v-col>
+          <h3 class="pb-2">
+            {{ $t('filter') }}
+          </h3>
+          <key-value-filter :filters="selectedLayerAvailableFilters" @change="handleFilterChange" />
+        </v-col>
+      </v-row>
+    </template>
+    
     <v-divider class="my-4" />
 
     <v-btn
       color="primary"
       block
-      :disabled="isDownloading"
+      :disabled="isDownloading || !drawnFeatures.length"
       @click="handleDownloadClick"
     >
       {{ $t('download') }}
@@ -58,15 +72,17 @@
 </template>
 
 <script>
-
   import { mapActions, mapGetters } from 'vuex'
+  import KeyValueFilter from '~/components/KeyValueFilter/KeyValueFilter'
   import { generateDownloadUrl } from '~/lib/external-api'
   import getFeature from '~/lib/get-feature'
 
   export default {
+    components: { KeyValueFilter },
     data: () => ({
       selectedLayerId: null,
       isDownloading: false,
+      selectedFilters: null,
     }),
 
     computed: {
@@ -111,17 +127,26 @@
       selectionCoordinates() {
         return this.drawnFeatureCoordinates.toString().replace(/,/g, ' ')
       },
+
+      selectedLayerAvailableFilters() {
+        if (this.selectedLayerForSelection?.externalApi.filters) {
+          return this.selectedLayerForSelection.externalApi.filters.split(', ')
+        }
+
+        return []
+      },
     },
 
     methods: {
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
 
-      getDownloadUrl({ url, propertyMapping, areas }) {
-        return generateDownloadUrl({ url, propertyMapping, data: { areas } })
+      getDownloadUrl({ url, filters }) {
+        return generateDownloadUrl({ url, filters })
       },
 
       handleSelectionLayerSelect(id) {
         this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === id))
+        this.selectedFilters = null
 
         if (this.drawMode === 'static') {
           this.clearDrawnFeatures()
@@ -154,6 +179,10 @@
         return features.map(feature => feature.properties[area])
       },
 
+      handleFilterChange(value) {
+        this.selectedFilters = value
+      },
+
       async handleDownloadClick() {
         const { externalApi } = this.selectedLayerForSelection
         let areas
@@ -164,9 +193,16 @@
           areas = await this.getSelectedAreas(this.selectedLayerForSelection)
         }
 
-        const downloadUrl = this.getDownloadUrl({ ...externalApi, areas })
+        const areaFilter = {
+          name: externalApi.propertyMapping.area,
+          comparer: 'in',
+          value: `[${ areas.map(area => `'${ area }'`).join(', ') }]`,
+        }
 
-        console.log(this.selectedLayerForSelection)
+        const downloadUrl = this.getDownloadUrl({ ...externalApi, filters: [
+          areaFilter,
+          ...(this.selectedFilters || []),
+        ] })
 
         const options = {
           headers: {
@@ -174,17 +210,21 @@
           },
         }
 
-        fetch(downloadUrl, options)
-          .then( res => res.blob() )
-          .then( blob => {
-            var file = window.URL.createObjectURL(blob)
+        this.isDownloading = true
 
-            console.log(file)
+        fetch(downloadUrl, options)
+          .then(res => res.blob() )
+          .then(blob => {
+            var file = window.URL.createObjectURL(blob)
 
             window.location.assign(file)
           })
-
-        // window.location.href = downloadUrl
+          .catch(err => {
+            console.log(err)
+          })
+          .finally(() => {
+            this.isDownloading = false
+          })
       },
     },
   }
