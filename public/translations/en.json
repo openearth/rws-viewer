@@ -1,5 +1,7 @@
 {
   "activeLayers": "Active layers",
+  "addFilter": "Add filter",
+  "apiWarning": "Downloading from an API is limited to 10.000 records due to external API limitations. Please use filtering to refine your query",
   "availableLayers": "Available layers",
   "chooseLayers": "Choose layers",
   "close": "Close",
@@ -28,6 +30,7 @@
   "layerSelection": "Select from visible layers",
   "layers": "Layers",
   "legends": "Legend | Legends",
+  "name": "Name",
   "noLayersSelected": "Select one or more layers.",
   "noSelection": "No selection",
   "notYetAvailable": "Not yet available.",

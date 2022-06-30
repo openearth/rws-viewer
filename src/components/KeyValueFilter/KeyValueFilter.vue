@@ -1,7 +1,7 @@
 <template>
   <v-container class="pa-0">
     <v-row v-for="filter in enabledFilters" :key="filter.name">
-      <v-col :cols="3" class="d-flex align-center">
+      <v-col :cols="3" class="d-flex align-center text-break">
         {{ filter.name }}
       </v-col>
       <v-col :cols="3">
@@ -35,6 +35,7 @@
         <v-select
           v-model="selectedFilter"
           :items="selectableFilters"
+          :label="$t('name')"
           dense
           outlined
           hide-details
@@ -43,6 +44,7 @@
       <v-col :cols="2">
         <v-btn 
           icon
+          :title="$t('addFilter')"
           :disabled="!selectedFilter"
           @click="addFilter"
         >
@@ -88,6 +90,9 @@
       },
     },
     watch: {
+      filters() {
+        this.enabledFilters = []
+      },
       enabledFilters: {
         handler(value) {
           this.$emit('filters-changed', this.enabledFilters)

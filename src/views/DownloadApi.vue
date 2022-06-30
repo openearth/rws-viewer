@@ -3,8 +3,12 @@
     <v-row>
       <v-col>
         <h3>{{ $t('select') }}</h3>
-        <p class="body-2 mb-0">
+        <p class="body-2">
           {{ $t('selectDesc') }}
+        </p>
+
+        <p class="body-2 mb-0">
+          <v-icon>mdi-information-outline</v-icon> {{ $t('apiWarning') }}
         </p>
       </v-col>
     </v-row>
@@ -50,7 +54,7 @@
 
       <v-row>
         <v-col>
-          <h3 class="pb-2">
+          <h3 class="pb-3">
             {{ $t('filters') }}
           </h3>
           <key-value-filter :filters="selectedLayerAvailableFilters" @change="handleFilterChange" />
@@ -64,6 +68,7 @@
       color="primary"
       block
       :disabled="isDownloading || !drawnFeatures.length"
+      :loading="isDownloading"
       @click="handleDownloadClick"
     >
       {{ $t('download') }}
