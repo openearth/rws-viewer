@@ -51,7 +51,7 @@
       <v-row>
         <v-col>
           <h3 class="pb-2">
-            {{ $t('filter') }}
+            {{ $t('filters') }}
           </h3>
           <key-value-filter :filters="selectedLayerAvailableFilters" @change="handleFilterChange" />
         </v-col>
