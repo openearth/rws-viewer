@@ -1,5 +1,7 @@
 {
   "activeLayers": "Actieve lagen",
+  "addFilter": "Filter toevoegen",
+  "apiWarning": "Downloaden van een API is gelimiteerd to 10.000 records, vanwege API limitaties. Gebruik filtering om uw zoekopdracht te verfijnen",
   "availableLayers": "Beschikbare lagen",
   "chooseLayers": "Lagen kiezen",
   "close": "Sluiten",
@@ -28,6 +30,7 @@
   "layerSelection": "Selecteer uit zichtbare lagen",
   "layers": "Lagen",
   "legends": "Legenda | Legenda's",
+  "name": "Naam",
   "noLayersSelected": "Selecteer één of meer lagen.",
   "noSelection": "Geen selectie",
   "notYetAvailable": "Nog niet beschikbaar.",
