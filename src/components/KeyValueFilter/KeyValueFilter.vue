@@ -79,10 +79,6 @@
           'like',
           'startswith',
           'endswith',
-          'wkt',
-          'geojson',
-          'bbox',
-          'al',
         ]),
       }
     },
