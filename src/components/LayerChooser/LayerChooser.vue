@@ -37,6 +37,7 @@
       :value="activeFlattenedLayerIds"
       hoverable
       selectable
+      selection-type="independent"
       dense
       expand-icon="mdi-chevron-down"
       :items="layersWithParents"
@@ -47,13 +48,7 @@
       <template #prepend="{selected, open, item, indeterminate}">
         <div v-if="!item.layer">
           <v-icon>
-            <template v-if="selected">
-              {{ open
-                ? `mdi-folder-open${selected ? '' : '-outline'}`
-                : `mdi-folder${selected ? '-check' : '-outline'}`
-              }}
-            </template>
-            <template v-else-if="indeterminate">
+            <template v-if="indeterminate">
               {{ open
                 ? `mdi-folder-open`
                 : `mdi-folder`
