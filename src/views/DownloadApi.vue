@@ -84,7 +84,7 @@
 <script>
   import { mapActions, mapGetters } from 'vuex'
   import KeyValueFilter from '~/components/KeyValueFilter/KeyValueFilter'
-  import { generateDownloadUrl } from '~/lib/external-api'
+  import { downloadFromUrl, generateDownloadUrl } from '~/lib/external-api'
   import getFeature from '~/lib/get-feature'
 
   export default {
@@ -218,27 +218,14 @@
           ...(this.selectedFilters || []),
         ] })
 
-        const options = {
-          headers: {
-            ...(externalApi.apiKey ? { 'x-api-key': process.env[externalApi.apiKey] } : {}),
-          },
-        }
-
         this.isDownloading = true
 
-        fetch(downloadUrl, options)
-          .then(res => res.blob() )
-          .then(blob => {
-            var file = window.URL.createObjectURL(blob)
-
-            window.location.assign(file)
-          })
-          .catch(err => {
-            console.log(err)
-          })
-          .finally(() => {
-            this.isDownloading = false
-          })
+        downloadFromUrl({
+          url: downloadUrl,
+          apiKey: process.env[externalApi.apiKey],
+        }).finally(() => {
+          this.isDownloading = false
+        })
       },
     },
   }
