@@ -14,7 +14,34 @@
         />
       </v-col>
       <v-col :cols="4">
+        <template v-if="filter.name.includes('date')">
+          <v-btn title="Select Date" @click="handleDateSelectorClick">
+            {{ filter.value || $t('select') }}
+          </v-btn>
+          <v-dialog
+            v-model="showDialog"
+            max-width="280"
+            @click:outside="handleDialogClose"
+          >
+            <v-container class="white pa-0">
+              <v-date-picker
+                v-model="filter.value"
+              />
+              <v-container class="pa-2 d-flex">
+                <v-spacer />
+                <v-btn
+                  color="primary"
+                  text
+                  @click="handleDialogClose"
+                >
+                  {{ $t('close') }}
+                </v-btn>
+              </v-container>
+            </v-container>
+          </v-dialog>
+        </template>
         <v-text-field
+          v-else
           v-model="filter.value"
           dense
           outlined
@@ -69,6 +96,7 @@
       return {
         enabledFilters: [],
         selectedFilter: null,
+        showDialog: false,
         comparers: Object.freeze([
           'eq',
           'ne',
@@ -116,6 +144,12 @@
       removeFilter(filter) {
         this.enabledFilters = this.enabledFilters.filter(enabledFilter => enabledFilter !== filter)
         this.selectedFilter = this.selectableFilters[0] 
+      },
+      handleDialogClose() {
+        this.showDialog = false
+      },
+      handleDateSelectorClick() {
+        this.showDialog = true
       },
     },
   }
