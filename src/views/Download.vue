@@ -1,7 +1,7 @@
 <template>
   <v-container class="pa-0">
     <v-row v-if="!downloadIsAvailable && !activeLayersList.length">
-      <v-col>
+      <v-col class="pa-8">
         <v-alert
           dense
           outlined
