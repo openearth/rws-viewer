@@ -198,17 +198,21 @@
         let areas
 
         if (this.drawMode === 'static') {
+          // when drawmode is we can use selectedAreas (derived from the drawnFeatures) directly
           areas = this.selectedAreas
         } else if (this.drawMode === 'rectangle') {
+          // if the user has drawn a rectangle, we need to fetch the areas in the rectangle first
           areas = await this.getSelectedAreas(this.selectedLayerForSelection)
         }
 
+        // compose a filter definition in the format of KeyValueFilter
         const areaFilter = {
           name: externalApi.propertyMapping.area,
           comparer: 'in',
           value: `[${ areas.map(area => `'${ area }'`).join(',') }]`,
         }
 
+        // generate download url containing the area filter + configured filters
         const downloadUrl = this.getDownloadUrl({ ...externalApi, filters: [
           areaFilter,
           ...(this.selectedFilters || []),
@@ -221,8 +225,6 @@
         }
 
         this.isDownloading = true
-
-        console.log(downloadUrl)
 
         fetch(downloadUrl, options)
           .then(res => res.blob() )
