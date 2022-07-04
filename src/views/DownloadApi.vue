@@ -49,7 +49,7 @@
       </v-col>
     </v-row>
 
-    <template v-if="selectedLayerAvailableFilters.length">
+    <template v-if="availableFiltersForSelectedLayer.length">
       <v-divider class="my-4" />
 
       <v-row>
@@ -62,7 +62,7 @@
             {{ $t('noFilterSelected') }}
           </p>
 
-          <key-value-filter :filters="selectedLayerAvailableFilters" @change="handleFilterChange" />
+          <key-value-filter :filters="availableFiltersForSelectedLayer" @change="handleFilterChange" />
         </v-col>
       </v-row>
     </template>
@@ -138,7 +138,7 @@
         return this.drawnFeatureCoordinates.toString().replace(/,/g, ' ')
       },
 
-      selectedLayerAvailableFilters() {
+      availableFiltersForSelectedLayer() {
         if (this.selectedLayerForSelection?.externalApi.filters) {
           return this.selectedLayerForSelection.externalApi.filters.split(', ')
         }
@@ -206,7 +206,7 @@
         const areaFilter = {
           name: externalApi.propertyMapping.area,
           comparer: 'in',
-          value: `[${ areas.map(area => `'${ area }'`).join(', ') }]`,
+          value: `[${ areas.map(area => `'${ area }'`).join(',') }]`,
         }
 
         const downloadUrl = this.getDownloadUrl({ ...externalApi, filters: [
@@ -221,6 +221,8 @@
         }
 
         this.isDownloading = true
+
+        console.log(downloadUrl)
 
         fetch(downloadUrl, options)
           .then(res => res.blob() )
