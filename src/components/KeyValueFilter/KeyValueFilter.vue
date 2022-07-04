@@ -95,7 +95,6 @@
       },
       enabledFilters: {
         handler(value) {
-          this.$emit('filters-changed', this.enabledFilters)
           this.$emit('change', value)
         },
         deep: true,
