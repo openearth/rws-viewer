@@ -57,6 +57,11 @@
           <h3 class="pb-3">
             {{ $t('filters') }}
           </h3>
+          
+          <p v-if="!selectedFilters || !selectedFilters.length" class="body-2">
+            {{ $t('noFilterSelected') }}
+          </p>
+
           <key-value-filter :filters="selectedLayerAvailableFilters" @change="handleFilterChange" />
         </v-col>
       </v-row>
