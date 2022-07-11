@@ -2,17 +2,16 @@ import axios from 'axios'
 import { map, uniq, pipe, find, propEq } from 'ramda'
 
 
-
 import {
   WCS_LAYER_TYPE,
   WFS_LAYER_TYPE,
 } from '~/lib/constants'
 
 
-
 const getTagContent = tag => tag.textContent
 const getParentNode = tag => tag.parentNode
-const textToArray = text => text.split(',')
+const textToArray = text => text.split(',') //split at comma
+
 
 const getTags = tagName => root =>
   [ ...root ]
@@ -31,7 +30,13 @@ const findLayer = id => (layers) => {
   } 
 }
 
-
+function readBbox(BboxElement) {
+  const bbox = [ [ BboxElement.getElementsByTagName('westBoundLongitude')[0].textContent,
+  BboxElement.getElementsByTagName('southBoundLatitude')[0].textContent ], 
+  [ BboxElement.getElementsByTagName('eastBoundLongitude')[0].textContent,
+  BboxElement.getElementsByTagName('northBoundLatitude')[0].textContent ] ]
+  return bbox
+}
 
 function createParameters(type) {
   if (type === WCS_LAYER_TYPE) {
@@ -112,6 +117,16 @@ export function getLayerProperties(capabilities, layer) {
     () => capabilities.querySelector('WMS_Capabilities'),
     el => el.getAttribute('version'),
   )()
+
+  const bbox = pipe(
+    () => [ ...capabilities.querySelectorAll('[queryable="1"]') ],
+    getTags('Name'),
+    findLayer(layer),
+    getParentNode,
+    el => el.querySelector('EX_GeographicBoundingBox'),
+    readBbox,
+
+  )()
   
   const keywords = pipe(
     () => [ ...capabilities.querySelectorAll('[queryable="1"]') ],
@@ -136,7 +151,7 @@ export function getLayerProperties(capabilities, layer) {
     map(textToArray),
     (array) => array.flat(),
   )()
-  return { serviceType, timeExtent, wmsVersion }
+  return { serviceType, timeExtent, wmsVersion, bbox }
 }
 
 

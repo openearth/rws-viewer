@@ -33,6 +33,7 @@
         :options="layer"
         :opacity="layer.opacity"
       />
+      <map-zoom :extent="zoomExtent" />
       <mapbox-draw-control
         :draw-mode="drawMode"
         :drawn-feature="drawnFeature"
@@ -46,7 +47,8 @@
   import { mapActions, mapGetters } from 'vuex'
   import { MapboxMap } from '@deltares/vue-components'
   import AppShell from './components/AppShell/AppShell'
-  import MapLayer from './components/MapLayer/MapLayer.js'
+  import MapLayer from './components/MapComponents/MapLayer.js'
+  import MapZoom from './components/MapComponents/MapZoom.js'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
   import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
@@ -58,6 +60,7 @@
       AppShell,
       MapboxMap,
       MapLayer,
+      MapZoom,
       MapboxDrawControl,
       LayerOrder,
       LocaleSwitcher,
@@ -75,7 +78,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom' ]),
+      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       mapLeftPadding() {
         return this.appNavigationOpen ? this.appNavigationWidth : 0
