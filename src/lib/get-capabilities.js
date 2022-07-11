@@ -30,11 +30,11 @@ const findLayer = id => (layers) => {
   } 
 }
 
-function readBbox(BboxElement) {
-  const bbox = [ [ BboxElement.getElementsByTagName('westBoundLongitude')[0].textContent,
-  BboxElement.getElementsByTagName('southBoundLatitude')[0].textContent ], 
-  [ BboxElement.getElementsByTagName('eastBoundLongitude')[0].textContent,
-  BboxElement.getElementsByTagName('northBoundLatitude')[0].textContent ] ]
+function readBbox(bboxElement) {
+  const bbox = [ [ bboxElement.getElementsByTagName('westBoundLongitude')[0].textContent,
+  bboxElement.getElementsByTagName('southBoundLatitude')[0].textContent ], 
+  [ bboxElement.getElementsByTagName('eastBoundLongitude')[0].textContent,
+  bboxElement.getElementsByTagName('northBoundLatitude')[0].textContent ] ]
   return bbox
 }
 
@@ -108,9 +108,14 @@ export function getSupportedOutputFormats(type, capabilities) {
 export function getLayerProperties(capabilities, layer) {
 /**
  * function that reads the wms capabilities response of the workpspace
- * find the given layer
- * reads the layer keywords. 
- * 
+ * 1. find the given layer
+ * 2. extracts:   
+ *    -wmsVersion
+ *    -bbox of layer
+ *    -keywords (that contain the service type)
+ *    -service type of layer (wfs or wcs)
+ *    -time extent of layer
+ *  
  *  * */
 
   const wmsVersion = pipe(
@@ -125,7 +130,6 @@ export function getLayerProperties(capabilities, layer) {
     getParentNode,
     el => el.querySelector('EX_GeographicBoundingBox'),
     readBbox,
-
   )()
   
   const keywords = pipe(
