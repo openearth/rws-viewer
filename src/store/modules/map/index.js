@@ -2,7 +2,7 @@ import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import addFilterAttributesToLayer from '~/lib/add-filter-attributes-to-layer'
 import { getWmsCapabilities, getLayerProperties } from '~/lib/get-capabilities'
-
+import { NEDERLANDS_MAP_CENTER, NEDERLANDAS_MAP_ZOOM } from '~/lib/constants'
 
 export default {
   namespaced: true,
@@ -13,13 +13,15 @@ export default {
     drawMode: null,
     drawnFeatures: [],
     filteredLayerId: null, // id of active layer to filter
-    wmsLayers: [], 
+    wmsLayers: [],
     selectedLayerForSelection: null,
+    mapCenter: NEDERLANDS_MAP_CENTER,
+    mapZoom: NEDERLANDAS_MAP_ZOOM,
   }),
 
   getters: {
     mapLoaded: state => state.mapLoaded,
-    activeFlattenedLayers: state => (state.mapLoaded && state.activeFlattenedLayers) || [], 
+    activeFlattenedLayers: state => (state.mapLoaded && state.activeFlattenedLayers) || [],
     activeFlattenedLayerIds: state => (state.activeFlattenedLayers || []).map(({ id }) => id),
     activeFlattenedLayersIdsWithTimeOption (state, getters) {
       if (!getters.activeFlattenedLayers) {
@@ -33,6 +35,8 @@ export default {
     drawnFeatures: state => state.drawnFeatures,
     filteredLayerId: state => state.filteredLayerId,
     selectedLayerForSelection: state => state.selectedLayerForSelection,
+    mapCenter: state => state.mapCenter,
+    mapZoom: state => state.mapZoom,
   },
 
   mutations: {
@@ -96,6 +100,12 @@ export default {
     SET_SELECTED_LAYER_FOR_SELECTION(state, layer) {
       state.selectedLayerForSelection = layer
     },
+    SET_MAP_CENTER(state, coords) {
+      state.mapCenter = coords
+    },
+    SET_MAP_ZOOM(state, zoom) {
+      state.mapZoom = zoom
+    },
   },
 
   actions: {
@@ -103,29 +113,29 @@ export default {
       commit('SET_MAP_LOADED')
     },
     loadLayerOnMap({ commit, state }, { layers }) {
-      
+
       const layersToAdd = difference(layers , state.activeFlattenedLayers)
-      
+
       layersToAdd.forEach((layer) => {
         getWmsCapabilities(layer.url)
           .then(capabilities => getLayerProperties(capabilities, layer.layer))
           .then(({ serviceType, timeExtent, wmsVersion }) => {
             commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion } } )
             commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion } }))
-          }, 
+          },
           )
-      })  
+      })
     },
     reloadLayerOnMap({ commit, state, rootState }) {
-      /* If a layer has the time option true, 
-      then in the filter tab the user can load on 
+      /* If a layer has the time option true,
+      then in the filter tab the user can load on
       the map the layer with a new time or a new cql filter */
-     
+
       const { filteredLayerId, activeFlattenedLayers } = state
       commit('REMOVE_WMS_LAYER', filteredLayerId)
       const { selectedTimestamp, cqlFilter } = rootState.data
       const layer = addFilterAttributesToLayer(activeFlattenedLayers, filteredLayerId, selectedTimestamp, cqlFilter )
-      
+
       commit('ADD_WMS_LAYER', buildWmsLayer(layer))
     },
     removeLayerFromMap({ commit }, { layers }) {
@@ -134,7 +144,7 @@ export default {
         commit('REMOVE_WMS_LAYER', layer.id)
       })
     },
-    
+
     removefilteredLayerId({ commit }) {
       commit('REMOVE_FILTERS_LAYER_ID')
     },
@@ -170,9 +180,13 @@ export default {
     setfilteredLayerId({ commit }, id) {
       commit('SET_FILTERS_LAYER_ID', id)
     },
-
     setSelectedLayerForSelection({ commit }, layer) {
       commit('SET_SELECTED_LAYER_FOR_SELECTION', layer)
+    }, setMapCenter({ commit }, coords) {
+      commit('SET_MAP_CENTER', coords)
+    },
+    setMapZoom({ commit }, zoom) {
+      commit('SET_MAP_ZOOM', zoom)
     },
   },
 }
