@@ -10,9 +10,9 @@ export default {
   },
   methods:  {
     deferredMountedTo() {
-      this.zoomToExtend()
+      this.zoomToExtent()
     },
-    zoomToExtend() {
+    zoomToExtent() {
       const map = this.getMap()
       if (map && this.extent.length) {
          map.fitBounds(this.extent)
@@ -20,11 +20,11 @@ export default {
     },
   },
   mounted() {
-    this.zoomToExtend()
+    this.zoomToExtent()
   },
   watch: {
     extent() {
-      this.zoomToExtend()
+      this.zoomToExtent()
       
     },
   },
