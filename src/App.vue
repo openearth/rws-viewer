@@ -15,6 +15,8 @@
       :access-token="accessToken"
       :padding="{ left: mapLeftPadding }"
       mapbox-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
+      :center="mapCenter"
+      :zoom="mapZoom"
       @styledata="setMapLoaded"
     >
       <time-slider
@@ -73,7 +75,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId' ]),
+      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       mapLeftPadding() {
         return this.appNavigationOpen ? this.appNavigationWidth : 0
