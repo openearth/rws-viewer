@@ -15,7 +15,10 @@ export default {
     zoomToExtent() {
       const map = this.getMap()
       if (map && this.extent.length) {
-         map.fitBounds(this.extent)
+         map.fitBounds(this.extent, {
+          padding: 100,
+          maxZoom: 12,
+         })
       }
     },
   },
@@ -25,7 +28,6 @@ export default {
   watch: {
     extent() {
       this.zoomToExtent()
-      
     },
   },
 }
