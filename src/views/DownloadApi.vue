@@ -89,6 +89,7 @@
   import KeyValueFilter from '~/components/KeyValueFilter/KeyValueFilter'
   import { downloadFromUrl, generateDownloadUrl } from '~/lib/external-api'
   import getFeature from '~/lib/get-feature'
+  import _ from 'lodash'
 
   export default {
     components: { KeyValueFilter },
@@ -194,9 +195,9 @@
           coordinates: this.selectionCoordinates,
         })
 
-        const { area } = this.selectedLayerForSelection.externalApi.propertyMapping
+        const { layerAttributeArea } = this.selectedLayerForSelection.externalApi.propertyMapping
 
-        return features.map(feature => feature.properties[area])
+        return features.map(feature => feature.properties[layerAttributeArea])
       },
 
       handleFilterChange(value) {
@@ -215,12 +216,24 @@
           areas = await this.getSelectedAreas(this.selectedLayerForSelection)
         }
 
-        // compose a filter definition in the format of KeyValueFilter
-        const areaFilter = {
-          name: externalApi.propertyMapping.area,
-          comparer: 'in',
-          value: `[${ areas.map(area => `'${ area }'`).join(',') }]`,
+        const { area, geojson } = externalApi.propertyMapping
+
+        let areaFilter = {}
+        if (area) {
+          // compose a filter definition in the format of KeyValueFilter
+          areaFilter = {
+            name: area,
+            comparer: 'in',
+            value: `[${ areas.map(area => `"${ area }"`).join(',') }]`,
+          }
+        } else if (geojson) {
+          areaFilter = {
+            name: geojson,
+            comparer: 'geojson',
+            value: JSON.stringify(this.drawnFeatures[0]),
+          }
         }
+
 
         // generate download url containing the area filter + configured filters
         const downloadUrl = this.getDownloadUrl({ ...externalApi, filters: [
@@ -229,6 +242,7 @@
         ] })
 
         this.isDownloading = true
+        console.log(downloadUrl, this.drawnFeatures[0])
 
         downloadFromUrl({
           url: downloadUrl,
