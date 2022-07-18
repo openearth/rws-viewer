@@ -4,7 +4,8 @@ export const generateDownloadUrl = ({
 }) => {
   const formattedFilter = filters.map(({ name, comparer, value }) => `${ name }:${ comparer }:${ value }`).join(';')
 
-  return `${ url }?filter=${ formattedFilter };&pagesize=10000&format=csv`
+
+  return `${ url }?filter=${ formattedFilter }&format=csv`
 }
 
 export const downloadFromUrl = ({ url, apiKey }) => {
