@@ -1,7 +1,7 @@
 {
   "activeLayers": "Actieve lagen",
   "addFilter": "Filter toevoegen",
-  "apiWarning": "Downloaden van een API is gelimiteerd to 10.000 records, vanwege API limitaties. Gebruik filtering om uw zoekopdracht te verfijnen",
+  "apiWarning": "Downloaden van een API is gelimiteerd to {maxPageSize} records, vanwege API limitaties. Gebruik filtering om uw zoekopdracht te verfijnen",
   "availableLayers": "Beschikbare lagen",
   "chooseLayers": "Lagen kiezen",
   "close": "Sluiten",
