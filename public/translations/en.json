@@ -1,7 +1,7 @@
 {
   "activeLayers": "Active layers",
   "addFilter": "Add filter",
-  "apiWarning": "Downloading from an API is limited to 10.000 records due to external API limitations. Please use filtering to refine your query",
+  "apiWarning": "Downloading from an API is limited to {maxPageSize} records due to external API limitations. Please use filtering to refine your query",
   "availableLayers": "Available layers",
   "chooseLayers": "Choose layers",
   "close": "Close",

@@ -7,8 +7,8 @@
           {{ $t('selectDesc') }}
         </p>
 
-        <p class="body-2 mb-0">
-          <v-icon>mdi-information-outline</v-icon> {{ $t('apiWarning') }}
+        <p v-if="maxPageSize" class="body-2 mb-0">
+          <v-icon>mdi-information-outline</v-icon> {{ $t('apiWarning', {maxPageSize}) }}
         </p>
       </v-col>
     </v-row>
@@ -86,8 +86,8 @@
   import KeyValueFilter from '~/components/KeyValueFilter/KeyValueFilter'
   import { downloadFromUrl, generateDownloadUrl } from '~/lib/external-api'
   import getFeature from '~/lib/get-feature'
-  import _ from 'lodash'
   import { stringify } from 'wkt'
+  import _ from 'lodash'
 
   export default {
     components: { KeyValueFilter },
@@ -100,6 +100,10 @@
     computed: {
       ...mapGetters('map', [ 'drawMode', 'drawnFeatures', 'activeFlattenedLayerIds', 'activeFlattenedLayers', 'selectedLayerForSelection' ]),
       ...mapGetters('data', [ 'flattenedLayers' ]),
+
+      maxPageSize() {
+        return _.get(this.selectedLayer, 'externalApi.maxPageSize')
+      },
 
       activeLayers() {
         return this.activeFlattenedLayerIds
@@ -152,8 +156,8 @@
     methods: {
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
 
-      getDownloadUrl({ url, filters }) {
-        return generateDownloadUrl({ url, filters })
+      getDownloadUrl({ url, filters, maxPageSize, formatCsv }) {
+        return generateDownloadUrl({ url, filters, maxPageSize, formatCsv })
       },
 
       handleSelectionLayerSelect(id) {
@@ -208,6 +212,7 @@
         }
 
         const { area, wkt } = externalApi.propertyMapping
+        const { formatCsv, name, maxPageSize } = externalApi
 
         let areaFilter = {}
         if (area) {
@@ -225,20 +230,28 @@
           }
         }
 
+        let fileExtension = 'json'
+        if (formatCsv) {
+          fileExtension = 'csv'
+        }
 
-        // generate download url containing the area filter + configured filters
         const downloadUrl = this.getDownloadUrl({ ...externalApi, filters: [
           areaFilter,
           ...(this.selectedFilters || []),
-        ] })
+        ]})
 
         this.isDownloading = true
+        const date = new Date(Date.now())
+        const fileName = `${name}_${date.toLocaleString()}.${fileExtension}`
 
         downloadFromUrl({
           url: downloadUrl,
           apiKey: process.env[externalApi.apiKey],
-        }).finally(() => {
+          formatCsv,
+          fileName,
+        }).finally((result) => {
           this.isDownloading = false
+          console.log('result', result)
         })
       },
     },

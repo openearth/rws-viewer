@@ -19,6 +19,8 @@ query ($first: IntType, $skip: IntType = 0) {
         apiKey
         filters
         dateFilters
+        formatCsv
+        maxPageSize
       }
       tags {
         title
