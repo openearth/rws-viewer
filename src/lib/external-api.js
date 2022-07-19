@@ -25,10 +25,7 @@ export const downloadFromUrl = ({ url, apiKey, formatCsv, fileName }) => {
     return fetch(url, options)
     .then(res => res.blob() )
     .then(blob => {
-      console.log(blob, url)
-      var file = window.URL.createObjectURL(blob)
-
-      window.location.assign(file, fileName)
+      saveAs(blob, fileName)
     })
     .catch(err => {
       console.log(err)
@@ -37,7 +34,6 @@ export const downloadFromUrl = ({ url, apiKey, formatCsv, fileName }) => {
     return fetch(url, options)
       .then(res => res.json() )
       .then(data => {
-        console.log(data)
         let blob = new Blob([ JSON.stringify(data) ], {
           type: 'application/json',
         })

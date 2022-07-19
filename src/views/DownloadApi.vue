@@ -78,6 +78,15 @@
     >
       {{ $t('download') }}
     </v-btn>
+    <v-alert
+      v-if="requestFailure"
+      border="bottom"
+      colored-border
+      type="warning"
+      elevation="2"
+    >
+    {{ requestFailure }}
+    </v-alert>
   </v-container>
 </template>
 
@@ -95,6 +104,7 @@
       selectedLayerId: null,
       isDownloading: false,
       selectedFilters: null,
+      requestFailure: false,
     }),
 
     computed: {
@@ -156,10 +166,6 @@
     methods: {
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
 
-      getDownloadUrl({ url, filters, maxPageSize, formatCsv }) {
-        return generateDownloadUrl({ url, filters, maxPageSize, formatCsv })
-      },
-
       handleSelectionLayerSelect(id) {
         this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === id))
         this.selectedFilters = null
@@ -200,6 +206,7 @@
       },
 
       async handleDownloadClick() {
+        this.requestFailure = false
         const { externalApi } = this.selectedLayerForSelection
         let areas
 
@@ -235,7 +242,7 @@
           fileExtension = 'csv'
         }
 
-        const downloadUrl = this.getDownloadUrl({ ...externalApi, filters: [
+        const downloadUrl = generateDownloadUrl({ ...externalApi, filters: [
           areaFilter,
           ...(this.selectedFilters || []),
         ]})
@@ -252,6 +259,8 @@
         }).finally((result) => {
           this.isDownloading = false
           console.log('result', result)
+        }).catch(err => {
+          this.requestFailure = 'Request failed'
         })
       },
     },
