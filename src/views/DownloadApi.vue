@@ -90,6 +90,7 @@
   import { downloadFromUrl, generateDownloadUrl } from '~/lib/external-api'
   import getFeature from '~/lib/get-feature'
   import _ from 'lodash'
+  import { stringify } from 'wkt'
 
   export default {
     components: { KeyValueFilter },
@@ -216,7 +217,7 @@
           areas = await this.getSelectedAreas(this.selectedLayerForSelection)
         }
 
-        const { area, geojson } = externalApi.propertyMapping
+        const { area, wkt } = externalApi.propertyMapping
 
         let areaFilter = {}
         if (area) {
@@ -226,11 +227,11 @@
             comparer: 'in',
             value: `[${ areas.map(area => `"${ area }"`).join(',') }]`,
           }
-        } else if (geojson) {
+        } else if (wkt) {
           areaFilter = {
-            name: geojson,
-            comparer: 'geojson',
-            value: JSON.stringify(this.drawnFeatures[0]),
+            name: wkt,
+            comparer: 'wkt',
+            value: stringify(this.drawnFeatures[0]),
           }
         }
 
@@ -242,7 +243,6 @@
         ] })
 
         this.isDownloading = true
-        console.log(downloadUrl, this.drawnFeatures[0])
 
         downloadFromUrl({
           url: downloadUrl,

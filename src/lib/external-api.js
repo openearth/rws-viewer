@@ -5,7 +5,7 @@ export const generateDownloadUrl = ({
   const formattedFilter = filters.map(({ name, comparer, value }) => `${ name }:${ comparer }:${ value }`).join(';')
 
 
-  return `${ url }?filter=${ formattedFilter }&format=csv`
+  return `${ url }?filter=${ formattedFilter }`
 }
 
 export const downloadFromUrl = ({ url, apiKey }) => {
@@ -15,9 +15,11 @@ export const downloadFromUrl = ({ url, apiKey }) => {
     },
   }
 
+  console.log(url)
   return fetch(url, options)
     .then(res => res.blob() )
     .then(blob => {
+      console.log(blob)
       var file = window.URL.createObjectURL(blob)
 
       window.location.assign(file)

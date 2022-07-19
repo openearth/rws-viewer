@@ -95,6 +95,10 @@
           "filters": {
             "type": "string",
             "description": "Comma-separated list of filters to be applied to the data"
+          },
+          "date_filters": {
+            "type": "string",
+            "description": "Comma-separated list of filters to be applied to the data"
           }
         },
         "externalApiUrl": {
