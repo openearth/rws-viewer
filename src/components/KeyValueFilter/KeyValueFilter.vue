@@ -7,14 +7,14 @@
       <v-col :cols="3">
         <v-select
           v-model="filter.comparer"
-          :items="comparers"
+          :items="dateFilter.includes(filter.name) ? comparers : dateComparers"
           dense
           outlined
           hide-details
         />
       </v-col>
       <v-col :cols="4">
-        <template v-if="filter.name.includes('date')">
+        <template v-if="dateFilter.includes(filter.name)">
           <v-btn title="Select Date" @click="handleDateSelectorClick">
             {{ filter.value || $t('select') }}
           </v-btn>
@@ -69,7 +69,7 @@
         />
       </v-col>
       <v-col :cols="2">
-        <v-btn 
+        <v-btn
           icon
           :title="$t('addFilter')"
           :disabled="!selectedFilter"
@@ -88,6 +88,10 @@
   export default {
     props: {
       filters: {
+        type: Array,
+        required: true,
+      },
+      dateFilters: {
         type: Array,
         required: true,
       },
@@ -110,11 +114,22 @@
           'startswith',
           'endswith',
         ]),
+        dateComparers: Object.freeze([
+          'eq',
+          'ne',
+          'lt',
+          'le',
+          'ge',
+          'gt',
+        ]),
       }
     },
     computed: {
       selectableFilters() {
-        return this.filters.filter(filter => !this.enabledFilters.find(enabledFilter => enabledFilter.name === filter))
+        return this.allFilters.filter(filter => !this.enabledFilters.find(enabledFilter => enabledFilter.name === filter))
+      },
+      allFilters() {
+        return this.filters.concat(this.dateFilters)
       },
     },
     watch: {
@@ -129,21 +144,21 @@
       },
     },
     mounted() {
-      this.selectedFilter = this.selectableFilters[0] 
+      this.selectedFilter = this.selectableFilters[0]
     },
     methods: {
       addFilter() {
         this.enabledFilters.push({
           name: this.selectedFilter,
           comparer: 'eq',
-          value: '', 
+          value: '',
         })
 
-        this.selectedFilter = this.selectableFilters[0] 
+        this.selectedFilter = this.selectableFilters[0]
       },
       removeFilter(filter) {
         this.enabledFilters = this.enabledFilters.filter(enabledFilter => enabledFilter !== filter)
-        this.selectedFilter = this.selectableFilters[0] 
+        this.selectedFilter = this.selectableFilters[0]
       },
       handleDialogClose() {
         this.showDialog = false
