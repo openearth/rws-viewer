@@ -18,6 +18,7 @@ query ($first: IntType, $skip: IntType = 0) {
         propertyMapping
         apiKey
         filters
+        dateFilters
       }
       tags {
         title
