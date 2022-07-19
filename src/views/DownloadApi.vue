@@ -57,16 +57,19 @@
           <h3 class="pb-3">
             {{ $t('filters') }}
           </h3>
-          
+
           <p v-if="!selectedFilters || !selectedFilters.length" class="body-2">
             {{ $t('noFilterSelected') }}
           </p>
 
-          <key-value-filter :filters="availableFiltersForSelectedLayer" @change="handleFilterChange" />
+          <key-value-filter
+            :filters="availableFiltersForSelectedLayer"
+            :date-filters="dateFilters"
+            @change="handleFilterChange" />
         </v-col>
       </v-row>
     </template>
-    
+
     <v-divider class="my-4" />
 
     <v-btn
@@ -120,7 +123,7 @@
         if (!this.selectedLayer) {
           return []
         }
-        
+
         const { area } = this.selectedLayerForSelection.externalApi.propertyMapping
 
         return this.drawnFeatures.map(feature => feature.properties[area])
@@ -141,6 +144,13 @@
       availableFiltersForSelectedLayer() {
         if (this.selectedLayerForSelection?.externalApi.filters) {
           return this.selectedLayerForSelection.externalApi.filters.split(', ')
+        }
+
+        return []
+      },
+      dateFilters() {
+        if (this.selectedLayerForSelection?.externalApi.filters_date) {
+          return this.selectedLayerForSelection.externalApi.filters_date.split(', ')
         }
 
         return []
