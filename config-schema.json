@@ -95,6 +95,18 @@
           "filters": {
             "type": "string",
             "description": "Comma-separated list of filters to be applied to the data"
+          },
+          "date_filters": {
+            "type": "string",
+            "description": "Comma-separated list of filters to be applied to the data"
+          },
+          "format_csv": {
+            "type": "boolean",
+            "description": "Can the filter format=csv be applied on this request"
+          },
+          "max_page_size": {
+            "type": "string",
+            "description": "The max page size of the request"
           }
         },
         "externalApiUrl": {
