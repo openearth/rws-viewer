@@ -7,14 +7,14 @@
       <v-col :cols="3">
         <v-select
           v-model="filter.comparer"
-          :items="dateFilter.includes(filter.name) ? comparers : dateComparers"
+          :items="dateFilters.includes(filter.name) ? comparers : dateComparers"
           dense
           outlined
           hide-details
         />
       </v-col>
       <v-col :cols="4">
-        <template v-if="dateFilter.includes(filter.name)">
+        <template v-if="dateFilters.includes(filter.name)">
           <v-btn title="Select Date" @click="handleDateSelectorClick">
             {{ filter.value || $t('select') }}
           </v-btn>
