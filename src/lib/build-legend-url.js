@@ -6,6 +6,7 @@ export default function (layerData) {
   const { url, layer } = layerData
   const params = stringify({
     'request': 'GetLegendGraphic',
+    'service':'wms',
     'version': '1.0.0',
     'format': 'image/png',
     'width': '30',
