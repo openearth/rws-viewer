@@ -91,6 +91,7 @@
           :is-layer="!!item.layer"
           :has-metadata="!!item.metadata.length"
           @update-layer-opacity="updateLayerOpacity"
+          @zoom-to-layer-extent="zoomToLayerExtent"
         >
           <template #info="{ isOpen, close }">
             <layer-info-dialog
@@ -146,7 +147,7 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'updateWmsLayerOpacity' ]),
+      ...mapActions('map', [ 'updateWmsLayerOpacity', 'updateZoomExtent' ]),
       handleInput(newValue) {
         const added = difference(newValue, this.activeFlattenedLayerIds)
         const removed =  difference(this.activeFlattenedLayerIds, newValue)
@@ -174,6 +175,9 @@
       },
       updateLayerOpacity({ id, opacity }) {
         this.updateWmsLayerOpacity({ id, opacity })
+      },
+      zoomToLayerExtent(id) {
+        this.updateZoomExtent(id)
       },
     },
   }

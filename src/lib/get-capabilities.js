@@ -2,17 +2,16 @@ import axios from 'axios'
 import { map, uniq, pipe, find, propEq } from 'ramda'
 
 
-
 import {
   WCS_LAYER_TYPE,
   WFS_LAYER_TYPE,
 } from '~/lib/constants'
 
 
-
 const getTagContent = tag => tag.textContent
 const getParentNode = tag => tag.parentNode
-const textToArray = text => text.split(',')
+const textToArray = text => text.split(',') //split at comma
+
 
 const getTags = tagName => root =>
   [ ...root ]
@@ -31,7 +30,13 @@ const findLayer = id => (layers) => {
   } 
 }
 
-
+function readBbox(bboxElement) {
+  const bbox = [ [ bboxElement.getElementsByTagName('westBoundLongitude')[0].textContent,
+  bboxElement.getElementsByTagName('southBoundLatitude')[0].textContent ], 
+  [ bboxElement.getElementsByTagName('eastBoundLongitude')[0].textContent,
+  bboxElement.getElementsByTagName('northBoundLatitude')[0].textContent ] ]
+  return bbox
+}
 
 function createParameters(type) {
   if (type === WCS_LAYER_TYPE) {
@@ -103,14 +108,28 @@ export function getSupportedOutputFormats(type, capabilities) {
 export function getLayerProperties(capabilities, layer) {
 /**
  * function that reads the wms capabilities response of the workpspace
- * find the given layer
- * reads the layer keywords. 
- * 
+ * 1. find the given layer
+ * 2. extracts:   
+ *    -wmsVersion
+ *    -bbox of layer
+ *    -keywords (that contain the service type)
+ *    -service type of layer (wfs or wcs)
+ *    -time extent of layer
+ *  
  *  * */
 
   const wmsVersion = pipe(
     () => capabilities.querySelector('WMS_Capabilities'),
     el => el.getAttribute('version'),
+  )()
+
+  const bbox = pipe(
+    () => [ ...capabilities.querySelectorAll('[queryable="1"]') ],
+    getTags('Name'),
+    findLayer(layer),
+    getParentNode,
+    el => el.querySelector('EX_GeographicBoundingBox'),
+    readBbox,
   )()
   
   const keywords = pipe(
@@ -136,7 +155,7 @@ export function getLayerProperties(capabilities, layer) {
     map(textToArray),
     (array) => array.flat(),
   )()
-  return { serviceType, timeExtent, wmsVersion }
+  return { serviceType, timeExtent, wmsVersion, bbox }
 }
 
 

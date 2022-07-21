@@ -8,7 +8,7 @@
       >
         {{ name }}
       </span>
-      <div v-if="hasMetadata" class="d-flex align-center ml-3">
+      <div v-if="hasMetadata">
         <v-btn icon @click.stop="showInfo = true">
           <v-icon>
             mdi-information
@@ -23,17 +23,37 @@
       </div>
     </div>
     <v-expand-transition>
-      <div v-if="isLayer && selected">
-        <v-slider
-          v-model="layerOpacity"
-          class="pt-2 pb-5 pr-5"
-          hide-details
-          :ripple="false"
-          :max="1"
-          :step="0.1"
-          label="Opacity"
-          @end="$emit('update-layer-opacity', { id, opacity: layerOpacity })"
-        />
+      <div v-if="isLayer && selected" class="pt-2 pb-5 pr-5">
+        <v-row no-gutters>
+          <v-col cols="2">
+            <v-tooltip bottom>
+              <template #activator="{on, attrs}">
+                <v-btn
+                  icon
+                  v-bind="attrs"
+                  v-on="on"
+                  @click="$emit('zoom-to-layer-extent', id)"
+                >
+                  <v-icon>
+                    mdi-magnify-plus-outline
+                  </v-icon>
+                </v-btn>
+              </template>
+              <span>Zoom in to layer</span>
+            </v-tooltip>
+          </v-col>
+          <v-col cols="10">
+            <v-slider
+              v-model="layerOpacity"
+              hide-details
+              :ripple="false"
+              :max="1"
+              :step="0.1"
+              label="Opacity"
+              @end="$emit('update-layer-opacity', { id, opacity: layerOpacity })"
+            />
+          </v-col>
+        </v-row>
       </div>
     </v-expand-transition>
   </div>
