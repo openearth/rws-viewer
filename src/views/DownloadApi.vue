@@ -62,7 +62,10 @@
             {{ $t('noFilterSelected') }}
           </p>
 
-          <key-value-filter :filters="availableFiltersForSelectedLayer" @change="handleFilterChange" />
+          <key-value-filter
+            :filters="availableFiltersForSelectedLayer"
+            :date-filters="dateFilters"
+            @change="handleFilterChange" />
         </v-col>
       </v-row>
     </template>
@@ -78,6 +81,15 @@
     >
       {{ $t('download') }}
     </v-btn>
+    <v-alert
+      v-if="requestFailure"
+      border="bottom"
+      colored-border
+      type="warning"
+      elevation="2"
+    >
+    {{ requestFailure }}
+    </v-alert>
   </v-container>
 </template>
 
@@ -95,6 +107,7 @@
       selectedLayerId: null,
       isDownloading: false,
       selectedFilters: null,
+      requestFailure: false,
     }),
 
     computed: {
@@ -126,9 +139,7 @@
         if (!this.selectedLayer) {
           return []
         }
-
         const { layerAttributeArea } = this.selectedLayerForSelection.externalApi.propertyMapping
-
         return this.drawnFeatures.map(feature => feature.properties[layerAttributeArea])
       },
 
@@ -146,19 +157,22 @@
 
       availableFiltersForSelectedLayer() {
         if (this.selectedLayerForSelection?.externalApi.filters) {
-          return this.selectedLayerForSelection.externalApi.filters.split(', ')
+          const filters = this.selectedLayerForSelection.externalApi.filters.split(', ')
+          return filters.concat(this.dateFilters)
         }
 
+        return []
+      },
+      dateFilters() {
+        if (this.selectedLayerForSelection?.externalApi.dateFilters) {
+          return this.selectedLayerForSelection.externalApi.dateFilters.split(', ')
+        }
         return []
       },
     },
 
     methods: {
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
-
-      getDownloadUrl({ url, filters, maxPageSize, formatCsv }) {
-        return generateDownloadUrl({ url, filters, maxPageSize, formatCsv })
-      },
 
       handleSelectionLayerSelect(id) {
         this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === id))
@@ -200,6 +214,7 @@
       },
 
       async handleDownloadClick() {
+        this.requestFailure = false
         const { externalApi } = this.selectedLayerForSelection
         let areas
 
@@ -235,7 +250,7 @@
           fileExtension = 'csv'
         }
 
-        const downloadUrl = this.getDownloadUrl({ ...externalApi, filters: [
+        const downloadUrl = generateDownloadUrl({ ...externalApi, filters: [
           areaFilter,
           ...(this.selectedFilters || []),
         ]})
@@ -252,6 +267,8 @@
         }).finally((result) => {
           this.isDownloading = false
           console.log('result', result)
+        }).catch(err => {
+          this.requestFailure = 'Request failed'
         })
       },
     },
