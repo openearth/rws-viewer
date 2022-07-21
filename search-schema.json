@@ -31,6 +31,10 @@
         "type": "string",
         "description": "Layer to be downloaded available on the service"
       },
+      "externalApiUrl": {
+        "type": "string",
+        "description": "Url of external service, used to download data"
+      },
       "metadata": {
         "type": "array",
         "description": "List of metadata objects for this layer",

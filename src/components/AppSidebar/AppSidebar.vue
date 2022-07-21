@@ -18,7 +18,7 @@
           :key="tab.name"
           :to="`/${viewerConfig}${tab.page}`"
           :ripple="false"
-          exact-path
+          :exact-path="tab.page === '/'"
         >
           {{ $t(tab.name) }}
           <v-icon>{{ tab.icon }}</v-icon>

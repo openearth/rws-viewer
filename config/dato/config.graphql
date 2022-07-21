@@ -11,6 +11,17 @@ query ($first: IntType, $skip: IntType = 0) {
       downloadLayer
       timeFilter
       columnFilter
+      externalApi {
+        id
+        name
+        url
+        propertyMapping
+        apiKey
+        filters
+        dateFilters
+        formatCsv
+        maxPageSize
+      }
       tags {
         title
       }
