@@ -1,7 +1,7 @@
 <template>
   <app-shell :header-title="viewerName">
     <locale-switcher slot="header-right" />
-    
+
     <v-fade-transition mode="out-in">
       <layer-order v-if="wmsLayerIds.length" />
     </v-fade-transition>
@@ -13,6 +13,8 @@
       slot="map"
       :access-token="accessToken"
       mapbox-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
+      :center="mapCenter"
+      :zoom="mapZoom"
       @styledata="setMapLoaded"
     >
       <time-slider
@@ -35,7 +37,7 @@
         @change="addDrawnFeature"
       />
       <mapbox-select-point-control
-        :draw-mode="drawMode" 
+        :draw-mode="drawMode"
         @click="handleFeatureClick"
       />
     </mapbox-map>
@@ -78,7 +80,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'selectedLayerForSelection' ]),
+      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'selectedLayerForSelection' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
@@ -90,14 +92,14 @@
     },
     watch: {
       //Set as default timestamp the last value of the timeExtent array
-      formattedTimeExtent() { 
+      formattedTimeExtent() {
         if (this.formattedTimeExtent.length) {
           this.setSelectedTimestamp(this.formattedTimeExtent[this.formattedTimeExtent.length -1].t1)
         }
       },
     },
     mounted() {
-      this.$router.onReady(this.getAppData)    
+      this.$router.onReady(this.getAppData)
     },
 
     methods: {
