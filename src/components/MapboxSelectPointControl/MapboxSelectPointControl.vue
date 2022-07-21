@@ -36,13 +36,14 @@
         const width = parseInt(style.getPropertyValue('width'))
         const height = parseInt(style.getPropertyValue('height'))
         const { x, y } = event.point
+        console.log('click', bounds, x, y, width, height)
 
         this.$emit('click',{
           bounds,
           x,
           y,
-          width: width,
-          height: height,
+          width,
+          height,
         })
       },
     },

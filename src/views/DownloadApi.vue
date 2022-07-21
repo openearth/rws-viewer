@@ -143,16 +143,16 @@
 
       availableFiltersForSelectedLayer() {
         if (this.selectedLayerForSelection?.externalApi.filters) {
-          return this.selectedLayerForSelection.externalApi.filters.split(', ')
+          const filters = this.selectedLayerForSelection.externalApi.filters.split(', ')
+          return filters.concat(this.dateFilters)
         }
 
         return []
       },
       dateFilters() {
-        if (this.selectedLayerForSelection?.externalApi.filters_date) {
-          return this.selectedLayerForSelection.externalApi.filters_date.split(', ')
+        if (this.selectedLayerForSelection?.externalApi.dateFilters) {
+          return this.selectedLayerForSelection.externalApi.dateFilters.split(', ')
         }
-
         return []
       },
     },
