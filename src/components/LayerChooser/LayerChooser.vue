@@ -43,6 +43,7 @@
       :search="search"
       :filter="activeFilter"
       @input="handleInput"
+      @update:open="handleOpenedFolders"
     >
       <template #prepend="{selected, open, item, indeterminate}">
         <div v-if="!item.layer">
@@ -78,7 +79,7 @@
               <v-icon v-if="item.layer">
                 {{ selected ? 'mdi-layers' : 'mdi-layers-outline' }}
               </v-icon>
-            </v-col>  
+            </v-col>
           </v-row>
         </div>
       </template>
@@ -121,9 +122,11 @@
       searchString: '',
       value: [],
       onlyActive: false,
+      openedItems: [],
     }),
 
     computed: {
+      ...mapGetters('app', [ 'viewerConfig' ]),
       ...mapGetters('data', [ 'displayLayers' ]),
       ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
       layersWithParents() {
@@ -144,9 +147,19 @@
         newValue && this.$refs.tree.updateAll(true)
       },
     },
-
+    mounted () {
+      console.log(this.$refs.tree)
+    },
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity' ]),
+      handleOpenedFolders(newValue) {
+        console.log(newValue, newValue.join(','))
+        const url = new URL(window.location.href)
+        if (newValue.length > 0 ) {
+          url.searchParams.set('folders', newValue.join(','))
+        }
+        this.$router.replace(`/${ this.viewerConfig }/?${ url.searchParams.toString() }`)
+      },
       handleInput(newValue) {
         const added = difference(newValue, this.activeFlattenedLayerIds)
         const removed =  difference(this.activeFlattenedLayerIds, newValue)
@@ -174,6 +187,21 @@
       },
       updateLayerOpacity({ id, opacity }) {
         this.updateWmsLayerOpacity({ id, opacity })
+      },
+      getOpenedNodes(nodes) {
+        console.log('hoi', nodes)
+        const openedNodes = []
+        const checkChildren = (nodes) => {
+          Object.entries(nodes).forEach(node => {
+            console.log(node)
+            if (node[1].isOpen) {
+              openedNodes.push(node[0])
+            }
+            checkChildren(node[1].children)
+          })
+        }
+        checkChildren(nodes)
+        console.log(openedNodes)
       },
     },
   }
