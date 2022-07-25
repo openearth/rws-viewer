@@ -5,10 +5,10 @@ import {
   mapFormatToFileExtension,
 } from '~/lib/download-helpers'
 
-function getUrlAndOutputType({ layer = {}, coordinates = '', format }) {
-
+export default function({ layer = {}, filters = [], format, coordinates  = '' }) {
+  
   const { url } = layer
-  const filter = createDownloadFilter(coordinates)
+  const filter = createDownloadFilter(filters, coordinates)
   const params = createDownloadParameters({ layerData: layer, filter, format })
   
   return {
@@ -16,10 +16,4 @@ function getUrlAndOutputType({ layer = {}, coordinates = '', format }) {
     fileType: mapFormatToFileExtension[format],
   }
   
-}
-
-export default function({ layers = [], coordinates = '', formats = [] }) {
-  return layers.map((layer, index) => (
-    getUrlAndOutputType({ layer, coordinates, format: formats[index] })),
-  )
 }

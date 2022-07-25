@@ -62,7 +62,11 @@
             {{ $t('noFilterSelected') }}
           </p>
 
-          <key-value-filter :filters="availableFiltersForSelectedLayer" @change="handleFilterChange" />
+          <key-value-filter
+            :filters="availableFiltersForSelectedLayer"
+            :comparers="comparers"
+            @change="handleFilterChange"
+          />
         </v-col>
       </v-row>
     </template>
@@ -93,6 +97,19 @@
       selectedLayerId: null,
       isDownloading: false,
       selectedFilters: null,
+      comparers: Object.freeze([
+        'eq',
+        'ne',
+        'lt',
+        'le',
+        'ge',
+        'gt',
+        'in',
+        'notin',
+        'like',
+        'startswith',
+        'endswith',
+      ]),
     }),
 
     computed: {
@@ -183,7 +200,7 @@
           layer: layer.layer,
           coordinates: this.selectionCoordinates,
         })
-
+        
         const { area } = this.selectedLayerForSelection.externalApi.propertyMapping
 
         return features.map(feature => feature.properties[area])
@@ -217,7 +234,7 @@
           areaFilter,
           ...(this.selectedFilters || []),
         ] })
-
+       
         this.isDownloading = true
 
         downloadFromUrl({
