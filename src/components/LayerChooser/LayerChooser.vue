@@ -148,12 +148,13 @@
       },
     },
     mounted () {
-      console.log(this.$refs.tree)
+      const searchParams = new URLSearchParams(window.location.search)
+      const folders = (searchParams.get('folders') || '').split(',')
+      this.$refs.tree.open = folders
     },
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity' ]),
       handleOpenedFolders(newValue) {
-        console.log(newValue, newValue.join(','))
         const url = new URL(window.location.href)
         if (newValue.length > 0 ) {
           url.searchParams.set('folders', newValue.join(','))
