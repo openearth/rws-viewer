@@ -75,6 +75,44 @@
           "type": "string",
           "description": "Layer to be downloaded available on the service"
         },
+        "externalApi": {
+          "name": {
+            "type": "string",
+            "description": "Name of the external service"
+          },
+          "url": {
+            "type": "string",
+            "description": "Url of external service, used to download data"
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "API needed to download data"
+          },
+          "propertyMapping": {
+            "type": "object",
+            "description": "Mapping of properties to external service"
+          },
+          "filters": {
+            "type": "string",
+            "description": "Comma-separated list of filters to be applied to the data"
+          },
+          "date_filters": {
+            "type": "string",
+            "description": "Comma-separated list of filters to be applied to the data"
+          },
+          "format_csv": {
+            "type": "boolean",
+            "description": "Can the filter format=csv be applied on this request"
+          },
+          "max_page_size": {
+            "type": "string",
+            "description": "The max page size of the request"
+          }
+        },
+        "externalApiUrl": {
+          "type": "string",
+          "description": "Url of external service, used to download data"
+        },
         "metadata": {
           "type": "array",
           "description": "List of metadata objects for this layer",
