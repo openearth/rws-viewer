@@ -182,7 +182,8 @@ export default {
     },
     setSelectedLayerForSelection({ commit }, layer) {
       commit('SET_SELECTED_LAYER_FOR_SELECTION', layer)
-    }, setMapCenter({ commit }, coords) {
+    },
+    setMapCenter({ commit }, coords) {
       commit('SET_MAP_CENTER', coords)
     },
     setMapZoom({ commit }, zoom) {

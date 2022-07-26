@@ -7,8 +7,8 @@
           {{ $t('selectDesc') }}
         </p>
 
-        <p class="body-2 mb-0">
-          <v-icon>mdi-information-outline</v-icon> {{ $t('apiWarning') }}
+        <p v-if="maxPageSize" class="body-2 mb-0">
+          <v-icon>mdi-information-outline</v-icon> {{ $t('apiWarning', {maxPageSize}) }}
         </p>
       </v-col>
     </v-row>
@@ -57,7 +57,7 @@
           <h3 class="pb-3">
             {{ $t('filters') }}
           </h3>
-          
+
           <p v-if="!selectedFilters || !selectedFilters.length" class="body-2">
             {{ $t('noFilterSelected') }}
           </p>
@@ -65,12 +65,13 @@
           <key-value-filter
             :filters="availableFiltersForSelectedLayer"
             :comparers="comparers"
+            :date-filters="dateFilters"
             @change="handleFilterChange"
           />
         </v-col>
       </v-row>
     </template>
-    
+
     <v-divider class="my-4" />
 
     <v-btn
@@ -82,6 +83,15 @@
     >
       {{ $t('download') }}
     </v-btn>
+    <v-alert
+      v-if="requestFailure"
+      border="bottom"
+      colored-border
+      type="warning"
+      elevation="2"
+    >
+      {{ requestFailure }}
+    </v-alert>
   </v-container>
 </template>
 
@@ -90,6 +100,8 @@
   import KeyValueFilter from '~/components/KeyValueFilter/KeyValueFilter'
   import { downloadFromUrl, generateDownloadUrl } from '~/lib/external-api'
   import getFeature from '~/lib/get-feature'
+  import { stringify } from 'wkt'
+  import _ from 'lodash'
 
   export default {
     components: { KeyValueFilter },
@@ -110,11 +122,16 @@
         'startswith',
         'endswith',
       ]),
+      requestFailure: false,
     }),
 
     computed: {
       ...mapGetters('map', [ 'drawMode', 'drawnFeatures', 'activeFlattenedLayerIds', 'activeFlattenedLayers', 'selectedLayerForSelection' ]),
       ...mapGetters('data', [ 'flattenedLayers' ]),
+
+      maxPageSize() {
+        return _.get(this.selectedLayer, 'externalApi.maxPageSize')
+      },
 
       activeLayers() {
         return this.activeFlattenedLayerIds
@@ -137,10 +154,8 @@
         if (!this.selectedLayer) {
           return []
         }
-        
-        const { area } = this.selectedLayerForSelection.externalApi.propertyMapping
-
-        return this.drawnFeatures.map(feature => feature.properties[area])
+        const { layerAttributeArea } = this.selectedLayerForSelection.externalApi.propertyMapping
+        return this.drawnFeatures.map(feature => feature.properties[layerAttributeArea])
       },
 
       drawnFeatureCoordinates() {
@@ -157,19 +172,22 @@
 
       availableFiltersForSelectedLayer() {
         if (this.selectedLayerForSelection?.externalApi.filters) {
-          return this.selectedLayerForSelection.externalApi.filters.split(', ')
+          const filters = this.selectedLayerForSelection.externalApi.filters.split(', ')
+          return filters.concat(this.dateFilters)
         }
 
+        return []
+      },
+      dateFilters() {
+        if (this.selectedLayerForSelection?.externalApi.dateFilters) {
+          return this.selectedLayerForSelection.externalApi.dateFilters.split(', ')
+        }
         return []
       },
     },
 
     methods: {
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
-
-      getDownloadUrl({ url, filters }) {
-        return generateDownloadUrl({ url, filters })
-      },
 
       handleSelectionLayerSelect(id) {
         this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === id))
@@ -200,10 +218,10 @@
           layer: layer.layer,
           coordinates: this.selectionCoordinates,
         })
-        
-        const { area } = this.selectedLayerForSelection.externalApi.propertyMapping
 
-        return features.map(feature => feature.properties[area])
+        const { layerAttributeArea } = this.selectedLayerForSelection.externalApi.propertyMapping
+
+        return features.map(feature => feature.properties[layerAttributeArea])
       },
 
       handleFilterChange(value) {
@@ -211,6 +229,7 @@
       },
 
       async handleDownloadClick() {
+        this.requestFailure = false
         const { externalApi } = this.selectedLayerForSelection
         let areas
 
@@ -222,26 +241,49 @@
           areas = await this.getSelectedAreas(this.selectedLayerForSelection)
         }
 
-        // compose a filter definition in the format of KeyValueFilter
-        const areaFilter = {
-          name: externalApi.propertyMapping.area,
-          comparer: 'in',
-          value: `[${ areas.map(area => `'${ area }'`).join(',') }]`,
+        const { area, wkt } = externalApi.propertyMapping
+        const { formatCsv, name, maxPageSize } = externalApi
+
+        let areaFilter = {}
+        if (area) {
+          // compose a filter definition in the format of KeyValueFilter
+          areaFilter = {
+            name: area,
+            comparer: 'in',
+            value: `[${ areas.map(area => `"${ area }"`).join(',') }]`,
+          }
+        } else if (wkt) {
+          areaFilter = {
+            name: wkt,
+            comparer: 'wkt',
+            value: stringify(this.drawnFeatures[0]),
+          }
         }
 
-        // generate download url containing the area filter + configured filters
-        const downloadUrl = this.getDownloadUrl({ ...externalApi, filters: [
+        let fileExtension = 'json'
+        if (formatCsv) {
+          fileExtension = 'csv'
+        }
+
+        const downloadUrl = generateDownloadUrl({ ...externalApi, filters: [
           areaFilter,
           ...(this.selectedFilters || []),
         ] })
-       
+
         this.isDownloading = true
+        const date = new Date(Date.now())
+        const fileName = `${ name }_${ date.toLocaleString() }.${ fileExtension }`
 
         downloadFromUrl({
           url: downloadUrl,
           apiKey: process.env[externalApi.apiKey],
-        }).finally(() => {
+          formatCsv,
+          fileName,
+        }).finally((result) => {
           this.isDownloading = false
+          console.log('result', result)
+        }).catch(err => {
+          this.requestFailure = 'Request failed'
         })
       },
     },

@@ -7,14 +7,41 @@
       <v-col :cols="3">
         <v-select
           v-model="filter.comparer"
-          :items="comparers"
+          :items="dateFilters.includes(filter.name) ? comparers : dateComparers"
           dense
           outlined
           hide-details
         />
       </v-col>
       <v-col :cols="4">
+        <template v-if="dateFilters.includes(filter.name)">
+          <v-btn title="Select Date" @click="handleDateSelectorClick">
+            {{ filter.value || $t('select') }}
+          </v-btn>
+          <v-dialog
+            v-model="showDialog"
+            max-width="280"
+            @click:outside="handleDialogClose"
+          >
+            <v-container class="white pa-0">
+              <v-date-picker
+                v-model="filter.value"
+              />
+              <v-container class="pa-2 d-flex">
+                <v-spacer />
+                <v-btn
+                  color="primary"
+                  text
+                  @click="handleDialogClose"
+                >
+                  {{ $t('close') }}
+                </v-btn>
+              </v-container>
+            </v-container>
+          </v-dialog>
+        </template>
         <v-text-field
+          v-else
           v-model="filter.value"
           dense
           outlined
@@ -42,7 +69,7 @@
         />
       </v-col>
       <v-col :cols="2">
-        <v-btn 
+        <v-btn
           icon
           :title="$t('addFilter')"
           :disabled="!selectedFilter"
@@ -60,7 +87,7 @@
 <script>
   export default {
     props: {
-      filters: { 
+      filters: {  
         type: Array,
         required: true,
       },
@@ -73,19 +100,36 @@
         required: false,
         default: false,
       },
+      dateFilters: {
+        type: Array,
+        required: false,
+        default: () =>[],
+      },
     },
     data() {
       return {
         enabledFilters: [],
         selectedFilter: null,
+        showDialog: false,
+        dateComparers: Object.freeze([ //TODO: make them prop
+          'eq',
+          'ne',
+          'lt',
+          'le',
+          'ge',
+          'gt',
+        ]),
       }
     },
-    computed: {
+    computed: { //TODO: suggestion simplify don't use the allFitlers but just filters
       selectableFilters() {
         if (this.validateValues) {
-          return this.filters.map(filter => filter.name)
+          return this.allFilters.map(filter => filter.name)
         }
-        return this.filters.filter(filter => !this.enabledFilters.find(enabledFilter => enabledFilter.name === filter))
+        return this.allFilters.filter(filter => !this.enabledFilters.find(enabledFilter => enabledFilter.name === filter))
+      },
+      allFilters() {
+        return this.filters.concat(this.dateFilters)
       },
     },
     watch: {
@@ -103,7 +147,6 @@
     },
     mounted() {
       this.selectedFilter = this.selectableFilters[0] 
-      
     },
     methods: {
       addFilter() {
@@ -116,7 +159,13 @@
       },
       removeFilter(filter) {
         this.enabledFilters = this.enabledFilters.filter(enabledFilter => enabledFilter !== filter)
-        this.selectedFilter = this.selectableFilters[0] 
+        this.selectedFilter = this.selectableFilters[0]
+      },
+      handleDialogClose() {
+        this.showDialog = false
+      },
+      handleDateSelectorClick() {
+        this.showDialog = true
       },
     },
   }
