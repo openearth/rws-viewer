@@ -87,7 +87,7 @@
 <script>
   export default {
     props: {
-      filters: {  
+      filters: {
         type: Array,
         required: true,
       },
@@ -121,15 +121,12 @@
         ]),
       }
     },
-    computed: { //TODO: suggestion simplify don't use the allFitlers but just filters
+    computed: {
       selectableFilters() {
         if (this.validateValues) {
-          return this.allFilters.map(filter => filter.name)
+          return this.filters.map(filter => filter.name)
         }
-        return this.allFilters.filter(filter => !this.enabledFilters.find(enabledFilter => enabledFilter.name === filter))
-      },
-      allFilters() {
-        return this.filters.concat(this.dateFilters)
+        return this.filters.filter(filter => !this.enabledFilters.find(enabledFilter => enabledFilter.name === filter))
       },
     },
     watch: {
@@ -146,16 +143,16 @@
       },
     },
     mounted() {
-      this.selectedFilter = this.selectableFilters[0] 
+      this.selectedFilter = this.selectableFilters[0]
     },
     methods: {
       addFilter() {
         this.enabledFilters.push({
           name: this.selectedFilter,
           comparer: this.comparers[0], //default value
-          value: '', 
+          value: '',
         })
-        this.selectedFilter = this.selectableFilters[0] 
+        this.selectedFilter = this.selectableFilters[0]
       },
       removeFilter(filter) {
         this.enabledFilters = this.enabledFilters.filter(enabledFilter => enabledFilter !== filter)
