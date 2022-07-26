@@ -44,5 +44,6 @@
   "selectDesc": "Selecteer een deel van de kaart om te downloaden. Dit kan door te tekenen, of een voorgedefinieerd sectie te kiezen.",
   "selectFilter": "Selecteer een waarde van de onderstaande lijst om de laag te bevra",
   "selectLayerWithTime": "Selecteer een laag uit de lijst om de tijdcomponent in te schakelen",
-  "selectLayersToView": "Selecteer lagen om te bekijken"
+  "selectLayersToView": "Selecteer lagen om te bekijken",
+  "shareUrl": "Deel url"
 }

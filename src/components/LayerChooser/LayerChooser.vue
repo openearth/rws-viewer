@@ -90,13 +90,14 @@
           :selected="selected"
           :parent-ids="item.parentIds.toString()"
           :is-layer="!!item.layer"
-          :has-metadata="!!item.metadata.length"
+          :has-metadata="!!item.metadata.length || getUrl(item) !== ''"
           @update-layer-opacity="updateLayerOpacity"
         >
           <template #info="{ isOpen, close }">
             <layer-info-dialog
               :title="item.name"
               :content="item.metadata"
+              :share-url="getUrl(item)"
               :open="isOpen"
               @close="close"
             />
@@ -112,6 +113,8 @@
   import { mapGetters, mapActions } from 'vuex'
   import LayerInfoDialog from '~/components/LayerInfoDialog/LayerInfoDialog'
   import addParentIdToLayers from '~/lib/add-parent-id-to-layers'
+  import _ from 'lodash'
+
   const LayerControl = () => import('~/components/LayerControl/LayerControl')
 
   export default {
@@ -189,20 +192,20 @@
       updateLayerOpacity({ id, opacity }) {
         this.updateWmsLayerOpacity({ id, opacity })
       },
-      getOpenedNodes(nodes) {
-        console.log('hoi', nodes)
-        const openedNodes = []
-        const checkChildren = (nodes) => {
-          Object.entries(nodes).forEach(node => {
-            console.log(node)
-            if (node[1].isOpen) {
-              openedNodes.push(node[0])
-            }
-            checkChildren(node[1].children)
-          })
+      getUrl(item) {
+        let folders = {}
+        folders = [...item.parentIds]
+        let layers = item.id
+        if (_.get(item, 'children', []).length > 0) {
+          folders.push(item.id)
+          layers = ''
         }
-        checkChildren(nodes)
-        console.log(openedNodes)
+
+        const url = new URL(window.location.href)
+        url.searchParams.set('folders', folders)
+        url.searchParams.set('layers', layers)
+        const shareUrl = `${url.origin}/${ this.viewerConfig }/?${ url.searchParams.toString() }`
+        return shareUrl
       },
     },
   }
