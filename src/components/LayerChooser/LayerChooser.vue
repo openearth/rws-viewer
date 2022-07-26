@@ -42,6 +42,7 @@
       :items="layersWithParents"
       :search="search"
       :filter="activeFilter"
+      :open="openedItems"
       @input="handleInput"
       @update:open="handleOpenedFolders"
     >
@@ -153,12 +154,14 @@
     mounted () {
       const searchParams = new URLSearchParams(window.location.search)
       const folders = (searchParams.get('folders') || '').split(',')
-      this.$refs.tree.open = folders
+      this.openedItems = folders
     },
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity' ]),
-      handleOpenedFolders(newValue) {
+      handleOpenedFolders(newValue, oldValue) {
+        if (newValue.length === 0 && !oldValue) { return }
         const url = new URL(window.location.href)
+        if (url.searchParams.get('folders') === newValue.join(',')) { return }
         if (newValue.length > 0 ) {
           url.searchParams.set('folders', newValue.join(','))
         }
