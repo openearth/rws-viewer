@@ -45,5 +45,6 @@
   "selectAreasDesc": "Select the areas that needs to be included in the download. You can select/deselect areas by clicking on polygons in map.",
   "selectFilter": "Select a value from list below to query the layer",
   "selectLayerWithTime": "Select a layer from the list to enable the time component",
-  "selectLayersToView": "Select layers to view"
+  "selectLayersToView": "Select layers to view",
+  "shareUrl": "Share url"
 }

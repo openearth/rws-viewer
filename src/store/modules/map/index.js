@@ -37,6 +37,8 @@ export default {
     selectedLayerForSelection: state => state.selectedLayerForSelection,
     mapCenter: state => state.mapCenter,
     mapZoom: state => state.mapZoom,
+    filteredLayerId: state => state.filteredLayerId,
+    selectedLayerForSelection: state => state.selectedLayerForSelection,
   },
 
   mutations: {
@@ -105,6 +107,9 @@ export default {
     },
     SET_MAP_ZOOM(state, zoom) {
       state.mapZoom = zoom
+    },
+    SET_SELECTED_LAYER_FOR_SELECTION(state, layer) {
+      state.selectedLayerForSelection = layer
     },
   },
 
@@ -177,7 +182,8 @@ export default {
     updateWmsLayerOpacity({ commit }, { id, opacity }) {
       commit('UPDATE_WMS_LAYER_OPACITY', { id, opacity })
     },
-    setfilteredLayerId({ commit }, id) {
+
+    setFiltersLayerId({ commit }, id) {
       commit('SET_FILTERS_LAYER_ID', id)
     },
     setSelectedLayerForSelection({ commit }, layer) {

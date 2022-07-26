@@ -175,7 +175,7 @@
   import { describeFeatureType, readFeatureProperties } from '~/lib/wfs-filter-helpers'
 
   //import only for test
-  
+
   const NO_SELECTION_ID = 'NO_SELECTION_ID'
 
   export default {
@@ -203,7 +203,7 @@
 
       validUrl() {
         if (!this.selectedLayerData) {
-          return 
+          return
         }
         return Boolean(this.selectedLayerData.downloadUrl) || Boolean(this.selectedLayerData.url)
       },
@@ -303,11 +303,11 @@
           format: this.downloadLayerFormat,
           coordinates: this.selectedCoordinates,
         })
-        
+
 
         this.isGeneratingDownload = true
-    
-        //saveAs(downloadProps.url) 
+
+        //saveAs(downloadProps.url)
         fetch(downloadProps.url)
           .then(res => res.blob())
           .then(blob => {
@@ -317,7 +317,7 @@
             fileLink.href = fileUrl
             fileLink.setAttribute('download',`${ Date.now() }.${ downloadProps.fileType }`)
             document.body.appendChild(fileLink)
-         
+
             fileLink.click()
           })
           .catch(err => {
@@ -327,14 +327,14 @@
             this.isGeneratingDownload = false
           })
 
-      },  
-      handleFilterChange(event) { 
+      },
+      handleFilterChange(event) {
         this.selectedFilters = event
       },
       async getAttributesToFilter() {
-        
+
         const { serviceType, url, layer } = this.selectedLayerData
-        
+
         if (serviceType === 'wfs') {
           const response = await describeFeatureType({
             url,
@@ -342,7 +342,7 @@
           })
           this.availableFiltersForSelectedLayer = readFeatureProperties(response)
         }
-        
+
       },
     },
   }
