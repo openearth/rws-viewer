@@ -24,7 +24,7 @@
         mode="simple-slider"
         @input="onTimingSelection"
       />
-      <v-mapbox-layer
+      <map-layer
         v-for="(layer, index) in wmsLayers"
         :key="layer.id"
         :before="wmsLayerIds[index - 1] || 'gl-draw-polygon-fill-inactive.cold'"
