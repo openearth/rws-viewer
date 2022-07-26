@@ -34,7 +34,7 @@ export function createDownloadFilter(filtersArray = [], coordinates = '') {
       value: validCoordinates,
     } ]
   }
-  console.log('function createDownloadFilter', filtersArray)
+ 
   return filterTemplate(filtersArray)
 }
 

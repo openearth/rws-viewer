@@ -281,7 +281,7 @@
           fileName,
         }).finally((result) => {
           this.isDownloading = false
-          console.log('result', result)
+          
         }).catch(err => {
           this.requestFailure = 'Request failed'
         })
