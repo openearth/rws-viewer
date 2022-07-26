@@ -13,8 +13,8 @@ export default {
     drawMode: null,
     drawnFeatures: [],
     filteredLayerId: null, // id of active layer to filter
-    selectedLayerForSelection: null,
     wmsLayers: [],
+    selectedLayerForSelection: null,
     mapCenter: NEDERLANDS_MAP_CENTER,
     mapZoom: NEDERLANDAS_MAP_ZOOM,
   }),
@@ -32,8 +32,9 @@ export default {
     wmsLayers: state => state.wmsLayers,
     wmsLayerIds: state => (state.activeFlattenedLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
-    selectMode: state => state.selectMode,
-    drawnFeature: state => state.drawnFeatures,
+    drawnFeatures: state => state.drawnFeatures,
+    filteredLayerId: state => state.filteredLayerId,
+    selectedLayerForSelection: state => state.selectedLayerForSelection,
     mapCenter: state => state.mapCenter,
     mapZoom: state => state.mapZoom,
     filteredLayerId: state => state.filteredLayerId,
@@ -97,6 +98,9 @@ export default {
     },
     REMOVE_FILTERS_LAYER_ID(state) {
       state.filteredLayerId = null
+    },
+    SET_SELECTED_LAYER_FOR_SELECTION(state, layer) {
+      state.selectedLayerForSelection = layer
     },
     SET_MAP_CENTER(state, coords) {
       state.mapCenter = coords
@@ -182,11 +186,9 @@ export default {
     setFiltersLayerId({ commit }, id) {
       commit('SET_FILTERS_LAYER_ID', id)
     },
-
     setSelectedLayerForSelection({ commit }, layer) {
       commit('SET_SELECTED_LAYER_FOR_SELECTION', layer)
     },
-
     setMapCenter({ commit }, coords) {
       commit('SET_MAP_CENTER', coords)
     },

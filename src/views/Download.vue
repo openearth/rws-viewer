@@ -42,8 +42,7 @@
 
   export default {
     computed: {
-      ...mapGetters('map', [ 'drawMode', 'selectMode', 'drawnFeatures', 'rasterLayerIds', 'activeFlattenedLayerIds', 'activeFlattenedLayers', 'selectedLayerForSelection']),
-      ...mapGetters('data', [ 'flattenedLayers' ]),
+      ...mapGetters('map', [ 'activeFlattenedLayers', 'activeFlattenedLayerIds' ]),
 
       activeLayers() {
         return this.activeFlattenedLayerIds.map(id => this.activeFlattenedLayers.find(layer => layer.id === id))

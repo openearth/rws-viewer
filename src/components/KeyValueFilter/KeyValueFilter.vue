@@ -7,14 +7,14 @@
       <v-col :cols="3">
         <v-select
           v-model="filter.comparer"
-          :items="dateFilters.includes(filter.name) ? comparers : dateComparers"
+          :items="dateItems(filter)"
           dense
           outlined
           hide-details
         />
       </v-col>
       <v-col :cols="4">
-        <template v-if="dateFilters.includes(filter.name)">
+        <template v-if="checkDateFilters(filter)">
           <v-btn title="Select Date" @click="handleDateSelectorClick">
             {{ filter.value || $t('select') }}
           </v-btn>
@@ -91,9 +91,19 @@
         type: Array,
         required: true,
       },
-      dateFilters: {
+      comparers: {
         type: Array,
         required: true,
+      },
+      validateValues: {
+        type: Boolean,
+        required: false,
+        default: false,
+      },
+      dateFilters: {
+        type: Array,
+        required: false,
+        default: () =>[],
       },
     },
     data() {
@@ -101,20 +111,7 @@
         enabledFilters: [],
         selectedFilter: null,
         showDialog: false,
-        comparers: Object.freeze([
-          'eq',
-          'ne',
-          'lt',
-          'le',
-          'ge',
-          'gt',
-          'in',
-          'notin',
-          'like',
-          'startswith',
-          'endswith',
-        ]),
-        dateComparers: Object.freeze([
+        dateComparers: Object.freeze([ //TODO: make them prop
           'eq',
           'ne',
           'lt',
@@ -126,10 +123,10 @@
     },
     computed: {
       selectableFilters() {
-        return this.allFilters.filter(filter => !this.enabledFilters.find(enabledFilter => enabledFilter.name === filter))
-      },
-      allFilters() {
-        return this.filters.concat(this.dateFilters)
+        if (this.validateValues) {
+          return this.filters.map(filter => filter.name)
+        }
+        return this.filters.filter(filter => !this.enabledFilters.find(enabledFilter => enabledFilter.name === filter))
       },
     },
     watch: {
@@ -138,7 +135,9 @@
       },
       enabledFilters: {
         handler(value) {
-          this.$emit('change', value)
+          if (value.length) {
+            this.$emit('change', value)
+          }
         },
         deep: true,
       },
@@ -150,10 +149,9 @@
       addFilter() {
         this.enabledFilters.push({
           name: this.selectedFilter,
-          comparer: 'eq',
+          comparer: this.comparers[0], //default value
           value: '',
         })
-
         this.selectedFilter = this.selectableFilters[0]
       },
       removeFilter(filter) {
@@ -165,6 +163,12 @@
       },
       handleDateSelectorClick() {
         this.showDialog = true
+      },
+      checkDateFilters(filter) {
+        return this.dateFilters.includes(filter.name)
+      },
+      dateItems(filter) {
+        return this.checkDateFilters(filter) ? this.dateComparers : this.comparers
       },
     },
   }
