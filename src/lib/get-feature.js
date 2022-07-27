@@ -2,7 +2,8 @@ import buildGeoServerUrl from './build-geoserver-url'
 import { createDownloadFilter } from './download-helpers'
 
 
-
+//TODO: why is there another get-feature function defined?
+//see download-helpers createWfsParameters
 export default async function getFeature ({ url, layer, coordinates }) {
   const filter = createDownloadFilter(coordinates)
 

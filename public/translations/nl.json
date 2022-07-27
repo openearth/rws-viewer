@@ -7,9 +7,9 @@
   "close": "Sluiten",
   "collapseAll": "Klap alles in",
   "download": "Download",
-  "downloadData": "Geen laag geselecteerd | Download laag (.zip) | Download {count} lagen (.zip)",
-  "downloadDataSection": "Geen laag geselecteerd | Download sectie uit laag (.zip) | Download sectie uit {count} lagen (.zip)",
-  "downloadDesc": "Kies één of meerdere lagen om te downloaden.",
+  "downloadData": "Geen laag geselecteerd | Download laag",
+  "downloadDataSection": "Geen laag geselecteerd | Download sectie uit laag",
+  "downloadDesc": "Kies één laag om te downloaden.",
   "downloadNotice": "Het genereren van het bestand kan even duren",
   "downloadUnavailable": "Het downloaden van data is nog niet beschikbaar voor één of meerdere lagen.",
   "drawPolygon": "Teken veelhoek",
@@ -22,7 +22,7 @@
   "filterViewMessage": "Selecteer een of meer lagen met het klokpictogram om de filters in te schakelen",
   "filters": "Filters",
   "formats": "Indelingen",
-  "formatsDesc": "Selecteer download indeling voor elke laag.",
+  "formatsDesc": "Selecteer download indeling voor de laag.",
   "labelFilter": "Geen vooraf gedefinieerd filter",
   "labelLayerWithTime": "Selecteer uit zichtbare lagen met klokpictogram",
   "layerFormats": "Selecteer uit beschikbare indelingen",
@@ -44,5 +44,6 @@
   "selectDesc": "Selecteer een deel van de kaart om te downloaden. Dit kan door te tekenen, of een voorgedefinieerd sectie te kiezen.",
   "selectFilter": "Selecteer een waarde van de onderstaande lijst om de laag te bevra",
   "selectLayerWithTime": "Selecteer een laag uit de lijst om de tijdcomponent in te schakelen",
-  "selectLayersToView": "Selecteer lagen om te bekijken"
+  "selectLayersToView": "Selecteer lagen om te bekijken",
+  "shareUrl": "Deel url"
 }

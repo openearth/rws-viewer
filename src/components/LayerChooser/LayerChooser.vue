@@ -42,7 +42,9 @@
       :items="layersWithParents"
       :search="search"
       :filter="activeFilter"
+      :open="openedItems"
       @input="handleInput"
+      @update:open="handleOpenedFolders"
     >
       <template #prepend="{selected, open, item, indeterminate}">
         <div v-if="!item.layer">
@@ -78,7 +80,7 @@
               <v-icon v-if="item.layer">
                 {{ selected ? 'mdi-layers' : 'mdi-layers-outline' }}
               </v-icon>
-            </v-col>  
+            </v-col>
           </v-row>
         </div>
       </template>
@@ -89,13 +91,14 @@
           :selected="selected"
           :parent-ids="item.parentIds.toString()"
           :is-layer="!!item.layer"
-          :has-metadata="!!item.metadata.length"
+          :has-metadata="!!item.metadata.length || getUrl(item) !== ''"
           @update-layer-opacity="updateLayerOpacity"
         >
           <template #info="{ isOpen, close }">
             <layer-info-dialog
               :title="item.name"
               :content="item.metadata"
+              :share-url="getUrl(item)"
               :open="isOpen"
               @close="close"
             />
@@ -111,6 +114,8 @@
   import { mapGetters, mapActions } from 'vuex'
   import LayerInfoDialog from '~/components/LayerInfoDialog/LayerInfoDialog'
   import addParentIdToLayers from '~/lib/add-parent-id-to-layers'
+  import _ from 'lodash'
+
   const LayerControl = () => import('~/components/LayerControl/LayerControl')
 
   export default {
@@ -121,9 +126,11 @@
       searchString: '',
       value: [],
       onlyActive: false,
+      openedItems: [],
     }),
 
     computed: {
+      ...mapGetters('app', [ 'viewerConfig' ]),
       ...mapGetters('data', [ 'displayLayers' ]),
       ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
       layersWithParents() {
@@ -144,9 +151,22 @@
         newValue && this.$refs.tree.updateAll(true)
       },
     },
-
+    mounted () {
+      const searchParams = new URLSearchParams(window.location.search)
+      const folders = (searchParams.get('folders') || '').split(',')
+      this.openedItems = folders
+    },
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity' ]),
+      handleOpenedFolders(newValue, oldValue) {
+        if (newValue.length === 0 && !oldValue) { return }
+        const url = new URL(window.location.href)
+        if (url.searchParams.get('folders') === newValue.join(',')) { return }
+        if (newValue.length > 0 ) {
+          url.searchParams.set('folders', newValue.join(','))
+        }
+        this.$router.replace(`/${ this.viewerConfig }/?${ url.searchParams.toString() }`)
+      },
       handleInput(newValue) {
         const added = difference(newValue, this.activeFlattenedLayerIds)
         const removed =  difference(this.activeFlattenedLayerIds, newValue)
@@ -174,6 +194,21 @@
       },
       updateLayerOpacity({ id, opacity }) {
         this.updateWmsLayerOpacity({ id, opacity })
+      },
+      getUrl(item) {
+        let folders = {}
+        folders = [...item.parentIds]
+        let layers = item.id
+        if (_.get(item, 'children', []).length > 0) {
+          folders.push(item.id)
+          layers = ''
+        }
+
+        const url = new URL(window.location.href)
+        url.searchParams.set('folders', folders)
+        url.searchParams.set('layers', layers)
+        const shareUrl = `${url.origin}/${ this.viewerConfig }/?${ url.searchParams.toString() }`
+        return shareUrl
       },
     },
   }

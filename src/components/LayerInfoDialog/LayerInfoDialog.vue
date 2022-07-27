@@ -29,6 +29,20 @@
               </dt>
               <dd v-html="item.value" />
             </div>
+            <div>
+              <dt class="font-weight-bold">
+                {{ $t('shareUrl') }}
+                <v-btn icon @click="copyUrlToClipboard">
+                  <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
+                </v-btn>
+              </dt>
+              <dd>
+                <v-text-field
+                  ref="share"
+                  :value="shareUrl"
+                />
+              </dd>
+            </div>
           </dl>
         </v-card-text>
       </div>
@@ -51,10 +65,18 @@
         type: Array,
         default: () => [],
       },
+      shareUrl: {
+        type: String,
+        default: '',
+      },
     },
     methods: {
       close() {
         this.$emit('close')
+      },
+      copyUrlToClipboard() {
+        navigator.clipboard.writeText(this.shareUrl)
+        alert(`The following url is copied to clipboard! ${this.shareUrl }`)
       },
     },
   }

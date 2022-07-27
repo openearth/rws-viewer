@@ -64,8 +64,10 @@
 
           <key-value-filter
             :filters="availableFiltersForSelectedLayer"
+            :comparers="comparers"
             :date-filters="dateFilters"
-            @change="handleFilterChange" />
+            @change="handleFilterChange"
+          />
         </v-col>
       </v-row>
     </template>
@@ -88,7 +90,7 @@
       type="warning"
       elevation="2"
     >
-    {{ requestFailure }}
+      {{ requestFailure }}
     </v-alert>
   </v-container>
 </template>
@@ -107,6 +109,19 @@
       selectedLayerId: null,
       isDownloading: false,
       selectedFilters: null,
+      comparers: Object.freeze([
+        'eq',
+        'ne',
+        'lt',
+        'le',
+        'ge',
+        'gt',
+        'in',
+        'notin',
+        'like',
+        'startswith',
+        'endswith',
+      ]),
       requestFailure: false,
     }),
 
@@ -253,11 +268,11 @@
         const downloadUrl = generateDownloadUrl({ ...externalApi, filters: [
           areaFilter,
           ...(this.selectedFilters || []),
-        ]})
+        ] })
 
         this.isDownloading = true
         const date = new Date(Date.now())
-        const fileName = `${name}_${date.toLocaleString()}.${fileExtension}`
+        const fileName = `${ name }_${ date.toLocaleString() }.${ fileExtension }`
 
         downloadFromUrl({
           url: downloadUrl,
@@ -266,7 +281,7 @@
           fileName,
         }).finally((result) => {
           this.isDownloading = false
-          console.log('result', result)
+          
         }).catch(err => {
           this.requestFailure = 'Request failed'
         })

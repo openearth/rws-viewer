@@ -73,17 +73,17 @@
       <v-row>
         <v-col>
           <v-select
-            v-model="downloadLayers"
+            v-model="downloadLayer"
             :label="$t('layerSelection')"
             :items="activeLayersList"
             dense
-            multiple
             outlined
             hide-details
+            @change="getAttributesToFilter"
           />
           <transition name="fade" mode="out-in">
             <v-alert
-              v-if="!allUrlsAreValid"
+              v-if="!validUrl && downloadLayer"
               class="mt-2 mb-0"
               dense
               outlined
@@ -94,7 +94,7 @@
           </transition>
         </v-col>
       </v-row>
-      <template v-if="downloadLayers.length">
+      <template v-if="downloadLayer">
         <v-row>
           <v-col>
             <h4>{{ $t('formats') }}</h4>
@@ -106,10 +106,23 @@
         <v-row>
           <v-col>
             <download-format-chooser
-              v-for="(id, index) in downloadLayers"
-              :key="id"
-              v-model="downloadLayersFormats[index]"
-              :layer-id="id"
+              v-model="downloadLayerFormat"
+              :layer-id="downloadLayer"
+            />
+          </v-col>
+        </v-row>
+      </template>
+      <template v-if="downloadLayer">
+        <v-row>
+          <v-col>
+            <h4 class="pb-3">
+              {{ $t('filters') }}
+            </h4>
+            <key-value-filter
+              :filters="availableFiltersForSelectedLayer"
+              :comparers="comparers"
+              :validate-values="true"
+              @change="handleFilterChange"
             />
           </v-col>
         </v-row>
@@ -125,7 +138,7 @@
             color="primary"
             block
             :ripple="false"
-            :disabled="!downloadLayers.length || isGeneratingDownload || !allUrlsAreValid"
+            :disabled="!downloadLayer|| isGeneratingDownload || !validUrl"
             :loading="isGeneratingDownload"
             @click="onDownloadClick"
           >
@@ -136,7 +149,7 @@
           </v-btn>
           <transition name="fade">
             <v-alert
-              v-if="downloadLayers.length && allUrlsAreValid"
+              v-if="downloadLayer && validUrl"
               class="mt-2 mb-0"
               dense
               outlined
@@ -152,27 +165,32 @@
 </template>
 
 <script>
-  import JSZip from 'jszip'
-  import JSZipUtils from 'jszip-utils'
+
   import { saveAs } from 'file-saver'
   import { mapActions, mapGetters } from 'vuex'
+  import KeyValueFilter from '~/components/KeyValueFilter/KeyValueFilter'
   import DownloadFormatChooser from '~/components/DownloadFormatChooser/DownloadFormatChooser.vue'
   import metaRepo from '~/repo/metaRepo'
   import buildDownloadUrl from '~/lib/build-download-url'
+  import { describeFeatureType, readFeatureProperties } from '~/lib/wfs-filter-helpers'
+
+  //import only for test
 
   const NO_SELECTION_ID = 'NO_SELECTION_ID'
 
   export default {
-    components: { DownloadFormatChooser },
+    components: { DownloadFormatChooser, KeyValueFilter },
 
     data: () => ({
       selectedLayer: null,
-      downloadLayersFormats: [],
-      downloadLayers: [],
-      downloadFormats: [],
+      downloadLayerFormat: null,
+      downloadLayer: null,
       isGeneratingDownload: false,
       preDefinedAreas: [],
       selectedArea: null,
+      availableFiltersForSelectedLayer: [],
+      selectedFilters: [],
+      comparers: [ '=', '<>', '<', '>', '<=', '>=', 'Like', 'Between' ],
     }),
 
     computed: {
@@ -183,14 +201,17 @@
         return this.activeFlattenedLayerIds.map(id => this.activeFlattenedLayers.find(layer => layer.id === id))
       },
 
-      allUrlsAreValid() {
-        return this.selectedLayerData.every(layer => Boolean(layer.downloadUrl) || Boolean(layer.url))
+      validUrl() {
+        if (!this.selectedLayerData) {
+          return
+        }
+        return Boolean(this.selectedLayerData.downloadUrl) || Boolean(this.selectedLayerData.url)
       },
 
       buttonText() {
         return this.selectedArea
-          ? this.$tc('downloadDataSection', this.downloadLayers.length)
-          : this.$tc('downloadData', this.downloadLayers.length)
+          ? this.$tc('downloadDataSection', this.downloadLayer)
+          : this.$tc('downloadData', this.downloadLayer)
       },
 
       drawnFeatureCoordinates() {
@@ -222,7 +243,7 @@
       },
 
       selectedLayerData() {
-        return this.downloadLayers.map(id => this.activeLayers.find(layer => layer.id === id))
+        return this.activeLayers.find(layer => layer.id === this.downloadLayer)
       },
 
       selectionCoordinates() {
@@ -234,7 +255,7 @@
       activeFlattenedLayerIds(val, oldVal) {
         if (val !== oldVal) {
           // if activeFlattenedLayerIds change, reset selected layers in dropdown.
-          this.downloadLayers = []
+          this.downloadLayer = null
         }
       },
     },
@@ -276,32 +297,52 @@
       },
 
       onDownloadClick() {
-        const urls = buildDownloadUrl({
-          layers: this.selectedLayerData,
-          coordinates: this.selectionCoordinates,
-          formats: this.downloadLayersFormats,
+        const downloadProps = buildDownloadUrl({
+          layer: this.selectedLayerData,
+          filters: this.selectedFilters,
+          format: this.downloadLayerFormat,
+          coordinates: this.selectedCoordinates,
         })
+
 
         this.isGeneratingDownload = true
 
-        this.generateZipFile(urls)
-          .then((content) => {
-            saveAs(content, 'layers.zip')
+        //saveAs(downloadProps.url)
+        fetch(downloadProps.url)
+          .then(res => res.blob())
+          .then(blob => {
+            const fileUrl = window.URL.createObjectURL(blob)
+            const fileLink = document.createElement('a')
+
+            fileLink.href = fileUrl
+            fileLink.setAttribute('download',`${ Date.now() }.${ downloadProps.fileType }`)
+            document.body.appendChild(fileLink)
+
+            fileLink.click()
+          })
+          .catch(err => {
+            console.log(err)
+          })
+          .finally(()=>{
             this.isGeneratingDownload = false
           })
+
       },
+      handleFilterChange(event) {
+        this.selectedFilters = event
+      },
+      async getAttributesToFilter() {
 
-      async generateZipFile(urls) {
-        let zip = new JSZip()
+        const { serviceType, url, layer } = this.selectedLayerData
 
-        return Promise.all(urls.map(async ({ url, fileType }, index) => {
-          const filename = `${ this.selectedLayerData[index].layer }.${ fileType }`
+        if (serviceType === 'wfs') {
+          const response = await describeFeatureType({
+            url,
+            layer,
+          })
+          this.availableFiltersForSelectedLayer = readFeatureProperties(response)
+        }
 
-          return JSZipUtils.getBinaryContent(url)
-            .then(data => zip.file(filename, data, { binary: true }))
-            .catch(err => console.log(err))
-        }))
-          .then(() => zip.generateAsync({ type: 'blob' }))
       },
     },
   }
