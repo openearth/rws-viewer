@@ -15,6 +15,7 @@
   "drawPolygon": "Draw polygon",
   "selectFeatures": "Select features",
   "chooseLayer": "Choose a layer for the selection",
+  "chooseApi": "Choose an Api for the selectino",
   "drawRectangle": "Draw rectangle",
   "expandAll": "Expand all",
   "favourites": "Favourites",

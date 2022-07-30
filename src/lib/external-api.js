@@ -40,8 +40,5 @@ export const downloadFromUrl = ({ url, apiKey, formatCsv, fileName }) => {
 
         saveAs(blob, fileName)
       })
-      .catch(err => {
-        console.log(err)
-      })
     }
 }
