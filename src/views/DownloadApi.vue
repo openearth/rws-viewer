@@ -264,6 +264,12 @@
         const { formatCsv, name } = externalApi
 
         let areaFilter = {}
+        
+        /* 
+        
+        TODO: We need to find a solution for SOVON. not more than 
+                            
+        */
         if (areas) {
           // compose a filter definition in the format of KeyValueFilter
           areaFilter = {
@@ -271,7 +277,7 @@
             comparer: 'in',
             value: `[${ selectedAreas.map(area => `"${ area }"`).join(',') }]`,
           }
-        } else if (areas) {
+        } else if (area) { //TODO: this is not working correct 
           // compose a filter definition in the format of KeyValueFilter
           areaFilter = {
             name: area,
@@ -309,7 +315,7 @@
           this.isDownloading = false
         }).catch(err => {
           console.log('ERROR', err)
-          this.requestFailure = `Request failed: ${err}`
+          this.requestFailure = `Request failed: ${ err }`
         })
       },
     },
