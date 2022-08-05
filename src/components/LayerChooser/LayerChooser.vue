@@ -160,9 +160,13 @@
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity', 'updateZoomExtent' ]),
       handleOpenedFolders(newValue, oldValue) {
-        if (newValue.length === 0 && !oldValue) { return }
+        if (newValue.length === 0 && !oldValue) {
+          return 
+        }
         const url = new URL(window.location.href)
-        if (url.searchParams.get('folders') === newValue.join(',')) { return }
+        if (url.searchParams.get('folders') === newValue.join(',')) {
+          return 
+        }
         if (newValue.length > 0 ) {
           url.searchParams.set('folders', newValue.join(','))
         }
@@ -198,9 +202,10 @@
       },
       zoomToLayerExtent(id) {
         this.updateZoomExtent(id)
+      },
       getUrl(item) {
         let folders = {}
-        folders = [...item.parentIds]
+        folders = [ ...item.parentIds ]
         let layers = item.id
         if (_.get(item, 'children', []).length > 0) {
           folders.push(item.id)
@@ -210,7 +215,7 @@
         const url = new URL(window.location.href)
         url.searchParams.set('folders', folders)
         url.searchParams.set('layers', layers)
-        const shareUrl = `${url.origin}/${ this.viewerConfig }/?${ url.searchParams.toString() }`
+        const shareUrl = `${ url.origin }/${ this.viewerConfig }/?${ url.searchParams.toString() }`
         return shareUrl
       },
     },
