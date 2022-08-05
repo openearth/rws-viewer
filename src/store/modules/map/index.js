@@ -17,6 +17,7 @@ export default {
     selectedLayerForSelection: null,
     mapCenter: NEDERLANDS_MAP_CENTER,
     mapZoom: NEDERLANDAS_MAP_ZOOM,
+    zoomExtent: [], 
   }),
 
   getters: {
@@ -37,6 +38,7 @@ export default {
     selectedLayerForSelection: state => state.selectedLayerForSelection,
     mapCenter: state => state.mapCenter,
     mapZoom: state => state.mapZoom,
+    zoomExtent: state => state.zoomExtent,
     filteredLayerId: state => state.filteredLayerId,
     selectedLayerForSelection: state => state.selectedLayerForSelection,
   },
@@ -108,6 +110,9 @@ export default {
     SET_MAP_ZOOM(state, zoom) {
       state.mapZoom = zoom
     },
+    UPDATE_ZOOM_EXTENT(state, bbox) {
+      state.zoomExtent = bbox
+    },
     SET_SELECTED_LAYER_FOR_SELECTION(state, layer) {
       state.selectedLayerForSelection = layer
     },
@@ -124,10 +129,10 @@ export default {
       layersToAdd.forEach((layer) => {
         getWmsCapabilities(layer.url)
           .then(capabilities => getLayerProperties(capabilities, layer.layer))
-          .then(({ serviceType, timeExtent, wmsVersion }) => {
-            commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion } } )
-            commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion } }))
-          },
+          .then(({ serviceType, timeExtent, wmsVersion, bbox }) => {
+            commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } } )
+            commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } }))
+          }, 
           )
       })
     },
@@ -194,6 +199,13 @@ export default {
     },
     setMapZoom({ commit }, zoom) {
       commit('SET_MAP_ZOOM', zoom)
+    },
+    updateZoomExtent({ commit, state }, id) {
+      //updates zoom extent based on the bbox of the layer. 
+      //input is the id of the layer
+      //activeFlattenedLayers
+      const layerToZoom = state.activeFlattenedLayers.find(layer => layer.id === id)
+      commit('UPDATE_ZOOM_EXTENT', layerToZoom.bbox)
     },
   },
 }

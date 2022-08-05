@@ -60,7 +60,7 @@
       },
 
       showApiTab() {
-        return this.activeLayers.some(layer => layer.externalApi)
+        return this.activeLayers.some(layer => layer.externalApi.length)
       },
     },
     methods: {
