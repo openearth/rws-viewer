@@ -57,10 +57,11 @@
         this.chosenFormat = newValue
       },
     },
-
+    
     async mounted() {
       const serviceUrl = this.layerToDownload.downloadUrl || this.layerToDownload.url
       const serviceType = this.layerToDownload.serviceType 
+      //wfs or wcs capabilities to read the supported formats to download the layer
       const capabilities = await getCapabilities(serviceUrl, serviceType)
       
       this.supportedFormats = getSupportedOutputFormats(serviceType, capabilities)

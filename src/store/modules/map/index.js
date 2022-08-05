@@ -11,9 +11,10 @@ export default {
     mapLoaded: false,
     activeFlattenedLayers: [],
     drawMode: null,
-    drawnFeature: null,
+    drawnFeatures: [],
     filteredLayerId: null, // id of active layer to filter
-    wmsLayers: [], 
+    wmsLayers: [],
+    selectedLayerForSelection: null,
     mapCenter: NEDERLANDS_MAP_CENTER,
     mapZoom: NEDERLANDAS_MAP_ZOOM,
     zoomExtent: [], 
@@ -21,7 +22,7 @@ export default {
 
   getters: {
     mapLoaded: state => state.mapLoaded,
-    activeFlattenedLayers: state => (state.mapLoaded && state.activeFlattenedLayers) || [], 
+    activeFlattenedLayers: state => (state.mapLoaded && state.activeFlattenedLayers) || [],
     activeFlattenedLayerIds: state => (state.activeFlattenedLayers || []).map(({ id }) => id),
     activeFlattenedLayersIdsWithTimeOption (state, getters) {
       if (!getters.activeFlattenedLayers) {
@@ -32,11 +33,14 @@ export default {
     wmsLayers: state => state.wmsLayers,
     wmsLayerIds: state => (state.activeFlattenedLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
-    drawnFeature: state => state.drawnFeature,
+    drawnFeatures: state => state.drawnFeatures,
     filteredLayerId: state => state.filteredLayerId,
+    selectedLayerForSelection: state => state.selectedLayerForSelection,
     mapCenter: state => state.mapCenter,
     mapZoom: state => state.mapZoom,
     zoomExtent: state => state.zoomExtent,
+    filteredLayerId: state => state.filteredLayerId,
+    selectedLayerForSelection: state => state.selectedLayerForSelection,
   },
 
   mutations: {
@@ -66,8 +70,19 @@ export default {
     SET_DRAW_MODE(state, { mode }) {
       state.drawMode = mode
     },
-    SET_DRAWN_FEATURE(state, feature) {
-      state.drawnFeature = Object.freeze(feature)
+    ADD_DRAWN_FEATURE(state, feature) {
+      if (!state.drawnFeatures.find(f => f.properties.gebiedid === feature.properties.gebiedid)) {
+        state.drawnFeatures = [
+          ...state.drawnFeatures,
+          feature,
+        ]
+      }
+    },
+    REMOVE_DRAWN_FEATURE(state, feature) {
+      state.drawnFeatures = state.drawnFeatures.filter(f => f.properties.gebiedid !== feature.properties.gebiedid)
+    },
+    SET_DRAWN_FEATURES(state, feature) {
+      state.drawnFeatures = Object.freeze(feature)
     },
     UPDATE_WMS_LAYER_OPACITY(state, { id, opacity }) {
       const layerToUpdate = state.wmsLayers.find(layer => layer.id === id)
@@ -86,6 +101,9 @@ export default {
     REMOVE_FILTERS_LAYER_ID(state) {
       state.filteredLayerId = null
     },
+    SET_SELECTED_LAYER_FOR_SELECTION(state, layer) {
+      state.selectedLayerForSelection = layer
+    },
     SET_MAP_CENTER(state, coords) {
       state.mapCenter = coords
     },
@@ -95,6 +113,9 @@ export default {
     UPDATE_ZOOM_EXTENT(state, bbox) {
       state.zoomExtent = bbox
     },
+    SET_SELECTED_LAYER_FOR_SELECTION(state, layer) {
+      state.selectedLayerForSelection = layer
+    },
   },
 
   actions: {
@@ -102,9 +123,9 @@ export default {
       commit('SET_MAP_LOADED')
     },
     loadLayerOnMap({ commit, state }, { layers }) {
-      
+
       const layersToAdd = difference(layers , state.activeFlattenedLayers)
-      
+
       layersToAdd.forEach((layer) => {
         getWmsCapabilities(layer.url)
           .then(capabilities => getLayerProperties(capabilities, layer.layer))
@@ -113,18 +134,18 @@ export default {
             commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } }))
           }, 
           )
-      })  
+      })
     },
     reloadLayerOnMap({ commit, state, rootState }) {
-      /* If a layer has the time option true, 
-      then in the filter tab the user can load on 
+      /* If a layer has the time option true,
+      then in the filter tab the user can load on
       the map the layer with a new time or a new cql filter */
-     
+
       const { filteredLayerId, activeFlattenedLayers } = state
       commit('REMOVE_WMS_LAYER', filteredLayerId)
       const { selectedTimestamp, cqlFilter } = rootState.data
       const layer = addFilterAttributesToLayer(activeFlattenedLayers, filteredLayerId, selectedTimestamp, cqlFilter )
-      
+
       commit('ADD_WMS_LAYER', buildWmsLayer(layer))
     },
     removeLayerFromMap({ commit }, { layers }) {
@@ -133,7 +154,7 @@ export default {
         commit('REMOVE_WMS_LAYER', layer.id)
       })
     },
-    
+
     removefilteredLayerId({ commit }) {
       commit('REMOVE_FILTERS_LAYER_ID')
     },
@@ -147,22 +168,31 @@ export default {
       commit('SET_DRAW_MODE', { mode: modeToCommit })
     },
 
-    setDrawnFeature({ commit, state }, feature) {
-      if (state.drawMode) {
-        commit('SET_DRAW_MODE', { mode: null })
-      }
-      commit('SET_DRAWN_FEATURE', feature)
+    addDrawnFeature({ commit }, feature) {
+      commit('ADD_DRAWN_FEATURE', feature)
     },
 
-    clearDrawnFeature({ commit }) {
-      commit('SET_DRAWN_FEATURE', null)
+    removeDrawnFeature({ commit }, feature) {
+      commit('REMOVE_DRAWN_FEATURE', feature)
+    },
+
+    setDrawnFeatures({ commit }, features) {
+      commit('SET_DRAWN_FEATURES', features)
+    },
+
+    clearDrawnFeatures({ commit }) {
+      commit('SET_DRAWN_FEATURES', [])
     },
 
     updateWmsLayerOpacity({ commit }, { id, opacity }) {
       commit('UPDATE_WMS_LAYER_OPACITY', { id, opacity })
     },
-    setfilteredLayerId({ commit }, id) {
+
+    setFiltersLayerId({ commit }, id) {
       commit('SET_FILTERS_LAYER_ID', id)
+    },
+    setSelectedLayerForSelection({ commit }, layer) {
+      commit('SET_SELECTED_LAYER_FOR_SELECTION', layer)
     },
     setMapCenter({ commit }, coords) {
       commit('SET_MAP_CENTER', coords)
