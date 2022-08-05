@@ -16,6 +16,7 @@
   "drawRectangle": "Teken rechthoek",
   "selectFeatures": "Selecteer features",
   "chooseLayer": "Kies een laag voor de selectie",
+  "chooseApi": "Kies een API voor de selectie.",
   "expandAll": "Klap alles uit",
   "favourites": "Favorieten",
   "filterByTag": "Filteren op zoekterm",

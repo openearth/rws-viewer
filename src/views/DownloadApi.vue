@@ -14,29 +14,6 @@
     </v-row>
     <v-row>
       <v-col>
-        <v-btn
-          :color="drawMode === 'static' ? 'primary' : null"
-          block
-          :ripple="false"
-          @click="onDrawModeSelect('static')"
-        >
-          {{ $t('selectFeatures') }}
-        </v-btn>
-      </v-col>
-      <v-col>
-        <v-btn
-          :color="drawMode === 'rectangle' ? 'primary' : null"
-          block
-          :ripple="false"
-          @click="onDrawModeSelect('rectangle')"
-        >
-          {{ $t('drawRectangle') }}
-        </v-btn>
-      </v-col>
-    </v-row>
-
-    <v-row v-if="['static', 'rectangle'].includes(drawMode)">
-      <v-col>
         <v-select
           :value="selectedLayerForSelection && selectedLayerForSelection.id"
           :label="$t('chooseLayer')"
@@ -48,7 +25,43 @@
         />
       </v-col>
     </v-row>
-
+    <v-row>
+      <v-col>
+        <v-select
+          v-if="selectedLayerForSelection && selectedLayerForSelection.id"
+          v-model="selectedApi"
+          :label="$t('chooseApi')"
+          :items="selectedLayerForSelection.externalApi"
+          item-text="name"
+          dense
+          outlined
+          hide-details
+          return-object
+        />
+      </v-col>
+    </v-row>
+    <v-row v-if="selectedApi">
+      <v-col>
+        <v-btn
+          :color="drawMode === 'static' ? 'primary' : null"
+          block
+          :ripple="false"
+          @click="onDrawModeSelect('static')"
+        >
+          {{ $t('selectFeatures') }}
+        </v-btn>
+      </v-col>
+      <v-col v-if="multipleAreas">
+        <v-btn
+          :color="drawMode === 'rectangle' ? 'primary' : null"
+          block
+          :ripple="false"
+          @click="onDrawModeSelect('rectangle')"
+        >
+          {{ $t('drawRectangle') }}
+        </v-btn>
+      </v-col>
+    </v-row>
     <template v-if="availableFiltersForSelectedLayer.length">
       <v-divider class="my-4" />
 
@@ -123,6 +136,7 @@
         'endswith',
       ]),
       requestFailure: false,
+      selectedApi: null,
     }),
 
     computed: {
@@ -130,7 +144,7 @@
       ...mapGetters('data', [ 'flattenedLayers' ]),
 
       maxPageSize() {
-        return _.get(this.selectedLayer, 'externalApi.maxPageSize')
+        return _.get(this.selectedApi, 'maxPageSize')
       },
 
       activeLayers() {
@@ -154,7 +168,7 @@
         if (!this.selectedLayer) {
           return []
         }
-        const { layerAttributeArea } = this.selectedLayerForSelection.externalApi.propertyMapping
+        const { layerAttributeArea } = _.get(this.selectedApi, 'propertyMapping', {})
         return this.drawnFeatures.map(feature => feature.properties[layerAttributeArea])
       },
 
@@ -171,18 +185,21 @@
       },
 
       availableFiltersForSelectedLayer() {
-        if (this.selectedLayerForSelection?.externalApi.filters) {
-          const filters = this.selectedLayerForSelection.externalApi.filters.split(', ')
+        if (this.selectedApi?.filters) {
+          const filters = this.selectedApi.filters.split(', ')
           return filters.concat(this.dateFilters)
         }
 
         return []
       },
       dateFilters() {
-        if (this.selectedLayerForSelection?.externalApi.dateFilters) {
-          return this.selectedLayerForSelection.externalApi.dateFilters.split(', ')
+        if (this.selectedApi?.dateFilters) {
+          return this.selectedApi.dateFilters.split(', ')
         }
         return []
+      },
+      multipleAreas() {
+        return _.has( this.selectedApi, 'propertyMapping.areas')
       },
     },
 
@@ -192,6 +209,7 @@
       handleSelectionLayerSelect(id) {
         this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === id))
         this.selectedFilters = null
+        this.requestFailure = false
 
         if (this.drawMode === 'static') {
           this.clearDrawnFeatures()
@@ -219,38 +237,52 @@
           coordinates: this.selectionCoordinates,
         })
 
-        const { layerAttributeArea } = this.selectedLayerForSelection.externalApi.propertyMapping
+        const { layerAttributeArea } = this.selectedApi.propertyMapping
 
         return features.map(feature => feature.properties[layerAttributeArea])
       },
 
       handleFilterChange(value) {
         this.selectedFilters = value
+        this.requestFailure = false
       },
 
       async handleDownloadClick() {
         this.requestFailure = false
-        const { externalApi } = this.selectedLayerForSelection
-        let areas
+        const externalApi = this.selectedApi
+        let selectedAreas
 
         if (this.drawMode === 'static') {
           // when drawmode is we can use selectedAreas (derived from the drawnFeatures) directly
-          areas = this.selectedAreas
+          selectedAreas = this.selectedAreas
         } else if (this.drawMode === 'rectangle') {
           // if the user has drawn a rectangle, we need to fetch the areas in the rectangle first
-          areas = await this.getSelectedAreas(this.selectedLayerForSelection)
+          selectedAreas = await this.getSelectedAreas(this.selectedLayerForSelection)
         }
 
-        const { area, wkt } = externalApi.propertyMapping
-        const { formatCsv, name, maxPageSize } = externalApi
+        const { area, wkt, areas } = externalApi.propertyMapping
+        const { formatCsv, name } = externalApi
 
         let areaFilter = {}
-        if (area) {
+        
+        /* 
+        
+        TODO: We need to find a solution for SOVON. not more than 
+                            
+        */
+        if (areas) {
+          // compose a filter definition in the format of KeyValueFilter
+          areaFilter = {
+            name: areas,
+            comparer: 'in',
+            value: `[${ selectedAreas.map(area => `"${ area }"`).join(',') }]`,
+          }
+        } else if (area) { //TODO: this is not working correct 
           // compose a filter definition in the format of KeyValueFilter
           areaFilter = {
             name: area,
-            comparer: 'in',
-            value: `[${ areas.map(area => `"${ area }"`).join(',') }]`,
+            comparer: 'eq',
+            value: selectedAreas[0],
           }
         } else if (wkt) {
           areaFilter = {
@@ -281,9 +313,9 @@
           fileName,
         }).finally((result) => {
           this.isDownloading = false
-          
         }).catch(err => {
-          this.requestFailure = 'Request failed'
+          console.log('ERROR', err)
+          this.requestFailure = `Request failed: ${ err }`
         })
       },
     },
