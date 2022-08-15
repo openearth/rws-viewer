@@ -95,10 +95,10 @@ export default {
       layerToUpdate.opacity = opacity
       state.wmsLayers = update(index, layerToUpdate, state.wmsLayers)
     },
-    SET_FILTERS_LAYER_ID(state, id) {
+    SET_FILTERED_LAYER_ID(state, id) {
       state.filteredLayerId = id
     },
-    REMOVE_FILTERS_LAYER_ID(state) {
+    REMOVE_FILTERED_LAYER_ID(state) {
       state.filteredLayerId = null
     },
     SET_SELECTED_LAYER_FOR_SELECTION(state, layer) {
@@ -155,8 +155,8 @@ export default {
       })
     },
 
-    removefilteredLayerId({ commit }) {
-      commit('REMOVE_FILTERS_LAYER_ID')
+    removeFilteredLayerId({ commit }) {
+      commit('REMOVE_FILTERED_LAYER_ID')
     },
 
     moveRasterLayer({ commit }, { fromIndex, toIndex }) {
@@ -188,8 +188,8 @@ export default {
       commit('UPDATE_WMS_LAYER_OPACITY', { id, opacity })
     },
 
-    setFiltersLayerId({ commit }, id) {
-      commit('SET_FILTERS_LAYER_ID', id)
+    setFilteredLayerId({ commit }, id) {
+      commit('SET_FILTERED_LAYER_ID', id)
     },
     setSelectedLayerForSelection({ commit }, layer) {
       commit('SET_SELECTED_LAYER_FOR_SELECTION', layer)

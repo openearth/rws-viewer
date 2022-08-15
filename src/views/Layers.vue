@@ -41,7 +41,7 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'loadLayerOnMap', 'removeLayerFromMap', 'removefilteredLayerId' ]),
+      ...mapActions('map', [ 'loadLayerOnMap', 'removeLayerFromMap', 'removeFilteredLayerId' ]),
 
       onSelectLayers(layerIds) {
         const layers = layerIds
@@ -58,7 +58,7 @@
 
         if (layers.length) {
           this.removeLayerFromMap({ layers })
-          this.removefilteredLayerId()
+          this.removeFilteredLayerId()
         }
       },
     },

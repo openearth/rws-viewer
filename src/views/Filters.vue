@@ -125,7 +125,7 @@
     },
     methods: {
       ...mapActions('data', [ 'setTimeExtent', 'setCQLFilter' ] ),
-      ...mapActions('map', [ 'setfilteredLayerId', 'reloadLayerOnMap' ]),
+      ...mapActions('map', [ 'setFilteredLayerId', 'reloadLayerOnMap' ]),
       setFilter(value) {
         const filter = `${ this.filterName }='${ value }'`
         this.setCQLFilter(filter)
@@ -133,7 +133,7 @@
 
       },
       setIdOfFilteredLayer(id) {
-        this.setfilteredLayerId(id)
+        this.setFilteredLayerId(id)
       },
     },
 
