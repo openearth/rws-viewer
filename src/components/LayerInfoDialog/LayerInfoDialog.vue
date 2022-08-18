@@ -100,7 +100,6 @@
     methods: {
       close() {
         this.$emit('close')
-        console.log(this.htmlFactsheets)
       },
       copyUrlToClipboard() {
         navigator.clipboard.writeText(this.shareUrl)
