@@ -98,6 +98,7 @@
           <template #info="{ isOpen, close }">
             <layer-info-dialog
               :title="item.name"
+              :factsheets="item.factsheets"
               :content="item.metadata"
               :share-url="getUrl(item)"
               :open="isOpen"
