@@ -11,7 +11,7 @@
       },
       drawnFeatures: {
         type: Array,
-        default: null,
+        default: () => [],
       },
     },
 
@@ -39,7 +39,7 @@
       combinedFeatures(featureCollection) {
         if (this.mbDraw) {
           this.mbDraw.deleteAll()
-  
+
           if (featureCollection.features.length) {
             this.mbDraw.add(featureCollection)
           }

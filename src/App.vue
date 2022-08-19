@@ -83,7 +83,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeature', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection' ]),
+      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
@@ -107,7 +107,7 @@
 
     methods: {
       ...mapActions('data', [ 'getAppData', 'setSelectedTimestamp' ]),
-      ...mapActions('map', [ 'addDrawnFeature', 'removeDrawnFeature', 'setMapLoaded' ]),
+      ...mapActions('map', [ 'adds', 'removeDrawnFeature', 'addDrawnFeature', 'setMapLoaded' ]),
       formatTimeExtent(extent) {
         if (extent.length) {
           const formattedTimeExtent = extent.map(s => ({
