@@ -20,8 +20,19 @@
 
       <v-divider />
 
+
+  
+      
       <div class="px-2 py-2 flex-grow-1 overflow-y-auto">
         <v-card-text>
+          <div 
+            v-for="(htmlFactsheet, index) in htmlFactsheets" 
+            :key="index" 
+            class="px-2 py-2 flex-grow-1 overflow-y-auto"
+          >
+            <div v-html="htmlFactsheet" />
+          </div>
+
           <dl class="layer-info-dialog__metadata">
             <div v-for="item in content" :key="item.key">
               <dt class="font-weight-bold">
@@ -61,6 +72,10 @@
         type: String,
         default: '',
       },
+      factsheets: {
+        type: Array,
+        default: () => [],
+      },
       content: {
         type: Array,
         default: () => [],
@@ -70,13 +85,25 @@
         default: '',
       },
     },
+    data() {
+      return {
+        htmlFactsheets: [],
+      }
+    },
+    async mounted() {
+      for (const factsheet of this.factsheets) {
+        const html = await fetch(`https://kaartenbak.netlify.app/api/factsheet?id=${ factsheet.id }&format=html`)
+          .then(res => res.text())
+        this.htmlFactsheets.push(html)
+      }
+    },
     methods: {
       close() {
         this.$emit('close')
       },
       copyUrlToClipboard() {
         navigator.clipboard.writeText(this.shareUrl)
-        alert(`The following url is copied to clipboard! ${this.shareUrl }`)
+        alert(`The following url is copied to clipboard! ${ this.shareUrl }`)
       },
     },
   }

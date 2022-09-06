@@ -25,6 +25,9 @@ query ($first: IntType, $skip: IntType = 0) {
       tags {
         title
       }
+      factsheets {
+        id
+      }
       metadata {
         key: title
         value: content
