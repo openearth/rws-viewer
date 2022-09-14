@@ -55,12 +55,6 @@
     },
     methods: {
       ...mapActions('data', [ 'resetTimeExtent' ]),
-      /*       removeTimeSlider(event) {
-        const tab = event
-        if (tab !== 'filters') {
-          this.resetTimeExtent()
-        }
-      }, */
     },
   }
 </script>

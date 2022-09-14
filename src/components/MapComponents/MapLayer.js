@@ -113,7 +113,7 @@ export default {
   mounted() {
     const map = this.getMap()
     // We can immediately initialize if we have the map ready
-    if (map) {
+    if (map && map.isStyleLoaded()) {
       this.renderLayer()
       this.isInitialized = true
     }
@@ -133,5 +133,9 @@ export default {
     opacity() {
       this.setOpacity()
     },
+     before(newValue) {
+      const map = this.getMap()
+      map.moveLayer(this.options.id, newValue)
+     },
   },
 }
