@@ -73,4 +73,7 @@
       0 6px 10px 0 rgba(0, 0, 0, .14),
       0 1px 18px 0 rgba(0, 0, 0, .12);
   }
+  .v-navigation-drawer__content {
+    overflow-y:hidden;
+  }
 </style>
