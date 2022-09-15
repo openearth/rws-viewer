@@ -23,7 +23,7 @@
       </div>
     </div>
     <v-expand-transition>
-      <div v-if="isLayer && selected" class="pt-2 pb-5 pr-5">
+      <div v-if="isLayer && selected" class="pt-0 pb-1 pr-5">
         <v-row no-gutters>
           <v-col cols="2">
             <v-tooltip bottom>

@@ -224,6 +224,9 @@
 </script>
 
 <style lang="scss">
+.v-treeview-node__root {
+  margin-bottom: -8px;
+}
 .v-treeview-node__checkbox {
   display: none !important;
 }
@@ -233,7 +236,7 @@
 }
 
 .v-treeview-node__content {
-  margin-left: 36px !important
+  margin-left: 36px !important;
 }
 
 .v-treeview-node--leaf .v-treeview-node__content {
