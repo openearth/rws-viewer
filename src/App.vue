@@ -32,6 +32,7 @@
         :opacity="layer.opacity"
       />
       <map-zoom :extent="zoomExtent" />
+      <v-mapbox-navigation-control position="top-right" />
       <mapbox-draw-control
         :draw-mode="drawMode"
         :drawn-features="drawnFeatures"
