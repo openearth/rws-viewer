@@ -51,10 +51,11 @@ export default {
     addLayer() {
       const map = this.getMap()
       
+     
       if (this.before && map.getLayer(this.before)) {
         map.addLayer(this.options, this.before)
       } else {
-        map.addLayer(this.options)
+        map.addLayer(this.options, 'gl-draw-polygon-fill-inactive.cold')
       }
 
       if (this.clickable) {
@@ -133,9 +134,12 @@ export default {
     opacity() {
       this.setOpacity()
     },
-     before(newValue) {
+    before(onTopLayer, beforeLayer) {
       const map = this.getMap()
-      map.moveLayer(this.options.id, newValue)
+      map.moveLayer(this.options.id, onTopLayer)
+      if (!onTopLayer) {
+        map.moveLayer(this.options.id, 'gl-draw-polygon-fill-inactive.cold')
+      } 
      },
   },
 }

@@ -27,7 +27,7 @@
       <map-layer
         v-for="(layer, index) in wmsLayers"
         :key="layer.id"
-        :before="wmsLayerIds[index - 1] || 'gl-draw-polygon-fill-inactive.cold'"
+        :before="wmsLayerIds[index - 1]"
         :options="layer"
         :opacity="layer.opacity"
       />
