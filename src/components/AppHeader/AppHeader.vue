@@ -5,7 +5,12 @@
     :dark="theme === 'dark'"
     width="100%"
   >
-    <v-app-bar-nav-icon @click.stop="onMenuButtonClick" />
+    <v-app-bar-nav-icon v-if="appNavigationOpen" @click.stop="onMenuButtonClick">
+      <v-icon>mdi-arrow-left</v-icon>
+    </v-app-bar-nav-icon>
+    <v-app-bar-nav-icon v-else @click.stop="onMenuButtonClick">
+      <v-icon>mdi-arrow-right</v-icon>
+    </v-app-bar-nav-icon>
 
     <v-toolbar-title v-if="title">
       {{ title }}
