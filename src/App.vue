@@ -131,8 +131,6 @@
           ...clickData,
         })
 
-        console.log(feature)
-
         if (feature) {
           if (this.drawnFeatures.find(f => f.properties.gebiedid === feature.properties.gebiedid)) {
             this.removeDrawnFeature(feature)
