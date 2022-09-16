@@ -243,6 +243,7 @@
         await this.clearDrawnFeatures()
         this.selectedArea = null
 
+        // work in progress
         this.setSelectedLayerForSelection(this.selectedApi)
         this.selectedLayerId = this.selectedApi.id
 
