@@ -60,6 +60,5 @@ const queries = (await fs.readdir(__dirname))
   .map(file => path.join(__dirname, file))
   .map(fetchDataFromQueryFile({}))
 
-
 Promise.all(queries)
   .then(() => console.log('Parsed all queries'))

@@ -1,0 +1,18 @@
+query {
+  apis: allExternalApis {
+    layers {
+      layer {
+        name
+        id
+        url
+        layer
+        downloadUrl
+        downloadLayer
+        timeFilter
+        columnFilter
+      }
+    }
+    name
+    id
+  }
+}

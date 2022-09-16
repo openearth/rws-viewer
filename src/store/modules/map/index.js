@@ -17,7 +17,7 @@ export default {
     selectedLayerForSelection: null,
     mapCenter: NEDERLANDS_MAP_CENTER,
     mapZoom: NEDERLANDAS_MAP_ZOOM,
-    zoomExtent: [], 
+    zoomExtent: [],
   }),
 
   getters: {

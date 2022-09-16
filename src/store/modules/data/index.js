@@ -4,6 +4,7 @@ import router from '../../../router'
 import configRepo from '~/repo/configRepo'
 import { flattenLayers, getLayersTags, getLayersById, omitLayers } from '~/lib/layer-helpers.js'
 import { WADDEN_SEA_MAP_CENTER, NEDERLANDS_MAP_CENTER, WADDEN_SEA_MAP_ZOOM, NEDERLANDAS_MAP_ZOOM } from '~/lib/constants'
+import { apis } from '../../../../public/data/api.json'
 
 export default {
   namespaced: true,
@@ -15,6 +16,7 @@ export default {
     timeExtent: [], //array with isoString format, timeExtent of the selected layer in the filters tab
     selectedTimestamp: null, // needed in ISOstring format
     cqlFilter: null,
+    apis,
   }),
 
   getters: {

@@ -15,24 +15,11 @@
     <v-row>
       <v-col>
         <v-select
-          :value="selectedLayerForSelection && selectedLayerForSelection.id"
-          :label="$t('chooseLayer')"
-          :items="activeLayersList"
-          dense
-          outlined
-          hide-details
-          @change="handleSelectionLayerSelect"
-        />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-select
-          v-if="selectedLayerForSelection && selectedLayerForSelection.id"
           v-model="selectedApi"
           :label="$t('chooseApi')"
-          :items="selectedLayerForSelection.externalApi"
+          :items="activeLayers"
           item-text="name"
+          item-value="id"
           dense
           outlined
           hide-details
@@ -41,6 +28,21 @@
       </v-col>
     </v-row>
     <v-row v-if="selectedApi">
+      <v-col>
+        <v-select
+          :value="selectedLayerForSelection && selectedLayerForSelection.id"
+          :label="$t('chooseLayer')"
+          :items="apisLayers"
+          item-text="name"
+          item-value="id"
+          dense
+          outlined
+          hide-details
+          @change="handleSelectionLayerSelect"
+        />
+      </v-col>
+    </v-row>
+    <v-row v-if="selectedLayerForSelection && selectedLayerForSelection.id">
       <v-col>
         <v-btn
           :color="drawMode === 'static' ? 'primary' : null"
@@ -109,7 +111,7 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters } from 'vuex'
+  import { mapActions, mapGetters, mapState } from 'vuex'
   import KeyValueFilter from '~/components/KeyValueFilter/KeyValueFilter'
   import { downloadFromUrl, generateDownloadUrl } from '~/lib/external-api'
   import getFeature from '~/lib/get-feature'
@@ -142,6 +144,7 @@
     computed: {
       ...mapGetters('map', [ 'drawMode', 'drawnFeatures', 'activeFlattenedLayerIds', 'activeFlattenedLayers', 'selectedLayerForSelection' ]),
       ...mapGetters('data', [ 'flattenedLayers' ]),
+      ...mapState('data', [ 'apis' ]),
 
       maxPageSize() {
         return _.get(this.selectedApi, 'maxPageSize')
@@ -158,6 +161,19 @@
           text: name,
           value: id,
         }))
+      },
+
+      apisLayers() {
+        return this.apis.reduce((apisLayers, api) => {
+          this.selectedApi.externalApi.forEach(externalApi => {
+            if (api.id === externalApi.id) {
+              apisLayers.push(...api.layers.map(({ layer }) => {
+                return { ...layer }
+              }))
+            }
+          })
+          return apisLayers
+        }, [])
       },
 
       selectedLayer() {
@@ -185,7 +201,7 @@
       },
 
       availableFiltersForSelectedLayer() {
-        if (this.selectedApi?.filters) {
+        if (this.selectedApi?.filters && this.selectedLayer) {
           const filters = this.selectedApi.filters.split(', ')
           return filters.concat(this.dateFilters)
         }
@@ -204,10 +220,15 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
+      ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection', 'loadLayerOnMap', 'removeLayerFromMap' ]),
 
       handleSelectionLayerSelect(id) {
-        this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === id))
+        // work in progress
+        const selectedLayer = this.apisLayers.find(layer => layer.id === id)
+
+        this.loadLayerOnMap({ layers: [ selectedLayer ] })
+
+        this.setSelectedLayerForSelection(this.selectedApi)
         this.selectedFilters = null
         this.requestFailure = false
 
@@ -222,8 +243,8 @@
         await this.clearDrawnFeatures()
         this.selectedArea = null
 
-        this.setSelectedLayerForSelection(this.activeLayers.find(layer => layer.id === this.activeLayersList[0].value))
-        this.selectedLayerId = this.activeLayersList[0].value
+        this.setSelectedLayerForSelection(this.selectedApi)
+        this.selectedLayerId = this.selectedApi.id
 
         this.setDrawMode({ mode })
       },
