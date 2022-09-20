@@ -2,7 +2,7 @@ import buildGeoserverUrl from './build-geoserver-url'
 
 const defaultUrl = process.env.VUE_APP_GEOSERVER_BASE_URL
 
-export default ({ url: rawUrl = defaultUrl, id, layer, style = '', paint = {}, tileSize = 256, time, filter, version }) => {
+export default ({ url: rawUrl = defaultUrl, id, layer, styles = '', paint = {}, tileSize = 256, time, filter, version }) => {
   
   const url = new URL(rawUrl)
   const searchParamEntries = url.searchParams.entries()
@@ -13,7 +13,7 @@ export default ({ url: rawUrl = defaultUrl, id, layer, style = '', paint = {}, t
     service: 'WMS',
     request: 'GetMap',
     layers: layer,
-    style,
+    styles,
     width: 256,
     height: 256,
     version,

@@ -58,6 +58,11 @@ export default {
       state.activeFlattenedLayers.splice(fromIndex, 1)
       state.activeFlattenedLayers.splice(toIndex, 0, element)
     },
+    MOVE_WMS_LAYER(state, { fromIndex, toIndex }) {
+      var element = state.wmsLayers[fromIndex]
+      state.wmsLayers.splice(fromIndex, 1)
+      state.wmsLayers.splice(toIndex, 0, element)
+    },
     REMOVE_ACTIVE_FLATTENED_LAYER(state, { layer }) {
       state.activeFlattenedLayers = state.activeFlattenedLayers.filter(activeLayer => activeLayer.id !== layer.id)
     },
@@ -161,6 +166,7 @@ export default {
 
     moveRasterLayer({ commit }, { fromIndex, toIndex }) {
       commit('MOVE_ACTIVE_FLATTENED_LAYER', { fromIndex, toIndex })
+      commit('MOVE_WMS_LAYER', { fromIndex, toIndex })
     },
 
     setDrawMode({ commit, state }, { mode }) {

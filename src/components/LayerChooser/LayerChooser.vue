@@ -30,83 +30,84 @@
           {{ $t('collapseAll') }}
         </v-btn> -->
     </div>
-
-    <v-treeview
-      ref="tree"
-      class="layer-chooser__tree"
-      :value="activeFlattenedLayerIds"
-      hoverable
-      selectable
-      dense
-      expand-icon="mdi-chevron-down"
-      :items="layersWithParents"
-      :search="search"
-      :filter="activeFilter"
-      :open="openedItems"
-      @input="handleInput"
-      @update:open="handleOpenedFolders"
-    >
-      <template #prepend="{selected, open, item, indeterminate}">
-        <div v-if="!item.layer">
-          <v-icon>
-            <template v-if="selected">
-              {{ open
-                ? `mdi-folder-open${selected ? '' : '-outline'}`
-                : `mdi-folder${selected ? '-check' : '-outline'}`
-              }}
+    <div class="layers-scrollable">
+      <v-treeview
+        ref="tree"
+        class="layer-chooser__tree"
+        :value="activeFlattenedLayerIds"
+        hoverable
+        selectable
+        dense
+        expand-icon="mdi-chevron-down"
+        :items="layersWithParents"
+        :search="search"
+        :filter="activeFilter"
+        :open="openedItems"
+        @input="handleInput"
+        @update:open="handleOpenedFolders"
+      >
+        <template #prepend="{selected, open, item, indeterminate}">
+          <div v-if="!item.layer">
+            <v-icon>
+              <template v-if="selected">
+                {{ open
+                  ? `mdi-folder-open${selected ? '' : '-outline'}`
+                  : `mdi-folder${selected ? '-check' : '-outline'}`
+                }}
+              </template>
+              <template v-else-if="indeterminate">
+                {{ open
+                  ? `mdi-folder-open`
+                  : `mdi-folder`
+                }}
+              </template>
+              <template v-else>
+                {{ open
+                  ? `mdi-folder-open-outline`
+                  : `mdi-folder-outline`
+                }}
+              </template>
+            </v-icon>
+          </div>
+          <div v-else>
+            <v-row no-gutters>
+              <v-col class="ml-n5">
+                <v-icon v-if="item.timeFilter">
+                  {{ selected ? 'mdi-clock-time-three' : 'mdi-clock-time-three-outline' }}
+                </v-icon>
+              </v-col>
+              <v-col>
+                <v-icon v-if="item.layer">
+                  {{ selected ? 'mdi-layers' : 'mdi-layers-outline' }}
+                </v-icon>
+              </v-col>
+            </v-row>
+          </div>
+        </template>
+        <template #label="{ item, selected }">
+          <layer-control
+            :id="item.id"
+            :name="item.name"
+            :selected="selected"
+            :parent-ids="item.parentIds.toString()"
+            :is-layer="!!item.layer"
+            :has-metadata="!!item.metadata.length || getUrl(item) !== ''"
+            @update-layer-opacity="updateLayerOpacity"
+            @zoom-to-layer-extent="zoomToLayerExtent"
+          >
+            <template #info="{ isOpen, close }">
+              <layer-info-dialog
+                :title="item.name"
+                :content="item.metadata"
+                :share-url="getUrl(item)"
+                :open="isOpen"
+                @close="close"
+              />
             </template>
-            <template v-else-if="indeterminate">
-              {{ open
-                ? `mdi-folder-open`
-                : `mdi-folder`
-              }}
-            </template>
-            <template v-else>
-              {{ open
-                ? `mdi-folder-open-outline`
-                : `mdi-folder-outline`
-              }}
-            </template>
-          </v-icon>
-        </div>
-        <div v-else>
-          <v-row no-gutters>
-            <v-col class="ml-n5">
-              <v-icon v-if="item.timeFilter">
-                {{ selected ? 'mdi-clock-time-three' : 'mdi-clock-time-three-outline' }}
-              </v-icon>
-            </v-col>
-            <v-col>
-              <v-icon v-if="item.layer">
-                {{ selected ? 'mdi-layers' : 'mdi-layers-outline' }}
-              </v-icon>
-            </v-col>
-          </v-row>
-        </div>
-      </template>
-      <template #label="{ item, selected }">
-        <layer-control
-          :id="item.id"
-          :name="item.name"
-          :selected="selected"
-          :parent-ids="item.parentIds.toString()"
-          :is-layer="!!item.layer"
-          :has-metadata="!!item.metadata.length || getUrl(item) !== ''"
-          @update-layer-opacity="updateLayerOpacity"
-          @zoom-to-layer-extent="zoomToLayerExtent"
-        >
-          <template #info="{ isOpen, close }">
-            <layer-info-dialog
-              :title="item.name"
-              :content="item.metadata"
-              :share-url="getUrl(item)"
-              :open="isOpen"
-              @close="close"
-            />
-          </template>
-        </layer-control>
-      </template>
-    </v-treeview>
+          </layer-control>
+        </template>
+      </v-treeview>
+    </div>
   </v-sheet>
 </template>
 
@@ -223,6 +224,9 @@
 </script>
 
 <style lang="scss">
+.v-treeview-node__root {
+  margin-bottom: -8px;
+}
 .v-treeview-node__checkbox {
   display: none !important;
 }
@@ -232,13 +236,15 @@
 }
 
 .v-treeview-node__content {
-  margin-left: 36px !important
+  margin-left: 36px !important;
 }
 
 .v-treeview-node--leaf .v-treeview-node__content {
   margin-left: 6px !important;
 }
-
+.layer-chooser {
+  margin-right: -10px !important;
+}
 .layer-chooser__dialog {
   width: 90vw;
   max-width: 960px;
@@ -272,5 +278,9 @@
   transform: translate(-125%, 7px);
   pointer-events: none;
   top: 0;
+}
+.layers-scrollable {
+  overflow-y:auto;
+  height: calc(100vh - 248px);
 }
 </style>

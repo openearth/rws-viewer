@@ -27,11 +27,12 @@
       <map-layer
         v-for="(layer, index) in wmsLayers"
         :key="layer.id"
-        :before="wmsLayerIds[index - 1] || 'gl-draw-polygon-fill-inactive.cold'"
+        :before="wmsLayerIds[index - 1]"
         :options="layer"
         :opacity="layer.opacity"
       />
       <map-zoom :extent="zoomExtent" />
+      <v-mapbox-navigation-control position="top-right" />
       <mapbox-draw-control
         :draw-mode="drawMode"
         :drawn-features="drawnFeatures"
