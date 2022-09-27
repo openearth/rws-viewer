@@ -46,5 +46,7 @@
   "selectFilter": "Selecteer een waarde van de onderstaande lijst om de laag te bevra",
   "selectLayerWithTime": "Selecteer een laag uit de lijst om de tijdcomponent in te schakelen",
   "selectLayersToView": "Selecteer lagen om te bekijken",
-  "shareUrl": "Deel url"
+  "shareUrl": "Deel url",
+  "saveFavourites": "Opslaan favorieten",
+  "loadFavourites": "Laad favorieten"
 }

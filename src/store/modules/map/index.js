@@ -72,6 +72,12 @@ export default {
     REMOVE_WMS_LAYER(state, layerId) {
       state.wmsLayers = state.wmsLayers.filter(wmsLayer => wmsLayer.id !== layerId)
     },
+    RESET_ACTIVE_FLATTENED_LAYERS(state) {
+      state.activeFlattenedLayers = []
+    },
+    RESET_WMS_LAYERS(state) {
+      state.wmsLayers = []
+    },
     SET_DRAW_MODE(state, { mode }) {
       state.drawMode = mode
     },
@@ -129,7 +135,7 @@ export default {
     },
     loadLayerOnMap({ commit, state }, { layers }) {
 
-      const layersToAdd = difference(layers , state.activeFlattenedLayers)
+      const layersToAdd = difference(layers, state.activeFlattenedLayers)
 
       layersToAdd.forEach((layer) => {
         getWmsCapabilities(layer.url)
@@ -161,6 +167,12 @@ export default {
     },
 
     removeFilteredLayerId({ commit }) {
+      commit('REMOVE_FILTERED_LAYER_ID')
+    },
+
+    resetLayers({ commit }) {
+      commit('RESET_ACTIVE_FLATTENED_LAYERS')
+      commit('RESET_WMS_LAYERS')
       commit('REMOVE_FILTERED_LAYER_ID')
     },
 
