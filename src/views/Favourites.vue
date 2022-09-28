@@ -32,7 +32,7 @@
       <v-col>
         <v-file-input
           v-model="chosenFile"
-          label="Select a file"
+          :label="$t('selectAFile')"
           accept="application/json"
         />
       </v-col>
