@@ -101,6 +101,9 @@
           this.setSelectedTimestamp(this.formattedTimeExtent[this.formattedTimeExtent.length -1].t1)
         }
       },
+      wmsLayers(newValue) {
+        console.log(newValue)
+      },
     },
     mounted() {
       this.$router.onReady(this.getAppData)

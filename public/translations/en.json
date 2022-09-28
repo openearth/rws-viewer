@@ -49,5 +49,6 @@
   "selectLayersToView": "Select layers to view",
   "shareUrl": "Share url",
   "saveFavourites": "Save favourites",
-  "loadFavourites": "Load favourites"
+  "loadFavourites": "Load favourites",
+  "saveFavouritesNotice": "Select one or more layers to save favourites"
 }

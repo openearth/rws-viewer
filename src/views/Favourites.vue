@@ -1,6 +1,6 @@
 <template>
   <v-container class="favourites pt-4">
-    <v-row>
+    <v-row v-if="activeFlattenedLayerIds.length">
       <v-col>
         <v-btn
           color="primary"
@@ -10,6 +10,17 @@
         >
           {{ $t('saveFavourites') }}
         </v-btn>
+      </v-col>
+    </v-row>
+    <v-row v-else>
+      <v-col>
+        <v-alert
+          dense
+          outlined
+          type="info"
+        >
+          {{ $t('saveFavouritesNotice') }}
+        </v-alert>
       </v-col>
     </v-row>
     <v-row>
