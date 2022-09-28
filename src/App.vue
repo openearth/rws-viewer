@@ -5,6 +5,7 @@
     <v-fade-transition mode="out-in">
       <layer-order v-if="wmsLayerIds.length" />
     </v-fade-transition>
+    <mapbox-coordinates :lng-lat="lngLat" />
     <v-fade-transition mode="out-in">
       <mapbox-legend v-if="wmsLayerIds.length" />
     </v-fade-transition>
@@ -32,6 +33,7 @@
         :opacity="layer.opacity"
       />
       <map-zoom :extent="zoomExtent" />
+      <MapMouseMove @mousemove="onMouseMove" />
       <v-mapbox-navigation-control position="top-right" />
       <mapbox-draw-control
         :draw-mode="drawMode"
@@ -59,6 +61,8 @@
   import TimeSlider from '~/components/TimeSlider'
   import MapboxSelectPointControl from '~/components/MapboxSelectPointControl/MapboxSelectPointControl'
   import getFeatureInfo from '~/lib/get-feature-info'
+  import MapMouseMove from './components/MapComponents/MapMouseMove.js'
+  import MapboxCoordinates from './components/MapboxCoordinates/MapboxCoordinates.vue'
 
   export default {
     components: {
@@ -74,12 +78,15 @@
       MapboxLegend,
       MapboxMap,
       TimeSlider,
+      MapMouseMove,
+      MapboxCoordinates,
     },
 
     data: () => ({
       accessToken: process.env.VUE_APP_MAPBOX_TOKEN,
       sampleDataTime: [],
       showslider: false,
+      lngLat: null,
     }),
 
     computed: {
@@ -139,6 +146,9 @@
             this.addDrawnFeature(feature)
           }
         }
+      },
+      onMouseMove(e) {
+        this.lngLat = e.lngLat
       },
     },
   }
