@@ -22,8 +22,7 @@
         if (!this.lngLat) {
           return ''
         }
-
-        return `lng/lat: ${ this.lngLat.lng }, ${ this.lngLat.lat }`
+        return `lon/lat(WGS84): ${ this.lngLat.lng.toFixed(4) }, ${ this.lngLat.lat.toFixed(4) }`
       },
     },
   }
@@ -40,6 +39,6 @@
     left: calc(50% - var(--sidebar-width));
     transform: translate(var(--translate-x));
     transition: transform .3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    z-index: 2;
+    z-index: 1;
   }
 </style>
