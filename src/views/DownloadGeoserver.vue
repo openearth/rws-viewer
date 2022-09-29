@@ -138,7 +138,7 @@
             color="primary"
             block
             :ripple="false"
-            :disabled="!downloadLayer|| isGeneratingDownload || !validUrl"
+            :disabled="!downloadLayer || !downloadLayerFormat || isGeneratingDownload || !validUrl"
             :loading="isGeneratingDownload"
             @click="onDownloadClick"
           >

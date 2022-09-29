@@ -37,10 +37,7 @@
                 </v-btn>
               </dt>
               <dd>
-                <v-text-field
-                  ref="share"
-                  :value="shareUrl"
-                />
+                {{ shareUrl }}
               </dd>
             </div>
           </dl>

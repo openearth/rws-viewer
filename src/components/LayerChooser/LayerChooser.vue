@@ -150,7 +150,7 @@
         }
       },
       onlyActive(newValue) {
-        newValue && this.$refs.tree.updateAll(true)
+        this.$refs.tree.updateAll(newValue)
       },
     },
     mounted () {
