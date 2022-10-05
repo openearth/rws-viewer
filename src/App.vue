@@ -44,6 +44,12 @@
         :draw-mode="drawMode"
         @click="handleFeatureClick"
       />
+      <map-layer-info
+        v-if="activeFlattenedLayers.length && !drawMode"
+        :layer="activeFlattenedLayers[0]"
+        @set-active-poup="setActivePopup()"
+        @remove-active-popup="removeActivePopup()"
+      />
     </mapbox-map>
   </app-shell>
 </template>
@@ -54,6 +60,7 @@
   import AppShell from './components/AppShell/AppShell'
   import MapLayer from './components/MapComponents/MapLayer.js'
   import MapZoom from './components/MapComponents/MapZoom.js'
+  import MapLayerInfo from './components/MapComponents/MapLayerInfo.js'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
   import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
@@ -70,6 +77,7 @@
       MapboxMap,
       MapLayer,
       MapZoom,
+      MapLayerInfo,
       MapboxDrawControl,
       LayerOrder,
       LocaleSwitcher,
@@ -91,7 +99,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection' ]),
+      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
@@ -146,6 +154,12 @@
             this.addDrawnFeature(feature)
           }
         }
+      },
+      setActivePopup(event) {
+        //console.log(event)
+      },
+      removeActivePopup(event) {
+        //console.log(event)
       },
       onMouseMove(e) {
         this.lngLat = e.lngLat

@@ -167,6 +167,8 @@
 <script>
 
   import { saveAs } from 'file-saver'
+  import JSZip from 'jszip'
+  import JSZipUtils from 'jszip-utils'
   import { mapActions, mapGetters } from 'vuex'
   import KeyValueFilter from '~/components/KeyValueFilter/KeyValueFilter'
   import DownloadFormatChooser from '~/components/DownloadFormatChooser/DownloadFormatChooser.vue'
@@ -295,8 +297,21 @@
         this.clearDrawnFeatures()
         this.addDrawnFeature(feature)
       },
-
+      async generateZipFile(urls) {
+        let zip = new JSZip()
+        return Promise.all(urls.map(async ({ url, fileType }) => {
+          
+          const layerName = this.selectedLayerData.layer.split(':')[1]
+          const filename = `${ layerName }.${ fileType }`
+          
+          return JSZipUtils.getBinaryContent(url)
+            .then(data => zip.file(filename, data, { binary: true }))
+            .catch(err => console.log(err))
+        }))
+          .then(() => zip.generateAsync({ type: 'blob' }))
+      },  
       onDownloadClick() {
+        //this was urls before
         const downloadProps = buildDownloadUrl({
           layer: this.selectedLayerData,
           filters: this.selectedFilters,
@@ -304,21 +319,12 @@
           coordinates: this.selectedCoordinates,
         })
 
-
+       
         this.isGeneratingDownload = true
 
-        //saveAs(downloadProps.url)
-        fetch(downloadProps.url)
-          .then(res => res.blob())
-          .then(blob => {
-            const fileUrl = window.URL.createObjectURL(blob)
-            const fileLink = document.createElement('a')
-
-            fileLink.href = fileUrl
-            fileLink.setAttribute('download',`${ Date.now() }.${ downloadProps.fileType }`)
-            document.body.appendChild(fileLink)
-
-            fileLink.click()
+        this.generateZipFile(downloadProps) // debug: provide it as array
+          .then((content) => {
+            saveAs(content, 'layer.zip')
           })
           .catch(err => {
             console.log(err)
@@ -326,7 +332,7 @@
           .finally(()=>{
             this.isGeneratingDownload = false
           })
-
+       
       },
       handleFilterChange(event) {
         this.selectedFilters = event
