@@ -14,7 +14,6 @@ export default function({ layer = {}, filters = [], format, coordinates  = '' })
  
   const params = createDownloadParameters({ layerData: layer, filter, format })
   
-
   const legendParams = createLegendDownloadParameters({ layerData: layer })
   return [ {
     url: `${ url }?${ params }`,

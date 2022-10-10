@@ -301,7 +301,15 @@
         let zip = new JSZip()
         return Promise.all(urls.map(async ({ url, fileType }) => {
           
-          const layerName = this.selectedLayerData.layer.split(':')[1]
+          //TODO: find a better solution for layers that don't have workspace
+          // the below if statement checks for workspace in layer name
+          let layerName
+          if (this.selectedLayerData.layer.includes(':')) {
+            layerName = this.selectedLayerData.layer.split(':')[1]
+          } else {
+            layerName = this.selectedLayerData.layer
+          }
+          
           const filename = `${ layerName }.${ fileType }`
           
           return JSZipUtils.getBinaryContent(url)
@@ -316,7 +324,7 @@
           layer: this.selectedLayerData,
           filters: this.selectedFilters,
           format: this.downloadLayerFormat,
-          coordinates: this.selectedCoordinates,
+          coordinates: this.selectionCoordinates,
         })
 
        

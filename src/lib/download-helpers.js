@@ -33,12 +33,12 @@ const createLegendParameters = ({ layer = '' }) => stringify({
 export function createDownloadFilter(filtersArray = [], coordinates = '') {
   const coordinatesArray = coordinates.split(' ')
   const validCoordinates = ((coordinatesArray.length / 2) - 1) >= 3 // 3 = triangle, 4 = rectangle, 5+ = polygon
-  
+ 
   if (validCoordinates) {
     filtersArray = [ ...filtersArray, {
       comparer: 'intersects',
       name: '',
-      value: validCoordinates,
+      value: coordinates,
     } ]
   }
  
