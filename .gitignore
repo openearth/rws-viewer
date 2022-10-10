@@ -24,3 +24,5 @@ pnpm-debug.log*
 
 # Generated files
 public/data/**/*.json
+# Local Netlify folder
+.netlify

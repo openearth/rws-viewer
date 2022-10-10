@@ -19,6 +19,12 @@
       <mapbox-legend v-if="wmsLayerIds.length" />
     </v-fade-transition>
 
+    <LayersDialog 
+      :open="layersDialogOpen"
+      :layers="kaartenbakLayers"
+      @close="closeLayersDialog"
+    />
+
     <mapbox-map
       slot="map"
       :access-token="accessToken"
@@ -80,6 +86,8 @@
   import MapMouseMove from './components/MapComponents/MapMouseMove.js'
   import MapboxCoordinates from './components/MapboxCoordinates/MapboxCoordinates.vue'
   import debounce from '~/lib/debounce'
+  import axios from 'axios'
+  import LayersDialog from '~/components/LayersDialog/LayersDialog'
 
   export default {
     components: {
@@ -98,6 +106,7 @@
       TimeSlider,
       MapMouseMove,
       MapboxCoordinates,
+      LayersDialog,
     },
 
     data: () => ({
@@ -105,6 +114,8 @@
       sampleDataTime: [],
       showslider: false,
       lngLat: null,
+      kaartenbakLayers: [],
+      layersDialogOpen: false,
     }),
 
     computed: {
@@ -176,14 +187,20 @@
       },
       onSearch: debounce(async function(val) {
         try {
-          const res = await fetch(`https://kaartenbak.netlify.app/api/search?viewer=${ this.viewerName }&query=${ val }`)
-          const data = await res.json()
+          if (val.trim()) {
+            const { data } = await axios(`/api/kaartenbak-find-layers?viewer=${ this.viewerName }&query=${ val }`)
 
-          console.log(data)
+            this.kaartenbakLayers = data
+            this.layersDialogOpen = true
+          }
+
         } catch (e) {
           console.log(e)
         }
       }, 1000),
+      closeLayersDialog() {
+        this.layersDialogOpen = false
+      },
     },
   }
 </script>
