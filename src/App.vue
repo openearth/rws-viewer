@@ -1,6 +1,15 @@
 <template>
   <app-shell :header-title="viewerName">
-    <locale-switcher slot="header-right" />
+    <template slot="header-right">
+      <v-col cols="2">
+        <v-text-field 
+          placeholder="Zoeken" 
+          hide-details 
+          @input="onSearch" 
+        />
+      </v-col>
+      <locale-switcher />
+    </template>
 
     <v-fade-transition mode="out-in">
       <layer-order v-if="wmsLayerIds.length" />
@@ -70,6 +79,7 @@
   import getFeatureInfo from '~/lib/get-feature-info'
   import MapMouseMove from './components/MapComponents/MapMouseMove.js'
   import MapboxCoordinates from './components/MapboxCoordinates/MapboxCoordinates.vue'
+  import debounce from '~/lib/debounce'
 
   export default {
     components: {
@@ -164,6 +174,16 @@
       onMouseMove(e) {
         this.lngLat = e.lngLat
       },
+      onSearch: debounce(async function(val) {
+        try {
+          const res = await fetch(`https://kaartenbak.netlify.app/api/search?viewer=${ this.viewerName }&query=${ val }`)
+          const data = await res.json()
+
+          console.log(data)
+        } catch (e) {
+          console.log(e)
+        }
+      }, 1000),
     },
   }
 </script>
