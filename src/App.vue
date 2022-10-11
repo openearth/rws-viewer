@@ -1,13 +1,7 @@
 <template>
   <app-shell :header-title="viewerName">
     <template slot="header-right">
-      <v-col cols="2">
-        <v-text-field 
-          placeholder="Zoeken" 
-          hide-details 
-          @input="onSearch" 
-        />
-      </v-col>
+      <search-bar @onSearch="onSearch" />
       <locale-switcher />
     </template>
 
@@ -88,6 +82,7 @@
   import debounce from '~/lib/debounce'
   import axios from 'axios'
   import LayersDialog from '~/components/LayersDialog/LayersDialog'
+  import SearchBar from '~/components/SearchBar/SearchBar'
 
   export default {
     components: {
@@ -107,6 +102,7 @@
       MapMouseMove,
       MapboxCoordinates,
       LayersDialog,
+      SearchBar,
     },
 
     data: () => ({

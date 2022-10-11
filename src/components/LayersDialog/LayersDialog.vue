@@ -8,7 +8,7 @@
     <v-card>
       <v-app-bar class="pr-1 pl-2" flat>
         <v-toolbar-title>
-          Layers
+          {{ $t('layers') }}
         </v-toolbar-title>
 
         <v-spacer />
@@ -22,7 +22,7 @@
 
       <div class="px-2 py-2 flex-grow-1 overflow-y-auto">
         <v-card-text v-if="!layers.length" class="text-center">
-          Geen layers gevonden
+          {{ $t('noLayersFound') }}
         </v-card-text>
         <v-card-text v-else>
           <div 

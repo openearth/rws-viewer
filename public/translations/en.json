@@ -51,5 +51,7 @@
   "saveFavourites": "Save favourites",
   "loadFavourites": "Load favourites",
   "saveFavouritesNotice": "Select one or more layers to save favourites.",
-  "selectAFile": "Select a file"
+  "selectAFile": "Select a file",
+  "search": "Search",
+  "noLayersFound": "No layers found"
 }
