@@ -16,7 +16,7 @@
       mapbox-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
       :center="mapCenter"
       :zoom="mapZoom"
-      @styledata="setMapLoaded"
+      @load="setMapLoaded"
     >
       <time-slider
         v-if="showTimeslider"
