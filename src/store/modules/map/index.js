@@ -30,7 +30,12 @@ export default {
       }
       return getters.activeFlattenedLayers.filter(layer => layer?.timeFilter).map(({ id })=>id)
     },
-    wmsLayers: state => state.wmsLayers,
+    wmsLayers(state) {
+      if (!state.mapLoaded) {
+        return []
+      }
+      return state.wmsLayers
+    } ,
     wmsLayerIds: state => (state.activeFlattenedLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
     drawnFeatures: state => state.drawnFeatures,
