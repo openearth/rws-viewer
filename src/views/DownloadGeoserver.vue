@@ -330,7 +330,7 @@
        
         this.isGeneratingDownload = true
 
-        this.generateZipFile(downloadProps) // debug: provide it as array
+        this.generateZipFile(downloadProps) 
           .then((content) => {
             saveAs(content, 'layer.zip')
           })
