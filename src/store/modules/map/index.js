@@ -30,7 +30,12 @@ export default {
       }
       return getters.activeFlattenedLayers.filter(layer => layer?.timeFilter).map(({ id })=>id)
     },
-    wmsLayers: state => state.wmsLayers,
+    wmsLayers(state) {
+      if (!state.mapLoaded) {
+        return []
+      }
+      return state.wmsLayers
+    } ,
     wmsLayerIds: state => (state.activeFlattenedLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
     drawnFeatures: state => state.drawnFeatures,
@@ -58,6 +63,11 @@ export default {
       state.activeFlattenedLayers.splice(fromIndex, 1)
       state.activeFlattenedLayers.splice(toIndex, 0, element)
     },
+    MOVE_WMS_LAYER(state, { fromIndex, toIndex }) {
+      var element = state.wmsLayers[fromIndex]
+      state.wmsLayers.splice(fromIndex, 1)
+      state.wmsLayers.splice(toIndex, 0, element)
+    },
     REMOVE_ACTIVE_FLATTENED_LAYER(state, { layer }) {
       state.activeFlattenedLayers = state.activeFlattenedLayers.filter(activeLayer => activeLayer.id !== layer.id)
     },
@@ -66,6 +76,12 @@ export default {
     },
     REMOVE_WMS_LAYER(state, layerId) {
       state.wmsLayers = state.wmsLayers.filter(wmsLayer => wmsLayer.id !== layerId)
+    },
+    RESET_ACTIVE_FLATTENED_LAYERS(state) {
+      state.activeFlattenedLayers = []
+    },
+    RESET_WMS_LAYERS(state) {
+      state.wmsLayers = []
     },
     SET_DRAW_MODE(state, { mode }) {
       state.drawMode = mode
@@ -124,7 +140,7 @@ export default {
     },
     loadLayerOnMap({ commit, state }, { layers }) {
 
-      const layersToAdd = difference(layers , state.activeFlattenedLayers)
+      const layersToAdd = difference(layers, state.activeFlattenedLayers)
 
       layersToAdd.forEach((layer) => {
         getWmsCapabilities(layer.url)
@@ -159,8 +175,15 @@ export default {
       commit('REMOVE_FILTERED_LAYER_ID')
     },
 
+    resetLayers({ commit }) {
+      commit('RESET_ACTIVE_FLATTENED_LAYERS')
+      commit('RESET_WMS_LAYERS')
+      commit('REMOVE_FILTERED_LAYER_ID')
+    },
+
     moveRasterLayer({ commit }, { fromIndex, toIndex }) {
       commit('MOVE_ACTIVE_FLATTENED_LAYER', { fromIndex, toIndex })
+      commit('MOVE_WMS_LAYER', { fromIndex, toIndex })
     },
 
     setDrawMode({ commit, state }, { mode }) {

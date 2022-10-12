@@ -5,6 +5,7 @@
     <v-fade-transition mode="out-in">
       <layer-order v-if="wmsLayerIds.length" />
     </v-fade-transition>
+    <mapbox-coordinates :lng-lat="lngLat" />
     <v-fade-transition mode="out-in">
       <mapbox-legend v-if="wmsLayerIds.length" />
     </v-fade-transition>
@@ -15,7 +16,7 @@
       mapbox-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
       :center="mapCenter"
       :zoom="mapZoom"
-      @styledata="setMapLoaded"
+      @load="setMapLoaded"
     >
       <time-slider
         v-if="showTimeslider"
@@ -27,11 +28,13 @@
       <map-layer
         v-for="(layer, index) in wmsLayers"
         :key="layer.id"
-        :before="wmsLayerIds[index - 1] || 'gl-draw-polygon-fill-inactive.cold'"
+        :before="wmsLayerIds[index - 1]"
         :options="layer"
         :opacity="layer.opacity"
       />
       <map-zoom :extent="zoomExtent" />
+      <MapMouseMove @mousemove="onMouseMove" />
+      <v-mapbox-navigation-control position="top-right" />
       <mapbox-draw-control
         :draw-mode="drawMode"
         :drawn-features="drawnFeatures"
@@ -40,6 +43,12 @@
       <mapbox-select-point-control
         :draw-mode="drawMode"
         @click="handleFeatureClick"
+      />
+      <map-layer-info
+        v-if="activeFlattenedLayers.length && !drawMode"
+        :layer="activeFlattenedLayers[0]"
+        @set-active-poup="setActivePopup()"
+        @remove-active-popup="removeActivePopup()"
       />
     </mapbox-map>
   </app-shell>
@@ -51,6 +60,7 @@
   import AppShell from './components/AppShell/AppShell'
   import MapLayer from './components/MapComponents/MapLayer.js'
   import MapZoom from './components/MapComponents/MapZoom.js'
+  import MapLayerInfo from './components/MapComponents/MapLayerInfo.js'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
   import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
@@ -58,6 +68,8 @@
   import TimeSlider from '~/components/TimeSlider'
   import MapboxSelectPointControl from '~/components/MapboxSelectPointControl/MapboxSelectPointControl'
   import getFeatureInfo from '~/lib/get-feature-info'
+  import MapMouseMove from './components/MapComponents/MapMouseMove.js'
+  import MapboxCoordinates from './components/MapboxCoordinates/MapboxCoordinates.vue'
 
   export default {
     components: {
@@ -65,6 +77,7 @@
       MapboxMap,
       MapLayer,
       MapZoom,
+      MapLayerInfo,
       MapboxDrawControl,
       LayerOrder,
       LocaleSwitcher,
@@ -73,17 +86,20 @@
       MapboxLegend,
       MapboxMap,
       TimeSlider,
+      MapMouseMove,
+      MapboxCoordinates,
     },
 
     data: () => ({
       accessToken: process.env.VUE_APP_MAPBOX_TOKEN,
       sampleDataTime: [],
       showslider: false,
+      lngLat: null,
     }),
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection' ]),
+      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
@@ -138,6 +154,15 @@
             this.addDrawnFeature(feature)
           }
         }
+      },
+      setActivePopup(event) {
+        //console.log(event)
+      },
+      removeActivePopup(event) {
+        //console.log(event)
+      },
+      onMouseMove(e) {
+        this.lngLat = e.lngLat
       },
     },
   }

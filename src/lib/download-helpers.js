@@ -23,20 +23,28 @@ const createWcsParameters = ({ layer = '', format = '' }) => stringify({
   'format': format,
 })
 
+const createLegendParameters = ({ layer = '' }) => stringify({
+  'request': 'GetStyles',
+  'service': 'WMS',
+  'version': '1.1.1',
+  'layers': layer,
+})
+
 export function createDownloadFilter(filtersArray = [], coordinates = '') {
   const coordinatesArray = coordinates.split(' ')
   const validCoordinates = ((coordinatesArray.length / 2) - 1) >= 3 // 3 = triangle, 4 = rectangle, 5+ = polygon
-  
+ 
   if (validCoordinates) {
     filtersArray = [ ...filtersArray, {
       comparer: 'intersects',
       name: '',
-      value: validCoordinates,
+      value: coordinates,
     } ]
   }
  
   return filterTemplate(filtersArray)
 }
+
 
 export function createDownloadParameters({ layerData = {}, filter = '', format = '' }) {
   const { layer, serviceType, downloadLayer } = layerData
@@ -56,6 +64,11 @@ export function createDownloadParameters({ layerData = {}, filter = '', format =
   if (serviceType === 'wfs' && !downloadLayer) {
     return createWfsParameters({ layer, filter, format })
   }
+}
+
+export function createLegendDownloadParameters({ layerData = {} }) {
+  const { layer } = layerData
+  return createLegendParameters({ layer })
 }
 
 export const mapFormatToFileExtension = {

@@ -1,13 +1,20 @@
 <template>
   <div>
     <div class="d-flex align-center">
-      <span
-        class="sortable-handle py-3"
-        :data-id="id"
-        :data-parent-ids="parentIds"
-      >
-        {{ name }}
-      </span>
+      <v-tooltip top>
+        <template #activator="{ on, attrs }">
+          <span
+            class="sortable-handle py-3"
+            :data-id="id"
+            :data-parent-ids="parentIds"
+            v-bind="attrs"
+            v-on="on"
+          >
+            {{ name }}
+          </span>
+        </template>
+        <span>{{ name }}</span>
+      </v-tooltip>
       <div v-if="hasMetadata">
         <v-btn icon @click.stop="showInfo = true">
           <v-icon>
@@ -23,7 +30,7 @@
       </div>
     </div>
     <v-expand-transition>
-      <div v-if="isLayer && selected" class="pt-2 pb-5 pr-5">
+      <div v-if="isLayer && selected" class="pt-0 pb-1 pr-5">
         <v-row no-gutters>
           <v-col cols="2">
             <v-tooltip bottom>

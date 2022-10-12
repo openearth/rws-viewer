@@ -47,5 +47,9 @@
   "selectFilter": "Select a value from list below to query the layer",
   "selectLayerWithTime": "Select a layer from the list to enable the time component",
   "selectLayersToView": "Select layers to view",
-  "shareUrl": "Share url"
+  "shareUrl": "Share url",
+  "saveFavourites": "Save favourites",
+  "loadFavourites": "Load favourites",
+  "saveFavouritesNotice": "Select one or more layers to save favourites.",
+  "selectAFile": "Select a file"
 }
