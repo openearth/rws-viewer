@@ -3,6 +3,16 @@
   publish = "dist/"
 
 [[redirects]]
+  from = "https://rws-viewer.netlify.app/*"
+  to = "https://viewer.openearth.nl/:splat"
+  status = 301
+
+[[redirects]]
+  from = "/api/*"
+  to = "https://kaartenbak.netlify.app/api/:splat"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
