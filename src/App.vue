@@ -1,6 +1,9 @@
 <template>
   <app-shell :header-title="viewerName">
-    <locale-switcher slot="header-right" />
+    <template slot="header-right">
+      <search-bar @onSearch="onSearch" />
+      <locale-switcher />
+    </template>
 
     <v-fade-transition mode="out-in">
       <layer-order v-if="wmsLayerIds.length" />
@@ -9,6 +12,12 @@
     <v-fade-transition mode="out-in">
       <mapbox-legend v-if="wmsLayerIds.length" />
     </v-fade-transition>
+
+    <LayersDialog 
+      :open="layersDialogOpen"
+      :layers="layers"
+      @close="closeLayersDialog"
+    />
 
     <mapbox-map
       slot="map"
@@ -70,6 +79,10 @@
   import getFeatureInfo from '~/lib/get-feature-info'
   import MapMouseMove from './components/MapComponents/MapMouseMove.js'
   import MapboxCoordinates from './components/MapboxCoordinates/MapboxCoordinates.vue'
+  import debounce from '~/lib/debounce'
+  import axios from 'axios'
+  import LayersDialog from '~/components/LayersDialog/LayersDialog'
+  import SearchBar from '~/components/SearchBar/SearchBar'
 
   export default {
     components: {
@@ -88,6 +101,8 @@
       TimeSlider,
       MapMouseMove,
       MapboxCoordinates,
+      LayersDialog,
+      SearchBar,
     },
 
     data: () => ({
@@ -95,6 +110,8 @@
       sampleDataTime: [],
       showslider: false,
       lngLat: null,
+      layers: [],
+      layersDialogOpen: false,
     }),
 
     computed: {
@@ -163,6 +180,22 @@
       },
       onMouseMove(e) {
         this.lngLat = e.lngLat
+      },
+      onSearch: debounce(async function(val) {
+        try {
+          if (val.trim()) {
+            const { data } = await axios(`/api/search?viewer=${ this.viewerName }&query=${ val }`)
+
+            this.layers = data
+            this.layersDialogOpen = true
+          }
+
+        } catch (e) {
+          console.log(e)
+        }
+      }, 1000),
+      closeLayersDialog() {
+        this.layersDialogOpen = false
       },
     },
   }

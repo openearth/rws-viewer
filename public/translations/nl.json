@@ -50,5 +50,7 @@
   "saveFavourites": "Opslaan favorieten",
   "loadFavourites": "Laad favorieten",
   "saveFavouritesNotice": "Selecteer één of meerdere lagen om favorieten te kunnen opslaan.",
-  "selectAFile": "Selecteer een bestand"
+  "selectAFile": "Selecteer een bestand",
+  "search": "Zoeken",
+  "noLayersFound": "Geen lagen gevonden"
 }
