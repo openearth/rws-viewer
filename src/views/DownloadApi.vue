@@ -226,6 +226,7 @@
         // work in progress
         const selectedLayer = this.apisLayers.find(layer => layer.id === id)
 
+        this.removeLayerFromMap({ layers: [ selectedLayer ] })
         this.loadLayerOnMap({ layers: [ selectedLayer ] })
 
         this.setSelectedLayerForSelection(this.selectedApi)
