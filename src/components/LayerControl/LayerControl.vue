@@ -1,13 +1,20 @@
 <template>
   <div>
     <div class="d-flex align-center">
-      <span
-        class="sortable-handle py-3"
-        :data-id="id"
-        :data-parent-ids="parentIds"
-      >
-        {{ name }}
-      </span>
+      <v-tooltip top>
+        <template #activator="{ on, attrs }">
+          <span
+            class="sortable-handle py-3"
+            :data-id="id"
+            :data-parent-ids="parentIds"
+            v-bind="attrs"
+            v-on="on"
+          >
+            {{ name }}
+          </span>
+        </template>
+        <span>{{ name }}</span>
+      </v-tooltip>
       <div v-if="hasMetadata">
         <v-btn icon @click.stop="showInfo = true">
           <v-icon>
