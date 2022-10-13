@@ -15,7 +15,7 @@
 
     <LayersDialog 
       :open="layersDialogOpen"
-      :layers="kaartenbakLayers"
+      :layers="layers"
       @close="closeLayersDialog"
     />
 
@@ -110,7 +110,7 @@
       sampleDataTime: [],
       showslider: false,
       lngLat: null,
-      kaartenbakLayers: [],
+      layers: [],
       layersDialogOpen: false,
     }),
 
@@ -184,9 +184,9 @@
       onSearch: debounce(async function(val) {
         try {
           if (val.trim()) {
-            const { data } = await axios(`/api/kaartenbak-find-layers?viewer=${ this.viewerName }&query=${ val }`)
+            const { data } = await axios(`/api/search?viewer=${ this.viewerName }&query=${ val }`)
 
-            this.kaartenbakLayers = data
+            this.layers = data
             this.layersDialogOpen = true
           }
 

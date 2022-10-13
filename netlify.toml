@@ -1,22 +1,8 @@
 [build]
   command = "yarn build"
   publish = "dist/"
-  functions = "functions"
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-[dev]
-  targetPort = 3000
-  functions = "functions"
-
-[functions]
-  directory = "functions"
-  node_bundler = "esbuild"
