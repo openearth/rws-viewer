@@ -36,7 +36,7 @@
 
         const url = new URL(window.location.href)
         url.searchParams.set('layers', newValue.map(({ id }) => id).join(','))
-        this.$router.replace(`/${ this.viewerConfig }/?${ url.searchParams.toString() }`)
+        this.$router.replace(`${ url.pathname }?${ url.searchParams.toString() }`)
       },
     },
 
