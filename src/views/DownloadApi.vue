@@ -226,7 +226,6 @@
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection', 'loadLayerOnMap', 'removeLayerFromMap' ]),
 
       handleSelectionLayerSelect(id) {
-        // work in progress
         const selectedLayer = this.apisLayers.find(layer => layer.id === id)
 
         if (this.previousSelectedApiLayer) {
@@ -235,6 +234,7 @@
 
         this.removeLayerFromMap({ layers: [ selectedLayer ] })
         this.loadLayerOnMap({ layers: [ selectedLayer ] })
+
         this.setSelectedLayerForSelection(selectedLayer)
         this.previousSelectedApiLayer = selectedLayer
         this.selectedFilters = null
@@ -250,9 +250,6 @@
         // before we can start drawing again
         await this.clearDrawnFeatures()
         this.selectedArea = null
-
-        // work in progress
-        // this.setSelectedLayerForSelection(this.selectedApiLayer)
         this.selectedLayerId = this.selectedApiLayer
 
         this.setDrawMode({ mode })
