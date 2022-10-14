@@ -153,7 +153,7 @@
       activeLayers() {
         return this.activeFlattenedLayerIds
           .map(id => this.activeFlattenedLayers.find(layer => layer.id === id))
-          .filter(layer => layer.externalApi)
+          .filter(layer => layer?.externalApi)
       },
 
       activeLayersList() {
@@ -225,6 +225,8 @@
       handleSelectionLayerSelect(id) {
         // work in progress
         const selectedLayer = this.apisLayers.find(layer => layer.id === id)
+
+        console.log(selectedLayer)
 
         this.removeLayerFromMap({ layers: [ selectedLayer ] })
         this.loadLayerOnMap({ layers: [ selectedLayer ] })
