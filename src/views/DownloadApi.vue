@@ -30,6 +30,7 @@
     <v-row v-if="selectedApi">
       <v-col>
         <v-select
+          v-model="selectedApiLayer"
           :value="selectedLayerForSelection && selectedLayerForSelection.id"
           :label="$t('chooseLayer')"
           :items="apisLayers"
@@ -139,6 +140,8 @@
       ]),
       requestFailure: false,
       selectedApi: null,
+      selectedApiLayer: null,
+      previousSelectedApiLayer: null,
     }),
 
     computed: {
@@ -226,10 +229,14 @@
         // work in progress
         const selectedLayer = this.apisLayers.find(layer => layer.id === id)
 
+        if (this.previousSelectedApiLayer) {
+          this.removeLayerFromMap({ layers: [ this.previousSelectedApiLayer ] })
+        }
+
         this.removeLayerFromMap({ layers: [ selectedLayer ] })
         this.loadLayerOnMap({ layers: [ selectedLayer ] })
-
-        this.setSelectedLayerForSelection(this.selectedApi)
+        this.setSelectedLayerForSelection(selectedLayer)
+        this.previousSelectedApiLayer = selectedLayer
         this.selectedFilters = null
         this.requestFailure = false
 
@@ -245,8 +252,8 @@
         this.selectedArea = null
 
         // work in progress
-        this.setSelectedLayerForSelection(this.selectedApi)
-        this.selectedLayerId = this.selectedApi.id
+        // this.setSelectedLayerForSelection(this.selectedApiLayer)
+        this.selectedLayerId = this.selectedApiLayer
 
         this.setDrawMode({ mode })
       },
