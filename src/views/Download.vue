@@ -1,5 +1,5 @@
 <template>
-  <v-container class="pa-0">
+  <v-container class="download-container-scrollable pa-0">
     <v-row v-if="!downloadIsAvailable && !activeLayersList.length">
       <v-col class="pa-8">
         <v-alert
@@ -73,3 +73,9 @@
     },
   }
 </script>
+<style>
+.download-container-scrollable {
+  overflow-y:auto;
+  height: calc(100vh - 130px);
+}
+</style>

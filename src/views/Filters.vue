@@ -1,5 +1,5 @@
 <template>
-  <v-container class="download pt-4">
+  <v-container class="filters pt-4">
     <v-row v-if="!availableLayersList.length">
       <v-col>
         <v-alert
@@ -139,3 +139,9 @@
 
   }
 </script>
+<style>
+.filters {
+  overflow-y:auto;
+  height: calc(100vh - 130px);
+}
+</style>

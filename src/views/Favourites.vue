@@ -109,3 +109,9 @@
     },
   }
 </script>
+<style>
+.favourites {
+  overflow-y:auto;
+  height: calc(100vh - 130px);
+}
+</style>

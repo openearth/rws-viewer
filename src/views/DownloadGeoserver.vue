@@ -115,9 +115,12 @@
       <template v-if="downloadLayer">
         <v-row>
           <v-col>
-            <h4 class="pb-3">
-              {{ $t('filters') }}
+            <h4 class="pb-0">
+              {{ $t('filtersDownload') }}
             </h4>
+            <p class="body-2 pb-1">
+              {{ $t('filtersDownloadDesc') }}
+            </p>
             <key-value-filter
               :filters="availableFiltersForSelectedLayer"
               :comparers="comparers"

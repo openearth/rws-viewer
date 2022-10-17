@@ -47,7 +47,6 @@
         @update:open="handleOpenedFolders"
       >
         <template #prepend="{selected, open, item, indeterminate}">
-          
           <div v-if="!item.layer">
             <v-icon>
               <template v-if="selected">
