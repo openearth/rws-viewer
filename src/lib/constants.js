@@ -1,5 +1,5 @@
 export const VALID_VIEWER_CONFIGS = require('../../public/data/available-configs-viewers.json')
-console.log('VALID_VIEWER_CONFIGS',VALID_VIEWER_CONFIGS )
+
 export const VALID_VIEWER_NAMES =  VALID_VIEWER_CONFIGS.map(({ name }) => name)
 
 export const CATEGORIES = require('../../public/data/app.json').categories

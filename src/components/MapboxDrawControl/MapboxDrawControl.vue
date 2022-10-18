@@ -30,8 +30,10 @@
     watch: {
       drawMode(mode) {
         if (mode) {
+          map.getCanvas().style.cursor = 'crosshair'
           this.mbDraw.changeMode(`draw_${ mode }`)
         } else {
+          map.getCanvas().style.cursor = ''
           this.mbDraw.changeMode('simple_select')
         }
       },
@@ -49,6 +51,7 @@
 
     methods: {
       deferredMountedTo(map) {
+        console.log('loaded')
         window.map = map
         const modes = MapboxDraw.modes
         modes.draw_rectangle = DrawRectangle
@@ -65,6 +68,7 @@
         })
 
         this.mbDraw = mbDraw
+        
         map.addControl(mbDraw)
 
         const onChangeFn = () => {
