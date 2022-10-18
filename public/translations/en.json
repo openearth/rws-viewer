@@ -45,7 +45,7 @@
   "searchInAvailableLayerNames": "Search in available layer names",
   "select": "Select",
   "selectDesc": "Select a portion of the map to download. Either by drawing, or choosing a predefined section.",
-  "selectAreasDesc": "Select the areas that needs to be included in the download. You can select/deselect areas by clicking on polygons in map.",
+  "selectAreasDesc": "Select predefined area that needs to be included in the download or draw a shape for the selection. Disable the selection via no selection or by clicking on one of the drawing buttons",
   "selectFilter": "Select a value from list below to query the layer",
   "selectLayerWithTime": "Select a layer from the list to enable the time component",
   "selectLayersToView": "Select layers to view",
