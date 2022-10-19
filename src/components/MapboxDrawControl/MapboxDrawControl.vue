@@ -51,7 +51,6 @@
 
     methods: {
       deferredMountedTo(map) {
-        console.log('loaded')
         window.map = map
         const modes = MapboxDraw.modes
         modes.draw_rectangle = DrawRectangle

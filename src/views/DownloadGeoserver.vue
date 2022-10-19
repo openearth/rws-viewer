@@ -350,12 +350,12 @@
       },
       async getAttributesToFilter() {
 
-        const { serviceType, url, layer } = this.selectedLayerData
-
+        const { serviceType, url, layer, downloadLayer } = this.selectedLayerData
+        const layerName = downloadLayer ? downloadLayer : layer
         if (serviceType === 'wfs') {
           const response = await describeFeatureType({
             url,
-            layer,
+            layer: layerName,
           })
           this.availableFiltersForSelectedLayer = readFeatureProperties(response)
         }
