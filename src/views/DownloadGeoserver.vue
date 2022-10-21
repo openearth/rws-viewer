@@ -115,9 +115,12 @@
       <template v-if="downloadLayer">
         <v-row>
           <v-col>
-            <h4 class="pb-3">
-              {{ $t('filters') }}
+            <h4 class="pb-0">
+              {{ $t('filtersDownload') }}
             </h4>
+            <p class="body-2 pb-1">
+              {{ $t('filtersDownloadDesc') }}
+            </p>
             <key-value-filter
               :filters="availableFiltersForSelectedLayer"
               :comparers="comparers"
@@ -347,12 +350,12 @@
       },
       async getAttributesToFilter() {
 
-        const { serviceType, url, layer } = this.selectedLayerData
-
+        const { serviceType, url, layer, downloadLayer } = this.selectedLayerData
+        const layerName = downloadLayer ? downloadLayer : layer
         if (serviceType === 'wfs') {
           const response = await describeFeatureType({
             url,
-            layer,
+            layer: layerName,
           })
           this.availableFiltersForSelectedLayer = readFeatureProperties(response)
         }

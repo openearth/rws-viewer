@@ -2,8 +2,9 @@ import slugify from '@sindresorhus/slugify'
 import { uniqBy, uniq, difference } from 'ramda'
 import router from '../../../router'
 import configRepo from '~/repo/configRepo'
+import { getViewerConfiguration } from '~/repo/configRepo'
 import { flattenLayers, getLayersTags, getLayersById, omitLayers } from '~/lib/layer-helpers.js'
-import { WADDEN_SEA_MAP_CENTER, NEDERLANDS_MAP_CENTER, WADDEN_SEA_MAP_ZOOM, NEDERLANDAS_MAP_ZOOM } from '~/lib/constants'
+
 
 export default {
   namespaced: true,
@@ -62,14 +63,11 @@ export default {
     async getAppData({ dispatch }, route) {
       const viewer = route?.params?.config
 
-      //TODO: this is a temp solution
-      if (viewer === 'wadden-viewer') {
-        dispatch('map/setMapCenter', WADDEN_SEA_MAP_CENTER, { root: true })
-        dispatch('map/setMapZoom', WADDEN_SEA_MAP_ZOOM, { root: true })
-      } else {
-        dispatch('map/setMapCenter', NEDERLANDS_MAP_CENTER, { root: true })
-        dispatch('map/setMapZoom', NEDERLANDAS_MAP_ZOOM, { root: true })
-      }
+      //Set viewer configuration
+      const { mapCenter, mapZoom } = await getViewerConfiguration(viewer)
+       
+       dispatch('map/setMapCenter', mapCenter, { root: true })
+       dispatch('map/setMapZoom', mapZoom, { root: true })
       
       const { layers, name } = await dispatch('addViewerData', viewer)
 

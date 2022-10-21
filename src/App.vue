@@ -56,8 +56,6 @@
       <map-layer-info
         v-if="activeFlattenedLayers.length && !drawMode"
         :layer="activeFlattenedLayers[0]"
-        @set-active-poup="setActivePopup()"
-        @remove-active-popup="removeActivePopup()"
       />
     </mapbox-map>
   </app-shell>
@@ -171,12 +169,6 @@
             this.addDrawnFeature(feature)
           }
         }
-      },
-      setActivePopup(event) {
-        //console.log(event)
-      },
-      removeActivePopup(event) {
-        //console.log(event)
       },
       onMouseMove(e) {
         this.lngLat = e.lngLat

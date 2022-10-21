@@ -9,7 +9,7 @@
   >
     <v-tabs
       v-model="tabs.name"
-      grow
+      fixed-tabs
       icons-and-text
       background-color="blue-grey lighten-5"
     >
@@ -19,6 +19,7 @@
           :to="`/${viewerConfig}${tab.page}`"
           :ripple="false"
           :exact-path="tab.page === '/'"
+          :disabled="tab.disabled"
         >
           {{ $t(tab.name) }}
           <v-icon>{{ tab.icon }}</v-icon>
@@ -44,15 +45,27 @@
     data: () => ({
       drawer: false,
       tabs: [
-        { name: 'layers', page: '/', icon: 'mdi-layers' },
-        { name: 'download', page: '/download', icon: 'mdi-download' },
-        { name: 'favourites', page: '/favourites', icon: 'mdi-star' },
-        { name: 'filters', page:'/filters', icon: 'mdi-clock-time-three' },
+        { name: 'layers', page: '/', icon: 'mdi-layers', disabled: false },
+        { name: 'download', page: '/download', icon: 'mdi-download', disabled: false },
+        { name: 'favourites', page: '/favourites', icon: 'mdi-star', disabled: false },
+        { name: 'filters', page:'/filters', icon: 'mdi-clock-time-three', disabled: true },
       ],
     }),
     computed: {
       ...mapGetters('app', [ 'appNavigationOpen', 'appNavigationWidth', 'viewerConfig' ]),
+      ...mapGetters('map', [ 'activeFlattenedLayersIdsWithTimeOption' ]),
     },
+    watch: {
+      activeFlattenedLayersIdsWithTimeOption() {
+        const filterTabIndex = this.tabs.findIndex(tab=> tab.name ==='filters')
+        if (this.activeFlattenedLayersIdsWithTimeOption.length) {
+          this.tabs[filterTabIndex].disabled = false
+        } else {
+          this.tabs[filterTabIndex].disabled = true
+        }
+      },
+    },
+
     methods: {
       ...mapActions('data', [ 'resetTimeExtent' ]),
     },

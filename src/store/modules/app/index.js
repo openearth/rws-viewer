@@ -3,7 +3,7 @@ export default {
 
   state: () => ({
     appNavigationOpen: true,
-    appNavigationWidth: 460,
+    appNavigationWidth: 500,
     viewerConfig: '',
     viewerName: '',
   }),

@@ -1,5 +1,7 @@
 query {
-  configs: allMenus(filter: {parent: {exists: false}}) {
+  configs: allMenus(filter: { parent: { exists: false } }) {
     name
+    mapZoom
+    mapCenter
   }
 }
