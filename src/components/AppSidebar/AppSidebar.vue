@@ -9,7 +9,7 @@
   >
     <v-tabs
       v-model="tabs.name"
-      grow
+      fixed-tabs
       icons-and-text
       background-color="blue-grey lighten-5"
     >
