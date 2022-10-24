@@ -21,7 +21,7 @@
 <script>
   import { mapGetters } from 'vuex'
   import { getCapabilities, getSupportedOutputFormats } from '~/lib/get-capabilities'
-  
+  import moveInArrayByValue from '~/lib/move-in-array-by-value'
 
   export default {
     props: {
@@ -63,8 +63,12 @@
       const serviceType = this.layerToDownload.serviceType 
       //wfs or wcs capabilities to read the supported formats to download the layer
       const capabilities = await getCapabilities(serviceUrl, serviceType)
-      
-      this.supportedFormats = getSupportedOutputFormats(serviceType, capabilities)
+
+      let supportedOutputFormats = getSupportedOutputFormats(serviceType, capabilities)
+      supportedOutputFormats = moveInArrayByValue(supportedOutputFormats, 'csv', 0)
+      supportedOutputFormats = moveInArrayByValue(supportedOutputFormats, 'SHAPE-ZIP', 1)
+
+      this.supportedFormats = supportedOutputFormats
       this.loading = false
     },
 
