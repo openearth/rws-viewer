@@ -46,7 +46,7 @@
   "select": "Selecteer",
   "selectDesc": "Selecteer een deel van de kaart om te downloaden. Dit kan door te tekenen, of een voorgedefinieerd sectie te kiezen.",
   "selectAreasDesc": "Selecteer een voorgedefinieerd gebied of teken een vorm via de Teken rechthoek of veelhoek knop. Uitzetten gaat door Geen selectie te kiezen of via een van de knoppen.",
-  "selectFilter": "Selecteer een waarde van de onderstaande lijst om de laag te bevra",
+  "selectFilter": "Selecteer een waarde van de onderstaande lijst om de laag te bevragen",
   "selectLayerWithTime": "Selecteer een laag uit de lijst om de tijdcomponent in te schakelen",
   "selectLayersToView": "Selecteer lagen om te bekijken",
   "shareUrl": "Deel url",
