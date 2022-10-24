@@ -9,7 +9,7 @@
   "download": "Download",
   "downloadData": "Geen laag geselecteerd | Download laag",
   "downloadDataSection": "Geen laag geselecteerd | Download sectie uit laag",
-  "downloadDesc": "Kies één laag om te downloaden.",
+  "downloadDesc": "Kies één laag om te downloaden. Denk aan uw browsers instellingen. Maak het mogelijk om dowloads op een willekeurige plaats op te slaan.",
   "downloadNotice": "Het genereren van het bestand kan even duren",
   "downloadUnavailable": "Het downloaden van data is nog niet beschikbaar voor één of meerdere lagen.",
   "drawPolygon": "Teken veelhoek",

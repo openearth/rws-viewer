@@ -9,7 +9,7 @@
   "download": "Download",
   "downloadData": "No layer selected | Download layer ",
   "downloadDataSection": "No layer selected | Download layer section ",
-  "downloadDesc": "Choose one layer to download.",
+  "downloadDesc": "Choose one layer to download. Please take care of your browser settings. Enable asking where to download in order to be able to find your download.",
   "downloadNotice": "Generating the file may take a while",
   "downloadUnavailable": "Downloading data is not yet available for one or more layers.",
   "drawPolygon": "Draw polygon",
