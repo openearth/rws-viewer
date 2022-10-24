@@ -11,6 +11,43 @@
         </v-alert>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col>
+        <h3>{{ $t('download') }}</h3>
+        <p class="body-2 mb-0">
+          {{ $t('downloadDesc') }}
+        </p>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-select
+          v-model="downloadLayer"
+          :label="$t('layerSelection')"
+          :items="activeLayersList"
+          dense
+          outlined
+          hide-details
+          @change="getAttributesToFilter"
+        />
+        <transition name="fade" mode="out-in">
+          <v-alert
+            v-if="!validUrl && downloadLayer"
+            class="mt-2 mb-0"
+            dense
+            outlined
+            type="error"
+          >
+            {{ $t('preventDownload') }}
+          </v-alert>
+        </transition>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-divider class="my-4" />
+      </v-col>
+    </v-row>
     <template v-if="activeLayersList.length">
       <v-row>
         <v-col>
@@ -62,38 +99,7 @@
           <v-divider class="my-4" />
         </v-col>
       </v-row>
-      <v-row>
-        <v-col>
-          <h3>{{ $t('download') }}</h3>
-          <p class="body-2 mb-0">
-            {{ $t('downloadDesc') }}
-          </p>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <v-select
-            v-model="downloadLayer"
-            :label="$t('layerSelection')"
-            :items="activeLayersList"
-            dense
-            outlined
-            hide-details
-            @change="getAttributesToFilter"
-          />
-          <transition name="fade" mode="out-in">
-            <v-alert
-              v-if="!validUrl && downloadLayer"
-              class="mt-2 mb-0"
-              dense
-              outlined
-              type="error"
-            >
-              {{ $t('preventDownload') }}
-            </v-alert>
-          </transition>
-        </v-col>
-      </v-row>
+      
       <template v-if="downloadLayer">
         <v-row>
           <v-col>
@@ -130,11 +136,6 @@
           </v-col>
         </v-row>
       </template>
-      <v-row>
-        <v-col>
-          <v-divider class="my-4" />
-        </v-col>
-      </v-row>
       <v-row>
         <v-col>
           <v-btn
