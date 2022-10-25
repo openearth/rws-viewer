@@ -103,7 +103,7 @@
       <template v-if="downloadLayer">
         <v-row>
           <v-col>
-            <h4>{{ $t('formats') }}</h4>
+            <h3>{{ $t('formats') }}</h3>
             <p class="body-2 mb-0">
               {{ $t('formatsDesc') }}
             </p>
@@ -121,9 +121,9 @@
       <template v-if="downloadLayer">
         <v-row>
           <v-col>
-            <h4 class="pb-0">
+            <h3 class="pb-0">
               {{ $t('filtersDownload') }}
-            </h4>
+            </h3>
             <p class="body-2 pb-1">
               {{ $t('filtersDownloadDesc') }}
             </p>
