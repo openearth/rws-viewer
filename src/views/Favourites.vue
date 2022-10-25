@@ -1,17 +1,27 @@
 <template>
   <v-container class="favourites pt-4">
-    <v-row v-if="activeFlattenedLayerIds.length">
-      <v-col>
-        <v-btn
-          color="primary"
-          block
-          :ripple="false"
-          @click="onSaveClick"
-        >
-          {{ $t('saveFavourites') }}
-        </v-btn>
-      </v-col>
-    </v-row>
+    <template v-if="activeFlattenedLayerIds.length">
+      <v-row>
+        <v-col>
+          <h3>{{ $t('saveFavourites') }}</h3>
+          <p class="body-2 mb-0">
+            {{ $t('saveFavouritesDesc') }}
+          </p>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-btn
+            color="primary"
+            block
+            :ripple="false"
+            @click="onSaveClick"
+          >
+            {{ $t('saveFavourites') }}
+          </v-btn>
+        </v-col>
+      </v-row>
+    </template>
     <v-row v-else>
       <v-col>
         <v-alert
@@ -30,6 +40,14 @@
     </v-row>
     <v-row>
       <v-col>
+        <h3>{{ $t('loadFavourites') }}</h3>
+        <p class="body-2 mb-0">
+          {{ $t('loadFavouritesDesc') }}
+        </p>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
         <v-file-input
           v-model="chosenFile"
           :label="$t('selectAFile')"
@@ -44,7 +62,7 @@
           block
           :ripple="false"
           :disabled="!chosenFile"
-          @click="onLoadClick"
+          @click="handleLoadClick"
         >
           {{ $t('loadFavourites') }}
         </v-btn>
@@ -90,7 +108,7 @@
         saveAs(blob, 'favourites.json')
       },
 
-      onLoadClick() {
+      handleLoadClick() {
         const reader = new FileReader()
 
         reader.readAsText(this.chosenFile)
