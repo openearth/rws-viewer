@@ -76,7 +76,7 @@ export default {
       const initialLayerIds = (searchParams.get('layers') || '').split(',')
       let layersById = getLayersById(layers, initialLayerIds)
 
-      if (!layersById.length) {
+      if (!layersById.length && defaultLayer?.id) {
         initialLayerIds.push(defaultLayer.id)
         layersById = getLayersById(layers, initialLayerIds)
       }
