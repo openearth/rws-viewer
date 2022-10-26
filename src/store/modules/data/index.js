@@ -5,7 +5,6 @@ import configRepo from '~/repo/configRepo'
 import { getViewerConfiguration } from '~/repo/configRepo'
 import { flattenLayers, getLayersTags, getLayersById, omitLayers } from '~/lib/layer-helpers.js'
 
-
 export default {
   namespaced: true,
 
@@ -64,10 +63,10 @@ export default {
       const viewer = route?.params?.config
 
       //Set viewer configuration
-      const { mapCenter, mapZoom } = await getViewerConfiguration(viewer)
+      const { mapCenter, mapZoom, defaultLayer } = await getViewerConfiguration(viewer)
        
-       dispatch('map/setMapCenter', mapCenter, { root: true })
-       dispatch('map/setMapZoom', mapZoom, { root: true })
+      dispatch('map/setMapCenter', mapCenter, { root: true })
+      dispatch('map/setMapZoom', mapZoom, { root: true })
       
       const { layers, name } = await dispatch('addViewerData', viewer)
 
@@ -75,7 +74,12 @@ export default {
 
       const searchParams = new URLSearchParams(window.location.search)
       const initialLayerIds = (searchParams.get('layers') || '').split(',')
-      const layersById = getLayersById(layers, initialLayerIds)
+      let layersById = getLayersById(layers, initialLayerIds)
+
+      if (!layersById.length && defaultLayer?.id) {
+        initialLayerIds.push(defaultLayer.id)
+        layersById = getLayersById(layers, initialLayerIds)
+      }
 
       if (layersById.length) {
         dispatch('map/loadLayerOnMap', { layers: layersById }, { root: true })

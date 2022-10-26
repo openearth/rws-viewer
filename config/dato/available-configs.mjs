@@ -12,6 +12,7 @@ export default function handleAvailableConfigs(options) {
         name: slugify(config.name),
         mapZoom: config.mapZoom,
         mapCenter: config.mapCenter,
+        defaultLayer: config.defaultLayer,
       }
     })
   

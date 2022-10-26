@@ -3,5 +3,8 @@ query {
     name
     mapZoom
     mapCenter
+    defaultLayer {
+      id
+    }
   }
 }
