@@ -73,7 +73,7 @@
       },
       copyUrlToClipboard() {
         navigator.clipboard.writeText(this.shareUrl)
-        alert(`The following url is copied to clipboard! ${this.shareUrl }`)
+        alert(`The following url is copied to clipboard! ${ this.shareUrl }`)
       },
     },
   }
