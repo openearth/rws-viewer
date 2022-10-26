@@ -42,32 +42,23 @@
 
         const loadingPopup = new Mapbox.Popup().setLngLat(event.lngLat).addTo(map)
 
-        try {
-          const info = await getFeatureInfo({
-            layer: this.layer.layer,
-            url: this.layer.url,
-            bounds,
-            x,
-            y,
-            width,
-            height,
-          })
+        const info = await getFeatureInfo({
+          layer: this.layer.layer,
+          url: this.layer.url,
+          bounds,
+          x,
+          y,
+          width,
+          height,
+        })
 
-          loadingPopup.remove()
+        loadingPopup.remove()
 
-          if (info) {
-            const { properties } = info
-            const popup = new Mapbox.Popup()
-              .setLngLat(event.lngLat)
-              .setHTML(json2HtmlTable(this.layer.name, [ properties ]))
-              .addTo(map)
-
-            this.$emit('set-active-popup', popup)
-          }
-        } catch {
+        if (info) {
+          const { properties } = info
           const popup = new Mapbox.Popup()
             .setLngLat(event.lngLat)
-            .setHTML('Unable to retrieve data')
+            .setHTML(json2HtmlTable(this.layer.name, [ properties ]))
             .addTo(map)
 
           this.$emit('set-active-popup', popup)
@@ -90,6 +81,6 @@
 .mapboxgl-popup-content {
   overflow-y: scroll;
   width: 240px;
-  height: 240px;
+  max-height: 240px;
 }
 </style>
