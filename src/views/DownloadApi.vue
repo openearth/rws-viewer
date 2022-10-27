@@ -15,7 +15,7 @@
     <v-row>
       <v-col>
         <v-select
-          v-model="selectedApi"
+          v-model="selectedLayerToDownloadFrom" 
           :label="$t('chooseApi')"
           :items="activeLayers"
           item-text="name"
@@ -139,9 +139,9 @@
         'endswith',
       ]),
       requestFailure: false,
-      selectedApi: null,
       selectedApiLayer: null,
       previousSelectedApiLayer: null,
+      selectedLayerToDownloadFrom: null,
     }),
 
     computed: {
@@ -152,7 +152,7 @@
       maxPageSize() {
         return _.get(this.selectedApi, 'maxPageSize')
       },
-
+      //Active layers to download from. Each layer is connected to one and only API.
       activeLayers() {
         return this.activeFlattenedLayerIds
           .map(id => this.activeFlattenedLayers.find(layer => layer.id === id))
@@ -168,19 +168,24 @@
 
       apisLayers() {
         return this.apis.reduce((apisLayers, api) => {
-          this.selectedApi.externalApi.forEach(externalApi => {
-            if (api.id === externalApi.id) {
-              apisLayers.push(...api.layers.map(({ layer }) => {
-                return { ...layer }
-              }))
-            }
-          })
+          if (api.id === this.selectedApi.id) {
+            apisLayers.push(...api.layers.map(({ layer }) => {
+              return { ...layer }
+            }))
+          }
           return apisLayers
         }, [])
       },
 
       selectedLayer() {
         return this.flattenedLayers.find(layer => layer.id === this.selectedLayerId)
+      },
+
+      selectedApi() {
+        if (!this.selectedLayerToDownloadFrom){
+          return 
+        }
+        return this.selectedLayerToDownloadFrom.externalApi[0] //Why is it an array?
       },
 
       selectedAreas() {
@@ -204,7 +209,7 @@
       },
 
       availableFiltersForSelectedLayer() {
-        if (this.selectedApi?.filters && this.selectedLayer) {
+        if (this.selectedApi?.filters) {  
           const filters = this.selectedApi.filters.split(', ')
           return filters.concat(this.dateFilters)
         }
@@ -221,22 +226,31 @@
         return _.has( this.selectedApi, 'propertyMapping.areas')
       },
     },
+    mounted() {
+      this.hideActiveLayers()
+    },
+    updated() {
+      this.hideActiveLayers()
+    },
+
+    beforeDestroy() {
+      this.showActiveLayers()
+    },
+    deactivated() {
+      this.showActiveLayers()
+    },
 
     methods: {
-      ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection', 'loadLayerOnMap', 'removeLayerFromMap' ]),
-
+      ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection',  'loadApiLayerOnMap', 'removeApiLayerFromMap', 'updateWmsLayerOpacity' ]),
+      
       handleSelectionLayerSelect(id) {
+        //Layer to be used for areas selections. This layer is provided from the externalApi model.
         const selectedLayer = this.apisLayers.find(layer => layer.id === id)
-
-        if (this.previousSelectedApiLayer) {
-          this.removeLayerFromMap({ layers: [ this.previousSelectedApiLayer ] })
-        }
-
-        this.removeLayerFromMap({ layers: [ selectedLayer ] })
-        this.loadLayerOnMap({ layers: [ selectedLayer ] })
-
+        
+        this.loadApiLayerOnMap(selectedLayer)
+        
         this.setSelectedLayerForSelection(selectedLayer)
-        this.previousSelectedApiLayer = selectedLayer
+        
         this.selectedFilters = null
         this.requestFailure = false
 
@@ -273,7 +287,20 @@
         this.selectedFilters = value
         this.requestFailure = false
       },
-
+      hideActiveLayers() {
+        if (this.activeLayers.length) {
+          this.activeLayers.forEach(({ id }) => {
+            this.updateWmsLayerOpacity({ id, opacity: 0 })
+          })
+        }
+      },
+      showActiveLayers() {
+        if (this.activeLayers.length) {
+          this.activeLayers.forEach(({ id }) => {
+            this.updateWmsLayerOpacity({ id, opacity: 1 })
+          })
+        }
+      },
       async handleDownloadClick() {
         this.requestFailure = false
         const externalApi = this.selectedApi
@@ -344,6 +371,7 @@
           console.log('ERROR', err)
           this.requestFailure = `Request failed: ${ err }`
         })
+        
       },
     },
   }

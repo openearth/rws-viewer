@@ -14,6 +14,7 @@ export default {
     drawnFeatures: [],
     filteredLayerId: null, // id of active layer to filter
     wmsLayers: [],
+    wmsApiLayer: null,
     selectedLayerForSelection: null,
     mapCenter: NEDERLANDS_MAP_CENTER,
     mapZoom: NEDERLANDAS_MAP_ZOOM,
@@ -36,6 +37,12 @@ export default {
       }
       return state.wmsLayers
     } ,
+    wmsApiLayer(state) {
+      if (!state.mapLoaded) {
+        return []
+      }
+      return state.wmsApiLayer
+    },
     wmsLayerIds: state => (state.activeFlattenedLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
     drawnFeatures: state => state.drawnFeatures,
@@ -77,6 +84,14 @@ export default {
     REMOVE_WMS_LAYER(state, layerId) {
       state.wmsLayers = state.wmsLayers.filter(wmsLayer => wmsLayer.id !== layerId)
     },
+
+    ADD_WMS_API_LAYER(state, layer) {
+      state.wmsApiLayer = layer
+    },
+    REMOVE_WMS_API_LAYER(state) {
+      state.wmsApiLayer = null
+    },
+
     RESET_ACTIVE_FLATTENED_LAYERS(state) {
       state.activeFlattenedLayers = []
     },
@@ -152,6 +167,7 @@ export default {
           )
       })
     },
+    
     reloadLayerOnMap({ commit, state, rootState }) {
       /* If a layer has the time option true,
       then in the filter tab the user can load on
@@ -171,6 +187,12 @@ export default {
       })
     },
 
+    loadApiLayerOnMap({ commit, state }, layer) {
+      commit('ADD_WMS_API_LAYER', buildWmsLayer(layer))
+    },
+    removeApiLayerFromMap({ commit, state }) {
+      commit('REMOVE_WMS_WPI_LAYER')
+    },
     removeFilteredLayerId({ commit }) {
       commit('REMOVE_FILTERED_LAYER_ID')
     },

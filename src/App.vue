@@ -4,15 +4,16 @@
       <search-bar @onSearch="onSearch" />
       <locale-switcher />
     </template>
-
-    <v-fade-transition mode="out-in">
-      <layer-order v-if="wmsLayerIds.length" />
-    </v-fade-transition>
-    <mapbox-coordinates :lng-lat="lngLat" />
-    <v-fade-transition mode="out-in">
-      <mapbox-legend v-if="wmsLayerIds.length" />
-    </v-fade-transition>
-
+    <div v-if="!showApiLayer">
+      <v-fade-transition mode="out-in">
+        <layer-order v-if="wmsLayerIds.length" />
+      </v-fade-transition>
+      <mapbox-coordinates :lng-lat="lngLat" />
+      <v-fade-transition mode="out-in">
+        <mapbox-legend v-if="wmsLayerIds.length" />
+      </v-fade-transition>
+    </div>
+    
     <LayersDialog 
       :open="layersDialogOpen"
       :layers="layers"
@@ -34,6 +35,15 @@
         mode="simple-slider"
         @input="onTimingSelection"
       />
+      <div v-if="showApiLayer">
+        <map-layer
+          v-if="wmsApiLayer"
+          :key="wmsApiLayer.id"
+          :options="wmsApiLayer"
+          :opacity="wmsApiLayer.opacity"
+        />
+      </div> 
+      
       <map-layer
         v-for="(layer, index) in wmsLayers"
         :key="layer.id"
@@ -41,6 +51,7 @@
         :options="layer"
         :opacity="layer.opacity"
       />
+    
       <map-zoom :extent="zoomExtent" />
       <MapMouseMove @mousemove="onMouseMove" />
       <v-mapbox-navigation-control position="top-right" />
@@ -116,7 +127,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers' ]),
+      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
@@ -124,6 +135,10 @@
       showTimeslider() {
         const { name } = this.$route
         return this.filteredLayerId && name === 'filters' ? true : false
+      },
+      showApiLayer() {
+        const { name } = this.$route
+        return name==='download.api' ? true:false
       },
     },
     watch: {
