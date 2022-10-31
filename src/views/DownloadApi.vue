@@ -44,29 +44,31 @@
         />
       </v-col>
     </v-row>
-    <v-row v-if="selectedLayerForSelection && selectedLayerForSelection.id">
-      <!--  <v-row v-if="selectedApi"> -->
+    <!-- <v-row v-if="selectedLayerForSelection && selectedLayerForSelection.id"> -->
+    <v-row v-if="selectedApi">
       <v-col>
         <v-btn
-          :color="drawMode === 'static' ? 'primary' : null"
+          :color="drawMode === 'static' && selectionMode ==='selectFeatures' ? 'primary' : null"
           block
           :ripple="false"
+          :disabled="!selectedLayerIdToDownloadWith || selectedLayerIdToDownloadWith === selectedLayerToDownloadFrom.id"
           @click="onDrawModeSelect('static')"
         >
           {{ $t('selectFeatures') }}
         </v-btn>
       </v-col>
 
-      <!--  <v-col v-if="selectedApi.name === 'Aquadesk'">
+      <v-col v-if="selectedApi.name === 'Aquadesk'">
         <v-btn
-          :color="drawMode === 'static' ? 'primary' : null"
+          :color="drawMode === 'static' && selectionMode ==='selectPoints'? 'primary' : null"
           block
           :ripple="false"
-          @click="onDrawPointsSelect"
+          :disabled="selectionMode ==='selectFeatures'"
+          @click="onDrawModeSelectPoints('static')"
         >
-          SELECT POINTS
+          {{ $t('selectPoints') }}
         </v-btn>
-      </v-col> -->
+      </v-col>
 
       <v-col v-if="multipleAreas">
         <v-btn
@@ -155,8 +157,7 @@
       requestFailure: false,
       selectedLayerIdToDownloadWith: null,
       selectedLayerToDownloadFrom: null,
-      selectFeaturesMode: false, 
-      selectPointsMode: false,
+      selectionMode: null, //Introduced two select modes for the case of Aquadesk where the user can select also the points from the original layer
     }),
 
     computed: {
@@ -280,12 +281,19 @@
         this.hideActiveLayers()
         
       },
-      async onDrawPointsSelect() {
+      async onDrawModeSelectPoints(mode) {
         await this.clearDrawnFeatures()
         this.selectedArea = null
-        this.selectedLayerId = this.selectedLayerToDownloadFrom
+        this.selectedLayerIdToDownloadWith = this.selectedLayerToDownloadFrom.id
+        this.selectedLayerId = this.selectedLayerToDownloadFrom.id
+        this.setSelectedLayerForSelection(this.selectedLayerToDownloadFrom)
+        this.setDrawMode({ mode })
+        if (this.selectionMode === 'selectPoints') {
+          this.selectionMode = null
+        } else {
+          this.selectionMode = 'selectPoints'
+        }
         
-        this.setDrawMode('static')
       },
       async onDrawModeSelect(mode) {
         // We need to wait for clearing the feature
@@ -296,6 +304,12 @@
         this.selectedLayerId = this.selectedLayerIdToDownloadWith
         
         this.setDrawMode({ mode })
+
+        if (this.selectionMode === 'selectFeatures') {
+          this.selectionMode = null
+        } else {
+          this.selectionMode = 'selectFeatures'
+        }
       },
 
       async getSelectedAreas(layer) {
