@@ -24,16 +24,17 @@
           outlined
           hide-details
           return-object
+          @change="setAquadeskOpacity"
         />
       </v-col>
     </v-row>
     <v-row v-if="selectedApi">
       <v-col>
         <v-select
-          v-model="selectedApiLayer"
+          v-model="selectedLayerIdToDownloadWith"
           :value="selectedLayerForSelection && selectedLayerForSelection.id"
           :label="$t('chooseLayer')"
-          :items="apisLayers"
+          :items="layersToDownloadWith"
           item-text="name"
           item-value="id"
           dense
@@ -44,6 +45,7 @@
       </v-col>
     </v-row>
     <v-row v-if="selectedLayerForSelection && selectedLayerForSelection.id">
+      <!--  <v-row v-if="selectedApi"> -->
       <v-col>
         <v-btn
           :color="drawMode === 'static' ? 'primary' : null"
@@ -54,6 +56,18 @@
           {{ $t('selectFeatures') }}
         </v-btn>
       </v-col>
+
+      <!--  <v-col v-if="selectedApi.name === 'Aquadesk'">
+        <v-btn
+          :color="drawMode === 'static' ? 'primary' : null"
+          block
+          :ripple="false"
+          @click="onDrawPointsSelect"
+        >
+          SELECT POINTS
+        </v-btn>
+      </v-col> -->
+
       <v-col v-if="multipleAreas">
         <v-btn
           :color="drawMode === 'rectangle' ? 'primary' : null"
@@ -139,9 +153,10 @@
         'endswith',
       ]),
       requestFailure: false,
-      selectedApiLayer: null,
-      previousSelectedApiLayer: null,
+      selectedLayerIdToDownloadWith: null,
       selectedLayerToDownloadFrom: null,
+      selectFeaturesMode: false, 
+      selectPointsMode: false,
     }),
 
     computed: {
@@ -166,7 +181,7 @@
         }))
       },
 
-      apisLayers() {
+      layersToDownloadWith() {
         return this.apis.reduce((apisLayers, api) => {
           if (api.id === this.selectedApi.id) {
             apisLayers.push(...api.layers.map(({ layer }) => {
@@ -185,11 +200,11 @@
         if (!this.selectedLayerToDownloadFrom){
           return 
         }
-        return this.selectedLayerToDownloadFrom.externalApi[0] //Why is it an array?
+        return this.selectedLayerToDownloadFrom.externalApi[0] //Why is it an array? 
       },
 
       selectedAreas() {
-        if (!this.selectedLayer) {
+        if (!this.selectedLayerIdToDownloadWith) {
           return []
         }
         const { layerAttributeArea } = _.get(this.selectedApi, 'propertyMapping', {})
@@ -226,6 +241,7 @@
         return _.has( this.selectedApi, 'propertyMapping.areas')
       },
     },
+
     mounted() {
       this.hideActiveLayers()
     },
@@ -245,9 +261,11 @@
       
       handleSelectionLayerSelect(id) {
         //Layer to be used for areas selections. This layer is provided from the externalApi model.
-        const selectedLayer = this.apisLayers.find(layer => layer.id === id)
+        const selectedLayer = this.layersToDownloadWith.find(layer => layer.id === id)
+        
         
         this.loadApiLayerOnMap(selectedLayer)
+    
         
         this.setSelectedLayerForSelection(selectedLayer)
         
@@ -258,14 +276,25 @@
           this.clearDrawnFeatures()
         }
       },
-
+      setAquadeskOpacity() {
+        this.hideActiveLayers()
+        
+      },
+      async onDrawPointsSelect() {
+        await this.clearDrawnFeatures()
+        this.selectedArea = null
+        this.selectedLayerId = this.selectedLayerToDownloadFrom
+        
+        this.setDrawMode('static')
+      },
       async onDrawModeSelect(mode) {
         // We need to wait for clearing the feature
         // before we can start drawing again
+        this.selectFeaturesMode
         await this.clearDrawnFeatures()
         this.selectedArea = null
-        this.selectedLayerId = this.selectedApiLayer
-
+        this.selectedLayerId = this.selectedLayerIdToDownloadWith
+        
         this.setDrawMode({ mode })
       },
 
@@ -288,11 +317,14 @@
         this.requestFailure = false
       },
       hideActiveLayers() {
-        if (this.activeLayers.length) {
+        if (this.selectedLayerToDownloadFrom && _.get(this.selectedLayerToDownloadFrom.externalApi[0], 'name') === 'Aquadesk') {
+          this.updateWmsLayerOpacity({ id: this.selectedLayerToDownloadFrom.id, opacity: 1 })
+        } else {
           this.activeLayers.forEach(({ id }) => {
             this.updateWmsLayerOpacity({ id, opacity: 0 })
           })
         }
+   
       },
       showActiveLayers() {
         if (this.activeLayers.length) {
@@ -302,8 +334,10 @@
         }
       },
       async handleDownloadClick() {
+        
         this.requestFailure = false
         const externalApi = this.selectedApi
+        
         let selectedAreas
 
         if (this.drawMode === 'static') {
@@ -313,10 +347,11 @@
           // if the user has drawn a rectangle, we need to fetch the areas in the rectangle first
           selectedAreas = await this.getSelectedAreas(this.selectedLayerForSelection)
         }
+        
 
         const { area, wkt, areas } = externalApi.propertyMapping
         const { formatCsv, name } = externalApi
-
+        
         let areaFilter = {}
         
         /* 
@@ -355,7 +390,7 @@
           areaFilter,
           ...(this.selectedFilters || []),
         ] })
-
+      
         this.isDownloading = true
         const date = new Date(Date.now())
         const fileName = `${ name }_${ date.toLocaleString() }.${ fileExtension }`
