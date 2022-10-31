@@ -5,16 +5,16 @@ export default function (layerName, json) {
   let htmlRows = properties
     .map((property) => {
       return `<tr>
-                <td style="font-weight:bold; width: 50%; overflow-wrap: break-word; vertical-align: top;"> ${ property }:</td>
-                <td style="width: 50%; overflow-wrap: break-word; vertical-align: top;"> ${ rows[property] }</td>
+                <td style="font-weight:bold; width: 33%; overflow-wrap: break-word; vertical-align: top;"> ${ property }:</td>
+                <td style="width: 67%; overflow-wrap: break-word; vertical-align: top;"> ${ rows[property] }</td>
             </tr>`
     })
     .join('')
 
   //build the table
   const table = `
-  <p style="font-weight:bold; text-align:center;">${ layerName }</p>
-	<table style="table-layout: fixed; width: 100%;">
+  <p style="position: fixed; top: 0; left: 0; height: 20px; width: inherit; font-weight:bold; text-align:center; background-color: white;">${ layerName }</p>
+	<table style="table-layout: fixed; margin-top: 20px; width: 100%;">
 		<tbody>
 			${ htmlRows }
 		<tbody>

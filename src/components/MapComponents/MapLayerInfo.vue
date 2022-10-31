@@ -80,7 +80,7 @@
 <style>
 .mapboxgl-popup-content {
   overflow-y: scroll;
-  width: 240px;
+  width: 360px;
   max-height: 240px;
 }
 </style>
