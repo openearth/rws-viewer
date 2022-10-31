@@ -24,22 +24,20 @@
         <v-card-text>
           <dl class="layer-info-dialog__metadata">
             <div v-for="item in content" :key="item.key">
-              <dt class="font-weight-bold">
+              <dt class="font-weight-bold layer-info-dialog__metadata-key">
                 {{ item.key }}
               </dt>
-              <dd v-html="item.value" />
+              <dd class="layer-info-dialog__metadata-value" v-html="item.value" />
             </div>
-            <div>
-              <dt class="font-weight-bold">
-                {{ $t('shareUrl') }}
-                <v-btn icon @click="copyUrlToClipboard">
-                  <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
-                </v-btn>
-              </dt>
-              <dd>
-                {{ shareUrl }}
-              </dd>
-            </div>
+            <dt class="font-weight-bold layer-info-dialog__metadata-key">
+              {{ $t('shareUrl') }}
+              <v-btn icon @click="copyUrlToClipboard">
+                <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
+              </v-btn>
+            </dt>
+            <dd class="layer-info-dialog__metadata-value">
+              {{ shareUrl }}
+            </dd>
           </dl>
         </v-card-text>
       </div>
@@ -89,5 +87,13 @@
 
 .layer-info-dialog__metadata div {
   display: contents;
+}
+
+.layer-info-dialog__metadata-key {
+  width: 100px;
+}
+
+.layer-info-dialog__metadata-value {
+  max-width: 440px;
 }
 </style>
