@@ -1,7 +1,7 @@
 <template>
   <app-shell :header-title="viewerName">
     <template slot="header-right">
-      <search-bar @onSearch="onSearch" />
+      <search-bar @onSearch="handleSearch" />
       <locale-switcher />
     </template>
 
@@ -173,7 +173,7 @@
       onMouseMove(e) {
         this.lngLat = e.lngLat
       },
-      onSearch: debounce(async function(val) {
+      handleSearch: debounce(async function(val) {
         try {
           if (val.trim()) {
             const { data } = await axios(`/api/search?viewer=${ this.viewerName }&query=${ val }`)
