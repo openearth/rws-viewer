@@ -13,8 +13,8 @@
         <mapbox-legend v-if="wmsLayerIds.length" />
       </v-fade-transition>
     </div>
-    
-    <LayersDialog 
+
+    <LayersDialog
       :open="layersDialogOpen"
       :layers="layers"
       @close="closeLayersDialog"
@@ -41,9 +41,10 @@
           :key="wmsApiLayer.id"
           :options="wmsApiLayer"
           :opacity="wmsApiLayer.opacity"
+          :before="wmsLayerIds[0]"
         />
-      </div> 
-      
+      </div>
+
       <map-layer
         v-for="(layer, index) in wmsLayers"
         :key="layer.id"
@@ -51,7 +52,7 @@
         :options="layer"
         :opacity="layer.opacity"
       />
-    
+
       <map-zoom :extent="zoomExtent" />
       <MapMouseMove @mousemove="onMouseMove" />
       <v-mapbox-navigation-control position="top-right" />
