@@ -15,7 +15,7 @@
     <v-row>
       <v-col>
         <v-select
-          v-model="selectedLayerToDownloadFrom" 
+          v-model="selectedLayerToDownloadFrom"
           :label="$t('chooseApi')"
           :items="activeLayers"
           item-text="name"
@@ -28,62 +28,67 @@
         />
       </v-col>
     </v-row>
-    <v-row v-if="selectedApi">
-      <v-col>
-        <v-select
-          v-model="selectedLayerIdToDownloadWith"
-          :value="selectedLayerForSelection && selectedLayerForSelection.id"
-          :label="$t('chooseLayer')"
-          :items="layersToDownloadWith"
-          item-text="name"
-          item-value="id"
-          dense
-          outlined
-          hide-details
-          @change="handleSelectionLayerSelect"
-        />
-      </v-col>
-    </v-row>
-    <!-- <v-row v-if="selectedLayerForSelection && selectedLayerForSelection.id"> -->
-    <v-row v-if="selectedApi">
-      <v-col>
-        <v-btn
-          :color="drawMode === 'static' && selectionMode ==='selectFeatures' ? 'primary' : null"
-          block
-          :ripple="false"
-          :disabled="!selectedLayerIdToDownloadWith || selectedLayerIdToDownloadWith === selectedLayerToDownloadFrom.id"
-          @click="onDrawModeSelect('static')"
-        >
-          {{ $t('selectFeatures') }}
-        </v-btn>
-      </v-col>
-
-      <v-col v-if="selectedApi.name === 'Aquadesk'">
-        <v-btn
-          :color="drawMode === 'static' && selectionMode ==='selectPoints'? 'primary' : null"
-          block
-          :ripple="false"
-          :disabled="selectionMode ==='selectFeatures'"
-          @click="onDrawModeSelectPoints('static')"
-        >
-          {{ $t('selectPoints') }}
-        </v-btn>
-      </v-col>
-
-      <v-col v-if="multipleAreas">
-        <v-btn
-          :color="drawMode === 'rectangle' ? 'primary' : null"
-          block
-          :ripple="false"
-          @click="onDrawModeSelect('rectangle')"
-        >
-          {{ $t('drawRectangle') }}
-        </v-btn>
-      </v-col>
-    </v-row>
+    <v-divider class="my-4" />
+    <div v-if="selectedApi">
+      <v-row>
+        <v-col cols="6">
+          <v-select
+            v-model="selectedLayerIdToDownloadWith"
+            :value="selectedLayerForSelection && selectedLayerForSelection.id"
+            :label="$t('chooseLayer')"
+            :items="layersToDownloadWith"
+            item-text="name"
+            item-value="id"
+            dense
+            outlined
+            hide-details
+            @change="handleSelectionLayerSelect"
+          />
+        </v-col>
+        <v-col cols="6">
+          <v-btn
+            :color="drawMode === 'static' && selectionMode ==='selectFeatures' ? 'primary' : null"
+            block
+            :ripple="false"
+            :disabled="!selectedLayerIdToDownloadWith || selectedLayerIdToDownloadWith === selectedLayerToDownloadFrom.id || selectionMode ==='selectPoints' || selectionMode === 'selectRectangle'"
+            @click="onDrawModeSelect('static')"
+          >
+            {{ $t('selectFeatures') }}
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-subheader v-if="selectedApi.name === 'Aquadesk'">or </v-subheader>
+      <!-- <v-row v-if="selectedLayerForSelection && selectedLayerForSelection.id"> -->
+      <v-row v-if="selectedApi">
+        <v-col v-if="selectedApi.name === 'Aquadesk'">
+          <v-btn
+            :color="drawMode === 'static' && selectionMode ==='selectPoints'? 'primary' : null"
+            block
+            :ripple="false"
+            :disabled="selectionMode ==='selectFeatures' || selectionMode === 'selectRectangle'"
+            @click="onDrawModeSelectPoints('static')"
+          >
+            {{ $t('selectPoints') }}
+          </v-btn>
+        </v-col>
+      </v-row>
+      <v-subheader v-if="selectedApi.name === 'Aquadesk'">or </v-subheader>
+      <v-row>
+        <v-col v-if="multipleAreas">
+          <v-btn
+            :color="drawMode === 'rectangle' ? 'primary' : null"
+            block
+            :ripple="false"
+            @click="onDrawModeSelect('rectangle')"
+            :disabled="selectionMode ==='selectFeatures' || selectionMode === 'selectPoints'"
+          >
+            {{ $t('drawRectangle') }}
+          </v-btn>
+        </v-col>
+      </v-row>
+    </div>
     <template v-if="availableFiltersForSelectedLayer.length">
       <v-divider class="my-4" />
-
       <v-row>
         <v-col>
           <h3 class="pb-3">
@@ -199,16 +204,17 @@
 
       selectedApi() {
         if (!this.selectedLayerToDownloadFrom){
-          return 
+          return
         }
-        return this.selectedLayerToDownloadFrom.externalApi[0] //Why is it an array? 
+        return this.selectedLayerToDownloadFrom.externalApi[0] //Why is it an array?
       },
 
       selectedAreas() {
         if (!this.selectedLayerIdToDownloadWith) {
           return []
         }
-        const { layerAttributeArea } = _.get(this.selectedApi, 'propertyMapping', {})
+        let { layerAttributeArea } = _.get(this.selectedApi, 'propertyMapping', {})
+        layerAttributeArea = layerAttributeArea.split(',')
         return this.drawnFeatures.map(feature => feature.properties[layerAttributeArea])
       },
 
@@ -220,12 +226,8 @@
           : []
       },
 
-      selectionCoordinates() {
-        return this.drawnFeatureCoordinates.toString().replace(/,/g, ' ')
-      },
-
       availableFiltersForSelectedLayer() {
-        if (this.selectedApi?.filters) {  
+        if (this.selectedApi?.filters) {
           const filters = this.selectedApi.filters.split(', ')
           return filters.concat(this.dateFilters)
         }
@@ -244,7 +246,7 @@
     },
 
     mounted() {
-      this.hideActiveLayers() 
+      this.hideActiveLayers()
 
     },
     updated() {
@@ -260,17 +262,19 @@
 
     methods: {
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection',  'loadApiLayerOnMap', 'removeApiLayerFromMap', 'updateWmsLayerOpacity' ]),
-      
+      selectionCoordinates(features) {
+        return features.toString().replace(/,/g, ' ')
+      },
       handleSelectionLayerSelect(id) {
         //Layer to be used for areas selections. This layer is provided from the externalApi model.
         const selectedLayer = this.layersToDownloadWith.find(layer => layer.id === id)
-        
-        
+
+
         this.loadApiLayerOnMap(selectedLayer)
-    
-        
+
+
         this.setSelectedLayerForSelection(selectedLayer)
-        
+
         this.selectedFilters = null
         this.requestFailure = false
 
@@ -280,7 +284,7 @@
       },
       setAquadeskOpacity() {
         this.hideActiveLayers()
-        
+
       },
       async onDrawModeSelectPoints(mode) {
         await this.clearDrawnFeatures()
@@ -294,7 +298,7 @@
         } else {
           this.selectionMode = 'selectPoints'
         }
-        
+
       },
       async onDrawModeSelect(mode) {
         // We need to wait for clearing the feature
@@ -303,28 +307,42 @@
         await this.clearDrawnFeatures()
         this.selectedArea = null
         this.selectedLayerId = this.selectedLayerIdToDownloadWith
-        
+
         this.setDrawMode({ mode })
 
-        if (this.selectionMode === 'selectFeatures') {
+        let selectionMode = 'selectFeatures'
+        if (mode === 'rectangle') {
+          selectionMode = 'selectRectangle'
+        }
+
+        if (this.selectionMode === selectionMode) {
           this.selectionMode = null
         } else {
-          this.selectionMode = 'selectFeatures'
+          this.selectionMode = selectionMode
         }
       },
 
-      async getSelectedAreas(layer) {
+      async getSelectedAreas(layer, selectedFeatures) {
         const url = layer.url
+
+        let referenceLayer = layer.layer
+        if (_.get(this.selectedLayerToDownloadFrom.externalApi[0], 'name') === 'Aquadesk') {
+          referenceLayer = 'wie_ddecoapi:macroinvertebrates_all'
+        }
 
         const { features } = await getFeature({
           url,
-          layer: layer.layer,
-          coordinates: this.selectionCoordinates,
+          layer: referenceLayer,
+          coordinates: this.selectionCoordinates(selectedFeatures),
         })
 
-        const { layerAttributeArea } = this.selectedApi.propertyMapping
+        let { layerAttributeArea } = this.selectedApi.propertyMapping
+        layerAttributeArea = layerAttributeArea.split(', ')
+        const selectedAreas = layerAttributeArea.map(laa => {
+          return features.map(feature => feature.properties[laa])
+        })
 
-        return features.map(feature => feature.properties[layerAttributeArea])
+        return selectedAreas.map(selArea => [... new Set(selArea)])
       },
 
       handleFilterChange(value) {
@@ -332,16 +350,16 @@
         this.requestFailure = false
       },
       hideActiveLayers() {
-       
+
         if (this.$route.name != 'download.api') {
           return
         }
-       
+
         if (this.selectedLayerToDownloadFrom && _.get(this.selectedLayerToDownloadFrom.externalApi[0], 'name') === 'Aquadesk') {
-       
+
           this.updateWmsLayerOpacity({ id: this.selectedLayerToDownloadFrom.id, opacity: 1 })
           const restActiveFlattenedLayers = this.activeFlattenedLayers.filter(activeLayer => activeLayer.id != this.selectedLayerToDownloadFrom.id)
-        
+
           restActiveFlattenedLayers.forEach(({ id }) => {
             this.updateWmsLayerOpacity({ id, opacity: 0 })
           })
@@ -350,7 +368,7 @@
             this.updateWmsLayerOpacity({ id, opacity: 0 })
           })
         }
-   
+
       },
       showActiveLayers() {
         if (this.activeFlattenedLayers.length) {
@@ -360,63 +378,68 @@
         }
       },
       async handleDownloadClick() {
-        
+
         this.requestFailure = false
         const externalApi = this.selectedApi
-        
+
         let selectedAreas
 
-        if (this.drawMode === 'static') {
+        if (this.drawMode === 'static' &&  this.selectionMode !== 'selectPoints') {
           // when drawmode is we can use selectedAreas (derived from the drawnFeatures) directly
-          selectedAreas = this.selectedAreas
-        } else if (this.drawMode === 'rectangle') {
+          selectedAreas = [this.selectedAreas]
+          if ( _.get(this.selectedLayerToDownloadFrom.externalApi[0], 'name') === 'Aquadesk') {
+            selectedAreas = await this.getSelectedAreas(this.selectedLayerToDownloadFrom, this.selectedAreas)
+          }
+        } else if (this.drawMode === 'rectangle' || this.selectionMode === 'selectPoints') {
           // if the user has drawn a rectangle, we need to fetch the areas in the rectangle first
-          selectedAreas = await this.getSelectedAreas(this.selectedLayerForSelection)
+          selectedAreas = await this.getSelectedAreas(this.selectedLayerToDownloadFrom, this.drawnFeatureCoordinates)
         }
-        
 
         const { area, wkt, areas } = externalApi.propertyMapping
         const { formatCsv, name } = externalApi
-        
+
         let areaFilter = {}
-        
-        /* 
-        
-        TODO: We need to find a solution for SOVON. not more than 
-                            
+
+        /*
+
+        TODO: We need to find a solution for SOVON. not more than
+
         */
+
         if (areas) {
+          const areaArray = areas.split(', ')
+          areaFilter = areaArray.map((a, ind) => {
+            // compose a filter definition in the format of KeyValueFilter
+            return {
+              name: a,
+              comparer: 'in',
+              value: `[${ selectedAreas[ind].map(sa => `"${ sa }"`).join(',') }]`,
+            }
+          })
+        } else if (area) { //TODO: this is not working correct
           // compose a filter definition in the format of KeyValueFilter
-          areaFilter = {
-            name: areas,
-            comparer: 'in',
-            value: `[${ selectedAreas.map(area => `"${ area }"`).join(',') }]`,
-          }
-        } else if (area) { //TODO: this is not working correct 
-          // compose a filter definition in the format of KeyValueFilter
-          areaFilter = {
+          areaFilter = [{
             name: area,
             comparer: 'eq',
-            value: selectedAreas[0],
-          }
+            value: selectedAreas[0][0],
+          }]
         } else if (wkt) {
-          areaFilter = {
+          areaFilter = [{
             name: wkt,
             comparer: 'wkt',
             value: stringify(this.drawnFeatures[0]),
-          }
+          }]
         }
 
         let fileExtension = 'json'
         if (formatCsv) {
           fileExtension = 'csv'
         }
-
         const downloadUrl = generateDownloadUrl({ ...externalApi, filters: [
-          areaFilter,
+          ...areaFilter,
           ...(this.selectedFilters || []),
         ] })
-      
+
         this.isDownloading = true
         const date = new Date(Date.now())
         const fileName = `${ name }_${ date.toLocaleString() }.${ fileExtension }`
@@ -432,8 +455,15 @@
           console.log('ERROR', err)
           this.requestFailure = `Request failed: ${ err }`
         })
-        
+
       },
     },
   }
 </script>
+
+<style scoped>
+.download {
+  overflow-y: scroll;
+  height: calc(100vh - 176px);
+}
+</style>
