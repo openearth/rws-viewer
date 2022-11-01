@@ -7,13 +7,13 @@ import {
 } from '~/lib/download-helpers'
 
 export default function({ layer = {}, filters = [], format, coordinates  = '' }) {
-  
+
   const { url } = layer
 
   const filter = createDownloadFilter(filters, coordinates)
- 
+
   const params = createDownloadParameters({ layerData: layer, filter, format })
-  
+
   const legendParams = createLegendDownloadParameters({ layerData: layer })
   return [ {
     url: `${ url }?${ params }`,
@@ -24,5 +24,5 @@ export default function({ layer = {}, filters = [], format, coordinates  = '' })
     fileType: 'sld',
   },
   ]
-  
+
 }
