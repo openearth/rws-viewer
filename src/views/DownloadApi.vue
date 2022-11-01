@@ -220,6 +220,7 @@
 
       drawnFeatureCoordinates() {
         const drawnFeature = this.drawnFeatures[0]
+        console.log(drawnFeature)
 
         return drawnFeature?.geometry?.coordinates
           ? Array.from(drawnFeature?.geometry?.coordinates).map(coordinates => coordinates.flat())
@@ -338,9 +339,11 @@
 
         let { layerAttributeArea } = this.selectedApi.propertyMapping
         layerAttributeArea = layerAttributeArea.split(', ')
+        console.log(layerAttributeArea, features)
         const selectedAreas = layerAttributeArea.map(laa => {
           return features.map(feature => feature.properties[laa])
         })
+        console.log(selectedAreas.map(selArea => [... new Set(selArea)]))
 
         return selectedAreas.map(selArea => [... new Set(selArea)])
       },
@@ -388,12 +391,14 @@
           // when drawmode is we can use selectedAreas (derived from the drawnFeatures) directly
           selectedAreas = [this.selectedAreas]
           if ( _.get(this.selectedLayerToDownloadFrom.externalApi[0], 'name') === 'Aquadesk') {
-            selectedAreas = await this.getSelectedAreas(this.selectedLayerToDownloadFrom, this.selectedAreas)
+            console.log(this.drawnFeatureCoordinates)
+            selectedAreas = await this.getSelectedAreas(this.selectedLayerToDownloadFrom, this.drawnFeatureCoordinates)
           }
         } else if (this.drawMode === 'rectangle' || this.selectionMode === 'selectPoints') {
           // if the user has drawn a rectangle, we need to fetch the areas in the rectangle first
           selectedAreas = await this.getSelectedAreas(this.selectedLayerToDownloadFrom, this.drawnFeatureCoordinates)
         }
+        console.log(selectedAreas)
 
         const { area, wkt, areas } = externalApi.propertyMapping
         const { formatCsv, name } = externalApi
