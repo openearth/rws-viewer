@@ -172,7 +172,7 @@
       activeLayers() {
         return this.activeFlattenedLayerIds
           .map(id => this.activeFlattenedLayers.find(layer => layer.id === id))
-          .filter(layer => layer?.externalApi)
+          .filter(layer => layer?.externalApi.length)
       },
 
       activeLayersList() {
@@ -244,7 +244,8 @@
     },
 
     mounted() {
-      this.hideActiveLayers()
+      this.hideActiveLayers() 
+
     },
     updated() {
       this.hideActiveLayers()
@@ -331,18 +332,29 @@
         this.requestFailure = false
       },
       hideActiveLayers() {
+       
+        if (this.$route.name != 'download.api') {
+          return
+        }
+       
         if (this.selectedLayerToDownloadFrom && _.get(this.selectedLayerToDownloadFrom.externalApi[0], 'name') === 'Aquadesk') {
+       
           this.updateWmsLayerOpacity({ id: this.selectedLayerToDownloadFrom.id, opacity: 1 })
+          const restActiveFlattenedLayers = this.activeFlattenedLayers.filter(activeLayer => activeLayer.id != this.selectedLayerToDownloadFrom.id)
+        
+          restActiveFlattenedLayers.forEach(({ id }) => {
+            this.updateWmsLayerOpacity({ id, opacity: 0 })
+          })
         } else {
-          this.activeLayers.forEach(({ id }) => {
+          this.activeFlattenedLayers.forEach(({ id }) => {
             this.updateWmsLayerOpacity({ id, opacity: 0 })
           })
         }
    
       },
       showActiveLayers() {
-        if (this.activeLayers.length) {
-          this.activeLayers.forEach(({ id }) => {
+        if (this.activeFlattenedLayers.length) {
+          this.activeFlattenedLayers.forEach(({ id }) => {
             this.updateWmsLayerOpacity({ id, opacity: 1 })
           })
         }
