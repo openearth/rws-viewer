@@ -1,3 +1,5 @@
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'map-zoom',
   inject: [ 'getMap' ],
@@ -8,6 +10,9 @@ export default {
       default: () => ([]),
     },
   },
+  computed: {
+    ...mapGetters('app', [ 'appNavigationWidth' ]),
+  },
   methods:  {
     deferredMountedTo() {
       this.zoomToExtent()
@@ -16,7 +21,12 @@ export default {
       const map = this.getMap()
       if (map && this.extent.length) {
          map.fitBounds(this.extent, {
-          padding: 100,
+          padding: {
+            left: this.appNavigationWidth,
+            top: 100,
+            right: 100,
+            bottom: 100,
+          },
           maxZoom: 12,
          })
       }
