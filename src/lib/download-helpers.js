@@ -40,7 +40,6 @@ export function createDownloadFilter(filtersArray = [], coordinates = '') {
       value: coordinates,
     } ]
   }
-
   return filterTemplate(filtersArray)
 }
 

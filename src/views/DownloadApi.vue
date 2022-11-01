@@ -47,7 +47,7 @@
         </v-col>
         <v-col cols="6">
           <v-btn
-            :color="drawMode === 'static' && selectionMode ==='selectFeatures' ? 'primary' : null"
+            :color="selectionMode ==='selectFeatures' ? 'primary' : null"
             block
             :ripple="false"
             :disabled="!selectedLayerIdToDownloadWith || selectedLayerIdToDownloadWith === selectedLayerToDownloadFrom.id || selectionMode ==='selectPoints' || selectionMode === 'selectRectangle'"
@@ -62,7 +62,7 @@
       <v-row v-if="selectedApi">
         <v-col v-if="selectedApi.name === 'Aquadesk'">
           <v-btn
-            :color="drawMode === 'static' && selectionMode ==='selectPoints'? 'primary' : null"
+            :color="selectionMode ==='selectPoints' ? 'primary' : null"
             block
             :ripple="false"
             :disabled="selectionMode ==='selectFeatures' || selectionMode === 'selectRectangle'"
@@ -164,7 +164,6 @@
       selectedLayerToDownloadFrom: null,
       selectionMode: null, //Introduced two select modes for the case of Aquadesk where the user can select also the points from the original layer
     }),
-
     computed: {
       ...mapGetters('map', [ 'drawMode', 'drawnFeatures', 'activeFlattenedLayerIds', 'activeFlattenedLayers', 'selectedLayerForSelection' ]),
       ...mapGetters('data', [ 'flattenedLayers' ]),
@@ -220,11 +219,23 @@
 
       drawnFeatureCoordinates() {
         const drawnFeature = this.drawnFeatures[0]
-        console.log(drawnFeature)
 
-        return drawnFeature?.geometry?.coordinates
-          ? Array.from(drawnFeature?.geometry?.coordinates).map(coordinates => coordinates.flat())
-          : []
+        let featureCoordinates = []
+        if (Array.from(drawnFeature?.geometry?.coordinates).length === 2) {
+          const coords = Array.from(drawnFeature?.geometry?.coordinates)
+          const margin = 0.001
+          const minx = coords[0] - margin
+          const maxx = coords[0] + margin
+          const miny = coords[1] - margin
+          const maxy = coords[1] + margin
+          featureCoordinates = [minx, maxy, maxx, maxy, maxx, miny, minx, miny, minx, maxy]
+        } else {
+          featureCoordinates = drawnFeature?.geometry?.coordinates
+            ? Array.from(drawnFeature?.geometry?.coordinates).map(coordinates => coordinates.flat())
+            : []
+        }
+
+        return featureCoordinates
       },
 
       availableFiltersForSelectedLayer() {
@@ -245,7 +256,13 @@
         return _.has( this.selectedApi, 'propertyMapping.areas')
       },
     },
-
+    watch: {
+      selectionMode (val, previousVal) {
+        if (previousVal !== 'selectFeatures' && val !== 'selectFeatures'){
+          this.removeApiLayerFromMap()
+        }
+      },
+    },
     mounted() {
       this.hideActiveLayers()
 
@@ -267,6 +284,7 @@
         return features.toString().replace(/,/g, ' ')
       },
       handleSelectionLayerSelect(id) {
+        this.selectionMode = 'selectFeatures'
         //Layer to be used for areas selections. This layer is provided from the externalApi model.
         const selectedLayer = this.layersToDownloadWith.find(layer => layer.id === id)
 
@@ -282,6 +300,7 @@
         if (this.drawMode === 'static') {
           this.clearDrawnFeatures()
         }
+
       },
       setAquadeskOpacity() {
         this.hideActiveLayers()
@@ -339,11 +358,9 @@
 
         let { layerAttributeArea } = this.selectedApi.propertyMapping
         layerAttributeArea = layerAttributeArea.split(', ')
-        console.log(layerAttributeArea, features)
         const selectedAreas = layerAttributeArea.map(laa => {
           return features.map(feature => feature.properties[laa])
         })
-        console.log(selectedAreas.map(selArea => [... new Set(selArea)]))
 
         return selectedAreas.map(selArea => [... new Set(selArea)])
       },
@@ -391,15 +408,12 @@
           // when drawmode is we can use selectedAreas (derived from the drawnFeatures) directly
           selectedAreas = [this.selectedAreas]
           if ( _.get(this.selectedLayerToDownloadFrom.externalApi[0], 'name') === 'Aquadesk') {
-            console.log(this.drawnFeatureCoordinates)
             selectedAreas = await this.getSelectedAreas(this.selectedLayerToDownloadFrom, this.drawnFeatureCoordinates)
           }
         } else if (this.drawMode === 'rectangle' || this.selectionMode === 'selectPoints') {
           // if the user has drawn a rectangle, we need to fetch the areas in the rectangle first
           selectedAreas = await this.getSelectedAreas(this.selectedLayerToDownloadFrom, this.drawnFeatureCoordinates)
         }
-        console.log(selectedAreas)
-
         const { area, wkt, areas } = externalApi.propertyMapping
         const { formatCsv, name } = externalApi
 

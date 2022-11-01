@@ -163,11 +163,11 @@ export default {
           .then(({ serviceType, timeExtent, wmsVersion, bbox }) => {
             commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } } )
             commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } }))
-          }, 
+          },
           )
       })
     },
-    
+
     reloadLayerOnMap({ commit, state, rootState }) {
       /* If a layer has the time option true,
       then in the filter tab the user can load on
@@ -191,7 +191,7 @@ export default {
       commit('ADD_WMS_API_LAYER', buildWmsLayer(layer))
     },
     removeApiLayerFromMap({ commit, state }) {
-      commit('REMOVE_WMS_WPI_LAYER')
+      commit('REMOVE_WMS_API_LAYER')
     },
     removeFilteredLayerId({ commit }) {
       commit('REMOVE_FILTERED_LAYER_ID')
@@ -246,7 +246,7 @@ export default {
       commit('SET_MAP_ZOOM', zoom)
     },
     updateZoomExtent({ commit, state }, id) {
-      //updates zoom extent based on the bbox of the layer. 
+      //updates zoom extent based on the bbox of the layer.
       //input is the id of the layer
       //activeFlattenedLayers
       const layerToZoom = state.activeFlattenedLayers.find(layer => layer.id === id)
