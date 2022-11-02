@@ -43,7 +43,7 @@
       />
       <map-zoom :extent="zoomExtent" />
       <MapMouseMove @mousemove="onMouseMove" />
-      <v-mapbox-navigation-control position="top-right" />
+      <v-mapbox-navigation-control />
       <mapbox-draw-control
         :draw-mode="drawMode"
         :drawn-features="drawnFeatures"
@@ -192,3 +192,17 @@
     },
   }
 </script>
+<style>
+
+.mapboxgl-ctrl-top-right {
+    top: 0;
+    right: 0;
+}
+
+@media only screen and (max-width:1199px) {
+  .mapboxgl-ctrl-top-right {
+    top: 0;
+    right: calc(100vw - 560px);
+  }
+  }
+</style>
