@@ -57,23 +57,23 @@
           </v-btn>
         </v-col>
       </v-row>
-      <v-subheader v-if="selectedApi.name === 'Aquadesk'">or </v-subheader>
-      <!-- <v-row v-if="selectedLayerForSelection && selectedLayerForSelection.id"> -->
-      <v-row v-if="selectedApi">
-        <v-col v-if="selectedApi.name === 'Aquadesk'">
-          <v-btn
-            :color="selectionMode ==='selectPoints' ? 'primary' : null"
-            block
-            :ripple="false"
-            :disabled="selectionMode ==='selectFeatures' || selectionMode === 'selectRectangle'"
-            @click="onDrawModeSelectPoints('static')"
-          >
-            {{ $t('selectPoints') }}
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-subheader v-if="selectedApi.name === 'Aquadesk'">or </v-subheader>
-      <v-row>
+      <div  v-if="selectedApi.name === 'Aquadesk'">
+        <v-subheader>or </v-subheader>
+        <v-row v-if="selectedApi">
+          <v-col>
+            <v-btn
+              :color="selectionMode ==='selectPoints' ? 'primary' : null"
+              block
+              :ripple="false"
+              :disabled="selectionMode ==='selectFeatures' || selectionMode === 'selectRectangle'"
+              @click="onDrawModeSelectPoints('static')"
+            >
+              {{ $t('selectPoints') }}
+            </v-btn>
+          </v-col>
+        </v-row>
+        <v-subheader> or </v-subheader>
+        <v-row>
         <v-col v-if="multipleAreas">
           <v-btn
             :color="drawMode === 'rectangle' ? 'primary' : null"
@@ -86,6 +86,7 @@
           </v-btn>
         </v-col>
       </v-row>
+      </div>
     </div>
     <template v-if="availableFiltersForSelectedLayer.length">
       <v-divider class="my-4" />
@@ -248,7 +249,7 @@
       },
       dateFilters() {
         if (this.selectedApi?.dateFilters) {
-          return this.selectedApi.dateFilters.split(', ')
+          return this.selectedApi.dateFilters.split(',')
         }
         return []
       },
@@ -288,10 +289,7 @@
         //Layer to be used for areas selections. This layer is provided from the externalApi model.
         const selectedLayer = this.layersToDownloadWith.find(layer => layer.id === id)
 
-
         this.loadApiLayerOnMap(selectedLayer)
-
-
         this.setSelectedLayerForSelection(selectedLayer)
 
         this.selectedFilters = null
@@ -307,12 +305,14 @@
 
       },
       async onDrawModeSelectPoints(mode) {
+        console.log('onDrawModeSelectPoints', mode)
         await this.clearDrawnFeatures()
         this.selectedArea = null
         this.selectedLayerIdToDownloadWith = this.selectedLayerToDownloadFrom.id
         this.selectedLayerId = this.selectedLayerToDownloadFrom.id
         this.setSelectedLayerForSelection(this.selectedLayerToDownloadFrom)
         this.setDrawMode({ mode })
+        //TODO: Fix enabling and disabling of points
         if (this.selectionMode === 'selectPoints') {
           this.selectionMode = null
         } else {
@@ -323,7 +323,7 @@
       async onDrawModeSelect(mode) {
         // We need to wait for clearing the feature
         // before we can start drawing again
-        this.selectFeaturesMode
+       
         await this.clearDrawnFeatures()
         this.selectedArea = null
         this.selectedLayerId = this.selectedLayerIdToDownloadWith
@@ -398,10 +398,11 @@
         }
       },
       async handleDownloadClick() {
+        console.log('handle DownloadClick')
 
         this.requestFailure = false
         const externalApi = this.selectedApi
-
+        console.log(' externalAPI', externalApi)
         let selectedAreas
 
         if (this.drawMode === 'static' &&  this.selectionMode !== 'selectPoints') {

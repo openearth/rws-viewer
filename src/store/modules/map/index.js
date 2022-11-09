@@ -188,7 +188,12 @@ export default {
     },
 
     loadApiLayerOnMap({ commit, state }, layer) {
-      commit('ADD_WMS_API_LAYER', buildWmsLayer(layer))
+      getWmsCapabilities(layer.url)
+      .then(capabilities => getLayerProperties(capabilities, layer.layer))
+      .then(({ serviceType, timeExtent, wmsVersion, bbox }) => {
+        commit('ADD_WMS_API_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } }))
+      },
+      )
     },
     removeApiLayerFromMap({ commit, state }) {
       commit('REMOVE_WMS_API_LAYER')
