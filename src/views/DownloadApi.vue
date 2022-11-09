@@ -50,7 +50,8 @@
             :color="selectionMode ==='selectFeatures' ? 'primary' : null"
             block
             :ripple="false"
-            :disabled="!selectedLayerIdToDownloadWith || selectedLayerIdToDownloadWith === selectedLayerToDownloadFrom.id || selectionMode ==='selectPoints' || selectionMode === 'selectRectangle'"
+            :disabled="!selectedLayerIdToDownloadWith || selectedLayerIdToDownloadWith === selectedLayerToDownloadFrom.id 
+            || selectionMode ==='selectPoints' || selectionMode === 'selectRectangle'"
             @click="onDrawModeSelect('static')"
           >
             {{ $t('selectFeatures') }}
@@ -285,7 +286,7 @@
         return features.toString().replace(/,/g, ' ')
       },
       handleSelectionLayerSelect(id) {
-        this.selectionMode = 'selectFeatures'
+        //this.selectionMode = 'selectFeatures'
         //Layer to be used for areas selections. This layer is provided from the externalApi model.
         const selectedLayer = this.layersToDownloadWith.find(layer => layer.id === id)
 
@@ -305,7 +306,7 @@
 
       },
       async onDrawModeSelectPoints(mode) {
-        console.log('onDrawModeSelectPoints', mode)
+        
         await this.clearDrawnFeatures()
         this.selectedArea = null
         this.selectedLayerIdToDownloadWith = this.selectedLayerToDownloadFrom.id
@@ -343,19 +344,20 @@
       },
 
       async getSelectedAreas(layer, selectedFeatures) {
+        console.log('getSelectedAreas inputs: layer, selectedFeatures', layer, selectedFeatures)
         const url = layer.url
 
-        let referenceLayer = layer.layer
+        let referenceLayer = layer.layer //if downloadLayer then use this one. 
         if (_.get(this.selectedLayerToDownloadFrom.externalApi[0], 'name') === 'Aquadesk') {
           referenceLayer = 'wie_ddecoapi:macroinvertebrates_all'
         }
-
+        console.log(' referenceLayer', referenceLayer)
         const { features } = await getFeature({
           url,
           layer: referenceLayer,
           coordinates: this.selectionCoordinates(selectedFeatures),
         })
-
+        console.log('result of getFeature', features)
         let { layerAttributeArea } = this.selectedApi.propertyMapping
         layerAttributeArea = layerAttributeArea.split(', ')
         const selectedAreas = layerAttributeArea.map(laa => {
