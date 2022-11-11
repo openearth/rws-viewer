@@ -43,6 +43,7 @@
             outlined
             hide-details
             @change="handleSelectionLayerSelect"
+            :disabled="selectionMode ==='selectPoints' || selectionMode === 'selectRectangle'"
           />
         </v-col>
         <v-col cols="6">
@@ -344,14 +345,16 @@
       },
 
       async getSelectedAreas(layer, selectedFeatures) {
-        console.log('getSelectedAreas inputs: layer, selectedFeatures', layer, selectedFeatures)
+      
         const url = layer.url
 
-        let referenceLayer = layer.layer //if downloadLayer then use this one. 
-        if (_.get(this.selectedLayerToDownloadFrom.externalApi[0], 'name') === 'Aquadesk') {
-          referenceLayer = 'wie_ddecoapi:macroinvertebrates_all'
+        let referenceLayer
+        if (layer.downloadLayer) {
+          referenceLayer = layer.downloadLayer
+        }else {
+          referenceLayer = layer.layer
         }
-        console.log(' referenceLayer', referenceLayer)
+       
         const { features } = await getFeature({
           url,
           layer: referenceLayer,
