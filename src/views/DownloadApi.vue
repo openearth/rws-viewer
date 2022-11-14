@@ -267,6 +267,7 @@
       },
     },
     mounted() {
+      //TODO: fix multiple points selection
       this.hideActiveLayers()
 
     },
