@@ -22,13 +22,13 @@ export default async function getFeatureInfo({ url, bounds, x, y, width, height,
     y: Math.round(y),
     bbox,
   })
-
+  
   return fetch(geoServerUrl)
     .then(response => response.json())
     .then(({ features }) => features[0])
     .then((feature) => ({
       ...feature,
-      id: String(feature.properties.id),
+      id: feature.geometry.type === 'Point' ? feature.properties.measurementobject : feature.id,//timestamp
     }))
     .catch(() => undefined)
 }

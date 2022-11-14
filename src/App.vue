@@ -96,6 +96,7 @@
   import LayersDialog from '~/components/LayersDialog/LayersDialog'
   import SearchBar from '~/components/SearchBar/SearchBar'
 
+
   export default {
     components: {
       AppShell,
@@ -179,9 +180,9 @@
           layer: this.selectedLayerForSelection.layer,
           ...clickData,
         })
-
+    
         if (feature) {
-          if (this.drawnFeatures.find(f => f.properties.gebiedid === feature.properties.gebiedid)) {
+          if (this.drawnFeatures.find(f => f.id === feature.id)) {
             this.removeDrawnFeature(feature)
           } else {
             this.addDrawnFeature(feature)

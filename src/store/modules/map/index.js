@@ -102,7 +102,7 @@ export default {
       state.drawMode = mode
     },
     ADD_DRAWN_FEATURE(state, feature) {
-      if (!state.drawnFeatures.find(f => f.properties.gebiedid === feature.properties.gebiedid)) {
+      if (!state.drawnFeatures.find(f => f.id === feature.id)) {
         state.drawnFeatures = [
           ...state.drawnFeatures,
           feature,
@@ -110,7 +110,7 @@ export default {
       }
     },
     REMOVE_DRAWN_FEATURE(state, feature) {
-      state.drawnFeatures = state.drawnFeatures.filter(f => f.properties.gebiedid !== feature.properties.gebiedid)
+      state.drawnFeatures = state.drawnFeatures.filter(f => f.id !== feature.id)
     },
     SET_DRAWN_FEATURES(state, feature) {
       state.drawnFeatures = Object.freeze(feature)

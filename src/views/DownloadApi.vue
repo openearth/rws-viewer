@@ -267,7 +267,6 @@
       },
     },
     mounted() {
-      //TODO: fix multiple points selection
       this.hideActiveLayers()
 
     },
@@ -361,7 +360,6 @@
           layer: referenceLayer,
           coordinates: this.selectionCoordinates(selectedFeatures),
         })
-        console.log('result of getFeature', features)
         let { layerAttributeArea } = this.selectedApi.propertyMapping
         layerAttributeArea = layerAttributeArea.split(', ')
         const selectedAreas = layerAttributeArea.map(laa => {
@@ -404,11 +402,9 @@
         }
       },
       async handleDownloadClick() {
-        console.log('handle DownloadClick')
 
         this.requestFailure = false
         const externalApi = this.selectedApi
-        console.log(' externalAPI', externalApi)
         let selectedAreas
 
         if (this.drawMode === 'static' &&  this.selectionMode !== 'selectPoints') {

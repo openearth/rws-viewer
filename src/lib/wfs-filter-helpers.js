@@ -52,7 +52,6 @@ export const filterTemplate = (filters) =>
 //For each filter object in the filtersArray, calls the ogcFilterLibrary to create the filter based on the comparer case
 function createOgcFiltersXml(filtersArray) {
   let ogcFilters = ''
-  console.log(filtersArray)
   filtersArray.forEach(({ comparer, name, value }) => {
     const ogcFilter = ogcFilterLibrary(comparer, name, value)
     ogcFilters = ogcFilters + ogcFilter
