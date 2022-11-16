@@ -47,7 +47,6 @@
         @update:open="handleOpenedFolders"
       >
         <template #prepend="{selected, open, item, indeterminate}">
-          
           <div v-if="!item.layer">
             <v-icon>
               <template v-if="selected">
@@ -209,14 +208,17 @@
         let folders = {}
         folders = [ ...item.parentIds ]
         let layers = item.id
+        let layersNames = item.name
         if (_.get(item, 'children', []).length > 0) {
           folders.push(item.id)
           layers = ''
+          layersNames = ''
         }
 
         const url = new URL(window.location.href)
         url.searchParams.set('folders', folders)
         url.searchParams.set('layers', layers)
+        url.searchParams.set('layerNames', layersNames)
         const shareUrl = `${ url.origin }/${ this.viewerConfig }/?${ url.searchParams.toString() }`
         return shareUrl
       },

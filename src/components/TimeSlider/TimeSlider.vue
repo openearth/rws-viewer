@@ -5,6 +5,7 @@
     elevation="2"
     width="68%"
     rounded
+    :style="{ left: appNavigationWidth + 'px' }"
   >
     <div
       v-if="mode === 'simple-select'"
@@ -75,10 +76,11 @@
 </template>
 
 <script>
-// @TOCHECK :: We're doing some triple-equals '===' checks on DateTime objects.
-// These are passed by reference on timing objects, so the triple-equals check works,
-// but it might be a bit shaky - in future iterations it might be better to check for primitives,
-// for example by using the `getTime()` method and comparing results
+  import { mapGetters } from 'vuex'
+  // @TOCHECK :: We're doing some triple-equals '===' checks on DateTime objects.
+  // These are passed by reference on timing objects, so the triple-equals check works,
+  // but it might be a bit shaky - in future iterations it might be better to check for primitives,
+  // for example by using the `getTime()` method and comparing results
 
   import INTERFACE from './INTERFACE'
   import PlayHead from './PlayHead'
@@ -108,6 +110,7 @@
       INTERFACE,
     }),
     computed: {
+      ...mapGetters('app', [ 'appNavigationWidth' ]),
       currentIndex() {
         return this.timings.findIndex(timing =>
           timing[INTERFACE.T1] === this.internalValue[INTERFACE.T1])
@@ -204,7 +207,7 @@
   max-width: 5000;
   bottom: 1;
   top: 5px;
-  left: 470px;
+  margin-left: $spacing-default;
 }
 .timeline {
   &_bar {

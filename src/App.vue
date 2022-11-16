@@ -1,7 +1,7 @@
 <template>
   <app-shell :header-title="viewerName">
     <template slot="header-right">
-      <search-bar @onSearch="onSearch" />
+      <search-bar @onSearch="handleSearch" />
       <locale-switcher />
     </template>
     <div v-if="!showApiLayer">
@@ -55,7 +55,7 @@
 
       <map-zoom :extent="zoomExtent" />
       <MapMouseMove @mousemove="onMouseMove" />
-      <v-mapbox-navigation-control position="top-right" />
+      <v-mapbox-navigation-control />
       <mapbox-draw-control
         :draw-mode="drawMode"
         :drawn-features="drawnFeatures"
@@ -68,8 +68,6 @@
       <map-layer-info
         v-if="activeFlattenedLayers.length && !drawMode"
         :layer="activeFlattenedLayers[0]"
-        @set-active-poup="setActivePopup()"
-        @remove-active-popup="removeActivePopup()"
       />
     </mapbox-map>
   </app-shell>
@@ -81,7 +79,7 @@
   import AppShell from './components/AppShell/AppShell'
   import MapLayer from './components/MapComponents/MapLayer.js'
   import MapZoom from './components/MapComponents/MapZoom.js'
-  import MapLayerInfo from './components/MapComponents/MapLayerInfo.js'
+  import MapLayerInfo from './components/MapComponents/MapLayerInfo'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
   import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
@@ -189,16 +187,10 @@
           }
         }
       },
-      setActivePopup(event) {
-        //console.log(event)
-      },
-      removeActivePopup(event) {
-        //console.log(event)
-      },
       onMouseMove(e) {
         this.lngLat = e.lngLat
       },
-      onSearch: debounce(async function(val) {
+      handleSearch: debounce(async function(val) {
         try {
           if (val.trim()) {
             const { data } = await axios(`/api/search?viewer=${ this.viewerName }&query=${ val }`)
@@ -217,3 +209,17 @@
     },
   }
 </script>
+<style>
+
+.mapboxgl-ctrl-top-right {
+    top: 0;
+    right: 0;
+}
+
+@media only screen and (max-width:1199px) {
+  .mapboxgl-ctrl-top-right {
+    top: 0;
+    right: calc(100vw - 560px);
+  }
+  }
+</style>

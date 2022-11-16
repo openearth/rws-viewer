@@ -30,8 +30,10 @@
     watch: {
       drawMode(mode) {
         if (mode) {
+          map.getCanvas().style.cursor = 'crosshair'
           this.mbDraw.changeMode(`draw_${ mode }`)
         } else {
+          map.getCanvas().style.cursor = ''
           this.mbDraw.changeMode('simple_select')
         }
       },
@@ -65,6 +67,7 @@
         })
 
         this.mbDraw = mbDraw
+        
         map.addControl(mbDraw)
 
         const onChangeFn = () => {

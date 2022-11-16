@@ -6,10 +6,18 @@ export default function handleAvailableConfigs(options) {
 
   return async function execute({ data }) {
     const { configs } = data
-    const availableConfigs = configs.map(config => slugify(config.name))
-
+   
+    const availableConfigs = configs.map(config => {
+      return {
+        name: slugify(config.name),
+        mapZoom: config.mapZoom,
+        mapCenter: config.mapCenter,
+        defaultLayer: config.defaultLayer,
+      }
+    })
+  
     fs.writeFile(
-      `${ publicDir }/available-configs.json`,
+      `${ publicDir }/available-configs-viewers.json`,
       JSON.stringify(availableConfigs, null, 2),
     )
 

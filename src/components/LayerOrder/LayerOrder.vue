@@ -85,7 +85,7 @@
 
 .layer-order {
   --translate-y: #{$spacing-default};
-  --translate-x: calc(100vw - 100% - #{$spacing-default});
+  --translate-x: calc(100vw - 105% - #{$spacing-default});
 
   position: absolute;
   top: 0;

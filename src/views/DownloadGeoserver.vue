@@ -11,6 +11,43 @@
         </v-alert>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col>
+        <h3>{{ $t('download') }}</h3>
+        <p class="body-2 mb-0">
+          {{ $t('downloadDesc') }}
+        </p>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-select
+          v-model="downloadLayer"
+          :label="$t('layerSelection')"
+          :items="activeLayersList"
+          dense
+          outlined
+          hide-details
+          @change="getAttributesToFilter"
+        />
+        <transition name="fade" mode="out-in">
+          <v-alert
+            v-if="!validUrl && downloadLayer"
+            class="mt-2 mb-0"
+            dense
+            outlined
+            type="error"
+          >
+            {{ $t('preventDownload') }}
+          </v-alert>
+        </transition>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-divider class="my-4" />
+      </v-col>
+    </v-row>
     <template v-if="activeLayersList.length">
       <v-row>
         <v-col>
@@ -62,42 +99,11 @@
           <v-divider class="my-4" />
         </v-col>
       </v-row>
-      <v-row>
-        <v-col>
-          <h3>{{ $t('download') }}</h3>
-          <p class="body-2 mb-0">
-            {{ $t('downloadDesc') }}
-          </p>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <v-select
-            v-model="downloadLayer"
-            :label="$t('layerSelection')"
-            :items="activeLayersList"
-            dense
-            outlined
-            hide-details
-            @change="getAttributesToFilter"
-          />
-          <transition name="fade" mode="out-in">
-            <v-alert
-              v-if="!validUrl && downloadLayer"
-              class="mt-2 mb-0"
-              dense
-              outlined
-              type="error"
-            >
-              {{ $t('preventDownload') }}
-            </v-alert>
-          </transition>
-        </v-col>
-      </v-row>
+      
       <template v-if="downloadLayer">
         <v-row>
           <v-col>
-            <h4>{{ $t('formats') }}</h4>
+            <h3>{{ $t('formats') }}</h3>
             <p class="body-2 mb-0">
               {{ $t('formatsDesc') }}
             </p>
@@ -115,9 +121,12 @@
       <template v-if="downloadLayer">
         <v-row>
           <v-col>
-            <h4 class="pb-3">
-              {{ $t('filters') }}
-            </h4>
+            <h3 class="pb-0">
+              {{ $t('filtersDownload') }}
+            </h3>
+            <p class="body-2 pb-1">
+              {{ $t('filtersDownloadDesc') }}
+            </p>
             <key-value-filter
               :filters="availableFiltersForSelectedLayer"
               :comparers="comparers"
@@ -127,11 +136,6 @@
           </v-col>
         </v-row>
       </template>
-      <v-row>
-        <v-col>
-          <v-divider class="my-4" />
-        </v-col>
-      </v-row>
       <v-row>
         <v-col>
           <v-btn
@@ -348,12 +352,12 @@
       },
       async getAttributesToFilter() {
 
-        const { serviceType, url, layer } = this.selectedLayerData
-
+        const { serviceType, url, layer, downloadLayer } = this.selectedLayerData
+        const layerName = downloadLayer ? downloadLayer : layer
         if (serviceType === 'wfs') {
           const response = await describeFeatureType({
             url,
-            layer,
+            layer: layerName,
           })
           this.availableFiltersForSelectedLayer = readFeatureProperties(response)
         }

@@ -94,7 +94,7 @@
       <v-row>
         <v-col>
           <h3 class="pb-3">
-            {{ $t('filters') }}
+            {{ $t('filtersDownload') }}
           </h3>
 
           <p v-if="!selectedFilters || !selectedFilters.length" class="body-2">
