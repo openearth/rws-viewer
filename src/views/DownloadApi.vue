@@ -6,7 +6,6 @@
         <p class="body-2">
           {{ $t('selectDesc') }}
         </p>
-
         <p v-if="maxPageSize" class="body-2 mb-0">
           <v-icon>mdi-information-outline</v-icon> {{ $t('apiWarning', {maxPageSize}) }}
         </p>
@@ -24,7 +23,7 @@
           outlined
           hide-details
           return-object
-          @change="setAquadeskOpacity"
+          @change="handleVisibilityOfLayers"
         />
       </v-col>
     </v-row>
@@ -287,7 +286,6 @@
         return features.toString().replace(/,/g, ' ')
       },
       handleSelectionLayerSelect(id) {
-        //this.selectionMode = 'selectFeatures'
         //Layer to be used for areas selections. This layer is provided from the externalApi model.
         const selectedLayer = this.layersToDownloadWith.find(layer => layer.id === id)
 
@@ -302,9 +300,10 @@
         }
 
       },
-      setAquadeskOpacity() {
+      handleVisibilityOfLayers() {
+        this.selectedLayerIdToDownloadWith = null
+        this.removeApiLayerFromMap()
         this.hideActiveLayers()
-
       },
       async onDrawModeSelectPoints(mode) {
         
