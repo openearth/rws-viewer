@@ -124,7 +124,7 @@ export function getLayerProperties(capabilities, layer) {
   )()
 
   const bbox = pipe(
-    () => [ ...capabilities.querySelectorAll('[queryable="1"]') ],
+    () => [ ...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]') ],
     getTags('Name'),
     findLayer(layer),
     getParentNode,
@@ -133,7 +133,7 @@ export function getLayerProperties(capabilities, layer) {
   )()
   
   const keywords = pipe(
-    () => [ ...capabilities.querySelectorAll('[queryable="1"]') ],
+    () => [ ...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]')],
     getTags('Name'),
     findLayer(layer),
     getParentNode,
@@ -146,7 +146,7 @@ export function getLayerProperties(capabilities, layer) {
         : null
 
   const timeExtent = pipe(
-    () => [ ...capabilities.querySelectorAll('[queryable="1"]') ],
+    () => [ ...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]') ],
     getTags('Name'),
     findLayer(layer),
     getParentNode,
