@@ -33,23 +33,21 @@
       },
       async cb(event) {
         const map = this.getMap()
-        const bounds = map.getBounds()
-        const canvas = map.getCanvas()
-        const { x, y } = event.point
-        const { width, height } = canvas
-
+        const { lng, lat } = event.lngLat
+    
         this.removeActivePopup()
 
         const loadingPopup = new Mapbox.Popup().setLngLat(event.lngLat).addTo(map)
-
+        let infoLayer
+        if (this.layer.downloadLayer) {
+          infoLayer = this.layer.downloadLayer
+        }else{
+          infoLayer = this.layer.layer
+        }
         const info = await getFeatureInfo({
-          layer: this.layer.layer,
+          layer: infoLayer,
           url: this.layer.url,
-          bounds,
-          x,
-          y,
-          width,
-          height,
+          lng, lat,
         })
 
         loadingPopup.remove()
