@@ -3,6 +3,7 @@ import buildGeoServerUrl from './build-geoserver-url'
 export default async function getFeatureInfo({ url, lng, lat,  layer, x=50, y=50, bounds, width=110, height=110 }) {
   let bbox = null
   // Bounding box used with area selection.
+ 
   if (bounds) {
     bbox = [
       bounds._sw.lng,
@@ -15,12 +16,13 @@ export default async function getFeatureInfo({ url, lng, lat,  layer, x=50, y=50
   // Bounding box used with single point selection.
   if (lng && lat) {
     bbox = [
-      (lng - 0.01),
-      (lat - 0.01),
-      (lng + 0.01),
-      (lat + 0.01),
+      (lng - 0.001),
+      (lat - 0.001),
+      (lng + 0.001),
+      (lat + 0.001),
     ].join(',')
   }
+
   const geoServerUrl = await buildGeoServerUrl({
     url,
     request: 'GetFeatureInfo',
