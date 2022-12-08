@@ -100,6 +100,7 @@
                 :title="item.name"
                 :content="item.metadata"
                 :share-url="getUrl(item)"
+                :metadata-url="item.metadataUrl"
                 :open="isOpen"
                 @close="close"
               />
