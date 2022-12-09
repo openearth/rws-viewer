@@ -41,6 +41,7 @@
         let infoLayer
         if (this.layer.downloadLayer) {
           infoLayer = this.layer.downloadLayer
+       
         } else {
           infoLayer = this.layer.layer
         }
