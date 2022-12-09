@@ -27,17 +27,31 @@
               <dt class="font-weight-bold layer-info-dialog__metadata-key">
                 {{ item.key }}
               </dt>
-              <dd class="layer-info-dialog__metadata-value" v-html="item.value" />
+              <dd
+                class="layer-info-dialog__metadata-value"
+                v-html="item.value"
+              />
             </div>
             <dt class="font-weight-bold layer-info-dialog__metadata-key">
               {{ $t('shareUrl') }}
-              <v-btn icon @click="copyUrlToClipboard">
+              <v-btn icon @click="copyUrlToClipboard(shareUrl)">
                 <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
               </v-btn>
             </dt>
             <dd class="layer-info-dialog__metadata-value">
               {{ shareUrl }}
             </dd>
+            <template v-if="metadataUrl">
+              <dt class="font-weight-bold layer-info-dialog__metadata-key">
+                Metadata url
+                <v-btn icon @click="copyUrlToClipboard(metadataUrl)">
+                  <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
+                </v-btn>
+              </dt>
+              <dd class="layer-info-dialog__metadata-value">
+                {{ metadataUrl }}
+              </dd>
+            </template>
           </dl>
         </v-card-text>
       </div>
@@ -64,14 +78,18 @@
         type: String,
         default: '',
       },
+      metadataUrl: {
+        type: String,
+        default: '',
+      },
     },
     methods: {
       close() {
         this.$emit('close')
       },
-      copyUrlToClipboard() {
-        navigator.clipboard.writeText(this.shareUrl)
-        alert(`The following url is copied to clipboard! ${ this.shareUrl }`)
+      async copyUrlToClipboard(url) {
+        await navigator.clipboard.writeText(url)
+        alert(`The following url is copied to clipboard! ${ url }`)
       },
     },
   }
