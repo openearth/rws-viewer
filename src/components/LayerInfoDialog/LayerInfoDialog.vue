@@ -44,12 +44,9 @@
             <template v-if="metadataUrl">
               <dt class="font-weight-bold layer-info-dialog__metadata-key">
                 Metadata url
-                <v-btn icon @click="copyUrlToClipboard(metadataUrl)">
-                  <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
-                </v-btn>
               </dt>
               <dd class="layer-info-dialog__metadata-value">
-                {{ metadataUrl }}
+                <a :href="metadataUrl" target="_blank">{{ metadataUrl }}</a>
               </dd>
             </template>
           </dl>
