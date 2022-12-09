@@ -172,7 +172,9 @@
         const timestamp = event
         this.setSelectedTimestamp(timestamp.t1)
       },
+      
       async handleFeatureClick(clickData) {
+        
         const feature = await getFeatureInfo({
           url: this.selectedLayerForSelection.url,
           layer: this.selectedLayerForSelection.layer,
