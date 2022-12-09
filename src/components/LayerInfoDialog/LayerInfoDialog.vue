@@ -46,7 +46,7 @@
                 Metadata url
               </dt>
               <dd class="layer-info-dialog__metadata-value">
-                <a :href="metadataUrl">{{ metadataUrl }}</a>
+                <a :href="metadataUrl" target="_blank">{{ metadataUrl }}</a>
               </dd>
             </template>
           </dl>
