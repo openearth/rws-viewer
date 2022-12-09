@@ -28,10 +28,23 @@
       },
 
       handleMapClick(event) {
-    
-        const { lng, lat } = event.lngLat
+        //TODO: it is not working correct
+        const map = event.target
+        const bounds = map.getBounds()
+        const canvas = map.getCanvas()
+        const style = window.getComputedStyle(canvas)
+
+        const width = parseInt(style.getPropertyValue('width'))
+        const height = parseInt(style.getPropertyValue('height'))
+        const { x, y } = event.point
+       
+
         this.$emit('click',{
-          lng,lat,
+          bounds,
+          x,
+          y,
+          width,
+          height,
         })
       },
     },

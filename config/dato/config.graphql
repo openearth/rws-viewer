@@ -21,6 +21,7 @@ query ($first: IntType, $skip: IntType = 0) {
         dateFilters
         formatCsv
         maxPageSize
+        freehandRectangleDrawing
         pointSelection
         multipleSelection
       }

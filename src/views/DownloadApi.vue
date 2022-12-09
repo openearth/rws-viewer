@@ -73,10 +73,10 @@
             </v-btn>
           </v-col>
         </v-row>
-        <!-- TODO: v-if = freehand/rectangle drawing  -->
-      <!--   <v-subheader> or </v-subheader>
+        
+        <v-subheader> or </v-subheader>
         <v-row>
-          <v-col v-if="multipleAreas">
+          <v-col v-if="drawRectangle">
             <v-btn
               :color="drawMode === 'rectangle' ? 'primary' : null"
               block
@@ -87,7 +87,7 @@
               {{ $t('drawRectangle') }}
             </v-btn>
           </v-col>
-        </v-row> -->
+        </v-row>
       </div>
     </div>
     <template v-if="availableFiltersForSelectedLayer.length">
@@ -235,8 +235,8 @@
         }
         return []
       },
-      multipleAreas() {
-        return _.has( this.selectedApi, 'propertyMapping.areas')
+      drawRectangle() {
+        return _.has( this.selectedApi, 'freehandRectangleDrawing')
       },
     },
     watch: {
@@ -306,6 +306,7 @@
 
       },
       drawnFeatureCoordinates(drawnFeature) {
+        
         let featureCoordinates = []
         if (Array.from(drawnFeature?.geometry?.coordinates).length === 2) {
           const coords = Array.from(drawnFeature?.geometry?.coordinates)
@@ -361,7 +362,7 @@
           coordinates: this.selectionCoordinates(selectedFeatures),
         })
         let { layerAttributeArea, layerAttributePreFilter } = this.selectedApi.propertyMapping
-       
+        
         const selectedAreasNamesAll = features.map(feature => feature.properties[layerAttributeArea]) 
         const selectedAreasNames = [ ...new Set(selectedAreasNamesAll) ]
        
@@ -436,7 +437,7 @@
         } else {
           //we need a getFeature request to get the values of the feature
           //the drawnFeature can be either point, multiple points or polygon
-          
+      
           for await (const featureValues of this.drawnFeatures.map(drawnFeature => this.getValuesOfFeature(this.selectedLayerToDownloadFrom, this.drawnFeatureCoordinates(drawnFeature)))) {
             selectedAreas = [ ...selectedAreas, _.get(featureValues, 'selectedAreasNames') ].flat()
             preFiltersValues = [ ...preFiltersValues,_.get(featureValues, 'preFiltersValues') ].flat()
