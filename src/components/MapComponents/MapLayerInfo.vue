@@ -34,14 +34,15 @@
       async cb(event) {
         const map = this.getMap()
         const { lng, lat } = event.lngLat
-    
+        
         this.removeActivePopup()
 
         const loadingPopup = new Mapbox.Popup().setLngLat(event.lngLat).addTo(map)
         let infoLayer
         if (this.layer.downloadLayer) {
           infoLayer = this.layer.downloadLayer
-        }else{
+       
+        } else {
           infoLayer = this.layer.layer
         }
         const info = await getFeatureInfo({
@@ -49,16 +50,17 @@
           url: this.layer.url,
           lng, lat,
         })
-
+        
         loadingPopup.remove()
 
         if (info) {
+          
           const { properties } = info
           const popup = new Mapbox.Popup()
             .setLngLat(event.lngLat)
             .setHTML(json2HtmlTable(this.layer.name, [ properties ]))
             .addTo(map)
-
+          
           this.$emit('set-active-popup', popup)
         }
       },

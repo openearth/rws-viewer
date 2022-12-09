@@ -4,16 +4,17 @@
       <search-bar @onSearch="handleSearch" />
       <locale-switcher />
     </template>
+    <div v-if="!showApiLayer">
+      <v-fade-transition mode="out-in">
+        <layer-order v-if="wmsLayerIds.length" />
+      </v-fade-transition>
+      <mapbox-coordinates :lng-lat="lngLat" />
+      <v-fade-transition mode="out-in">
+        <mapbox-legend v-if="wmsLayerIds.length" />
+      </v-fade-transition>
+    </div>
 
-    <v-fade-transition mode="out-in">
-      <layer-order v-if="wmsLayerIds.length" />
-    </v-fade-transition>
-    <mapbox-coordinates :lng-lat="lngLat" />
-    <v-fade-transition mode="out-in">
-      <mapbox-legend v-if="wmsLayerIds.length" />
-    </v-fade-transition>
-
-    <LayersDialog 
+    <LayersDialog
       :open="layersDialogOpen"
       :layers="layers"
       @close="closeLayersDialog"
@@ -34,6 +35,16 @@
         mode="simple-slider"
         @input="onTimingSelection"
       />
+      <div v-if="showApiLayer">
+        <map-layer
+          v-if="wmsApiLayer"
+          :key="wmsApiLayer.id"
+          :options="wmsApiLayer"
+          :opacity="wmsApiLayer.opacity"
+          :before="wmsLayerIds[0]"
+        />
+      </div>
+
       <map-layer
         v-for="(layer, index) in wmsLayers"
         :key="layer.id"
@@ -41,6 +52,7 @@
         :options="layer"
         :opacity="layer.opacity"
       />
+
       <map-zoom :extent="zoomExtent" />
       <MapMouseMove @mousemove="onMouseMove" />
       <v-mapbox-navigation-control />
@@ -82,6 +94,7 @@
   import LayersDialog from '~/components/LayersDialog/LayersDialog'
   import SearchBar from '~/components/SearchBar/SearchBar'
 
+
   export default {
     components: {
       AppShell,
@@ -114,7 +127,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers' ]),
+      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
@@ -122,6 +135,10 @@
       showTimeslider() {
         const { name } = this.$route
         return this.filteredLayerId && name === 'filters' ? true : false
+      },
+      showApiLayer() {
+        const { name } = this.$route
+        return name==='download.api' ? true:false
       },
     },
     watch: {
@@ -155,15 +172,17 @@
         const timestamp = event
         this.setSelectedTimestamp(timestamp.t1)
       },
+      
       async handleFeatureClick(clickData) {
+        
         const feature = await getFeatureInfo({
           url: this.selectedLayerForSelection.url,
           layer: this.selectedLayerForSelection.layer,
           ...clickData,
         })
-
+    
         if (feature) {
-          if (this.drawnFeatures.find(f => f.properties.gebiedid === feature.properties.gebiedid)) {
+          if (this.drawnFeatures.find(f => f.id === feature.id)) {
             this.removeDrawnFeature(feature)
           } else {
             this.addDrawnFeature(feature)

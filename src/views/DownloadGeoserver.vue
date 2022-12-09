@@ -290,6 +290,7 @@
       },
 
       onAreaSelection(id) {
+        console.log('id',id)
         this.setDrawMode({ mode: null })
 
         if (id === NO_SELECTION_ID) {

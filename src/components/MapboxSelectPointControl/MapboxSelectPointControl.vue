@@ -28,6 +28,7 @@
       },
 
       handleMapClick(event) {
+        //TODO: it is not working correct when moving or opening from smaller screens
         const map = event.target
         const bounds = map.getBounds()
         const canvas = map.getCanvas()

@@ -87,6 +87,7 @@
     computed: {
       ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
       ...mapGetters('data', [ 'flattenedLayers' ]),
+      ...mapGetters('app', [ 'viewerConfig' ]),
     },
 
     methods: {
@@ -117,10 +118,13 @@
 
           if (layerIds.length) {
             this.resetLayers()
+            
             const layers = layerIds.map((layerId) =>
               this.flattenedLayers.find(({ id }) => id === layerId),
             )
+
             this.loadLayerOnMap({ layers })
+            this.$router.replace(`/${ this.viewerConfig }`)
           }
         }
       },

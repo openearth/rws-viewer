@@ -1,5 +1,23 @@
 import buildGeoServerUrl from './build-geoserver-url'
+import _ from 'lodash'
 //https://gis.stackexchange.com/questions/79201/lat-long-values-in-a-wms-getfeatureinfo-request
+
+//Aquadesk
+function extractFeatureId(feature) {
+  
+  const properties = _.get(feature, 'properties')
+  const measurementobject = _.get(properties, 'measurementobject')
+  
+  let id
+  if (measurementobject) {
+    id = measurementobject
+  } else {
+    id = feature.id
+  }
+  return id
+  
+  
+}
 export default async function getFeatureInfo({ url, lng, lat,  layer, x=50, y=50, bounds, width=110, height=110 }) {
   let bbox = null
   // Bounding box used with area selection.
@@ -22,7 +40,7 @@ export default async function getFeatureInfo({ url, lng, lat,  layer, x=50, y=50
       (lat + 0.001),
     ].join(',')
   }
-
+  
   const geoServerUrl = await buildGeoServerUrl({
     url,
     request: 'GetFeatureInfo',
@@ -38,13 +56,13 @@ export default async function getFeatureInfo({ url, lng, lat,  layer, x=50, y=50
     y,
     bbox,
   })
-
+  
   return fetch(geoServerUrl)
     .then(response => response.json())
     .then(({ features }) => features[0])
     .then((feature) => ({
       ...feature,
-      id: String(feature.properties.id),
+      id: extractFeatureId(feature),
     }))
     .catch(() => undefined)
 }

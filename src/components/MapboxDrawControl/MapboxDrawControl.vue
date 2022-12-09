@@ -37,8 +37,8 @@
           this.mbDraw.changeMode('simple_select')
         }
       },
-
       combinedFeatures(featureCollection) {
+        
         if (this.mbDraw) {
           this.mbDraw.deleteAll()
 

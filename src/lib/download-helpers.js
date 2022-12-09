@@ -33,7 +33,6 @@ const createLegendParameters = ({ layer = '' }) => stringify({
 export function createDownloadFilter(filtersArray = [], coordinates = '') {
   const coordinatesArray = coordinates.split(' ')
   const validCoordinates = ((coordinatesArray.length / 2) - 1) >= 3 // 3 = triangle, 4 = rectangle, 5+ = polygon
- 
   if (validCoordinates) {
     filtersArray = [ ...filtersArray, {
       comparer: 'intersects',
@@ -41,7 +40,6 @@ export function createDownloadFilter(filtersArray = [], coordinates = '') {
       value: coordinates,
     } ]
   }
- 
   return filterTemplate(filtersArray)
 }
 
@@ -58,7 +56,7 @@ export function createDownloadParameters({ layerData = {}, filter = '', format =
   }
 
   if (serviceType === 'wfs' && downloadLayer) {
-    return createWfsParameters({ layer:downloadLayer, filter, format }) 
+    return createWfsParameters({ layer:downloadLayer, filter, format })
   }
 
   if (serviceType === 'wfs' && !downloadLayer) {

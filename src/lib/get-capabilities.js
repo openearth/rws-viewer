@@ -155,6 +155,7 @@ export function getLayerProperties(capabilities, layer) {
     map(textToArray),
     (array) => array.flat(),
   )()
+ 
   return { serviceType, timeExtent, wmsVersion, bbox }
 }
 

@@ -14,10 +14,12 @@ export default {
     drawnFeatures: [],
     filteredLayerId: null, // id of active layer to filter
     wmsLayers: [],
+    wmsApiLayer: null,
     selectedLayerForSelection: null,
     mapCenter: NEDERLANDS_MAP_CENTER,
     mapZoom: NEDERLANDAS_MAP_ZOOM,
-    zoomExtent: [], 
+    zoomExtent: [],
+    multipleSelection: false,
   }),
 
   getters: {
@@ -36,6 +38,12 @@ export default {
       }
       return state.wmsLayers
     } ,
+    wmsApiLayer(state) {
+      if (!state.mapLoaded) {
+        return []
+      }
+      return state.wmsApiLayer
+    },
     wmsLayerIds: state => (state.activeFlattenedLayers || []).map(({ id }) => id),
     drawMode: state => state.drawMode,
     drawnFeatures: state => state.drawnFeatures,
@@ -46,6 +54,7 @@ export default {
     zoomExtent: state => state.zoomExtent,
     filteredLayerId: state => state.filteredLayerId,
     selectedLayerForSelection: state => state.selectedLayerForSelection,
+    multipleSelection: state => state.multipleSelection,
   },
 
   mutations: {
@@ -77,6 +86,14 @@ export default {
     REMOVE_WMS_LAYER(state, layerId) {
       state.wmsLayers = state.wmsLayers.filter(wmsLayer => wmsLayer.id !== layerId)
     },
+
+    ADD_WMS_API_LAYER(state, layer) {
+      state.wmsApiLayer = layer
+    },
+    REMOVE_WMS_API_LAYER(state) {
+      state.wmsApiLayer = null
+    },
+
     RESET_ACTIVE_FLATTENED_LAYERS(state) {
       state.activeFlattenedLayers = []
     },
@@ -87,15 +104,25 @@ export default {
       state.drawMode = mode
     },
     ADD_DRAWN_FEATURE(state, feature) {
-      if (!state.drawnFeatures.find(f => f.properties.gebiedid === feature.properties.gebiedid)) {
-        state.drawnFeatures = [
-          ...state.drawnFeatures,
-          feature,
-        ]
+      if (state.multipleSelection) {
+        if (!state.drawnFeatures.find(f => f.id === feature.id)) {
+          state.drawnFeatures = [
+            ...state.drawnFeatures,
+            feature,
+          ]
+        }
+      } else {
+        state.drawnFeatures = [ feature ]
       }
+      
     },
     REMOVE_DRAWN_FEATURE(state, feature) {
-      state.drawnFeatures = state.drawnFeatures.filter(f => f.properties.gebiedid !== feature.properties.gebiedid)
+      if (state.multipleSelection) {
+        state.drawnFeatures = state.drawnFeatures.filter(f => f.id !== feature.id)
+      } else {
+        state.drawnFeatures = []
+      }
+      
     },
     SET_DRAWN_FEATURES(state, feature) {
       state.drawnFeatures = Object.freeze(feature)
@@ -132,6 +159,9 @@ export default {
     SET_SELECTED_LAYER_FOR_SELECTION(state, layer) {
       state.selectedLayerForSelection = layer
     },
+    SET_MULTIPLE_SELECTION(state, boolean) {
+      state.multipleSelection = boolean
+    },
   },
 
   actions: {
@@ -148,10 +178,11 @@ export default {
           .then(({ serviceType, timeExtent, wmsVersion, bbox }) => {
             commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } } )
             commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } }))
-          }, 
+          },
           )
       })
     },
+
     reloadLayerOnMap({ commit, state, rootState }) {
       /* If a layer has the time option true,
       then in the filter tab the user can load on
@@ -171,6 +202,17 @@ export default {
       })
     },
 
+    loadApiLayerOnMap({ commit, state }, layer) {
+      getWmsCapabilities(layer.url)
+      .then(capabilities => getLayerProperties(capabilities, layer.layer))
+      .then(({ serviceType, timeExtent, wmsVersion, bbox }) => {
+        commit('ADD_WMS_API_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } }))
+      },
+      )
+    },
+    removeApiLayerFromMap({ commit, state }) {
+      commit('REMOVE_WMS_API_LAYER')
+    },
     removeFilteredLayerId({ commit }) {
       commit('REMOVE_FILTERED_LAYER_ID')
     },
@@ -224,11 +266,14 @@ export default {
       commit('SET_MAP_ZOOM', zoom)
     },
     updateZoomExtent({ commit, state }, id) {
-      //updates zoom extent based on the bbox of the layer. 
+      //updates zoom extent based on the bbox of the layer.
       //input is the id of the layer
       //activeFlattenedLayers
       const layerToZoom = state.activeFlattenedLayers.find(layer => layer.id === id)
       commit('UPDATE_ZOOM_EXTENT', layerToZoom.bbox)
+    },
+    setMultipleSelection({ commit }, boolean) {
+      commit('SET_MULTIPLE_SELECTION', boolean)
     },
   },
 }
