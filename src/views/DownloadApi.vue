@@ -73,7 +73,8 @@
             </v-btn>
           </v-col>
         </v-row>
-        <v-subheader> or </v-subheader>
+        <!-- TODO: v-if = freehand/rectangle drawing  -->
+      <!--   <v-subheader> or </v-subheader>
         <v-row>
           <v-col v-if="multipleAreas">
             <v-btn
@@ -86,7 +87,7 @@
               {{ $t('drawRectangle') }}
             </v-btn>
           </v-col>
-        </v-row>
+        </v-row> -->
       </div>
     </div>
     <template v-if="availableFiltersForSelectedLayer.length">
