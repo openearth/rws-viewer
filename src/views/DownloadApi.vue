@@ -41,8 +41,8 @@
             dense
             outlined
             hide-details
-            @change="handleSelectionLayerSelect"
             :disabled="selectionMode ==='selectPoints' || selectionMode === 'selectRectangle'"
+            @change="handleSelectionLayerSelect"
           />
         </v-col>
         <v-col cols="6">
@@ -51,14 +51,14 @@
             block
             :ripple="false"
             :disabled="!selectedLayerIdToDownloadWith || selectedLayerIdToDownloadWith === selectedLayerToDownloadFrom.id 
-            || selectionMode ==='selectPoints' || selectionMode === 'selectRectangle'"
+              || selectionMode ==='selectPoints' || selectionMode === 'selectRectangle'"
             @click="onDrawModeSelect('static')"
           >
             {{ $t('selectFeatures') }}
           </v-btn>
         </v-col>
       </v-row>
-      <div  v-if="selectedApi.name === 'Aquadesk'">
+      <div v-if="selectedApi.name === 'Aquadesk'">
         <v-subheader>or </v-subheader>
         <v-row v-if="selectedApi">
           <v-col>
@@ -75,18 +75,18 @@
         </v-row>
         <v-subheader> or </v-subheader>
         <v-row>
-        <v-col v-if="multipleAreas">
-          <v-btn
-            :color="drawMode === 'rectangle' ? 'primary' : null"
-            block
-            :ripple="false"
-            @click="onDrawModeSelect('rectangle')"
-            :disabled="selectionMode ==='selectFeatures' || selectionMode === 'selectPoints'"
-          >
-            {{ $t('drawRectangle') }}
-          </v-btn>
-        </v-col>
-      </v-row>
+          <v-col v-if="multipleAreas">
+            <v-btn
+              :color="drawMode === 'rectangle' ? 'primary' : null"
+              block
+              :ripple="false"
+              :disabled="selectionMode ==='selectFeatures' || selectionMode === 'selectPoints'"
+              @click="onDrawModeSelect('rectangle')"
+            >
+              {{ $t('drawRectangle') }}
+            </v-btn>
+          </v-col>
+        </v-row>
       </div>
     </div>
     <template v-if="availableFiltersForSelectedLayer.length">
@@ -135,11 +135,11 @@
 </template>
 
 <script>
+  /* Sovon and WMR don't offer downloading for multiple areas yet  */
   import { mapActions, mapGetters, mapState } from 'vuex'
   import KeyValueFilter from '~/components/KeyValueFilter/KeyValueFilter'
   import { downloadFromUrl, generateDownloadUrl } from '~/lib/external-api'
   import getFeature from '~/lib/get-feature'
-  import { stringify } from 'wkt'
   import _ from 'lodash'
 
   export default {
@@ -210,34 +210,14 @@
         return this.selectedLayerToDownloadFrom.externalApi[0] //Why is it an array?
       },
 
-      selectedAreas() {
+      // multipleselection is not allowed
+      selectedAreaName() {
         if (!this.selectedLayerIdToDownloadWith) {
           return []
         }
         let { layerAttributeArea } = _.get(this.selectedApi, 'propertyMapping', {})
-        layerAttributeArea = layerAttributeArea.split(',')
-        return this.drawnFeatures.map(feature => feature.properties[layerAttributeArea])
-      },
 
-      drawnFeatureCoordinates() {
-        const drawnFeature = this.drawnFeatures[0]
-
-        let featureCoordinates = []
-        if (Array.from(drawnFeature?.geometry?.coordinates).length === 2) {
-          const coords = Array.from(drawnFeature?.geometry?.coordinates)
-          const margin = 0.001
-          const minx = coords[0] - margin
-          const maxx = coords[0] + margin
-          const miny = coords[1] - margin
-          const maxy = coords[1] + margin
-          featureCoordinates = [minx, maxy, maxx, maxy, maxx, miny, minx, miny, minx, maxy]
-        } else {
-          featureCoordinates = drawnFeature?.geometry?.coordinates
-            ? Array.from(drawnFeature?.geometry?.coordinates).map(coordinates => coordinates.flat())
-            : []
-        }
-
-        return featureCoordinates
+        return this.drawnFeatures.map(feature => feature.properties[layerAttributeArea])[0]
       },
 
       availableFiltersForSelectedLayer() {
@@ -264,6 +244,9 @@
           this.removeApiLayerFromMap()
         }
       },
+      selectedApi() {
+        this.setMultipleSelection(this.selectedApi.pointSelection)
+      },
     },
     mounted() {
       this.hideActiveLayers()
@@ -281,7 +264,7 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection',  'loadApiLayerOnMap', 'removeApiLayerFromMap', 'updateWmsLayerOpacity' ]),
+      ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection',  'loadApiLayerOnMap', 'removeApiLayerFromMap', 'updateWmsLayerOpacity', 'setMultipleSelection' ]),
       selectionCoordinates(features) {
         return features.toString().replace(/,/g, ' ')
       },
@@ -313,13 +296,31 @@
         this.selectedLayerId = this.selectedLayerToDownloadFrom.id
         this.setSelectedLayerForSelection(this.selectedLayerToDownloadFrom)
         this.setDrawMode({ mode })
-        //TODO: Fix enabling and disabling of points
+        
         if (this.selectionMode === 'selectPoints') {
           this.selectionMode = null
         } else {
           this.selectionMode = 'selectPoints'
         }
 
+      },
+      drawnFeatureCoordinates(drawnFeature) {
+        let featureCoordinates = []
+        if (Array.from(drawnFeature?.geometry?.coordinates).length === 2) {
+          const coords = Array.from(drawnFeature?.geometry?.coordinates)
+          const margin = 0.001
+          const minx = coords[0] - margin
+          const maxx = coords[0] + margin
+          const miny = coords[1] - margin
+          const maxy = coords[1] + margin
+          featureCoordinates = [ minx, maxy, maxx, maxy, maxx, miny, minx, miny, minx, maxy ]
+        } else {
+          featureCoordinates = drawnFeature?.geometry?.coordinates
+            ? Array.from(drawnFeature?.geometry?.coordinates).map(coordinates => coordinates.flat())
+            : []
+        }
+
+        return featureCoordinates
       },
       async onDrawModeSelect(mode) {
         // We need to wait for clearing the feature
@@ -343,29 +344,38 @@
         }
       },
 
-      async getSelectedAreas(layer, selectedFeatures) {
-      
+      async getValuesOfFeature(layer, selectedFeatures) { 
         const url = layer.url
 
         let referenceLayer
         if (layer.downloadLayer) {
           referenceLayer = layer.downloadLayer
-        }else {
+        } else {
           referenceLayer = layer.layer
         }
-       
+        
         const { features } = await getFeature({
           url,
           layer: referenceLayer,
           coordinates: this.selectionCoordinates(selectedFeatures),
         })
-        let { layerAttributeArea } = this.selectedApi.propertyMapping
-        layerAttributeArea = layerAttributeArea.split(', ')
-        const selectedAreas = layerAttributeArea.map(laa => {
-          return features.map(feature => feature.properties[laa])
-        })
+        let { layerAttributeArea, layerAttributePreFilter } = this.selectedApi.propertyMapping
+       
+        const selectedAreasNamesAll = features.map(feature => feature.properties[layerAttributeArea]) 
+        const selectedAreasNames = [ ...new Set(selectedAreasNamesAll) ]
+       
 
-        return selectedAreas.map(selArea => [... new Set(selArea)])
+        layerAttributePreFilter = layerAttributePreFilter.split(', ') // in case more than one pre-filters are provided
+        const preFiltersValuesAll = layerAttributePreFilter.map(filter => {
+        
+          return features.map(feature => feature.properties[filter])
+        })
+      
+        
+        const preFiltersValues = preFiltersValuesAll.map(preFilter => [ ... new Set(preFilter) ][0])
+
+   
+        return { selectedAreasNames, preFiltersValues }
       },
 
       handleFilterChange(value) {
@@ -393,6 +403,8 @@
         }
 
       },
+      
+
       showActiveLayers() {
         if (this.activeFlattenedLayers.length) {
           this.activeFlattenedLayers.forEach(({ id }) => {
@@ -404,60 +416,76 @@
 
         this.requestFailure = false
         const externalApi = this.selectedApi
-        let selectedAreas
+        
+        let selectedArea // id of clicked feature to be used in the areaFilter, 
+        let selectedAreas = [] // in case of aquadesk we have have multipleAreas
+        let preFiltersValues = []// in the case of aquadesk we need to set a default filter for taxontype
 
-        if (this.drawMode === 'static' &&  this.selectionMode !== 'selectPoints') {
-          // when drawmode is we can use selectedAreas (derived from the drawnFeatures) directly
-          selectedAreas = [this.selectedAreas]
-          if ( _.get(this.selectedLayerToDownloadFrom.externalApi[0], 'name') === 'Aquadesk') {
-            selectedAreas = await this.getSelectedAreas(this.selectedLayerToDownloadFrom, this.drawnFeatureCoordinates)
-          }
-        } else if (this.drawMode === 'rectangle' || this.selectionMode === 'selectPoints') {
-          // if the user has drawn a rectangle, we need to fetch the areas in the rectangle first
-          selectedAreas = await this.getSelectedAreas(this.selectedLayerToDownloadFrom, this.drawnFeatureCoordinates)
-        }
-        const { area, wkt, areas } = externalApi.propertyMapping
+        const { apiAttributeArea, apiAttributePreFilter } = externalApi.propertyMapping
+     
         const { formatCsv, name } = externalApi
+        if (!externalApi.pointSelection) {
+          // when drawmode is static and we don't need pre-filter values then we can use selectedAreas 
+          //(derived from the drawnFeatures) directly
 
-        let areaFilter = {}
+          //TODO: if in the future these apis offer Multi area selection then loop over the drawnFeatures
+          selectedArea = this.selectedAreaName 
+         
+          
+        } else {
+          //we need a getFeature request to get the values of the feature
+          //the drawnFeature can be either point, multiple points or polygon
+          
+          for await (const featureValues of this.drawnFeatures.map(drawnFeature => this.getValuesOfFeature(this.selectedLayerToDownloadFrom, this.drawnFeatureCoordinates(drawnFeature)))) {
+            selectedAreas = [ ...selectedAreas, _.get(featureValues, 'selectedAreasNames') ].flat()
+            preFiltersValues = [ ...preFiltersValues,_.get(featureValues, 'preFiltersValues') ].flat()
+            
+          }
+        }
+     
+        let areaFilter
+        let preFilter = []
+  
+        // compose a filter definition in the format of KeyValueFilter
+        if (selectedArea) {
+          areaFilter =  {
+            name: apiAttributeArea,
+            comparer: 'eq',
+            value: selectedArea,
+          } 
+        } else if (selectedAreas.length) {
+          areaFilter =  {
+            name: apiAttributeArea,
+            comparer: 'in',
+            value: `[ ${ selectedAreas.map(area => `"${ area }"`) } ]`,
+          } 
+        }
+        
 
-        /*
-
-        TODO: We need to find a solution for SOVON. not more than
-
-        */
-
-        if (areas) {
-          const areaArray = areas.split(', ')
-          areaFilter = areaArray.map((a, ind) => {
+       
+        if (apiAttributePreFilter) {
+          const preFiltersArray = apiAttributePreFilter.split(',')
+          
+          preFilter = preFiltersArray.map((a, ind) => {
+            
             // compose a filter definition in the format of KeyValueFilter
             return {
               name: a,
-              comparer: 'in',
-              value: `[${ selectedAreas[ind].map(sa => `"${ sa }"`).join(',') }]`,
+              comparer: 'eq',
+              value:  JSON.stringify(preFiltersValues[ind]),
             }
           })
-        } else if (area) { //TODO: this is not working correct
-          // compose a filter definition in the format of KeyValueFilter
-          areaFilter = [{
-            name: area,
-            comparer: 'eq',
-            value: selectedAreas[0][0],
-          }]
-        } else if (wkt) {
-          areaFilter = [{
-            name: wkt,
-            comparer: 'wkt',
-            value: stringify(this.drawnFeatures[0]),
-          }]
         }
-
+        
+ 
+       
         let fileExtension = 'json'
         if (formatCsv) {
           fileExtension = 'csv'
         }
         const downloadUrl = generateDownloadUrl({ ...externalApi, filters: [
-          ...areaFilter,
+          areaFilter,
+          ...(preFilter) && preFilter, //TODO: fix this
           ...(this.selectedFilters || []),
         ] })
 

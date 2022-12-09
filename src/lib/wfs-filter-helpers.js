@@ -44,7 +44,7 @@ export const filterTemplate = (filters) =>
 <ogc:Filter
 	xmlns:ogc="http://www.opengis.net/ogc">
 	<ogc:And>
-    ${filters.length ? createOgcFiltersXml(filters) : ''}
+    ${ filters.length ? createOgcFiltersXml(filters) : '' }
   </ogc:And>
 </ogc:Filter>
 
@@ -65,78 +65,78 @@ function ogcFilterLibrary(comparer, name, value) {
     case '=':
       return `
         <ogc:PropertyIsEqualTo matchCase="true">
-          <ogc:PropertyName>${name}</ogc:PropertyName>
-          <ogc:Literal>${value}</ogc:Literal>
+          <ogc:PropertyName>${ name }</ogc:PropertyName>
+          <ogc:Literal>${ value }</ogc:Literal>
         </ogc:PropertyIsEqualTo>
        `
     case '!=':
       return `
         <ogc:PropertyIsNotEqualTo matchCase="true">
-          <ogc:PropertyName>${name}</ogc:PropertyName>
-          <ogc:Literal>${value}</ogc:Literal>
+          <ogc:PropertyName>${ name }</ogc:PropertyName>
+          <ogc:Literal>${ value }</ogc:Literal>
         </ogc:PropertyIsNotEqualTo>
        `
     case '<':
       return `
         <ogc:PropertyIsLessThan>
-          <ogc:PropertyName>${name}</ogc:PropertyName>
-          <ogc:Literal>${value}</ogc:Literal>
+          <ogc:PropertyName>${ name }</ogc:PropertyName>
+          <ogc:Literal>${ value }</ogc:Literal>
         </ogc:PropertyIsLessThan>
        `
     case '>':
       return `
         <ogc:PropertyIsGreaterThan >
-          <ogc:PropertyName>${name}</ogc:PropertyName>
-          <ogc:Literal>${value}</ogc:Literal>
+          <ogc:PropertyName>${ name }</ogc:PropertyName>
+          <ogc:Literal>${ value }</ogc:Literal>
         </ogc:PropertyIsGreaterThan>
        `
     case '<=':
       return `
         <ogc:PropertyIsLessThanOrEqualTo>
-          <ogc:PropertyName>${name}</ogc:PropertyName>
-          <ogc:Literal>${value}</ogc:Literal>
+          <ogc:PropertyName>${ name }</ogc:PropertyName>
+          <ogc:Literal>${ value }</ogc:Literal>
         </ogc:PropertyIsLessThanOrEqualTo>
         `
     case '>=':
       return `
         <ogc:PropertyIsGreaterThanOrEqualTo>
-          <ogc:PropertyName>${name}</ogc:PropertyName>
-          <ogc:Literal>${value}</ogc:Literal>
+          <ogc:PropertyName>${ name }</ogc:PropertyName>
+          <ogc:Literal>${ value }</ogc:Literal>
         </ogc:PropertyIsGreaterThanOrEqualTo>
        `
     case 'Like':
       return `
         <ogc:PropertyIsLike wildCard="*" singleChar="." escapeChar="!">
-          <ogc:PropertyName>${name}</ogc:PropertyName>
-          <ogc:Literal>${value}</ogc:Literal>
+          <ogc:PropertyName>${ name }</ogc:PropertyName>
+          <ogc:Literal>${ value }</ogc:Literal>
         </ogc:PropertyIsLike>
        `
     case 'Between':
       return `
         <ogc:PropertyIsBetween>
-          <ogc:PropertyName>${name}</ogc:PropertyName>
-          <ogc:Literal>${value}</ogc:Literal>
+          <ogc:PropertyName>${ name }</ogc:PropertyName>
+          <ogc:Literal>${ value }</ogc:Literal>
         </ogc:PropertyIsBetween>
        `
     case 'Not between':
       return `
         <ogc:PropertyIsNotBetween>
-          <ogc:PropertyName>${name}</ogc:PropertyName>
-          <ogc:Literal>${value}</ogc:Literal>
+          <ogc:PropertyName>${ name }</ogc:PropertyName>
+          <ogc:Literal>${ value }</ogc:Literal>
         </ogc:PropertyIsNotBetween>
        `
     case 'In':
       return `
         <ogc:PropertyIsIn>
-          <ogc:PropertyName>${name}</ogc:PropertyName>
-          <ogc:Literal>${value}</ogc:Literal>
+          <ogc:PropertyName>${ name }</ogc:PropertyName>
+          <ogc:Literal>${ value }</ogc:Literal>
         </ogc:PropertyIsIn>
        `
     case 'Not in':
       return `
         <ogc:PropertyIsNotIn>
-          <ogc:PropertyName>${name}</ogc:PropertyName>
-          <ogc:Literal>${value}</ogc:Literal>
+          <ogc:PropertyName>${ name }</ogc:PropertyName>
+          <ogc:Literal>${ value }</ogc:Literal>
         </ogc:PropertyIsNotIn>
        `
     case 'intersects':
@@ -145,7 +145,7 @@ function ogcFilterLibrary(comparer, name, value) {
       <gml:Polygon xmlns:gml="http://www.opengis.net/gml" srsName="EPSG:4326">
         <gml:exterior>
           <gml:LinearRing>
-            <gml:posList>${value}</gml:posList>
+            <gml:posList>${ value }</gml:posList>
           </gml:LinearRing>
         </gml:exterior>
       </gml:Polygon>

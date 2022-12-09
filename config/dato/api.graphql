@@ -9,7 +9,7 @@ query {
         downloadUrl
         downloadLayer
         timeFilter
-        columnFilter
+        columnFilter,
       }
     }
     name

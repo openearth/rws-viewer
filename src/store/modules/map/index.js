@@ -19,6 +19,7 @@ export default {
     mapCenter: NEDERLANDS_MAP_CENTER,
     mapZoom: NEDERLANDAS_MAP_ZOOM,
     zoomExtent: [],
+    multipleSelection: false,
   }),
 
   getters: {
@@ -53,6 +54,7 @@ export default {
     zoomExtent: state => state.zoomExtent,
     filteredLayerId: state => state.filteredLayerId,
     selectedLayerForSelection: state => state.selectedLayerForSelection,
+    multipleSelection: state => state.multipleSelection,
   },
 
   mutations: {
@@ -102,15 +104,25 @@ export default {
       state.drawMode = mode
     },
     ADD_DRAWN_FEATURE(state, feature) {
-      if (!state.drawnFeatures.find(f => f.id === feature.id)) {
-        state.drawnFeatures = [
-          ...state.drawnFeatures,
-          feature,
-        ]
+      if (state.multipleSelection) {
+        if (!state.drawnFeatures.find(f => f.id === feature.id)) {
+          state.drawnFeatures = [
+            ...state.drawnFeatures,
+            feature,
+          ]
+        }
+      } else {
+        state.drawnFeatures = [ feature ]
       }
+      
     },
     REMOVE_DRAWN_FEATURE(state, feature) {
-      state.drawnFeatures = state.drawnFeatures.filter(f => f.id !== feature.id)
+      if (state.multipleSelection) {
+        state.drawnFeatures = state.drawnFeatures.filter(f => f.id !== feature.id)
+      } else {
+        state.drawnFeatures = []
+      }
+      
     },
     SET_DRAWN_FEATURES(state, feature) {
       state.drawnFeatures = Object.freeze(feature)
@@ -146,6 +158,9 @@ export default {
     },
     SET_SELECTED_LAYER_FOR_SELECTION(state, layer) {
       state.selectedLayerForSelection = layer
+    },
+    SET_MULTIPLE_SELECTION(state, boolean) {
+      state.multipleSelection = boolean
     },
   },
 
@@ -256,6 +271,9 @@ export default {
       //activeFlattenedLayers
       const layerToZoom = state.activeFlattenedLayers.find(layer => layer.id === id)
       commit('UPDATE_ZOOM_EXTENT', layerToZoom.bbox)
+    },
+    setMultipleSelection({ commit }, boolean) {
+      commit('SET_MULTIPLE_SELECTION', boolean)
     },
   },
 }

@@ -41,7 +41,7 @@
         let infoLayer
         if (this.layer.downloadLayer) {
           infoLayer = this.layer.downloadLayer
-        }else{
+        } else {
           infoLayer = this.layer.layer
         }
         const info = await getFeatureInfo({

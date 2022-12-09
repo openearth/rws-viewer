@@ -21,6 +21,8 @@ query ($first: IntType, $skip: IntType = 0) {
         dateFilters
         formatCsv
         maxPageSize
+        pointSelection
+        multipleSelection
       }
       tags {
         title

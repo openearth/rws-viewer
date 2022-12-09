@@ -7,6 +7,7 @@ export const generateDownloadUrl = ({
   formatCsv,
   maxPageSize,
 }) => {
+
   const formattedFilter = filters.map(({ name, comparer, value }) => `${ name }:${ comparer }:${ value }`).join(';')
   
   const format = formatCsv ? '&format=csv' : ''
