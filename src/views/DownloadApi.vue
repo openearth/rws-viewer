@@ -58,7 +58,8 @@
           </v-btn>
         </v-col>
       </v-row>
-      <div v-if="selectedApi.name === 'Aquadesk'">
+      <!-- TODO: fix hardcoded part -->
+      <div v-if="selectedApi.name === 'AquaDesk'">
         <v-subheader>or </v-subheader>
         <v-row v-if="selectedApi">
           <v-col>
@@ -165,7 +166,7 @@
       requestFailure: false,
       selectedLayerIdToDownloadWith: null,
       selectedLayerToDownloadFrom: null,
-      selectionMode: null, //Introduced two select modes for the case of Aquadesk where the user can select also the points from the original layer
+      selectionMode: null, //Introduced two select modes for the case of AquaDesk where the user can select also the points from the original layer
     }),
     computed: {
       ...mapGetters('map', [ 'drawMode', 'drawnFeatures', 'activeFlattenedLayerIds', 'activeFlattenedLayers', 'selectedLayerForSelection' ]),
@@ -390,7 +391,7 @@
           return
         }
 
-        if (this.selectedLayerToDownloadFrom && _.get(this.selectedLayerToDownloadFrom.externalApi[0], 'name') === 'Aquadesk') {
+        if (this.selectedLayerToDownloadFrom && _.get(this.selectedLayerToDownloadFrom.externalApi[0], 'name') === 'AquaDesk') {
 
           this.updateWmsLayerOpacity({ id: this.selectedLayerToDownloadFrom.id, opacity: 1 })
           const restActiveFlattenedLayers = this.activeFlattenedLayers.filter(activeLayer => activeLayer.id != this.selectedLayerToDownloadFrom.id)
@@ -420,8 +421,8 @@
         const externalApi = this.selectedApi
         
         let selectedArea // id of clicked feature to be used in the areaFilter, 
-        let selectedAreas = [] // in case of aquadesk we have have multipleAreas
-        let preFiltersValues = []// in the case of aquadesk we need to set a default filter for taxontype
+        let selectedAreas = [] // in case of AquaDesk we have have multipleAreas
+        let preFiltersValues = []// in the case of AquaDesk we need to set a default filter for taxontype
 
         const { apiAttributeArea, apiAttributePreFilter } = externalApi.propertyMapping
      
