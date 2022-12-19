@@ -28,23 +28,10 @@
       },
 
       handleMapClick(event) {
-        //TODO: it is not working correct when moving or opening from smaller screens
-        const map = event.target
-        const bounds = map.getBounds()
-        const canvas = map.getCanvas()
-        const style = window.getComputedStyle(canvas)
-
-        const width = parseInt(style.getPropertyValue('width'))
-        const height = parseInt(style.getPropertyValue('height'))
-        const { x, y } = event.point
-       
-
+        const { lng, lat } = event.lngLat
+   
         this.$emit('click',{
-          bounds,
-          x,
-          y,
-          width,
-          height,
+          lng, lat,
         })
       },
     },
