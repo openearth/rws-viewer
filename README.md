@@ -19,5 +19,5 @@ yarn install
 ### Local development
 
 ```sh
-yarn start-server
+yarn dev
 ```
