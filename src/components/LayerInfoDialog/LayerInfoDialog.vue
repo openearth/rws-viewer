@@ -1,8 +1,8 @@
 <template>
-  <v-dialog
-    scrollable
-    :value="open"
-    width="600"
+  <v-dialog 
+    scrollable 
+    :value="open" 
+    width="600" 
     @click:outside="close"
   >
     <v-card>
@@ -20,8 +20,20 @@
 
       <v-divider />
 
-      <div class="px-2 py-2 flex-grow-1 overflow-y-auto">
-        <v-card-text>
+      <div class="flex px-2 py-2 flex-grow-1 overflow-y-auto justify-center">
+        <span
+          v-if="!isLoading && errorMessage"
+          indeterminate 
+          color="primary"
+        >{{ errorMessage }}</span>
+
+        <v-progress-circular
+          v-if="isLoading"
+          indeterminate 
+          color="primary"
+        />
+
+        <v-card-text v-if="!isLoading && !errorMessage">
           <dl class="layer-info-dialog__metadata">
             <div v-for="item in content" :key="item.key">
               <dt class="font-weight-bold layer-info-dialog__metadata-key">
@@ -41,12 +53,19 @@
             <dd class="layer-info-dialog__metadata-value">
               {{ shareUrl }}
             </dd>
-            <template v-if="metadataUrl">
+            <template v-if="recordUrls.length">
               <dt class="font-weight-bold layer-info-dialog__metadata-key">
-                Metadata url
+                Metadata url(s)
               </dt>
               <dd class="layer-info-dialog__metadata-value">
-                <a :href="metadataUrl" target="_blank">{{ metadataUrl }}</a>
+                <a
+                  v-for="url in recordUrls" 
+                  :key="url" 
+                  :href="url" 
+                  target="_blank"
+                >
+                  {{ url }}
+                </a>
               </dd>
             </template>
           </dl>
@@ -57,6 +76,8 @@
 </template>
 
 <script>
+  import axios from 'axios'
+
   export default {
     props: {
       open: {
@@ -75,11 +96,36 @@
         type: String,
         default: '',
       },
-      metadataUrl: {
+      layerId: {
         type: String,
-        default: '',
+        required: true,
       },
     },
+
+    data() {
+      return {
+        isLoading: true,
+        recordUrls: [],
+        errorMessage: null,
+      }
+    },
+
+    watch: {
+      async open(val) {
+        if (val) {
+          try {
+            this.isLoading = true
+            const { data } = await axios('/api/record-urls?record=' + this.layerId)
+            this.recordUrls = data
+          } catch {
+            this.errorMessage = 'Something went wrong during fetching record urls.'
+          } finally {
+            this.isLoading = false
+          }
+        }
+      },
+    },
+
     methods: {
       close() {
         this.$emit('close')
@@ -93,6 +139,11 @@
 </script>
 
 <style lang="scss">
+// Not sure why tailwind's CSS class 'flex' is not working
+.flex {
+  display: flex;
+}
+
 .layer-info-dialog__metadata {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -110,5 +161,14 @@
 
 .layer-info-dialog__metadata-value {
   max-width: 440px;
+}
+
+.layer-info-dialog__metadata-value a {
+  display: block;
+  margin-bottom: $spacing-smaller;
+}
+
+.layer-info-dialog__metadata-value a:last-child {
+  margin-bottom: 0;
 }
 </style>
