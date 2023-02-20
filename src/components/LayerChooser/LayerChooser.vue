@@ -102,6 +102,7 @@
                 :share-url="getUrl(item)"
                 :open="isOpen"
                 :layer-id="item.id"
+                :viewer-name="viewerName"
                 @close="close"
               />
             </template>
@@ -133,7 +134,7 @@
     }),
 
     computed: {
-      ...mapGetters('app', [ 'viewerConfig' ]),
+      ...mapGetters('app', [ 'viewerConfig', 'viewerName' ]),
       ...mapGetters('data', [ 'displayLayers' ]),
       ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
       layersWithParents() {

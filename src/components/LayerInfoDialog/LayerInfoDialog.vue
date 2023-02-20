@@ -1,8 +1,8 @@
 <template>
-  <v-dialog 
-    scrollable 
-    :value="open" 
-    width="600" 
+  <v-dialog
+    scrollable
+    :value="open"
+    width="600"
     @click:outside="close"
   >
     <v-card>
@@ -23,13 +23,15 @@
       <div class="flex px-2 py-2 flex-grow-1 overflow-y-auto justify-center">
         <span
           v-if="!isLoading && errorMessage"
-          indeterminate 
+          indeterminate
           color="primary"
-        >{{ errorMessage }}</span>
+        >{{
+          errorMessage
+        }}</span>
 
         <v-progress-circular
           v-if="isLoading"
-          indeterminate 
+          indeterminate
           color="primary"
         />
 
@@ -53,18 +55,13 @@
             <dd class="layer-info-dialog__metadata-value">
               {{ shareUrl }}
             </dd>
-            <template v-if="recordUrls.length">
+            <template v-if="recordUrl">
               <dt class="font-weight-bold layer-info-dialog__metadata-key">
-                Metadata url(s)
+                Metadata url
               </dt>
               <dd class="layer-info-dialog__metadata-value">
-                <a
-                  v-for="url in recordUrls" 
-                  :key="url" 
-                  :href="url" 
-                  target="_blank"
-                >
-                  {{ url }}
+                <a :href="recordUrl" target="_blank">
+                  {{ recordUrl }}
                 </a>
               </dd>
             </template>
@@ -100,12 +97,16 @@
         type: String,
         required: true,
       },
+      viewerName: {
+        type: String,
+        required: true,
+      },
     },
 
     data() {
       return {
         isLoading: true,
-        recordUrls: [],
+        recordUrl: '',
         errorMessage: null,
       }
     },
@@ -115,10 +116,15 @@
         if (val) {
           try {
             this.isLoading = true
-            const { data } = await axios('/api/record-urls?record=' + this.layerId)
-            this.recordUrls = data
-          } catch {
-            this.errorMessage = 'Something went wrong during fetching record urls.'
+            const { data } = await axios(
+              `/api/record-register?record=${ this.layerId }&viewer=${ this.viewerName }`,
+            )
+            this.recordUrl = data
+          } catch (e) {
+            if (!e.response.data.error) {
+              this.errorMessage =
+                'Something went wrong during fetching the record url.'
+            }
           } finally {
             this.isLoading = false
           }
