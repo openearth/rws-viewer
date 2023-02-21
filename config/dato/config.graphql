@@ -32,7 +32,6 @@ query ($first: IntType, $skip: IntType = 0) {
         key: title
         value: content
       }
-      metadataUrl
     }
     parent {
       id
