@@ -20,22 +20,8 @@
 
       <v-divider />
 
-      <div class="flex px-2 py-2 flex-grow-1 overflow-y-auto justify-center">
-        <span
-          v-if="!isLoading && errorMessage"
-          indeterminate
-          color="primary"
-        >{{
-          errorMessage
-        }}</span>
-
-        <v-progress-circular
-          v-if="isLoading"
-          indeterminate
-          color="primary"
-        />
-
-        <v-card-text v-if="!isLoading && !errorMessage">
+      <div class="px-2 py-2 flex-grow-1 overflow-y-auto justify-center">
+        <v-card-text>
           <dl class="layer-info-dialog__metadata">
             <div v-for="item in content" :key="item.key">
               <dt class="font-weight-bold layer-info-dialog__metadata-key">
@@ -55,7 +41,25 @@
             <dd class="layer-info-dialog__metadata-value">
               {{ shareUrl }}
             </dd>
-            <template v-if="recordUrl">
+
+            <template v-if="errorMessage">
+              <dt class="layer-info-dialog__metadata-key" />
+              <dd class="layer-info-dialog__metadata-value">
+                {{ errorMessage }}
+              </dd>
+            </template>
+
+            <template v-if="isLoading">
+              <dt class="layer-info-dialog__metadata-key" />
+              <dd class="layer-info-dialog__metadata-value">
+                <v-progress-circular
+                  indeterminate
+                  color="primary"
+                />
+              </dd>
+            </template>
+
+            <div v-if="!isLoading && !errorMessage && recordUrl">
               <dt class="font-weight-bold layer-info-dialog__metadata-key">
                 Metadata url
               </dt>
@@ -64,7 +68,7 @@
                   {{ recordUrl }}
                 </a>
               </dd>
-            </template>
+            </div>
           </dl>
         </v-card-text>
       </div>
@@ -115,6 +119,7 @@
       async open(val) {
         if (val) {
           try {
+            this.errorMessage = ''
             this.isLoading = true
             const { data } = await axios(
               `/api/record-register?record=${ this.layerId }&viewer=${ this.viewerName }`,
@@ -145,11 +150,6 @@
 </script>
 
 <style lang="scss">
-// Not sure why tailwind's CSS class 'flex' is not working
-.flex {
-  display: flex;
-}
-
 .layer-info-dialog__metadata {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -157,7 +157,7 @@
   column-gap: $spacing-default;
 }
 
-.layer-info-dialog__metadata div {
+.layer-info-dialog__metadata > div {
   display: contents;
 }
 
