@@ -1,7 +1,7 @@
 <template>
   <app-shell :header-title="viewerName">
     <template slot="header-right">
-      <search-bar @onSearch="handleSearch" />
+      <search-bar :loading="loading" @onSearch="handleSearch" />
       <locale-switcher />
     </template>
     <div v-if="!showApiLayer">
@@ -94,7 +94,6 @@
   import LayersDialog from '~/components/LayersDialog/LayersDialog'
   import SearchBar from '~/components/SearchBar/SearchBar'
 
-
   export default {
     components: {
       AppShell,
@@ -123,6 +122,7 @@
       lngLat: null,
       layers: [],
       layersDialogOpen: false,
+      loading: false,
     }),
 
     computed: {
@@ -194,15 +194,17 @@
       },
       handleSearch: debounce(async function(val) {
         try {
+          this.loading = true
+
           if (val.trim()) {
             const { data } = await axios(`/api/search?viewer=${ this.viewerName }&query=${ val }`)
-
             this.layers = data
             this.layersDialogOpen = true
           }
-
         } catch (e) {
           console.log(e)
+        } finally {
+          this.loading = false
         }
       }, 1000),
       closeLayersDialog() {

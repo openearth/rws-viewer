@@ -95,7 +95,7 @@
             @update-layer-opacity="updateLayerOpacity"
             @zoom-to-layer-extent="zoomToLayerExtent"
           >
-            <template #info="{ isOpen, close }">
+            <template #info="{ isOpen, close, showFeedbackDialog }">
               <layer-info-dialog
                 :title="item.name"
                 :content="item.metadata"
@@ -103,6 +103,14 @@
                 :open="isOpen"
                 :layer-id="item.id"
                 :viewer-name="viewerName"
+                @close="close"
+                @showFeedbackDialog="showFeedbackDialog"
+              />
+            </template>
+            <template #feedback="{ isOpen, close }">
+              <feedback-dialog
+                :open="isOpen"
+                :layer-or-menu="item"
                 @close="close"
               />
             </template>
@@ -117,13 +125,14 @@
   import { difference } from 'ramda'
   import { mapGetters, mapActions } from 'vuex'
   import LayerInfoDialog from '~/components/LayerInfoDialog/LayerInfoDialog'
+  import FeedbackDialog from '~/components/FeedbackDialog/FeedbackDialog'
   import addParentIdToLayers from '~/lib/add-parent-id-to-layers'
   import _ from 'lodash'
 
   const LayerControl = () => import('~/components/LayerControl/LayerControl')
 
   export default {
-    components: { LayerControl, LayerInfoDialog },
+    components: { LayerControl, LayerInfoDialog, FeedbackDialog },
 
     data: () => ({
       show: true,

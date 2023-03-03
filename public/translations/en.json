@@ -58,5 +58,13 @@
   "saveFavouritesNotice": "Select one or more layers to save favourites.",
   "selectAFile": "Select a file",
   "search": "Search",
-  "noLayersFound": "No layers found"
+  "noLayersFound": "No layers found",
+  "viewerName": "Viewer name",
+  "layerName": "Layer name",
+  "whatCanBeImproved": "What can be improved?",
+  "whoAreYou": "Who are you?",
+  "whatIsYourEmail": "What is your email?",
+  "thisFieldIsRequired": "This field is required",
+  "emailMustBeValid": "Email must be valid",
+  "feedbackForm": "Feedback form"
 }

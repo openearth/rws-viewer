@@ -58,5 +58,13 @@
   "saveFavouritesNotice": "Selecteer één of meerdere lagen om favorieten te kunnen opslaan.",
   "selectAFile": "Selecteer een bestand",
   "search": "Zoeken",
-  "noLayersFound": "Geen lagen gevonden"
+  "noLayersFound": "Geen lagen gevonden",
+  "viewerName": "Viewer naam",
+  "layerName": "Laag naam",
+  "whatCanBeImproved": "Wat kan er verbeterd worden?",
+  "whoAreYou": "Wie bent u?",
+  "whatIsYourEmail": "Wat is uw e-mailadres?",
+  "thisFieldIsRequired": "Dit veld is verplicht",
+  "emailMustBeValid": "E-mail moet geldig zijn",
+  "feedbackForm": "Feedback formulier"
 }
