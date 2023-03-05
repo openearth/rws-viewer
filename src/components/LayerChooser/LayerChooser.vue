@@ -111,6 +111,7 @@
               <feedback-dialog
                 :open="isOpen"
                 :layer-or-menu="item"
+                :viewer="viewerName"
                 @close="close"
               />
             </template>

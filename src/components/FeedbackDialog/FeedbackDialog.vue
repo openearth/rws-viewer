@@ -23,6 +23,7 @@
           <v-form
             ref="form"
             v-model="valid"
+            :disabled="isLoading"
             @submit.prevent="submit"
           >
             <v-text-field
@@ -59,6 +60,7 @@
               block
               class="mr-4 primary"
               :disabled="!valid"
+              :loading="isLoading"
             >
               Submit
             </v-btn>
@@ -71,6 +73,7 @@
 
 <script>
   import * as EmailValidator from 'email-validator'
+  import axios from 'axios'
 
   export default {
     props: {
@@ -81,6 +84,10 @@
       layerOrMenu: {
         type: Object,
         default: undefined,
+      },
+      viewer: {
+        type: String,
+        default: 'none',
       },
     },
 
@@ -96,6 +103,8 @@
           (v) => !!v || this.$t('thisFieldIsRequired'),
           (v) => EmailValidator.validate(v) || this.$t('emailMustBeValid'),
         ],
+        errorMessage: '',
+        isLoading: false,
       }
     },
 
@@ -110,7 +119,7 @@
     watch: {
       open(val) {
         if (val) {
-          this.$refs.form.reset()
+          this.$refs?.form?.reset()
         }
       },
     },
@@ -120,8 +129,22 @@
         this.$emit('close')
       },
 
-      submit() {
-        console.log('lets go')
+      async submit() {
+        try {
+          this.errorMessage = ''
+          this.isLoading = true
+          await axios.post('/api/feedback', {
+            viewer: this.viewer,
+            layerOrMenuId: this.layerOrMenu.id,
+            name: this.name,
+            email: this.email,
+            feedback: this.feedback,
+          })
+        } catch {
+          this.errorMessage = 'Something went wrong during sending feedback.'
+        } finally {
+          this.isLoading = false
+        }
       },
     },
   }
