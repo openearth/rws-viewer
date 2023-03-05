@@ -55,14 +55,18 @@
               required
             />
 
+            <div class="red--text mb-6">
+              {{ errorMessage }}
+            </div>
+
             <v-btn
               type="submit"
               block
-              class="mr-4 primary"
+              class="primary"
               :disabled="!valid"
               :loading="isLoading"
             >
-              Submit
+              {{ $t('submit') }}
             </v-btn>
           </v-form>
         </v-card-text>
@@ -87,16 +91,16 @@
       },
       viewer: {
         type: String,
-        default: 'none',
+        default: '',
       },
     },
 
     data() {
       return {
         valid: false,
-        feedback: '',
         name: '',
         email: '',
+        feedback: '',
         feedbackRules: [ (v) => !!v || this.$t('thisFieldIsRequired') ],
         nameRules: [ (v) => !!v || this.$t('thisFieldIsRequired') ],
         emailRules: [
@@ -119,7 +123,11 @@
     watch: {
       open(val) {
         if (val) {
-          this.$refs?.form?.reset()
+          this.$refs?.form?.resetValidation()
+          this.name = ''
+          this.email = ''
+          this.feedback = ''
+          this.errorMessage = ''
         }
       },
     },
@@ -141,7 +149,7 @@
             feedback: this.feedback,
           })
         } catch {
-          this.errorMessage = 'Something went wrong during sending feedback.'
+          this.errorMessage = this.$t('sendFeedbackError')
         } finally {
           this.isLoading = false
         }

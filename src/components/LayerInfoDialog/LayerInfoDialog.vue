@@ -55,7 +55,7 @@
 
               <template v-if="errorMessage">
                 <dt class="layer-info-dialog__metadata-key" />
-                <dd class="layer-info-dialog__metadata-value">
+                <dd class="layer-info-dialog__metadata-value red--text">
                   {{ errorMessage }}
                 </dd>
               </template>
@@ -137,8 +137,7 @@
             this.recordUrl = data
           } catch (e) {
             if (!e.response.data.error) {
-              this.errorMessage =
-                'Something went wrong during fetching the record url.'
+              this.errorMessage = this.$t('recordUrlFechingError') 
             }
           } finally {
             this.isLoading = false

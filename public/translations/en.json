@@ -66,5 +66,8 @@
   "whatIsYourEmail": "What is your email?",
   "thisFieldIsRequired": "This field is required",
   "emailMustBeValid": "Email must be valid",
-  "feedbackForm": "Feedback form"
+  "feedbackForm": "Feedback form",
+  "submit": "Submit",
+  "recordUrlFechingError": "Something went wrong during fetching the record url.",
+  "sendFeedbackError": "Something went wrong during sending feedback."
 }
