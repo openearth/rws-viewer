@@ -58,5 +58,16 @@
   "saveFavouritesNotice": "Selecteer één of meerdere lagen om favorieten te kunnen opslaan.",
   "selectAFile": "Selecteer een bestand",
   "search": "Zoeken",
-  "noLayersFound": "Geen lagen gevonden"
+  "noLayersFound": "Geen lagen gevonden",
+  "viewerName": "Viewer naam",
+  "layerName": "Laag naam",
+  "whatCanBeImproved": "Wat kan er verbeterd worden?",
+  "whoAreYou": "Wie bent u?",
+  "whatIsYourEmail": "Wat is uw e-mailadres?",
+  "thisFieldIsRequired": "Dit veld is verplicht",
+  "emailMustBeValid": "E-mail moet geldig zijn",
+  "feedbackForm": "Feedback formulier",
+  "submit": "Verstuur",
+  "recordUrlFechingError": "Er ging iets mis bij het ophalen van de record url.",
+  "sendFeedbackError": "Er ging iets mis bij het verzenden van feedback."
 }

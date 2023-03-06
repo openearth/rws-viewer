@@ -26,6 +26,13 @@
           :isOpen="showInfo"
           :open="() => showInfo = true"
           :close="() => showInfo = false"
+          :showFeedbackDialog="() => showFeedback = true"
+        />
+        <slot
+          name="feedback"
+          :isOpen="showFeedback"
+          :open="() => showFeedback = true"
+          :close="() => showFeedback = false"
         />
       </div>
     </div>
@@ -98,6 +105,7 @@
     data: () => ({
       layerOpacity: 1,
       showInfo: false,
+      showFeedback: false,
     }),
     watch: {
       selected: {
