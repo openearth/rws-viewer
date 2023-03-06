@@ -34,14 +34,14 @@
                 />
               </div>
 
-              <dt class="font-weight-bold layer-info-dialog__metadata-key">
+              <!-- <dt class="font-weight-bold layer-info-dialog__metadata-key">
                 Feedback
               </dt>
               <dd class="layer-info-dialog__metadata-value">
                 <a @click="$emit('showFeedbackDialog')">
                   Neem contact op met de dataeigenaar van deze kaart
                 </a>
-              </dd>
+              </dd> -->
 
               <dt class="font-weight-bold layer-info-dialog__metadata-key">
                 {{ $t('shareUrl') }}
