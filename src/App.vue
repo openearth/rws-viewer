@@ -1,16 +1,16 @@
 <template>
-  <app-shell :header-title="viewerName">
+  <app-shell :header-title="viewerName" :print-mode="printMode">
     <template slot="header-right">
       <search-bar :loading="loading" @onSearch="handleSearch" />
       <locale-switcher />
     </template>
     <div v-if="!showApiLayer">
       <v-fade-transition mode="out-in">
-        <layer-order v-if="wmsLayerIds.length" />
+        <layer-order v-if="wmsLayerIds.length && printMode !== 'noui'" />
       </v-fade-transition>
-      <mapbox-coordinates :lng-lat="lngLat" />
+      <mapbox-coordinates v-if="printMode !== 'noui'" :lng-lat="lngLat" />
       <v-fade-transition mode="out-in">
-        <mapbox-legend v-if="wmsLayerIds.length" />
+        <mapbox-legend v-if="wmsLayerIds.length && printMode !== 'noui'" />
       </v-fade-transition>
     </div>
 
@@ -19,6 +19,8 @@
       :layers="layers"
       @close="closeLayersDialog"
     />
+
+    <mapbox-controls v-if="printMode !== 'noui'" @print="print" />
 
     <mapbox-map
       slot="map"
@@ -31,7 +33,7 @@
       <time-slider
         v-if="showTimeslider"
         :timings="formattedTimeExtent"
-        :value="formattedTimeExtent[formattedTimeExtent.length -1]"
+        :value="formattedTimeExtent[formattedTimeExtent.length - 1]"
         mode="simple-slider"
         @input="onTimingSelection"
       />
@@ -55,7 +57,7 @@
 
       <map-zoom :extent="zoomExtent" />
       <MapMouseMove @mousemove="onMouseMove" />
-      <v-mapbox-navigation-control />
+      <v-mapbox-navigation-control v-if="printMode !== 'noui'" />
       <mapbox-draw-control
         :draw-mode="drawMode"
         :drawn-features="drawnFeatures"
@@ -93,6 +95,9 @@
   import axios from 'axios'
   import LayersDialog from '~/components/LayersDialog/LayersDialog'
   import SearchBar from '~/components/SearchBar/SearchBar'
+  import MapboxControls from '~/components/MapboxControls/MapboxControls'
+  import { saveAs } from 'file-saver'
+  import b64ToBlob from '~/lib/b64-to-blob'
 
   export default {
     components: {
@@ -113,6 +118,7 @@
       MapboxCoordinates,
       LayersDialog,
       SearchBar,
+      MapboxControls,
     },
 
     data: () => ({
@@ -126,8 +132,26 @@
     }),
 
     computed: {
-      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
-      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
+      ...mapGetters('app', [
+        'viewerName',
+        'appNavigationOpen',
+        'appNavigationWidth',
+        'printMode',
+      ]),
+      ...mapGetters('map', [
+        'drawnFeatures',
+        'drawMode',
+        'wmsLayerIds',
+        'wmsLayers',
+        'filteredLayerId',
+        'mapCenter',
+        'mapZoom',
+        'zoomExtent',
+        'selectedLayerForSelection',
+        'activeFlattenedLayers',
+        'wmsApiLayer',
+        'multipleSelection',
+      ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
@@ -138,27 +162,36 @@
       },
       showApiLayer() {
         const { name } = this.$route
-        return name==='download.api' ? true:false
+        return name === 'download.api' ? true : false
       },
     },
+
     watch: {
       //Set as default timestamp the last value of the timeExtent array
       formattedTimeExtent() {
         if (this.formattedTimeExtent.length) {
-          this.setSelectedTimestamp(this.formattedTimeExtent[this.formattedTimeExtent.length -1].t1)
+          this.setSelectedTimestamp(
+            this.formattedTimeExtent[this.formattedTimeExtent.length - 1].t1,
+          )
         }
       },
     },
+
     mounted() {
       this.$router.onReady(this.getAppData)
     },
 
     methods: {
       ...mapActions('data', [ 'getAppData', 'setSelectedTimestamp' ]),
-      ...mapActions('map', [ 'adds', 'removeDrawnFeature', 'addDrawnFeature', 'setMapLoaded' ]),
+      ...mapActions('map', [
+        'adds',
+        'removeDrawnFeature',
+        'addDrawnFeature',
+        'setMapLoaded',
+      ]),
       formatTimeExtent(extent) {
         if (extent.length) {
-          const formattedTimeExtent = extent.map(s => ({
+          const formattedTimeExtent = extent.map((s) => ({
             label: s.split('-')[0],
             t1: new Date(s),
             t2: undefined,
@@ -172,17 +205,16 @@
         const timestamp = event
         this.setSelectedTimestamp(timestamp.t1)
       },
-      
+
       async handleFeatureClick(clickData) {
-        
         const feature = await getFeatureInfo({
           url: this.selectedLayerForSelection.url,
           layer: this.selectedLayerForSelection.layer,
           ...clickData,
         })
-    
+
         if (feature) {
-          if (this.drawnFeatures.find(f => f.id === feature.id)) {
+          if (this.drawnFeatures.find((f) => f.id === feature.id)) {
             this.removeDrawnFeature(feature)
           } else {
             this.addDrawnFeature(feature)
@@ -192,12 +224,14 @@
       onMouseMove(e) {
         this.lngLat = e.lngLat
       },
-      handleSearch: debounce(async function(val) {
+      handleSearch: debounce(async function (val) {
         try {
           this.loading = true
 
           if (val.trim()) {
-            const { data } = await axios(`/api/search?viewer=${ this.viewerName }&query=${ val }`)
+            const { data } = await axios(
+              `/api/search?viewer=${ this.viewerName }&query=${ val }`,
+            )
             this.layers = data
             this.layersDialogOpen = true
           }
@@ -210,20 +244,28 @@
       closeLayersDialog() {
         this.layersDialogOpen = false
       },
+      async print() {
+        try {
+          const { data } = await axios('/.netlify/functions/export')
+          const blob = b64ToBlob(data.pdf, 'application/pdf')
+          saveAs(blob, 'print.pdf')
+        } catch (e) {
+          console.log(e)
+        }
+      },
     },
   }
 </script>
 <style>
-
 .mapboxgl-ctrl-top-right {
-    top: 0;
-    right: 0;
+  top: 0;
+  right: 0;
 }
 
-@media only screen and (max-width:1199px) {
+@media only screen and (max-width: 1199px) {
   .mapboxgl-ctrl-top-right {
     top: 0;
     right: calc(100vw - 560px);
   }
-  }
+}
 </style>
