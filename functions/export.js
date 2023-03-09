@@ -1,11 +1,13 @@
-const scale = 0.5
+import { stringify } from 'query-string'
+
+const scale = 0.75
 const viewport = {
   width: 1122 / scale,
   height: 792 / scale,
 }
 
 export const handler = async (event) => {
-  const { layers, viewer } = event.queryStringParameters
+  const { layers, viewer, lat, lng, center, zoom } = event.queryStringParameters
 
   try {
     let browser
@@ -26,9 +28,17 @@ export const handler = async (event) => {
 
     page.on('pageerror', console.error)
 
+    const query = stringify({
+      print: 'noui',
+      layers,
+      lat,
+      lng,
+      center,
+      zoom: zoom,
+    })
 
     await page.goto(
-      `${ process.env.URL }/${ viewer }/?layers=${ layers }&print=noui`,
+      `${ process.env.URL }/${ viewer }/?${ query }`,
       { waitUntil: 'networkidle' },
     )
 

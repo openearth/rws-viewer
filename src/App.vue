@@ -6,11 +6,11 @@
     </template>
     <div v-if="!showApiLayer">
       <v-fade-transition mode="out-in">
-        <layer-order v-if="wmsLayerIds.length && printMode !== 'noui'" />
+        <layer-order v-if="wmsLayerIds.length && showUI" />
       </v-fade-transition>
-      <mapbox-coordinates v-if="printMode !== 'noui'" :lng-lat="lngLat" />
+      <mapbox-coordinates v-if="showUI" :lng-lat="lngLat" />
       <v-fade-transition mode="out-in">
-        <mapbox-legend v-if="wmsLayerIds.length" :expanded="printMode === 'noui'" />
+        <mapbox-legend v-if="wmsLayerIds.length" :expanded="!showUI" />
       </v-fade-transition>
     </div>
 
@@ -20,15 +20,13 @@
       @close="closeLayersDialog"
     />
 
-    <mapbox-controls v-if="printMode !== 'noui'" @print="print" />
-
     <mapbox-map
       slot="map"
       :access-token="accessToken"
       mapbox-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
       :center="mapCenter"
       :zoom="mapZoom"
-      @load="setMapLoaded"
+      @load="handleMapLoad"
     >
       <time-slider
         v-if="showTimeslider"
@@ -57,7 +55,7 @@
 
       <map-zoom :extent="zoomExtent" />
       <MapMouseMove @mousemove="onMouseMove" />
-      <v-mapbox-navigation-control v-if="printMode !== 'noui'" />
+      <v-mapbox-navigation-control v-if="showUI" />
       <mapbox-draw-control
         :draw-mode="drawMode"
         :drawn-features="drawnFeatures"
@@ -66,6 +64,11 @@
       <mapbox-select-point-control
         :draw-mode="drawMode"
         @click="handleFeatureClick"
+      />
+      <map-export-control
+        v-if="showUI"
+        :layers="wmsLayerIds"
+        :viewer="viewerConfig"
       />
       <map-layer-info
         v-if="activeFlattenedLayers.length && !drawMode"
@@ -95,9 +98,7 @@
   import axios from 'axios'
   import LayersDialog from '~/components/LayersDialog/LayersDialog'
   import SearchBar from '~/components/SearchBar/SearchBar'
-  import MapboxControls from '~/components/MapboxControls/MapboxControls'
-  import { saveAs } from 'file-saver'
-  import b64ToBlob from '~/lib/b64-to-blob'
+  import MapExportControl from './components/MapExportControl/MapExportControl.vue'
 
   export default {
     components: {
@@ -118,7 +119,7 @@
       MapboxCoordinates,
       LayersDialog,
       SearchBar,
-      MapboxControls,
+      MapExportControl,
     },
 
     data: () => ({
@@ -165,6 +166,9 @@
       showApiLayer() {
         const { name } = this.$route
         return name === 'download.api' ? true : false
+      },
+      showUI() {
+        return this.printMode !== 'noui'
       },
     },
 
@@ -250,13 +254,18 @@
       closeLayersDialog() {
         this.layersDialogOpen = false
       },
-      async print() {
-        try {
-          const { data } = await axios(`/.netlify/functions/export?layers=${ this.wmsLayerIds.join(',') }&viewer=${ this.viewerConfig }`)
-          const blob = b64ToBlob(data.pdf, 'application/pdf')
-          saveAs(blob, 'print.pdf')
-        } catch (e) {
-          console.log(e)
+      handleMapLoad(event) {
+        const map = event.target
+        this.setMapLoaded(true)
+        
+        const { zoom, lat, lng }= this.$route.query
+
+        if (zoom) {
+          map.setZoom(zoom)
+        }
+
+        if (lat && lng) {
+          map.setCenter([ lng, lat ])
         }
       },
     },
