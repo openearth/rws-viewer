@@ -10,7 +10,7 @@
       </v-fade-transition>
       <mapbox-coordinates v-if="printMode !== 'noui'" :lng-lat="lngLat" />
       <v-fade-transition mode="out-in">
-        <mapbox-legend v-if="wmsLayerIds.length && printMode !== 'noui'" />
+        <mapbox-legend v-if="wmsLayerIds.length" :expanded="printMode === 'noui'" />
       </v-fade-transition>
     </div>
 
@@ -134,6 +134,7 @@
     computed: {
       ...mapGetters('app', [
         'viewerName',
+        'viewerConfig',
         'appNavigationOpen',
         'appNavigationWidth',
         'printMode',
@@ -146,6 +147,7 @@
         'filteredLayerId',
         'mapCenter',
         'mapZoom',
+        'mapLoaded',
         'zoomExtent',
         'selectedLayerForSelection',
         'activeFlattenedLayers',
@@ -175,6 +177,9 @@
           )
         }
       },
+      printMode() {
+        this.setAppNavigationWidth({ width: this.printMode === 'noui' ? 0 : 500 })
+      },
     },
 
     mounted() {
@@ -182,6 +187,7 @@
     },
 
     methods: {
+      ...mapActions('app', [ 'setAppNavigationWidth' ]),
       ...mapActions('data', [ 'getAppData', 'setSelectedTimestamp' ]),
       ...mapActions('map', [
         'adds',
@@ -246,7 +252,7 @@
       },
       async print() {
         try {
-          const { data } = await axios('/.netlify/functions/export')
+          const { data } = await axios(`/.netlify/functions/export?layers=${ this.wmsLayerIds.join(',') }&viewer=${ this.viewerConfig }`)
           const blob = b64ToBlob(data.pdf, 'application/pdf')
           saveAs(blob, 'print.pdf')
         } catch (e) {

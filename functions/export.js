@@ -1,27 +1,41 @@
+const scale = 0.5
+const viewport = {
+  width: 1122 / scale,
+  height: 792 / scale,
+}
+
 export const handler = async (event) => {
+  const { layers, viewer } = event.queryStringParameters
+
   try {
     let browser
 
     if (process.env.NETLIFY_DEV) {
       const playwright = await import('playwright-chromium')
-      browser = await playwright.chromium.launch({ headless: true })
+      browser = await playwright.chromium.launch({
+        headless: true, 
+      })
     } else {
       const playwright = await import('playwright-aws-lambda')
       browser = await playwright.launchChromium()
     }
 
-    const page = await browser.newPage()
+    const page = await browser.newPage({
+      viewport,
+    })
+
     page.on('pageerror', console.error)
 
+
     await page.goto(
-      `${ process.env.URL }/wadden-viewer/?layers=97439193&folders=143810679&print=noui`,
+      `${ process.env.URL }/${ viewer }/?layers=${ layers }&print=noui`,
       { waitUntil: 'networkidle' },
     )
 
     // this somehow solves the issue of a blank page being returned as pdf
     await new Promise((res) => setTimeout(() => res(), 1000))
 
-    const pdf = await page.pdf({ format: 'A4' })
+    const pdf = await page.pdf({ format: 'a4', scale, landscape: true })
 
     await page.close()
 

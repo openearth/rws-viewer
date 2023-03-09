@@ -30,6 +30,9 @@ export default {
     SET_PRINT_MODE(state, { printMode }) {
       state.printMode = printMode
     },
+    SET_APP_NAVIGATION_WIDTH(state, { width }) {
+      state.appNavigationWidth = width
+    },
   },
 
   actions: {
@@ -44,6 +47,10 @@ export default {
 
     setPrintMode({ commit }, { printMode }) {
       commit('SET_PRINT_MODE', { printMode })
+    },
+
+    setAppNavigationWidth({ commit }, { width }) {
+      commit('SET_APP_NAVIGATION_WIDTH', { width })
     },
   },
 }

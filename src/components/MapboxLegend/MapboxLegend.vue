@@ -22,7 +22,7 @@
     </v-card-title>
 
     <v-card-text v-if="activeLayers.length >= 2" class="map-legend__content">
-      <v-expansion-panels multiple>
+      <v-expansion-panels multiple :value="initialPanelsValue">
         <v-expansion-panel
           v-for="(layer, index) in activeLayers"
           :key="index"
@@ -59,6 +59,13 @@
   import buildLegendUrl from '~/lib/build-legend-url'
 
   export default {
+    props: {
+      expanded: {
+        type: Boolean,
+        default: false,
+      },
+    },
+
     data: () => ({
       maxLegendHeight: 'calc(100vh - 106px)', // subtracts toolbar, margin and padding.
       maxLegendWidth: 'calc(100vw - 32px)', // subtracts padding.
@@ -66,6 +73,7 @@
       showLegend: false,
     }),
 
+    
     computed: {
       ...mapGetters('data', [ 'flattenedLayers' ]),
       ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
@@ -73,6 +81,18 @@
       activeLayers() {
         return this.activeFlattenedLayerIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
       },
+
+      initialPanelsValue() {
+        if (!this.expanded) {
+          return []
+        }
+
+        return this.activeLayers.map((_layer, index) => index)
+      },
+    },
+    
+    mounted() {
+      this.showLegend = this.expanded
     },
 
     methods: {
