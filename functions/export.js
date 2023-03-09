@@ -1,4 +1,5 @@
 import { stringify } from 'query-string'
+import { launchChromium } from 'playwright-aws-lambda'
 
 const scale = 0.75
 const viewport = {
@@ -10,17 +11,7 @@ export const handler = async (event) => {
   const { layers, viewer, lat, lng, center, zoom } = event.queryStringParameters
 
   try {
-    let browser
-
-    if (process.env.NETLIFY_DEV) {
-      const playwright = await import('playwright-chromium')
-      browser = await playwright.chromium.launch({
-        headless: true, 
-      })
-    } else {
-      const playwright = await import('playwright-aws-lambda')
-      browser = await playwright.launchChromium()
-    }
+    const browser = await launchChromium()
 
     const page = await browser.newPage({
       viewport,
