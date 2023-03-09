@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <app-header
+      v-if="printMode !== 'noui'"
       :title="headerTitle"
       :theme="theme"
     >
@@ -12,7 +13,7 @@
     <v-main>
       <slot name="map" />
       <slot />
-      <app-sidebar />
+      <app-sidebar v-if="printMode !== 'noui'" />
     </v-main>
   </v-app>
 </template>
@@ -23,10 +24,12 @@
 
   export default {
     name: 'AppShell',
+
     components: {
       AppHeader,
       AppSidebar,
     },
+
     props: {
       headerTitle: {
         type: String,
@@ -36,6 +39,10 @@
         type: String,
         default: 'dark',
         validator: value => value === 'dark' || value === 'light',
+      },
+      printMode: {
+        type: String,
+        default: '',
       },
     },
   }

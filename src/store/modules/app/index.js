@@ -6,6 +6,7 @@ export default {
     appNavigationWidth: 500,
     viewerConfig: '',
     viewerName: '',
+    printMode: '',
   }),
 
   getters: {
@@ -13,6 +14,7 @@ export default {
     appNavigationWidth: state => state.appNavigationWidth,
     viewerName: state => state.viewerName,
     viewerConfig: state => state.viewerConfig,
+    printMode: state => state.printMode,
   },
 
   mutations: {
@@ -25,6 +27,12 @@ export default {
     SET_VIEWER_CONFIG(state, config) {
       state.viewerConfig = config
     },
+    SET_PRINT_MODE(state, { printMode }) {
+      state.printMode = printMode
+    },
+    SET_APP_NAVIGATION_WIDTH(state, { width }) {
+      state.appNavigationWidth = width
+    },
   },
 
   actions: {
@@ -35,6 +43,14 @@ export default {
 
     setNavigationOpen({ commit }, { open }) {
       commit('SET_APP_NAVIGATION_OPEN', { open })
+    },
+
+    setPrintMode({ commit }, { printMode }) {
+      commit('SET_PRINT_MODE', { printMode })
+    },
+
+    setAppNavigationWidth({ commit }, { width }) {
+      commit('SET_APP_NAVIGATION_WIDTH', { width })
     },
   },
 }

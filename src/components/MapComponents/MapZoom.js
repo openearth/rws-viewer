@@ -19,10 +19,11 @@ export default {
     },
     zoomToExtent() {
       const map = this.getMap()
+      
       if (map && this.extent.length) {
          map.fitBounds(this.extent, {
           padding: {
-            left: this.appNavigationWidth,
+            left: 100 + this.appNavigationWidth,
             top: 100,
             right: 100,
             bottom: 100,

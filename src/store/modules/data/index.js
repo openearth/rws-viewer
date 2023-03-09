@@ -64,6 +64,13 @@ export default {
     async getAppData({ dispatch }, route) {
       const viewer = route?.params?.config
 
+      const searchParams = new URLSearchParams(window.location.search)
+      const printMode = searchParams.get('print')
+
+      if (printMode) {
+        dispatch('app/setPrintMode', { printMode }, { root: true })
+      }
+
       //Set viewer configuration
       const { mapCenter, mapZoom, defaultLayer } = await getViewerConfiguration(viewer)
        
@@ -74,7 +81,6 @@ export default {
 
       dispatch('app/setViewerName', { name }, { root: true })
 
-      const searchParams = new URLSearchParams(window.location.search)
       const initialLayerIds = (searchParams.get('layers') || '').split(',')
       let layersById = getLayersById(layers, initialLayerIds)
 
