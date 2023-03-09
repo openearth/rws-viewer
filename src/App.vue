@@ -65,6 +65,7 @@
         :draw-mode="drawMode"
         @click="handleFeatureClick"
       />
+      <mapbox-export-control />
       <map-layer-info
         v-if="activeFlattenedLayers.length && !drawMode"
         :layer="activeFlattenedLayers[0]"
@@ -86,6 +87,7 @@
   import LayerOrder from '~/components/LayerOrder/LayerOrder'
   import TimeSlider from '~/components/TimeSlider'
   import MapboxSelectPointControl from '~/components/MapboxSelectPointControl/MapboxSelectPointControl'
+  import MapboxExportControl from '~/components/MapboxExportControl/MapboxExportControl'
   import getFeatureInfo from '~/lib/get-feature-info'
   import MapMouseMove from './components/MapComponents/MapMouseMove.js'
   import MapboxCoordinates from './components/MapboxCoordinates/MapboxCoordinates.vue'
@@ -113,6 +115,7 @@
       MapboxCoordinates,
       LayersDialog,
       SearchBar,
+      MapboxExportControl,
     },
 
     data: () => ({
