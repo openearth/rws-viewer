@@ -11,7 +11,7 @@
   },
   "scripts": {
     "postinstall": "patch-package",
-    "dato": "node ./config/dato/_dump-data.mjs",
+    "dato": "node ./config/dato/dump-data.mjs",
     "prebuild": "yarn dato",
     "build": "vue-cli-service build",
     "predev": "yarn dato",

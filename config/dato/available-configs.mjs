@@ -1,25 +1,39 @@
 import fs from 'fs/promises'
 import slugify from '@sindresorhus/slugify'
+import { PUBLIC_DIR } from './constants.mjs'
+import datocmsRequest from './datocms.mjs'
 
-export default function handleAvailableConfigs(options) {
-  const { publicDir } = options
-
-  return async function execute({ data }) {
-    const { configs } = data
-   
-    const availableConfigs = configs.map(config => {
-      return {
-        name: slugify(config.name),
-        mapZoom: config.mapZoom,
-        mapCenter: config.mapCenter,
-        defaultLayer: config.defaultLayer,
-      }
-    })
-  
-    fs.writeFile(
-      `${ publicDir }/available-configs-viewers.json`,
-      JSON.stringify(availableConfigs, null, 2),
-    )
-
+const query = /* graphql */ `
+query {
+  configs: allMenus(filter: { parent: { exists: false } }) {
+    name
+    mapZoom
+    mapCenter
+    defaultLayer {
+      id
+    }
   }
+}
+`
+
+export default async function dumpAvailableConfigs() {
+  const { data: { configs } } = await datocmsRequest(
+    process.env.DATO_API_TOKEN,
+    {},
+    query,
+  )
+
+  const availableConfigs = configs.map((config) => {
+    return {
+      name: slugify(config.name),
+      mapZoom: config.mapZoom,
+      mapCenter: config.mapCenter,
+      defaultLayer: config.defaultLayer,
+    }
+  })
+
+  await fs.writeFile(
+    `${ PUBLIC_DIR }/available-configs-viewers.json`,
+    JSON.stringify(availableConfigs, null, 2),
+  )
 }
