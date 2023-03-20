@@ -26,7 +26,7 @@ async function run() {
 
     console.log('Dumped all data')
   } catch (e) {
-    console.log(e)
+    console.log('Something went wrong during dumping data:', e)
   }
 }
 

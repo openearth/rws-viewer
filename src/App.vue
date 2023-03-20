@@ -1,8 +1,13 @@
 <template>
   <app-shell :header-title="viewerName">
     <template slot="header-right">
-      <search-bar :loading="loading" @onSearch="handleSearch" />
-      <locale-switcher />
+      <search-bar :loading="searchIsLoading" @onSearch="handleSearch" />
+      <locale-switcher
+        :loading="localeIsLoading"
+        :current-locale="currentLocale"
+        :items="localeItems"
+        @input="switchLocaleAndAddViewerData($event.title)"
+      />
     </template>
     <div v-if="!showApiLayer">
       <v-fade-transition mode="out-in">
@@ -93,6 +98,10 @@
   import axios from 'axios'
   import LayersDialog from '~/components/LayersDialog/LayersDialog'
   import SearchBar from '~/components/SearchBar/SearchBar'
+  import { defaultLocale, availableLocales } from '~/plugins/i18n'
+
+  const removeRegion = locale => locale.replace(/-.+/, '')
+  const localeIsAvailable = locale => availableLocales.includes(locale)
 
   export default {
     components: {
@@ -122,7 +131,11 @@
       lngLat: null,
       layers: [],
       layersDialogOpen: false,
-      loading: false,
+      searchIsLoading: false,
+      currentLocale: defaultLocale,
+      localeIsLoading: false,
+      loadedLocales: [ defaultLocale ],
+      localeItems: availableLocales.map(locale => ({ title: locale })),
     }),
 
     computed: {
@@ -149,12 +162,32 @@
         }
       },
     },
+
     mounted() {
-      this.$router.onReady(this.getAppData)
+      this.$router.onReady(async (route) => {
+        const savedLocale = window.localStorage.getItem('locale')
+        let browserLocales = []
+
+        if (navigator.languages != undefined) {
+          const languages = navigator.languages.map(removeRegion)
+          browserLocales = [ ...new Set(languages) ].filter(localeIsAvailable)
+        }
+
+        const localeToUse = savedLocale || browserLocales[0] || defaultLocale
+
+        this.localeIsLoading = true
+        
+        if (localeToUse !== defaultLocale) {
+          await this.switchLocale(localeToUse)
+        }
+      
+        this.getAppData({ route, locale: this.currentLocale } )
+        this.localeIsLoading = false
+      })
     },
 
     methods: {
-      ...mapActions('data', [ 'getAppData', 'setSelectedTimestamp' ]),
+      ...mapActions('data', [ 'getAppData', 'setSelectedTimestamp', 'addViewerData' ]),
       ...mapActions('map', [ 'adds', 'removeDrawnFeature', 'addDrawnFeature', 'setMapLoaded' ]),
       formatTimeExtent(extent) {
         if (extent.length) {
@@ -174,7 +207,6 @@
       },
       
       async handleFeatureClick(clickData) {
-        
         const feature = await getFeatureInfo({
           url: this.selectedLayerForSelection.url,
           layer: this.selectedLayerForSelection.layer,
@@ -189,12 +221,38 @@
           }
         }
       },
+
       onMouseMove(e) {
         this.lngLat = e.lngLat
       },
+
+      switchLocale(locale) {
+        const promise = this.loadedLocales.includes(locale)
+          ? Promise.resolve(locale)
+          : axios({ method: 'get', url: `/translations/${ locale }.json` })
+            .then(({ data }) => {
+              this.$i18n.setLocaleMessage(locale, data)
+              this.loadedLocales.push(locale)
+              return locale
+            })
+
+        return promise.then(newLocale => {
+          window.localStorage.setItem('locale', locale)
+          this.$i18n.locale = newLocale
+          this.currentLocale = newLocale
+        })
+      },
+
+      async switchLocaleAndAddViewerData(locale) {
+        this.localeIsLoading = true
+        await this.switchLocale(locale)
+        await this.addViewerData({ viewer: this.$route.params.config, locale: this.currentLocale })
+        this.localeIsLoading = false
+      },
+
       handleSearch: debounce(async function(val) {
         try {
-          this.loading = true
+          this.searchIsLoading = true
 
           if (val.trim()) {
             const { data } = await axios(`/api/search?viewer=${ this.viewerName }&query=${ val }`)
@@ -204,9 +262,10 @@
         } catch (e) {
           console.log(e)
         } finally {
-          this.loading = false
+          this.searchIsLoading = false
         }
       }, 1000),
+
       closeLayersDialog() {
         this.layersDialogOpen = false
       },
