@@ -176,12 +176,12 @@
         const localeToUse = savedLocale || browserLocales[0] || defaultLocale
 
         this.localeIsLoading = true
-        
+
         if (localeToUse !== defaultLocale) {
           await this.switchLocale(localeToUse)
         }
       
-        this.getAppData({ route, locale: this.currentLocale } )
+        await this.getAppData({ route, locale: this.currentLocale } )
         this.localeIsLoading = false
       })
     },
