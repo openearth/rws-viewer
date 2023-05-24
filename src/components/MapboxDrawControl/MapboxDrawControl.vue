@@ -2,6 +2,7 @@
   import MapboxDraw from '@mapbox/mapbox-gl-draw'
   import DrawRectangle from 'mapbox-gl-draw-rectangle-mode'
   import StaticMode from '@mapbox/mapbox-gl-draw-static-mode'
+  import styles from '@mapbox/mapbox-gl-draw/src/lib/theme'
 
   export default {
     props: {
@@ -64,6 +65,37 @@
             trash: true,
           },
           modes,
+          styles: styles.map(style => {
+            if ([
+              'gl-draw-polygon-fill-active',
+              'gl-draw-polygon-fill-inactive',
+              'gl-draw-polygon-fill-static',
+            ].includes(style.id)) {
+              return {
+                ...style,
+                paint: {
+                  ...style.paint,
+                  'fill-color': '#ff0000',
+                  'fill-opacity': 0.5,
+                },
+              }
+            }
+
+            if ([
+              'gl-draw-polygon-stroke-active',
+              'gl-draw-polygon-stroke-inactive',
+              'gl-draw-polygon-stroke-static',
+            ].includes(style.id)) {
+              return {
+                ...style,
+                paint: {
+                  ...style.paint,
+                  'line-color': '#00FF00',
+                },
+              }
+            }
+            return style
+          }),
         })
 
         this.mbDraw = mbDraw
