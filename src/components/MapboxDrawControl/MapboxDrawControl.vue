@@ -91,6 +91,7 @@
                 paint: {
                   ...style.paint,
                   'line-color': '#008fc5',
+                  'line-width': 5,
                 },
               }
             }
