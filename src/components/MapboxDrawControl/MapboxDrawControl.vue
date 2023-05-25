@@ -75,7 +75,7 @@
                 ...style,
                 paint: {
                   ...style.paint,
-                  'fill-color': '#ff0000',
+                  'fill-color': '#008fc5',
                   'fill-opacity': 0.5,
                 },
               }
@@ -90,7 +90,7 @@
                 ...style,
                 paint: {
                   ...style.paint,
-                  'line-color': '#00FF00',
+                  'line-color': '#008fc5',
                 },
               }
             }
