@@ -1,7 +1,0 @@
-query MyQuery {
-  appConfig {
-    categories {
-      name
-    }
-  }
-}

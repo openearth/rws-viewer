@@ -61,7 +61,7 @@ export default {
   },
 
   actions: {
-    async getAppData({ dispatch }, route) {
+    async getAppData({ dispatch }, { route, locale }) {
       const viewer = route?.params?.config
 
       //Set viewer configuration
@@ -70,7 +70,7 @@ export default {
       dispatch('map/setMapCenter', mapCenter, { root: true })
       dispatch('map/setMapZoom', mapZoom, { root: true })
       
-      const { layers, name } = await dispatch('addViewerData', viewer)
+      const { layers, name } = await dispatch('addViewerData', { viewer, locale })
 
       dispatch('app/setViewerName', { name }, { root: true })
 
@@ -88,20 +88,17 @@ export default {
       }
     },
 
-    async addViewerData({ commit, state }, viewer) {
-      const { layers: viewerLayers, name } = await configRepo.getConfig(viewer)
+    async addViewerData({ commit }, { viewer, locale }) {
+      const { layers: viewerLayers, name } = await configRepo.getConfig(viewer, locale)
 
-      const stateLayers = state.displayLayers
-      commit('SET_DISPLAY_LAYERS', { layers: [ ...stateLayers, ...viewerLayers ] })
+      commit('SET_DISPLAY_LAYERS', { layers: [ ...viewerLayers ] })
 
-      const stateFlattenedLayers = state.flattenedLayers
       const flattenedViewerLayers = flattenLayers(viewerLayers)
-      const flattenedLayers = uniqBy(layer => layer.id, [ ...stateFlattenedLayers, ...flattenedViewerLayers ])
+      const flattenedLayers = uniqBy(layer => layer.id, [ ...flattenedViewerLayers ])
       commit('SET_FLATTENED_LAYERS', { layers: flattenedLayers })
 
-      const stateTags = state.layerTags
       const viewerTags = getLayersTags(flattenedViewerLayers)
-      const tags = uniq([ ...stateTags, ...viewerTags ])
+      const tags = uniq([ ...viewerTags ])
       commit('SET_LAYER_TAGS', { tags })
 
       const currentRoute = router.currentRoute
