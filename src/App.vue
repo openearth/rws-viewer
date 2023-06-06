@@ -213,6 +213,7 @@
         const feature = await getFeatureInfo({
           url: this.selectedLayerForSelection.url,
           layer: this.selectedLayerForSelection.layer,
+          serviceType: this.selectedLayerForSelection.serviceType,
           ...clickData,
         })
     
