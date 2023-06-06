@@ -225,6 +225,7 @@
 
 .layer-info-dialog__metadata-value {
   max-width: 440px;
+  margin: auto 0;
 }
 
 .layer-info-dialog__metadata-value a {
