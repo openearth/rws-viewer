@@ -58,6 +58,7 @@
         :opacity="layer.opacity"
       />
 
+      <mapbox-scale-control />
       <map-zoom :extent="zoomExtent" />
       <MapMouseMove @mousemove="onMouseMove" />
       <v-mapbox-navigation-control />
@@ -94,6 +95,7 @@
   import getFeatureInfo from '~/lib/get-feature-info'
   import MapMouseMove from './components/MapComponents/MapMouseMove.js'
   import MapboxCoordinates from './components/MapboxCoordinates/MapboxCoordinates.vue'
+  import MapboxScaleControl from './components/MapboxScaleControl/MapboxScaleControl.vue'
   import debounce from '~/lib/debounce'
   import axios from 'axios'
   import LayersDialog from '~/components/LayersDialog/LayersDialog'
@@ -122,6 +124,7 @@
       MapboxCoordinates,
       LayersDialog,
       SearchBar,
+      MapboxScaleControl,
     },
 
     data: () => ({
@@ -272,17 +275,20 @@
     },
   }
 </script>
-<style>
 
+<style>
 .mapboxgl-ctrl-top-right {
-    top: 0;
-    right: 0;
+  top: 0;
+  right: 0;
 }
 
 @media only screen and (max-width:1199px) {
   .mapboxgl-ctrl-top-right {
     top: 0;
-    right: calc(100vw - 560px);
+    right: calc(100vw - 600px);
   }
+  .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
+    float: left;
   }
+}
 </style>
