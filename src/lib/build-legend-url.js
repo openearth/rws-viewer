@@ -9,8 +9,6 @@ export default function (layerData) {
     'service':'wms',
     'version': '1.0.0',
     'format': 'image/png',
-    'width': '30',
-    'height': '30',
     'layer': layer,
     'legend_options': 'fontAntiAliasing:true;fontColor:0x000000;fontSize:16;labelMargin:8;dpi:90;',
   })

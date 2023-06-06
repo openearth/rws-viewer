@@ -53,6 +53,21 @@
                 {{ shareUrl }}
               </dd>
 
+              <template v-if="wmsUrl !== ''">
+                <dt class="font-weight-bold layer-info-dialog__metadata-key">
+                  {{ $t('wmsUrl') }}
+                  <v-btn icon @click="copyUrlToClipboard(wmsUrl)">
+                    <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
+                  </v-btn>
+                </dt>
+                <dd class="layer-info-dialog__metadata-value">
+                  <a :href="wmsUrl" target="_blank">
+                    {{ title }}
+                  </a>
+                </dd>
+              </template>
+
+
               <template v-if="errorMessage">
                 <dt class="layer-info-dialog__metadata-key" />
                 <dd class="layer-info-dialog__metadata-value red--text">
@@ -87,6 +102,8 @@
 
 <script>
   import axios from 'axios'
+  import buildGeoserverUrl from '~/lib/build-geoserver-url'
+  import { getWmsCapabilities, getLayerProperties } from '~/lib/get-capabilities'
 
   export default {
     props: {
@@ -110,6 +127,14 @@
         type: String,
         required: true,
       },
+      layer: {
+        type: String,
+        default: '',
+      },
+      url: {
+        type: String,
+        default: '',
+      },
       viewerName: {
         type: String,
         required: true,
@@ -121,6 +146,7 @@
         isLoading: true,
         recordUrl: '',
         errorMessage: null,
+        wmsUrl: '',
       }
     },
 
@@ -145,6 +171,12 @@
       },
     },
 
+    async mounted() {
+      if (this.layer && this.url) {
+        this.wmsUrl = await this.getWmsUrl()
+      }
+    },
+
     methods: {
       close() {
         this.$emit('close')
@@ -152,6 +184,23 @@
       async copyUrlToClipboard(url) {
         await navigator.clipboard.writeText(url)
         alert(`The following url is copied to clipboard! ${ url }`)
+      },
+      async getWmsUrl() {
+        const capabilities = await getWmsCapabilities(this.url)
+        const { bbox } = getLayerProperties(capabilities, this.layer)
+        return buildGeoserverUrl({
+          url: this.url,
+          request: 'GetMap',
+          service: 'WMS',
+          version: '1.1.0',
+          format: 'application/openlayers',
+          srs: 'EPSG:4258',
+          layers: this.layer,
+          width: 700,
+          height: 500,
+          bbox: bbox.flat().join(','),
+          styles: '',
+        })
       },
     },
   }
@@ -175,6 +224,7 @@
 
 .layer-info-dialog__metadata-value {
   max-width: 440px;
+  margin: auto 0;
 }
 
 .layer-info-dialog__metadata-value a {

@@ -51,6 +51,7 @@
   "selectLayersToView": "Selecteer lagen om te bekijken",
   "selectPoints": "Selecteer Punten",
   "shareUrl": "Deel url",
+  "wmsUrl": "WMS url",
   "saveFavourites": "Opslaan favorieten",
   "saveFavouritesDesc": "Download de huidige kaartlagen als favorieten om op later moment opnieuw te kunnen visualiseren. Denk aan de browser settings, deze dienen ingesteld te zijn op 'vragen waar wat er met downloads moet gebeuren'. Je vindt ze via Instellingen, Downloads.",
   "loadFavourites": "Laad favorieten",

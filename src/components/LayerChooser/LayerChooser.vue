@@ -102,6 +102,8 @@
                 :share-url="getUrl(item)"
                 :open="isOpen"
                 :layer-id="item.id"
+                :layer="item.layer"
+                :url="item.url"
                 :viewer-name="viewerName"
                 @close="close"
                 @showFeedbackDialog="showFeedbackDialog"

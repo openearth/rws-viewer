@@ -51,6 +51,7 @@
   "selectLayersToView": "Select layers to view",
   "selectPoints": "Select Points",
   "shareUrl": "Share url",
+  "wmsUrl": "WMS url",
   "saveFavourites": "Save favourites",
   "saveFavouritesDesc": "Download your favourite maps in a file to be able to either share or reuse. Take care of your browser settings, enable asking where to store data. You can find them via Settings, Downloads.",
   "loadFavourites": "Load favourites",

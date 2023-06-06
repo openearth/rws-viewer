@@ -48,6 +48,7 @@
         const info = await getFeatureInfo({
           layer: infoLayer,
           url: this.layer.url,
+          serviceType: this.layer.serviceType,
           lng, lat,
         })
         
