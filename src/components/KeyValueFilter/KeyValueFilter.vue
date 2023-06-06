@@ -134,9 +134,9 @@
         this.enabledFilters = []
       },
       enabledFilters: {
-        handler(value) {
-          if (value.length) {
-            this.$emit('change', value)
+        handler(newValue, oldValue) {
+          if (newValue.length || newValue.length !== oldValue.length) {
+            this.$emit('change', newValue)
           }
         },
         deep: true,
