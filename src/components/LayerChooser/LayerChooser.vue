@@ -110,8 +110,9 @@
             <template #feedback="{ isOpen, close }">
               <feedback-dialog
                 :open="isOpen"
-                :layer-or-menu="item"
+                :menu-or-layer="item"
                 :viewer="viewerName"
+                :share-url="getUrl(item)"
                 @close="close"
               />
             </template>
