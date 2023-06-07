@@ -55,6 +55,14 @@
               required
             />
 
+            <a 
+              v-if="privacyStatement" 
+              :href="privacyStatement" 
+              target="_blank"
+            >
+              Privacy Statement
+            </a>
+
             <div class="red--text mb-6">
               {{ errorMessage }}
             </div>
@@ -94,6 +102,10 @@
         default: '',
       },
       shareUrl: {
+        type: String,
+        default: '',
+      },
+      privacyStatement: {
         type: String,
         default: '',
       },
