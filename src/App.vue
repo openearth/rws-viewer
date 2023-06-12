@@ -25,6 +25,12 @@
       @close="closeLayersDialog"
     />
 
+    <UserAgreementDialog
+      :open="showUserAgreement"
+      :user-agreement="viewerUserAgreement"
+      @close="closeUserAgreementDialog"
+    />
+
     <mapbox-map
       slot="map"
       :access-token="accessToken"
@@ -100,6 +106,7 @@
   import axios from 'axios'
   import LayersDialog from '~/components/LayersDialog/LayersDialog'
   import SearchBar from '~/components/SearchBar/SearchBar'
+  import UserAgreementDialog from '~/components/UserAgreementDialog/UserAgreementDialog.vue'
   import { defaultLocale, availableLocales } from '~/plugins/i18n'
 
   const removeRegion = locale => locale.replace(/-.+/, '')
@@ -125,6 +132,7 @@
       LayersDialog,
       SearchBar,
       MapboxScaleControl,
+      UserAgreementDialog,
     },
 
     data: () => ({
@@ -139,10 +147,11 @@
       localeIsLoading: false,
       loadedLocales: [ defaultLocale ],
       localeItems: availableLocales.map(locale => ({ title: locale })),
+      userAgreementOpen: true,
     }),
 
     computed: {
-      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth' ]),
+      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement' ]),
       ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
       ...mapGetters('data', [ 'timeExtent' ]),
       formattedTimeExtent() {
@@ -155,6 +164,10 @@
       showApiLayer() {
         const { name } = this.$route
         return name==='download.api' ? true:false
+      },
+      showUserAgreement() {
+        const userAgreement = localStorage.getItem('userAgreement')
+        return this.viewerUserAgreement && !userAgreement && this.userAgreementOpen
       },
     },
     watch: {
@@ -272,6 +285,10 @@
 
       closeLayersDialog() {
         this.layersDialogOpen = false
+      },
+
+      closeUserAgreementDialog() {
+        this.userAgreementOpen = false
       },
     },
   }
