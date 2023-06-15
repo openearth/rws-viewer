@@ -26,7 +26,7 @@
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
-  import { CATEGORIES } from '../../lib/constants'
+  import { CATEGORIES } from '../../lib/constants.js'
   import slugify from '@sindresorhus/slugify'
 
   export default {

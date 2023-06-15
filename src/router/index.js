@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
-import { VALID_VIEWER_NAMES } from '../lib/constants'
+import { VALID_VIEWER_NAMES } from '../lib/constants.js'
 
 let hasHadFirstRoute = false
 
