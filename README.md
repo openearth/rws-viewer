@@ -24,7 +24,7 @@ yarn dev
 
 ## Scripted migrations
 
-We use scripted migrations for CMS model changes. Use `npm run migrations -- new --name <migration-name>`, to add a migration script. Make sure you set the environment variables `DATO_FULL_ACCESS_API_TOKEN_RWS_VIEWER` and `DATO_FULL_ACCESS_API_TOKEN_DELTARES_VIEWER`.
+We use scripted migrations for CMS model changes. Use `npm run migrations -- new --name <migration-name>`, to add a migration script. Make sure you set the environment variables `DATO_FULL_ACCESS_API_TOKEN_RWS_VIEWER` and `DATO_FULL_ACCESS_API_TOKEN_OPENEARTH_VIEWER`.
 
 ### Apply your migration to the main environment
 
