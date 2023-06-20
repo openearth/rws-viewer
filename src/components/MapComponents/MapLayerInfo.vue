@@ -25,6 +25,10 @@
       this.removeActivePopup()
     },
     methods: {
+      deferredMountedTo() {
+        // Needed for vue2mapbox-gl to work
+        // https://github.com/openearth/vue2mapbox-gl/blob/master/src/components/VMapbox.vue#L176
+      },
       removeActivePopup() {
         if (this.activePopup) {
           this.activePopup.remove()

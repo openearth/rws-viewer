@@ -25,13 +25,15 @@
       @close="closeLayersDialog"
     />
 
-    <mapbox-map
+    <v-mapbox
       slot="map"
       :access-token="accessToken"
-      mapbox-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
+      map-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
       :center="mapCenter"
       :zoom="mapZoom"
-      @load="setMapLoaded"
+      @mb-load="setMapLoaded"
+      class="mapbox-map"
+      :style="`--sidebar-width: ${appNavigationWidth}px`"
     >
       <time-slider
         v-if="showTimeslider"
@@ -75,13 +77,12 @@
         v-if="activeFlattenedLayers.length && !drawMode"
         :layer="activeFlattenedLayers[0]"
       />
-    </mapbox-map>
+    </v-mapbox>
   </app-shell>
 </template>
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
-  import { MapboxMap } from '@deltares/vue-components'
   import AppShell from './components/AppShell/AppShell'
   import MapLayer from './components/MapComponents/MapLayer.js'
   import MapZoom from './components/MapComponents/MapZoom.js'
@@ -108,7 +109,6 @@
   export default {
     components: {
       AppShell,
-      MapboxMap,
       MapLayer,
       MapZoom,
       MapLayerInfo,
@@ -118,7 +118,6 @@
       MapboxDrawControl,
       MapboxSelectPointControl,
       MapboxLegend,
-      MapboxMap,
       TimeSlider,
       MapMouseMove,
       MapboxCoordinates,
@@ -277,7 +276,12 @@
   }
 </script>
 
-<style>
+<style lang="scss">
+.mapbox-map {
+  height: 100%;
+  width: 100%;
+}
+
 .mapboxgl-ctrl-top-right {
   top: 0;
   right: 0;
@@ -286,7 +290,8 @@
 @media only screen and (max-width:1199px) {
   .mapboxgl-ctrl-top-right {
     top: 0;
-    right: calc(100vw - 600px);
+    left: calc(var(--sidebar-width) + #{$spacing-default});
+    right: unset;
   }
   .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
     float: left;

@@ -4,6 +4,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import './plugins/composition-api'
 import { i18n } from './plugins/i18n'
+import './plugins/mapbox'
 
 import App from './App.vue'
 

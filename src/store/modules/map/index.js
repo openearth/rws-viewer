@@ -2,7 +2,7 @@ import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
 import addFilterAttributesToLayer from '~/lib/add-filter-attributes-to-layer'
 import { getWmsCapabilities, getLayerProperties } from '~/lib/get-capabilities'
-import { NEDERLANDS_MAP_CENTER, NEDERLANDAS_MAP_ZOOM } from '~/lib/constants'
+import { NETHERLANDS_MAP_CENTER, NETHERLANDS_MAP_ZOOM } from '~/lib/constants'
 
 export default {
   namespaced: true,
@@ -16,8 +16,8 @@ export default {
     wmsLayers: [],
     wmsApiLayer: null,
     selectedLayerForSelection: null,
-    mapCenter: NEDERLANDS_MAP_CENTER,
-    mapZoom: NEDERLANDAS_MAP_ZOOM,
+    mapCenter: NETHERLANDS_MAP_CENTER,
+    mapZoom: NETHERLANDS_MAP_ZOOM,
     zoomExtent: [],
     multipleSelection: false,
   }),
