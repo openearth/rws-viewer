@@ -68,7 +68,7 @@
         :draw-mode="drawMode"
         :drawn-features="drawnFeatures"
         @change="addDrawnFeature"
-        />
+      />
       <mapbox-select-point-control
         :draw-mode="drawMode"
         @click="handleFeatureClick"

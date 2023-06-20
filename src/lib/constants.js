@@ -7,8 +7,8 @@ export const CATEGORIES = require('../../public/data/app.json').categories
 export const COORDINATES_HANDLE = '[[COORDINATES]]'
 
 // A default map center and zoom level are necessary for vue2mapbox-gl to watch for changes
-export const NEDERLANDS_MAP_CENTER = [5.2913, 52.1326]
-export const NEDERLANDAS_MAP_ZOOM = 7
+export const NETHERLANDS_MAP_CENTER = [5.2913, 52.1326]
+export const NETHERLANDS_MAP_ZOOM = 7
 
 // Layer types
 export const OWS_LAYER_TYPE = 'ows'
