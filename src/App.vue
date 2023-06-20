@@ -33,6 +33,7 @@
       :zoom="mapZoom"
       @mb-created="setMapLoaded"
       class="mapbox-map"
+      :style="`--sidebar-width: ${appNavigationWidth}px`"
     >
       <time-slider
         v-if="showTimeslider"
@@ -275,7 +276,7 @@
   }
 </script>
 
-<style>
+<style lang="scss">
 .mapbox-map {
   height: 100%;
   width: 100%;
@@ -289,7 +290,8 @@
 @media only screen and (max-width:1199px) {
   .mapboxgl-ctrl-top-right {
     top: 0;
-    right: calc(100vw - 600px);
+    left: calc(var(--sidebar-width) + #{$spacing-default});
+    right: unset;
   }
   .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
     float: left;
