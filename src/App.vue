@@ -25,13 +25,14 @@
       @close="closeLayersDialog"
     />
 
-    <mapbox-map
+    <v-mapbox
       slot="map"
       :access-token="accessToken"
-      mapbox-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
+      map-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
       :center="mapCenter"
       :zoom="mapZoom"
-      @load="setMapLoaded"
+      @mb-created="setMapLoaded"
+      class="mapbox-map"
     >
       <time-slider
         v-if="showTimeslider"
@@ -66,7 +67,7 @@
         :draw-mode="drawMode"
         :drawn-features="drawnFeatures"
         @change="addDrawnFeature"
-      />
+        />
       <mapbox-select-point-control
         :draw-mode="drawMode"
         @click="handleFeatureClick"
@@ -75,13 +76,12 @@
         v-if="activeFlattenedLayers.length && !drawMode"
         :layer="activeFlattenedLayers[0]"
       />
-    </mapbox-map>
+    </v-mapbox>
   </app-shell>
 </template>
 
 <script>
   import { mapActions, mapGetters } from 'vuex'
-  import { MapboxMap } from '@deltares/vue-components'
   import AppShell from './components/AppShell/AppShell'
   import MapLayer from './components/MapComponents/MapLayer.js'
   import MapZoom from './components/MapComponents/MapZoom.js'
@@ -108,7 +108,6 @@
   export default {
     components: {
       AppShell,
-      MapboxMap,
       MapLayer,
       MapZoom,
       MapLayerInfo,
@@ -118,7 +117,6 @@
       MapboxDrawControl,
       MapboxSelectPointControl,
       MapboxLegend,
-      MapboxMap,
       TimeSlider,
       MapMouseMove,
       MapboxCoordinates,
@@ -278,6 +276,11 @@
 </script>
 
 <style>
+.mapbox-map {
+  height: 100%;
+  width: 100%;
+}
+
 .mapboxgl-ctrl-top-right {
   top: 0;
   right: 0;
