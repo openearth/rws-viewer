@@ -31,7 +31,7 @@
       map-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
       :center="mapCenter"
       :zoom="mapZoom"
-      @mb-created="setMapLoaded"
+      @mb-load="setMapLoaded"
       class="mapbox-map"
       :style="`--sidebar-width: ${appNavigationWidth}px`"
     >
