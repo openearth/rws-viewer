@@ -1,6 +1,6 @@
 {
-  "name": "RWS Viewer",
-  "short_name": "RWS Viewer",
+  "name": "OpenEarth Viewer",
+  "short_name": "OpenEarth Viewer",
   "start_url": "/",
   "orientation": "portrait",
   "theme_color": "#008fc5",
