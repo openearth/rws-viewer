@@ -15,6 +15,7 @@
           />
           <div class="d-flex justify-end">
             <v-btn
+              color="primary"
               :disabled="!conditionsOfUse"
               @click="close"
             >
