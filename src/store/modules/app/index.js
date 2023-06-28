@@ -6,6 +6,7 @@ export default {
     appNavigationWidth: 500,
     viewerConfig: '',
     viewerName: '',
+    viewerUserAgreement: '',
   }),
 
   getters: {
@@ -13,6 +14,7 @@ export default {
     appNavigationWidth: state => state.appNavigationWidth,
     viewerName: state => state.viewerName,
     viewerConfig: state => state.viewerConfig,
+    viewerUserAgreement: state => state.viewerUserAgreement,
   },
 
   mutations: {
@@ -25,6 +27,9 @@ export default {
     SET_VIEWER_CONFIG(state, config) {
       state.viewerConfig = config
     },
+    SET_VIEWER_USER_AGREEMENT(state, { userAgreement }) {
+      state.viewerUserAgreement = userAgreement
+    },
   },
 
   actions: {
@@ -35,6 +40,10 @@ export default {
 
     setNavigationOpen({ commit }, { open }) {
       commit('SET_APP_NAVIGATION_OPEN', { open })
+    },
+
+    setViewerUserAgreement({ commit }, { userAgreement }) {
+      commit('SET_VIEWER_USER_AGREEMENT', { userAgreement })
     },
   },
 }

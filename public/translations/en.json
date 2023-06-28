@@ -70,5 +70,7 @@
   "feedbackForm": "Feedback form",
   "submit": "Submit",
   "recordUrlFechingError": "Something went wrong during fetching the record url.",
-  "sendFeedbackError": "Something went wrong during sending feedback."
+  "sendFeedbackError": "Something went wrong during sending feedback.",
+  "conditionsOfUseConsent": "I agree with the Conditions of Use",
+  "iAgree": "I agree"
 }

@@ -12,6 +12,7 @@ query {
     defaultLayer {
       id
     }
+    userAgreement
   }
 }
 `
@@ -29,6 +30,7 @@ export default async function dumpAvailableConfigs() {
       mapZoom: config.mapZoom,
       mapCenter: config.mapCenter,
       defaultLayer: config.defaultLayer,
+      userAgreement: config.userAgreement,
     }
   })
 
