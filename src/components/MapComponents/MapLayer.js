@@ -54,8 +54,10 @@ export default {
      
       if (this.before && map.getLayer(this.before)) {
         map.addLayer(this.options, this.before)
-      } else {
+      } else if (map.getLayer('gl-draw-polygon-fill-inactive.cold')) {
         map.addLayer(this.options, 'gl-draw-polygon-fill-inactive.cold')
+      } else {
+        map.addLayer(this.options)
       }
 
       if (this.clickable) {
