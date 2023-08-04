@@ -71,6 +71,7 @@
   "submit": "Verstuur",
   "recordUrlFechingError": "Er ging iets mis bij het ophalen van de record url.",
   "sendFeedbackError": "Er ging iets mis bij het verzenden van feedback.",
+  "feedbackDescription": "Neem contact op met de dataeigenaar van deze kaart",
   "conditionsOfUseConsent": "Ik ga akkoord met de Gebruiksvoorwaarden",
   "iAgree": "Ik ga akkoord"
 }

@@ -112,8 +112,10 @@
             <template #feedback="{ isOpen, close }">
               <feedback-dialog
                 :open="isOpen"
-                :layer-or-menu="item"
+                :menu-or-layer="item"
                 :viewer="viewerName"
+                :share-url="getUrl(item)"
+                :privacy-statement="viewerPrivacyStatement"
                 @close="close"
               />
             </template>
@@ -146,7 +148,7 @@
     }),
 
     computed: {
-      ...mapGetters('app', [ 'viewerConfig', 'viewerName' ]),
+      ...mapGetters('app', [ 'viewerConfig', 'viewerName', 'viewerPrivacyStatement' ]),
       ...mapGetters('data', [ 'displayLayers' ]),
       ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
       layersWithParents() {

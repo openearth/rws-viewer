@@ -27,9 +27,9 @@
             @submit.prevent="submit"
           >
             <v-text-field
-              v-if="layerOrMenu"
-              :value="layerOrMenu.name"
-              :label="layerOrMenuLabel"
+              v-if="menuOrLayer"
+              :value="menuOrLayer.name"
+              :label="menuOrLayerLabel"
               disabled
             />
 
@@ -54,6 +54,14 @@
               :rules="feedbackRules"
               required
             />
+
+            <a 
+              v-if="privacyStatement" 
+              :href="privacyStatement" 
+              target="_blank"
+            >
+              Privacy Statement
+            </a>
 
             <div class="red--text mb-6">
               {{ errorMessage }}
@@ -85,11 +93,19 @@
         type: Boolean,
         default: false,
       },
-      layerOrMenu: {
+      menuOrLayer: {
         type: Object,
         default: undefined,
       },
       viewer: {
+        type: String,
+        default: '',
+      },
+      shareUrl: {
+        type: String,
+        default: '',
+      },
+      privacyStatement: {
         type: String,
         default: '',
       },
@@ -113,8 +129,8 @@
     },
 
     computed: {
-      layerOrMenuLabel() {
-        return this.layerOrMenu.children
+      menuOrLayerLabel() {
+        return this.menuOrLayer.children
           ? this.$t('viewerName')
           : this.$t('layerName')
       },
@@ -143,11 +159,13 @@
           this.isLoading = true
           await axios.post('/api/feedback', {
             viewer: this.viewer,
-            layerOrMenuId: this.layerOrMenu.id,
+            menuOrLayerId: this.menuOrLayer.id,
             name: this.name,
             email: this.email,
             feedback: this.feedback,
+            shareUrl: this.shareUrl,
           })
+          this.close()
         } catch {
           this.errorMessage = this.$t('sendFeedbackError')
         } finally {
