@@ -7,6 +7,7 @@ export default {
     viewerConfig: '',
     viewerName: '',
     viewerPrivacyStatement: '',
+    viewerUserAgreement: '',
   }),
 
   getters: {
@@ -15,6 +16,7 @@ export default {
     viewerName: state => state.viewerName,
     viewerConfig: state => state.viewerConfig,
     viewerPrivacyStatement: state => state.viewerPrivacyStatement,
+    viewerUserAgreement: state => state.viewerUserAgreement,
   },
 
   mutations: {
@@ -30,6 +32,9 @@ export default {
     SET_VIEWER_PRIVACY_STATEMENT(state, { privacyStatement }) {
       state.viewerPrivacyStatement = privacyStatement
     },
+    SET_VIEWER_USER_AGREEMENT(state, { userAgreement }) {
+      state.viewerUserAgreement = userAgreement
+    },
   },
 
   actions: {
@@ -44,6 +49,10 @@ export default {
 
     setViewerPrivacyStatement({ commit }, { privacyStatement }) {
       commit('SET_VIEWER_PRIVACY_STATEMENT', { privacyStatement })
+    },
+
+    setViewerUserAgreement({ commit }, { userAgreement }) {
+      commit('SET_VIEWER_USER_AGREEMENT', { userAgreement })
     },
   },
 }

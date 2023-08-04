@@ -13,6 +13,7 @@ query {
       id
     }
     privacyStatement
+    userAgreement
   }
 }
 `
@@ -31,6 +32,7 @@ export default async function dumpAvailableConfigs() {
       mapCenter: config.mapCenter,
       defaultLayer: config.defaultLayer,
       privacyStatement: config.privacyStatement,
+      userAgreement: config.userAgreement,
     }
   })
 
