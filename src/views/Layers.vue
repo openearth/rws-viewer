@@ -49,6 +49,10 @@
           .map(layerId => this.flattenedLayers.find(({ id }) => id === layerId))
 
         if (layers.length) {
+          this.$trackEvent('selectLayer', {
+            layerIds,
+          })
+
           this.loadLayerOnMap({ layers })
         }
       },
@@ -58,6 +62,10 @@
           .map(layerId => this.flattenedLayers.find(({ id }) => id === layerId))
 
         if (layers.length) {
+          this.$trackEvent('deselectLayer', {
+            layerIds,
+          })
+
           this.removeLayerFromMap({ layers })
           this.removeFilteredLayerId()
         }

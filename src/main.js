@@ -2,6 +2,7 @@ import Vue from 'vue'
 import router from './router'
 import store from './store'
 import vuetify from './plugins/vuetify'
+import piwik from './plugins/piwik-analytics'
 import './plugins/composition-api'
 import { i18n } from './plugins/i18n'
 import './plugins/mapbox'
@@ -11,6 +12,8 @@ import App from './App.vue'
 Vue.config.productionTip = false
 
 import './components/AppCore/index.scss'
+
+Vue.use(piwik)
 
 new Vue({
   router,

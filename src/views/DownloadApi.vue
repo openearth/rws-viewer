@@ -503,12 +503,18 @@
           apiKey: process.env[externalApi.apiKey],
           formatCsv,
           fileName,
-        }).finally((result) => {
-          this.isDownloading = false
-        }).catch(err => {
-          console.log('ERROR', err)
-          this.requestFailure = `Request failed: ${ err }`
         })
+          .then(({ fileSize }) => {
+            this.$trackEvent('downloadApi', {
+              fileSize,
+            })
+          })
+          .finally(() => {
+            this.isDownloading = false
+          }).catch(err => {
+            console.log('ERROR', err)
+            this.requestFailure = `Request failed: ${ err }`
+          })
 
       },
     },
