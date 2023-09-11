@@ -50,7 +50,7 @@
 
         if (layers.length) {
           this.$trackEvent('selectLayer', {
-            layerIds,
+            layerNames: layers.map(layer => layer.name),
           })
 
           this.loadLayerOnMap({ layers })
@@ -63,7 +63,7 @@
 
         if (layers.length) {
           this.$trackEvent('deselectLayer', {
-            layerIds,
+            layerNames: layers.map(layer => layer.name),
           })
 
           this.removeLayerFromMap({ layers })
