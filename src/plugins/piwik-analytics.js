@@ -18,13 +18,11 @@ export default {
         },
 
         methods: {
-            $trackEvent(name, data) {
+            $trackEvent(category, action, name, value, dimensions) {
                 // Documentation https://help.piwik.pro/support/tag-manager/about-a-data-layer/
-                if (window.dataLayer) {
-                    window.dataLayer.push({
-                        event: name,
-                        ...data,
-                    })
+                if (window.Piwik) {
+                    const tracker = window.Piwik.getTracker()
+                    tracker.trackEvent(category, action, name, value, dimensions)
                 }
             },
         },

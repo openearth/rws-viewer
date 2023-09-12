@@ -505,9 +505,7 @@
           fileName,
         })
           .then(({ fileSize }) => {
-            this.$trackEvent('downloadApi', {
-              fileSize,
-            })
+            this.$trackEvent('download', 'api')
           })
           .finally(() => {
             this.isDownloading = false
