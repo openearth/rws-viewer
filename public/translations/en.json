@@ -62,7 +62,7 @@
   "noLayersFound": "No layers found",
   "viewerName": "Viewer name",
   "layerName": "Layer name",
-  "whatCanBeImproved": "What can be improved?",
+  "whatCanBeImproved": "Submit your comment here",
   "whoAreYou": "Who are you?",
   "whatIsYourEmail": "What is your email?",
   "thisFieldIsRequired": "This field is required",
@@ -71,7 +71,7 @@
   "submit": "Submit",
   "recordUrlFechingError": "Something went wrong during fetching the record url.",
   "sendFeedbackError": "Something went wrong during sending feedback.",
-  "feedbackDescription": "Contact the data owner of this map",
+  "feedbackDescription": "Contact us",
   "conditionsOfUseConsent": "I agree with the Conditions of Use",
   "iAgree": "I agree"
 }
