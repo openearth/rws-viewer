@@ -3,8 +3,21 @@
     <div class="d-flex align-center">
       <v-tooltip top>
         <template #activator="{ on, attrs }">
+          <button
+            v-if="isLayer"
+            class="layer-control__label layer-control__label--btn py-3"
+            :data-id="id"
+            :data-parent-ids="parentIds"
+            v-bind="attrs"
+            v-on="on"
+            @click="$emit('select', id)"
+          >
+            {{ name }}
+          </button>
+
           <span
-            class="sortable-handle py-3"
+            v-else
+            class="layer-control__label py-3"
             :data-id="id"
             :data-parent-ids="parentIds"
             v-bind="attrs"
@@ -122,10 +135,13 @@
 <style lang="scss">
   @import '~/components/AppCore/mixins.scss';
 
-  .sortable-handle {
+  .layer-control__label {
     @include truncate;
-
+    text-align: left;
     width: 100%;
-    cursor: grab;
+  }
+
+  .layer-control__label--btn {
+    cursor: pointer;
   }
 </style>
