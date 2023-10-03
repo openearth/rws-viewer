@@ -231,15 +231,6 @@
   margin: auto 0;
 }
 
-.layer-info-dialog__metadata-value a {
-  display: block;
-  margin-bottom: $spacing-smaller;
-}
-
-.layer-info-dialog__metadata-value a:last-child {
-  margin-bottom: 0;
-}
-
 .layer-info-dialog__title--wrapping {
   white-space: wrap;
 }
