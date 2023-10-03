@@ -94,6 +94,7 @@
             :has-metadata="!!item.metadata.length || getUrl(item) !== ''"
             @update-layer-opacity="updateLayerOpacity"
             @zoom-to-layer-extent="zoomToLayerExtent"
+            @select="handleSelect"
           >
             <template #info="{ isOpen, close, showFeedbackDialog }">
               <layer-info-dialog
@@ -195,6 +196,13 @@
 
         added.length && this.$emit('select-layers', added)
         removed.length && this.$emit('remove-layers', removed)
+      },
+      handleSelect(id) {
+        if (this.activeFlattenedLayerIds.includes(id)) {
+          this.$emit('remove-layers', [ id ])
+        } else {
+          this.$emit('select-layers', [ id ])
+        }
       },
       expandAll() {
         this.$refs.tree.updateAll(true)
