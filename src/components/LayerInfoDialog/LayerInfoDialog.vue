@@ -7,8 +7,12 @@
       @click:outside="close"
     >
       <v-card>
-        <v-app-bar class="pr-1 pl-2" flat>
-          <v-toolbar-title>
+        <v-app-bar
+          class="pr-1 pl-2"
+          flat
+          height="auto"
+        >
+          <v-toolbar-title class="layer-info-dialog__title--wrapping">
             {{ title }}
           </v-toolbar-title>
 
@@ -225,6 +229,10 @@
 .layer-info-dialog__metadata-value {
   max-width: 440px;
   margin: auto 0;
+}
+
+.layer-info-dialog__title--wrapping {
+  white-space: wrap;
 }
 
 </style>
