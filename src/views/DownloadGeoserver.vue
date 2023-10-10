@@ -208,10 +208,6 @@
       ...mapGetters('map', [ 'drawMode', 'drawnFeatures', 'activeFlattenedLayerIds', 'activeFlattenedLayers' ]),
       ...mapGetters('data', [ 'flattenedLayers' ]),
 
-      activeLayers() {
-        return this.activeFlattenedLayers
-      },
-
       validUrl() {
         if (!this.selectedLayerData) {
           return
@@ -234,7 +230,7 @@
       },
 
       downloadIsAvailable() {
-        return this.activeLayers.some(layer => Boolean(layer.downloadUrl) || Boolean(layer.url))
+        return this.activeFlattenedLayers.some(layer => Boolean(layer.downloadUrl) || Boolean(layer.url))
       },
 
       formattedAreas() {
@@ -247,14 +243,14 @@
       },
 
       activeLayersList() {
-        return this.activeLayers.map(({ id, name }) => ({
+        return this.activeFlattenedLayers.map(({ id, name }) => ({
           text: name,
           value: id,
         }))
       },
 
       selectedLayerData() {
-        return this.activeLayers.find(layer => layer.id === this.downloadLayer)
+        return this.activeFlattenedLayers.find(layer => layer.id === this.downloadLayer)
       },
 
       selectionCoordinates() {
@@ -292,7 +288,6 @@
         .getPredefinedAreas()
         .then(areas => {
           this.preDefinedAreas = areas
-          console.log(areas)
         })
         .catch(err => console.error('Error getting predefined selections', err))
     },
