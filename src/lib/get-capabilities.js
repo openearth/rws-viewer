@@ -110,6 +110,31 @@ export function getSupportedOutputFormats(type, capabilities) {
 
 }
 
+/**
+ * Determines if the layer is a raster layer
+ */
+export function isRasterLayer(type, capabilities, layer) {
+  if (type !== 'wcs') {
+    return false
+  }
+
+  const findCoverageForLayer = id => (layers) => {
+    id = id.replace(/:/, '__')
+    return layers.find(layer => layer.textContent.trim() === id)
+  }
+
+  const keywords = pipe(
+    () => [ ...capabilities.querySelectorAll('CoverageId') ],
+    findCoverageForLayer(layer),
+    getParentNode,
+    el => el.getElementsByTagName('ows:Keywords'),
+    getTags('ows:Keyword'),
+    map(getTagContent),
+  )()
+
+  return keywords.includes('GeoTIFF')
+}
+
 export function getLayerProperties(capabilities, layer) {
 /**
  * function that reads the wms capabilities response of the workpspace

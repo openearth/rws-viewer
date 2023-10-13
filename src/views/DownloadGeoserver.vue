@@ -85,6 +85,7 @@
         </v-col>
         <v-col>
           <v-btn
+            v-if="!isRasterLayer"
             :color="drawMode === 'polygon' ? 'primary' : null"
             block
             :ripple="false"
@@ -112,8 +113,10 @@
         <v-row>
           <v-col>
             <download-format-chooser
+              v-if="layerCapabilities"
               v-model="downloadLayerFormat"
-              :layer-id="downloadLayer"
+              :layer="selectedLayerData"
+              :layer-capabilities="layerCapabilities"
             />
           </v-col>
         </v-row>
@@ -179,6 +182,7 @@
   import metaRepo from '~/repo/metaRepo'
   import buildDownloadUrl from '~/lib/build-download-url'
   import { describeFeatureType, readFeatureProperties } from '~/lib/wfs-filter-helpers'
+  import { isRasterLayer, getCapabilities } from '~/lib/get-capabilities'
 
   //import only for test
 
@@ -196,16 +200,13 @@
       selectedArea: null,
       availableFiltersForSelectedLayer: [],
       selectedFilters: [],
+      layerCapabilities: null,
       comparers: [ '=', '<>', '<', '>', '<=', '>=', 'Like', 'Between' ],
     }),
 
     computed: {
       ...mapGetters('map', [ 'drawMode', 'drawnFeatures', 'activeFlattenedLayerIds', 'activeFlattenedLayers' ]),
       ...mapGetters('data', [ 'flattenedLayers' ]),
-
-      activeLayers() {
-        return this.activeFlattenedLayerIds.map(id => this.activeFlattenedLayers.find(layer => layer.id === id))
-      },
 
       validUrl() {
         if (!this.selectedLayerData) {
@@ -229,7 +230,7 @@
       },
 
       downloadIsAvailable() {
-        return this.activeLayers.some(layer => Boolean(layer.downloadUrl) || Boolean(layer.url))
+        return this.activeFlattenedLayers.some(layer => Boolean(layer.downloadUrl) || Boolean(layer.url))
       },
 
       formattedAreas() {
@@ -242,18 +243,30 @@
       },
 
       activeLayersList() {
-        return this.activeLayers.map(({ id, name }) => ({
+        return this.activeFlattenedLayers.map(({ id, name }) => ({
           text: name,
           value: id,
         }))
       },
 
       selectedLayerData() {
-        return this.activeLayers.find(layer => layer.id === this.downloadLayer)
+        return this.activeFlattenedLayers.find(layer => layer.id === this.downloadLayer)
       },
 
       selectionCoordinates() {
         return this.drawnFeatureCoordinates.toString().replace(/,/g, ' ')
+      },
+
+      isRasterLayer() {
+        if (!this.layerCapabilities) {
+          return false
+        }
+
+        return isRasterLayer(
+          this.selectedLayerData.serviceType,
+          this.layerCapabilities,
+          this.selectedLayerData.layer,
+        )
       },
     },
 
@@ -264,16 +277,34 @@
           this.downloadLayer = null
         }
       },
+      downloadLayer(val) {
+        if (val) {
+          this.reloadCapabilities()
+        }
+      },
     },
     created() {
       metaRepo
         .getPredefinedAreas()
-        .then(areas => this.preDefinedAreas = areas)
+        .then(areas => {
+          this.preDefinedAreas = areas
+        })
         .catch(err => console.error('Error getting predefined selections', err))
     },
 
     methods: {
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
+
+      reloadCapabilities() {
+        const serviceUrl = this.selectedLayerData.downloadUrl || this.selectedLayerData.url
+        const serviceType = this.selectedLayerData.serviceType
+
+        this.layerCapabilities = null
+
+        getCapabilities(serviceUrl, serviceType).then(capabilities => {
+          this.layerCapabilities = Object.freeze(capabilities)
+        })
+      },
 
       getLayerNameById(id) {
         const layer = this.flattenedLayers.find(layer => layer.id === id)
@@ -331,7 +362,6 @@
           format: this.downloadLayerFormat,
           coordinates: this.selectionCoordinates,
         })
-
        
         this.isGeneratingDownload = true
 

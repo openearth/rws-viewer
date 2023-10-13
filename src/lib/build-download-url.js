@@ -1,6 +1,5 @@
 
 import {
-  createDownloadFilter,
   createDownloadParameters,
   createLegendDownloadParameters,
   mapFormatToFileExtension,
@@ -10,9 +9,7 @@ export default function({ layer = {}, filters = [], format, coordinates  = '' })
 
   const { url } = layer
 
-  const filter = createDownloadFilter(filters, coordinates)
-
-  const params = createDownloadParameters({ layerData: layer, filter, format })
+  const params = createDownloadParameters({ layerData: layer, filters, coordinates, format })
 
   const legendParams = createLegendDownloadParameters({ layerData: layer })
   return [ {
