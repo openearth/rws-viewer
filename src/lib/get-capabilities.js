@@ -13,9 +13,14 @@ const getParentNode = tag => tag.parentNode
 const textToArray = text => text.split(',') //split at comma
 
 
-const getTags = tagName => root =>
+const getTags = (tagName) => root =>
   [ ...root ]
     .map(el => [ ...el.getElementsByTagName(tagName) ])
+    .flat()
+
+const getChildTags = (tagName) => root =>
+  [ ...root ]
+    .map(el => [ ...el.querySelectorAll(`:scope > ${ tagName }`) ])
     .flat()
 
 const findLayer = id => (layers) => {
@@ -150,7 +155,7 @@ export function getLayerProperties(capabilities, layer) {
 
   const bbox = pipe(
     () => [ ...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]') ],
-    getTags('Name'),
+    getChildTags('Name'),
     findLayer(layer),
     getParentNode,
     el => el.querySelector('EX_GeographicBoundingBox'),
@@ -159,7 +164,7 @@ export function getLayerProperties(capabilities, layer) {
   
   const keywords = pipe(
     () => [ ...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]') ],
-    getTags('Name'),
+    getChildTags('Name'),
     findLayer(layer),
     getParentNode,
     el => el.getElementsByTagName('KeywordList'),
@@ -172,7 +177,7 @@ export function getLayerProperties(capabilities, layer) {
 
   const timeExtent = pipe(
     () => [ ...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]') ],
-    getTags('Name'),
+    getChildTags('Name'),
     findLayer(layer),
     getParentNode,
     el =>[ ...el.getElementsByTagName('Dimension') ],
