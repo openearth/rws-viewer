@@ -14,7 +14,6 @@ query {
     }
     privacyStatement
     userAgreement
-    piwikContainerId
   }
 }
 `
@@ -34,7 +33,6 @@ export default async function dumpAvailableConfigs() {
       defaultLayer: config.defaultLayer,
       privacyStatement: config.privacyStatement,
       userAgreement: config.userAgreement,
-      piwikContainerId: config.piwikContainerId,
     }
   })
 

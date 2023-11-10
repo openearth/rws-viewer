@@ -1,17 +1,15 @@
-import { VALID_VIEWER_CONFIGS } from '../lib/constants'
-
 const CONTAINER_URL = '//statistiek.rijksoverheid.nl'
 
 export default {
   install(Vue, { containerUrl = CONTAINER_URL } = {}) {
 
     let initialized = false
-    let containerId = null
-    
+    let containerId = process.env.VUE_APP_PIWIK_CONTAINER_ID || null
+
     Vue.mixin({
         beforeRouteEnter(to, _from, next) {
             if (!initialized) {
-                initializePiwikScript(to.params.config)
+                initializePiwikScript()
                 initialized = true
             }
             next()  
@@ -29,13 +27,10 @@ export default {
 
     })
 
-    function initializePiwikScript(viewerName) {
-        const configForViewer = VALID_VIEWER_CONFIGS.find(config => config.name === viewerName)
-
-        containerId = configForViewer.piwikContainerId || null
-
+    function initializePiwikScript() {
+        
         if (!containerId) {
-            console.log('No piwik container id found')
+            console.log('No piwik container id found so Piwik was not installed')
             return
         }
 
