@@ -27,6 +27,8 @@ export const downloadFromUrl = ({ url, apiKey, formatCsv, fileName }) => {
     .then(res => res.blob() )
     .then(blob => {
       saveAs(blob, fileName)
+
+      return { fileSize: blob.size }
     })
     .catch(err => {
       console.log(err)
@@ -40,6 +42,8 @@ export const downloadFromUrl = ({ url, apiKey, formatCsv, fileName }) => {
         })
 
         saveAs(blob, fileName)
+
+        return { fileSize: blob.size }
       })
     }
 }

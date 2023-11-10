@@ -367,6 +367,8 @@
 
         this.generateZipFile(downloadProps) 
           .then((content) => {
+            this.$trackEvent('download', 'geoServer')
+            
             saveAs(content, 'layer.zip')
           })
           .catch(err => {

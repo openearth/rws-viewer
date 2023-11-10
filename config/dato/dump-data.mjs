@@ -1,5 +1,7 @@
 import dotenv from 'dotenv-safe'
-dotenv.config()
+dotenv.config({
+  allowEmptyValues: true,
+})
 
 import mkdirp from 'mkdirp'
 import rimraf from 'rimraf'
