@@ -83,9 +83,9 @@
 </script>
 
 <style>
-.mapboxgl-popup-content {
-  overflow-y: scroll;
-  width: 360px;
-  max-height: 240px;
-}
+  .mapboxgl-popup-content {
+    width: 360px;
+    max-height: 240px;
+    overflow-y: scroll;
+  }
 </style>

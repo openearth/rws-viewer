@@ -6,6 +6,9 @@ import piwik from './plugins/piwik-analytics'
 import './plugins/composition-api'
 import { i18n } from './plugins/i18n'
 import './plugins/mapbox'
+import VueTour from 'vue-tour'
+
+require('vue-tour/dist/vue-tour.css')
 
 import App from './App.vue'
 
@@ -13,7 +16,7 @@ Vue.config.productionTip = false
 
 import './components/AppCore/index.scss'
 
-Vue.use(piwik)
+Vue.use(piwik, VueTour)
 
 new Vue({
   router,

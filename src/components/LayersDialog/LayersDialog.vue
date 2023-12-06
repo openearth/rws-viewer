@@ -82,11 +82,11 @@
 </script>
 
 <style lang="scss">
-.layers-dialog__layer {
-  cursor: pointer;
-}
+  .layers-dialog__layer {
+    cursor: pointer;
+  }
 
-.layers-dialog__layer-name {
-  font-weight: bold;
-}
+  .layers-dialog__layer-name {
+    font-weight: bold;
+  }
 </style>

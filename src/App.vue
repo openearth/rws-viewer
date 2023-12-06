@@ -294,24 +294,25 @@
 </script>
 
 <style lang="scss">
-.mapbox-map {
-  height: 100%;
-  width: 100%;
-}
+  .mapbox-map {
+    width: 100%;
+    height: 100%;
+  }
 
-.mapboxgl-ctrl-top-right {
-  top: 0;
-  right: 0;
-}
-
-@media only screen and (max-width:1199px) {
   .mapboxgl-ctrl-top-right {
     top: 0;
-    left: calc(var(--sidebar-width) + #{$spacing-default});
-    right: unset;
+    right: 0;
   }
-  .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
-    float: left;
+
+  @media only screen and (max-width: 1199px) {
+    .mapboxgl-ctrl-top-right {
+      top: 0;
+      right: unset;
+      left: calc(var(--sidebar-width) + #{$spacing-default});
+    }
+
+    .mapboxgl-ctrl-top-right .mapboxgl-ctrl {
+      float: left;
+    }
   }
-}
 </style>

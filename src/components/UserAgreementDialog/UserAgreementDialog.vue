@@ -57,7 +57,7 @@
 </script>
 
 <style>
-.scrollbar {
-  overflow-y: scroll;
-}
+  .scrollbar {
+    overflow-y: scroll;
+  }
 </style>
