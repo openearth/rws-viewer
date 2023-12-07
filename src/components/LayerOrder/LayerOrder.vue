@@ -1,5 +1,6 @@
 <template>
   <v-card
+    data-v-step="3"
     class="layer-order"
     :class="{ 'layer-order--open': show }"
     elevation="2"
@@ -75,7 +76,7 @@
 </script>
 
 <style lang="scss">
-@import '~/components/AppCore/mixins.scss';
+  @import '~/components/AppCore/mixins.scss';
 
   @include max-sm-screen {
     .layer-order:not(.layer-order--open) .layer-order__content {
@@ -83,21 +84,21 @@
     }
   }
 
-.layer-order {
-  --translate-y: #{$spacing-default};
-  --translate-x: calc(100vw - 105% - #{$spacing-default});
+  .layer-order {
+    --translate-y: #{$spacing-default};
+    --translate-x: calc(100vw - 105% - #{$spacing-default});
 
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translate(var(--translate-x), var(--translate-y));
-  transition: transform .3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  z-index: 2;
-}
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 0;
+    transform: translate(var(--translate-x), var(--translate-y));
+    transition: transform .3s cubic-bezier(.25, .8, .25, 1);
+  }
 
   .layer-order__button {
     transform: rotate(0deg);
-    transition: transform .4s cubic-bezier(0.25, 0.8, 0.5, 1);
+    transition: transform .4s cubic-bezier(.25, .8, .5, 1);
   }
 
   .layer-order__button--active {
@@ -118,8 +119,8 @@
   }
 
   .layer-order__content {
-    z-index: 0;
     position: relative;
+    z-index: 0;
   }
 
   @include lg-screen {
@@ -135,6 +136,7 @@
     .layer-order__button {
       transform: rotate(180deg);
     }
+
     .layer-order__button--active {
       transform: rotate(0deg);
     }

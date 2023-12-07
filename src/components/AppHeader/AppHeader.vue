@@ -1,5 +1,6 @@
 <template>
   <v-app-bar
+    data-v-step="1"
     app
     :color="color"
     :dark="theme === 'dark'"
@@ -16,6 +17,13 @@
       {{ title }}
     </v-toolbar-title>
 
+    <v-tour
+      :steps="tourSteps"
+      :options="tourConfig"
+      name="introduction"
+      @click.native="nextStep"
+    />
+
     <v-spacer />
     <category-switcher />    
     <v-spacer />
@@ -27,6 +35,7 @@
 <script>
   import { mapActions, mapGetters } from 'vuex'
   import CategorySwitcher from '../CategorySwitcher/CategorySwitcher.vue'
+  import { tourConfig, tourSteps, tourStepCount } from '@/plugins/vue-tour'
 
   export default {
     name: 'AppHeader',
@@ -46,6 +55,16 @@
         default: 'primary',
       },
     },
+    data() {
+      return {
+        tourConfig,
+        tourSteps,
+        tourStepCount,
+      }
+    },
+    mounted () {
+      this.showTour()
+    },
     computed: {
       ...mapGetters('app', [ 'appNavigationOpen' ]),
     },
@@ -53,6 +72,9 @@
       ...mapActions('app', [ 'setNavigationOpen' ]),
       onMenuButtonClick() {
         this.setNavigationOpen({ open: !this.appNavigationOpen })
+      },
+      showTour () {
+        this.$tours.introduction.start()
       },
     },
   }

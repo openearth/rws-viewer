@@ -15,6 +15,7 @@
     >
       <template v-for="tab in tabs">
         <v-tab
+          :data-v-step="tab.stepnumber"
           :key="tab.name"
           :to="`/${viewerConfig}${tab.page}`"
           :ripple="false"
@@ -46,9 +47,9 @@
       drawer: false,
       tabs: [
         { name: 'layers', page: '/', icon: 'mdi-layers', disabled: false },
-        { name: 'download', page: '/download', icon: 'mdi-download', disabled: false },
-        { name: 'favourites', page: '/favourites', icon: 'mdi-star', disabled: false },
-        { name: 'filters', page:'/filters', icon: 'mdi-clock-time-three', disabled: true },
+        { name: 'download', page: '/download', icon: 'mdi-download', disabled: false, stepnumber: '5' },
+        { name: 'favourites', page: '/favourites', icon: 'mdi-star', disabled: false, stepnumber: '6' },
+        { name: 'filters', page:'/filters', icon: 'mdi-clock-time-three', disabled: true, stepnumber: '7' },
       ],
     }),
     computed: {
@@ -80,7 +81,8 @@
       0 6px 10px 0 rgba(0, 0, 0, .14),
       0 1px 18px 0 rgba(0, 0, 0, .12);
   }
+
   .v-navigation-drawer__content {
-    overflow-y:hidden;
+    overflow-y: hidden;
   }
 </style>

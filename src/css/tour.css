@@ -1,0 +1,32 @@
+.v-tour .v-step {
+  background-color: #66bbdc;
+  -webkit-filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.5));
+}
+
+.v-tour .v-step .v-step__arrow {
+  border-color: #66bbdc;
+}
+
+.v-tour .v-step .v-step__content {
+  text-align: left;
+  font-size: 1rem;
+  line-height: 1.3rem;
+}
+
+.v-tour .v-step .v-step__buttons {
+  display: flex;
+}
+
+.v-tour .v-step .v-step__button-skip {
+  margin-right: auto;
+}
+
+.v-tour .v-step .v-step__button {
+  height: auto;
+  padding: 4px 8px;
+}
+
+.v-tour .v-step .v-step__button:hover {
+  color: #66bbdc;
+}

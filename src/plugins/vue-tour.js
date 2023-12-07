@@ -1,0 +1,85 @@
+import Vue from 'vue'
+import VueTour from 'vue-tour'
+import 'vue-tour/dist/vue-tour.css'
+export const tourConfig = {
+  useKeyboardNavigation: true,
+}
+
+Vue.use(VueTour)
+
+export let tourStepCount = null
+
+export const tourSteps = [
+  {
+    target: '[data-v-step="1"]',
+    content: 'Welcome to the <strong>'+ '' +'</strong> platform!', // TODO: make the title of the platform in bold to take it automatically, like the viewer header title
+    params: {
+      placement: 'bottom',
+    },
+    before: function() {
+      tourStepCount = 1
+    },
+  },
+  {
+    target: '[data-v-step="2"]',
+    content: 'Select one or more layers to visualize',
+    params: {
+      placement: 'top',
+    },
+    before: function() {
+      tourStepCount = 2
+    },
+  },
+  {
+    target: '[data-v-step="3"]',
+    content: 'Change the order of the selected layers',
+    params: {
+      placement: 'top',
+    },
+    before: function() {
+      tourStepCount = 3
+    },
+  },
+  {
+    target: '[data-v-step="4"]',
+    content: 'View the legends of the layers',
+    params: {
+      placement: 'top',
+    },
+    before: function() {
+      tourStepCount = 4
+    },
+  },
+  {
+    target: '[data-v-step="5"]',
+    content: 'Download layers',
+    params: {
+      placement: 'bottom',
+    },
+    before: function() {
+      tourStepCount = 5
+    },
+  },
+  {
+    target: '[data-v-step="6"]',
+    content: 'Manage favourite layers',
+    params: {
+      placement: 'bottom',
+    },
+    before: function() {
+      tourStepCount = 6
+    },
+  },
+  {
+    target: '[data-v-step="7"]',
+    content: 'Control layer time',
+    params: {
+      placement: 'bottom',
+    },
+    before: function() {
+      tourStepCount = 7
+    },
+  },
+]
+
+

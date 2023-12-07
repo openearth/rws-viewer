@@ -6,6 +6,9 @@ import piwik from './plugins/piwik-analytics'
 import './plugins/composition-api'
 import { i18n } from './plugins/i18n'
 import './plugins/mapbox'
+import './plugins/vue-tour'
+
+import '@/css/tour.css'
 
 import App from './App.vue'
 
