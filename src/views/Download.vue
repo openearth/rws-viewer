@@ -67,8 +67,8 @@
   }
 </script>
 <style>
-  .download-container-scrollable {
-    height: calc(100vh - 130px);
-    overflow-y: auto;
-  }
+.download-container-scrollable {
+  overflow-y:auto;
+  height: calc(100vh - 130px);
+}
 </style>

@@ -251,67 +251,63 @@
 </script>
 
 <style lang="scss">
-  .v-treeview-node__root {
-    margin-bottom: -8px;
-  }
+.v-treeview-node__root {
+  margin-bottom: -8px;
+}
+.v-treeview-node__checkbox {
+  display: none !important;
+}
 
-  .v-treeview-node__checkbox {
-    display: none !important;
-  }
+.v-treeview-node--leaf .v-treeview-node__checkbox {
+  display: block !important;
+}
 
-  .v-treeview-node--leaf .v-treeview-node__checkbox {
-    display: block !important;
-  }
+.v-treeview-node__content {
+  margin-left: 36px !important;
+}
 
-  .v-treeview-node__content {
-    margin-left: 36px !important;
-  }
+.v-treeview-node--leaf .v-treeview-node__content {
+  margin-left: 6px !important;
+}
+.layer-chooser {
+  margin-right: -10px !important;
+}
+.layer-chooser__dialog {
+  width: 90vw;
+  max-width: 960px;
+  height: calc(90vh);
+}
 
-  .v-treeview-node--leaf .v-treeview-node__content {
-    margin-left: 6px !important;
-  }
+.layer-chooser__filter-options {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $spacing-tiny;
+}
 
-  .layer-chooser {
-    margin-right: -10px !important;
-  }
+.layer-chooser__only-active-switch {
+  margin-right: auto !important;
+}
 
-  .layer-chooser__dialog {
-    width: 90vw;
-    max-width: 960px;
-    height: calc(90vh);
-  }
+.layer-chooser .v-treeview-node__checkbox {
+  position: relative;
+  top: 0;
+  transform: translateY(7px);
+  align-self: flex-start;
+}
 
-  .layer-chooser__filter-options {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: $spacing-tiny;
-  }
+.layer-chooser .v-treeview-node__checkbox:before {
+  opacity: 0.001;
+}
 
-  .layer-chooser__only-active-switch {
-    margin-right: auto !important;
-  }
-
-  .layer-chooser .v-treeview-node__checkbox {
-    position: relative;
-    top: 0;
-    align-self: flex-start;
-    transform: translateY(7px);
-  }
-
-  .layer-chooser .v-treeview-node__checkbox::before {
-    opacity: .001;
-  }
-
-  .layer-chooser .v-treeview-node__prepend {
-    position: absolute;
-    top: 0;
-    transform: translate(-125%, 7px);
-    pointer-events: none;
-  }
-
-  .layers-scrollable {
-    height: calc(100vh - 248px);
-    overflow-y: auto;
-  }
+.layer-chooser .v-treeview-node__prepend {
+  position: absolute;
+  transform: translate(-125%, 7px);
+  pointer-events: none;
+  top: 0;
+}
+.layers-scrollable {
+  overflow-y:auto;
+  height: calc(100vh - 248px);
+}
 </style>

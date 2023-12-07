@@ -211,28 +211,28 @@
 </script>
 
 <style lang="scss">
-  .layer-info-dialog__metadata {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    row-gap: $spacing-smaller;
-    column-gap: $spacing-default;
-  }
+.layer-info-dialog__metadata {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  row-gap: $spacing-smaller;
+  column-gap: $spacing-default;
+}
 
-  .layer-info-dialog__metadata > div {
-    display: contents;
-  }
+.layer-info-dialog__metadata > div {
+  display: contents;
+}
 
-  .layer-info-dialog__metadata-key {
-    width: 100px;
-  }
+.layer-info-dialog__metadata-key {
+  width: 100px;
+}
 
-  .layer-info-dialog__metadata-value {
-    max-width: 440px;
-    margin: auto 0;
-  }
+.layer-info-dialog__metadata-value {
+  max-width: 440px;
+  margin: auto 0;
+}
 
-  .layer-info-dialog__title--wrapping {
-    white-space: wrap;
-  }
+.layer-info-dialog__title--wrapping {
+  white-space: wrap;
+}
 
 </style>

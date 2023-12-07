@@ -197,82 +197,81 @@
 </script>
 
 <style lang="scss" >
-  .v-slider__tick-label {
-    font-size: calc(.33 * (1.4vh + .9vw));
+
+.v-slider__tick-label {
+  font-size: calc(.33 * (1.4vh + 0.9vw));
+}
+.time-slider {
+  position:absolute;
+  z-index: 5;
+  max-width: 5000;
+  bottom: 1;
+  top: 5px;
+  margin-left: $spacing-default;
+}
+.timeline {
+  &_bar {
+    position: relative;
+    border: thin solid #dbdbdb;
+    background-color: #f2f2f2;
+    height: 20px;
   }
 
-  .time-slider {
+  // @FIX :: Overlapping elements make it that when dropping
+  // the playhead on a point that is 'over' the end of an interval,
+  // it will still 'emit' the interval value because that is the
+  // first it finds in the array.
+  // Same for snapping, it will snap to the point but will 'emit'
+  // the value of the array.
+  &_point,
+  &_interval {
     position: absolute;
-    z-index: 5;
-    top: 5px;
-    bottom: 1;
-    max-width: 5000;
-    margin-left: $spacing-default;
-  }
+    height: 100%;
+    cursor: pointer;
 
-  .timeline {
-    &_bar {
-      position: relative;
-      height: 20px;
-      border: thin solid #dbdbdb;
-      background-color: #f2f2f2;
-    }
-
-    // @FIX :: Overlapping elements make it that when dropping
-    // the playhead on a point that is 'over' the end of an interval,
-    // it will still 'emit' the interval value because that is the
-    // first it finds in the array.
-    // Same for snapping, it will snap to the point but will 'emit'
-    // the value of the array.
-    &_point,
-    &_interval {
+    &::after {
       position: absolute;
-      height: 100%;
-      cursor: pointer;
-
-      &::after {
-        content: '';
-        position: absolute;
-        top: 2px;
-        right: 2px;
-        bottom: 2px;
-        left: 2px;
-        transition: 150ms ease-out;
-      }
-
-      &:hover::after {
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-      }
+      content: '';
+      top: 2px;
+      left: 2px;
+      right: 2px;
+      bottom: 2px;
+      transition: 150ms ease-out;
     }
 
-    &_point {
-      z-index: 2;
-      top: -3px;
-      width: 10px;
-      height: calc(100% + 6px);
-      transform: translateX(-5px);
-
-      &::after {
-        border: 1px solid blue;
-        background-color: rgba(blue, .7);
-      }
-
-      &:hover::after {
-        border-radius: 2px;
-        background-color: blue;
-      }
-    }
-
-    &_interval {
-      z-index: 1;
-
-      &::after {
-        border: 1px solid blueviolet;
-        background-color: rgba(blueviolet, .3);
-      }
+    &:hover::after {
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
     }
   }
+
+  &_point {
+    top: -3px;
+    width: 10px;
+    height: calc(100% + 6px);
+    transform: translateX(-5px);
+    z-index: 2;
+
+    &::after {
+      border: 1px solid blue;
+      background-color: rgba(blue, 0.7);
+    }
+
+    &:hover::after {
+      border-radius: 2px;
+      background-color: blue;
+    }
+  }
+
+  &_interval {
+    z-index: 1;
+
+    &::after {
+      border: 1px solid blueviolet;
+      background-color: rgba(blueviolet, 0.3);
+    }
+  }
+}
 </style>

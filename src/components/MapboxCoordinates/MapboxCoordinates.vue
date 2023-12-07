@@ -35,10 +35,10 @@
     --translate-x: var(--sidebar-width);
 
     position: absolute;
-    z-index: 1;
     bottom: 0;
     left: calc(50% - var(--sidebar-width));
     transform: translate(var(--translate-x));
-    transition: transform .3s cubic-bezier(.25, .8, .25, 1);
+    transition: transform .3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 1;
   }
 </style>

@@ -172,45 +172,47 @@
 </script>
 
 <style lang="scss" scoped>
-  .playhead {
-    position: absolute;
-    z-index: 10;
-    bottom: -20%;
-    width: 0;
-    height: 140%;
-    cursor: grab;
+.playhead {
+  position: absolute;
+  height: 140%;
+  bottom: -20%;
+  width: 0;
 
-    &.is-dragging {
-      cursor: grabbing;
-    }
+  cursor: grab;
 
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -1px;
-      width: 2px;
-      height: 100%;
-      background-color: red;
-    }
-
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -6px;
-      left: -5px;
-      width: 10px;
-      height: 10px;
-      border-radius: 100%;
-      background-color: red;
-    }
+  &.is-dragging {
+    cursor: grabbing;
   }
 
-  .drag-area {
+  z-index: 10;
+
+  &::before {
     position: absolute;
-    top: 0;
-    left: -6px;
-    width: 12px;
+    content: '';
+    width: 2px;
     height: 100%;
+    top: 0;
+    left: -1px;
+    background-color: red;
   }
+
+  &::after {
+    position: absolute;
+    content: '';
+    width: 10px;
+    height: 10px;
+    bottom: -6px;
+    left: -5px;
+    background-color: red;
+    border-radius: 100%;
+  }
+}
+
+.drag-area {
+  position: absolute;
+  top: 0;
+  left: -6px;
+  width: 12px;
+  height: 100%;
+}
 </style>

@@ -132,8 +132,8 @@
   }
 </script>
 <style>
-  .favourites {
-    height: calc(100vh - 130px);
-    overflow-y: auto;
-  }
+.favourites {
+  overflow-y:auto;
+  height: calc(100vh - 130px);
+}
 </style>

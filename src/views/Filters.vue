@@ -140,8 +140,8 @@
   }
 </script>
 <style>
-  .filters {
-    height: calc(100vh - 130px);
-    overflow-y: auto;
-  }
+.filters {
+  overflow-y:auto;
+  height: calc(100vh - 130px);
+}
 </style>

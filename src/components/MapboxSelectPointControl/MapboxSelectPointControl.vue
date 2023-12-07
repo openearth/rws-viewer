@@ -41,7 +41,7 @@
 </script>
 
 <style>
-  .mapbox-gl-draw_ctrl-draw-btn {
-    display: none !important;
-  }
+.mapbox-gl-draw_ctrl-draw-btn {
+  display: none !important;
+}
 </style>

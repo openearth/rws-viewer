@@ -137,9 +137,8 @@
 
   .layer-control__label {
     @include truncate;
-
-    width: 100%;
     text-align: left;
+    width: 100%;
   }
 
   .layer-control__label--btn {

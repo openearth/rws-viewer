@@ -89,16 +89,16 @@
 
 <style lang="scss">
   .map-legend {
-    display: flex;
-    position: absolute;
-    z-index: 2;
-    right: $spacing-default;
     bottom: 0;
-    bottom: $spacing-medium;
+    display: flex;
     flex-direction: column;
     overflow: hidden;
+    position: absolute;
+    right: $spacing-default;
+    bottom: $spacing-medium;
     transform: translateY(calc(100% - 48px + #{$spacing-medium}));
-    transition: transform .3s cubic-bezier(.25, .8, .25, 1);
+    transition: transform .3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    z-index: 2;
   }
 
   .map-legend--open {
@@ -107,7 +107,7 @@
 
   .map-legend__button {
     transform: rotate(-180deg);
-    transition: transform .4s cubic-bezier(.25, .8, .5, 1);
+    transition: transform .4s cubic-bezier(0.25, 0.8, 0.5, 1);
   }
 
   .map-legend__button--active {
@@ -128,8 +128,8 @@
   }
 
   .map-legend__image {
-    width: auto;
-    max-width: 100%;
     height: auto;
+    max-width: 100%;
+    width: auto;
   }
 </style>
