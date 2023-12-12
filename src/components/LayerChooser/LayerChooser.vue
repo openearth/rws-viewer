@@ -312,7 +312,7 @@
   }
 
   .layers-scrollable {
-    height: calc(100vh - 248px);
+    height: calc(100vh - 262px);
     overflow-y: auto;
   }
 </style>
