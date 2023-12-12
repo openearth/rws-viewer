@@ -9,10 +9,10 @@ Vue.use(VueTour)
 
 export let tourStepCount = null
 
-export const tourSteps = [
+export const generateTourSteps = (data) => ([
   {
     target: '[data-v-step="1"]',
-    content: 'Welcome to the <strong>'+ '' +'</strong> platform!', // TODO: make the title of the platform in bold to take it automatically, like the viewer header title
+    content: 'Welcome to the <strong>'+ data.title +'</strong> platform!', // TODO: make the title of the platform in bold to take it automatically, like the viewer header title
     params: {
       placement: 'bottom',
     },
@@ -80,6 +80,6 @@ export const tourSteps = [
       tourStepCount = 7
     },
   },
-]
+])
 
 

@@ -18,8 +18,8 @@
 </template>
 
 <script>
-  const AppHeader = () => import('~/components/AppHeader/AppHeader')
-  const AppSidebar = () => import('~/components/AppSidebar/AppSidebar')
+  import AppHeader from '~/components/AppHeader/AppHeader'
+  import AppSidebar from '~/components/AppSidebar/AppSidebar'
 
   export default {
     name: 'AppShell',

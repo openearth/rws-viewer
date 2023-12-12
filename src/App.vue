@@ -30,7 +30,13 @@
       :user-agreement="viewerUserAgreement"
       @close="closeUserAgreementDialog"
     />
-    
+
+    <v-tour
+      :steps="generateTourSteps({title: viewerName})"
+      :options="tourConfig"
+      name="introduction"
+    />
+
     <v-mapbox
       slot="map"
       :access-token="accessToken"
@@ -109,6 +115,7 @@
   import SearchBar from '~/components/SearchBar/SearchBar'
   import UserAgreementDialog from '~/components/UserAgreementDialog/UserAgreementDialog.vue'
   import { defaultLocale, availableLocales } from '~/plugins/i18n'
+  import { tourConfig, generateTourSteps, tourStepCount } from '@/plugins/vue-tour'
 
   const removeRegion = locale => locale.replace(/-.+/, '')
   const localeIsAvailable = locale => availableLocales.includes(locale)
@@ -135,6 +142,9 @@
     },
 
     data: () => ({
+      tourConfig,
+      generateTourSteps,
+      tourStepCount,
       accessToken: process.env.VUE_APP_MAPBOX_TOKEN,
       sampleDataTime: [],
       showslider: false,
@@ -199,6 +209,7 @@
         await this.getAppData({ route, locale: this.currentLocale } )
         this.localeIsLoading = false
       })
+      this.showTour()
     },
 
     methods: {
@@ -288,6 +299,9 @@
 
       closeUserAgreementDialog() {
         this.userAgreementOpen = false
+      },
+      showTour () {
+        this.$tours.introduction.start()
       },
     },
   }
