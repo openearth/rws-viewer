@@ -14,6 +14,7 @@ export const generateTourSteps = (data) => ([
     target: '[data-v-step="1"]',
     content: 'Welcome to the <strong>'+ data.title +'</strong> platform!', // TODO: make the title of the platform in bold to take it automatically, like the viewer header title
     params: {
+      enableScrolling: false,
       placement: 'bottom',
     },
     before: function() {
@@ -24,6 +25,7 @@ export const generateTourSteps = (data) => ([
     target: '[data-v-step="2"]',
     content: 'Select one or more layers to visualize',
     params: {
+      enableScrolling: false,
       placement: 'top',
     },
     before: function() {
@@ -34,6 +36,7 @@ export const generateTourSteps = (data) => ([
     target: '[data-v-step="3"]',
     content: 'Change the order of the selected layers',
     params: {
+      enableScrolling: false,
       placement: 'top',
     },
     before: function() {
@@ -44,6 +47,7 @@ export const generateTourSteps = (data) => ([
     target: '[data-v-step="4"]',
     content: 'View the legends of the layers',
     params: {
+      enableScrolling: false,
       placement: 'top',
     },
     before: function() {
@@ -54,6 +58,7 @@ export const generateTourSteps = (data) => ([
     target: '[data-v-step="5"]',
     content: 'Download layers',
     params: {
+      enableScrolling: false,
       placement: 'bottom',
     },
     before: function() {
@@ -64,6 +69,7 @@ export const generateTourSteps = (data) => ([
     target: '[data-v-step="6"]',
     content: 'Manage favourite layers',
     params: {
+      enableScrolling: false,
       placement: 'bottom',
     },
     before: function() {
@@ -74,6 +80,7 @@ export const generateTourSteps = (data) => ([
     target: '[data-v-step="7"]',
     content: 'Control layer time',
     params: {
+      enableScrolling: false,
       placement: 'bottom',
     },
     before: function() {
