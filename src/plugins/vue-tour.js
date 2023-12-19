@@ -37,7 +37,13 @@ export const generateTourSteps = (data) => ([
     content: 'Change the order of the selected layers',
     params: {
       enableScrolling: false,
-      placement: 'top',
+      placement: 'right',
+      modifiers: {
+        offset: {
+        enabled: true,
+        offset: '0, 0',
+        },
+      },
     },
     before: function() {
       tourStepCount = 3
@@ -48,7 +54,13 @@ export const generateTourSteps = (data) => ([
     content: 'View the legends of the layers',
     params: {
       enableScrolling: false,
-      placement: 'top',
+      placement: 'left',
+      modifiers: {
+        offset: {
+        enabled: true,
+        offset: '0, 0',
+        },
+      },
     },
     before: function() {
       tourStepCount = 4
