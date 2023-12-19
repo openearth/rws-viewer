@@ -163,7 +163,7 @@
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement' ]),
       ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
-      ...mapGetters('data', [ 'timeExtent' ]),
+      ...mapGetters('data', [ 'timeExtent', 'flattenedLayers', 'displayLayers' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
       },
@@ -215,7 +215,7 @@
 
     methods: {
       ...mapActions('data', [ 'getAppData', 'setSelectedTimestamp', 'addViewerData' ]),
-      ...mapActions('map', [ 'adds', 'removeDrawnFeature', 'addDrawnFeature', 'setMapLoaded' ]),
+      ...mapActions('map', [ 'adds', 'removeDrawnFeature', 'addDrawnFeature', 'setMapLoaded', 'loadLayerOnMap' ]),
       formatTimeExtent(extent) {
         if (extent.length) {
           const formattedTimeExtent = extent.map(s => ({
@@ -306,7 +306,19 @@
       },
       nextStep () {
         if (tourStepCount == 2 ) {
-          this.$router.push('/?folders=185530370&layers=185534123,185530401,185530401&layerNames=GVG%20%282011-2018%29,GLG%20%282011-2018%29,GLG%20%282011-2018%29')
+          const firstFolder = this.displayLayers[0]
+
+          this.loadLayerOnMap({ layers: [
+            this.flattenedLayers[0],
+            this.flattenedLayers[1],
+          ] })
+
+          this.$router.push({
+            query: {
+              ...this.$route.query,
+              folders: firstFolder.id,
+            },
+          })
         }
       },
     },

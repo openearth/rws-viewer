@@ -170,6 +170,11 @@
       onlyActive(newValue) {
         this.$refs.tree.updateAll(newValue)
       },
+      '$route.query'() {
+        if (this.$route.query.folders) {
+          this.openedItems = (this.$route.query.folders || '').split(',')
+        } 
+      },
     },
     mounted () {
       const searchParams = new URLSearchParams(window.location.search)
