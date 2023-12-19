@@ -35,6 +35,7 @@
       :steps="generateTourSteps({title: viewerName})"
       :options="tourConfig"
       name="introduction"
+      @click.native="nextStep"
     />
 
     <v-mapbox
@@ -302,6 +303,11 @@
       },
       showTour () {
         this.$tours.introduction.start()
+      },
+      nextStep () {
+        if (tourStepCount == 2 ) {
+          this.$router.push('/?folders=185530370&layers=185534123,185530401,185530401&layerNames=GVG%20%282011-2018%29,GLG%20%282011-2018%29,GLG%20%282011-2018%29')
+        }
       },
     },
   }
