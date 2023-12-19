@@ -19,4 +19,3 @@
 
 [dev]
   targetPort = 3000
-  command = "npm run serve"
