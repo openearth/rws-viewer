@@ -5,6 +5,7 @@
       :value="open"
       width="600"
       @click:outside="close"
+      @keydown.esc="close"
     >
       <v-card>
         <v-app-bar
