@@ -79,7 +79,7 @@
       <mapbox-scale-control />
       <map-zoom :extent="zoomExtent" />
       <MapMouseMove @mousemove="onMouseMove" />
-      <v-mapbox-navigation-control />
+      <v-mapbox-navigation-control position='bottom-right' />
       <mapbox-draw-control
         :draw-mode="drawMode"
         :drawn-features="drawnFeatures"
