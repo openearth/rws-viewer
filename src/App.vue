@@ -8,6 +8,9 @@
         :items="localeItems"
         @input="switchLocaleAndAddViewerData($event.title)"
       />
+      <burger-menu
+        :loadingburger="localeIsLoading"
+      />
     </template>
     <div v-if="!showApiLayer">
       <v-fade-transition mode="out-in">
@@ -102,6 +105,7 @@
   import MapLayerInfo from './components/MapComponents/MapLayerInfo'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
   import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
+  import BurgerMenu from '~/components/BurgerMenu/BurgerMenu'
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
   import LayerOrder from '~/components/LayerOrder/LayerOrder'
   import TimeSlider from '~/components/TimeSlider'
@@ -130,6 +134,7 @@
       MapboxDrawControl,
       LayerOrder,
       LocaleSwitcher,
+      BurgerMenu,
       MapboxDrawControl,
       MapboxSelectPointControl,
       MapboxLegend,

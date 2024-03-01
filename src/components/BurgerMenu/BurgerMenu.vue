@@ -2,19 +2,18 @@
   <v-menu offset-y>
     <template #activator="{ on, attrs }">
       <v-btn
-        text
         dark
         v-bind="attrs"
-        :loading="loading"
-        :disabled="loading"
+        :loading="loadingburger"
+        :disabled="loadingburger"
         v-on="on"
+        icon
       >
-        {{ currentLocale }}
+        <v-icon> mdi-menu </v-icon>
       </v-btn>
     </template>
     <v-list>
       <v-list-item-group
-        :value="currentLocale"
         color="primary"
       >
         <v-list-item
@@ -22,7 +21,7 @@
           :key="item.title"
           @click="$emit('input', item)"
         >
-          <v-list-item-title>{{ item.title.toUpperCase() }}</v-list-item-title>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
       </v-list-item-group>
     </v-list>
@@ -32,18 +31,19 @@
 <script>
   export default {
     props: {
-      currentLocale: {
-        type: String,
-        required: true,
-      },
-      loading: {
+      loadingburger: {
         type: Boolean,
         required: true,
       },
-      items: {
-        type: Array,
-        required: true,
-      },
     },
+    data: () => ({
+      items: [
+        { title: 'Manual' },
+        { title: 'Contact' },
+        { title: 'Acknowledgments' },
+        { title: 'Disclaimer' },
+        { title: 'Privacy statement' },
+      ],
+    }),
   }
 </script>
