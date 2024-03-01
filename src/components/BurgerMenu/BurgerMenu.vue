@@ -6,8 +6,8 @@
         v-bind="attrs"
         :loading="loadingburger"
         :disabled="loadingburger"
-        v-on="on"
         icon
+        v-on="on"
       >
         <v-icon> mdi-menu </v-icon>
       </v-btn>
@@ -19,7 +19,7 @@
         <v-list-item
           v-for="item in items"
           :key="item.title"
-          @click="$emit('input', item)"
+          @click="handleItemClick(item)"
         >
           <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item>
@@ -37,13 +37,21 @@
       },
     },
     data: () => ({
+      // TODO: make the names change based on selected language
       items: [
-        { title: 'Manual' },
+        { title: 'Manual', url: 'https://waterinfo-extra.rws.nl/doorverwijzingen/overzicht-handleidingen-viewer/'  },
         { title: 'Contact' },
         { title: 'Acknowledgments' },
         { title: 'Disclaimer' },
         { title: 'Privacy statement' },
       ],
     }),
+    methods: {
+      handleItemClick(item) {
+        if (item.url) {
+          window.open(item.url, '_blank')
+        }
+      },
+    },
   }
 </script>
