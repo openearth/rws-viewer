@@ -10,6 +10,7 @@
       />
       <burger-menu
         :loadingburger="localeIsLoading"
+        @open-contact-form="onOpenContactForm"
       />
     </template>
     <div v-if="!showApiLayer">
@@ -27,7 +28,17 @@
       :layers="layers"
       @close="closeLayersDialog"
     />
-
+    <feedback-dialog
+      :open="feedbackDialogOpen"
+      @close="closeFeedbackDialog"
+    />
+      <!--
+        above
+      :menu-or-layer="item"
+      :viewer="viewerName"
+      :share-url="getUrl(item)"
+      :privacy-statement="viewerPrivacyStatement"
+      @close="close" -->
     <UserAgreementDialog
       :open="showUserAgreement"
       :user-agreement="viewerUserAgreement"
@@ -79,7 +90,7 @@
       <mapbox-scale-control />
       <map-zoom :extent="zoomExtent" />
       <MapMouseMove @mousemove="onMouseMove" />
-      <v-mapbox-navigation-control position='bottom-right' />
+      <v-mapbox-navigation-control position="bottom-right" />
       <mapbox-draw-control
         :draw-mode="drawMode"
         :drawn-features="drawnFeatures"
@@ -121,6 +132,7 @@
   import UserAgreementDialog from '~/components/UserAgreementDialog/UserAgreementDialog.vue'
   import { defaultLocale, availableLocales } from '~/plugins/i18n'
   import { tourConfig, generateTourSteps, tourStepCount } from '@/plugins/vue-tour'
+  import FeedbackDialog from './components/FeedbackDialog/FeedbackDialog.vue'
 
   const removeRegion = locale => locale.replace(/-.+/, '')
   const localeIsAvailable = locale => availableLocales.includes(locale)
@@ -145,6 +157,7 @@
       SearchBar,
       MapboxScaleControl,
       UserAgreementDialog,
+      FeedbackDialog,
     },
 
     data: () => ({
@@ -163,6 +176,7 @@
       loadedLocales: [ defaultLocale ],
       localeItems: availableLocales.map(locale => ({ title: locale })),
       userAgreementOpen: true,
+      feedbackDialogOpen: false,
     }),
 
     computed: {
@@ -325,6 +339,12 @@
             },
           })
         }
+      },
+      onOpenContactForm() {
+        this.feedbackDialogOpen = true
+      },
+      closeFeedbackDialog() {
+        this.feedbackDialogOpen = false
       },
     },
   }

@@ -50,6 +50,8 @@
       handleItemClick(item) {
         if (item.url) {
           window.open(item.url, '_blank')
+        } if (item.title ==='Contact') {
+          this.$emit('open-contact-form')
         }
       },
     },
