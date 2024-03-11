@@ -34,6 +34,13 @@
             />
 
             <v-text-field
+              v-else
+              :value="viewerName"
+              :label="this.$t('viewerName')"
+              disabled
+            />
+
+            <v-text-field
               v-model="name"
               :label="$t('whoAreYou')"
               :rules="nameRules"
@@ -84,6 +91,7 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   import * as EmailValidator from 'email-validator'
   import axios from 'axios'
 
@@ -129,6 +137,7 @@
     },
 
     computed: {
+      ...mapGetters('app', [ 'viewerName' ]),
       menuOrLayerLabel() {
         return this.menuOrLayer.children
           ? this.$t('viewerName')
