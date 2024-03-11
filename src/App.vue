@@ -37,8 +37,7 @@
       :menu-or-layer="item"
       :viewer="viewerName"
       :share-url="getUrl(item)"
-      :privacy-statement="viewerPrivacyStatement"
-      @close="close" -->
+      :privacy-statement="viewerPrivacyStatement" -->
     <UserAgreementDialog
       :open="showUserAgreement"
       :user-agreement="viewerUserAgreement"
