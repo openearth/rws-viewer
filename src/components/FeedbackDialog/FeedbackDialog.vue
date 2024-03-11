@@ -36,7 +36,7 @@
             <v-text-field
               v-else
               :value="viewerName"
-              :label="this.$t('viewerName')"
+              :label="$t('viewerName')"
               disabled
             />
 
