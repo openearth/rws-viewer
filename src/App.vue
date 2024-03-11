@@ -28,14 +28,13 @@
       :layers="layers"
       @close="closeLayersDialog"
     />
+
     <feedback-dialog
       :open="feedbackDialogOpen"
       @close="closeFeedbackDialog"
+      :privacy-statement="viewerPrivacyStatement"
     />
-      <!--
-        above
-      :share-url="getUrl(item)"
-      :privacy-statement="viewerPrivacyStatement" -->
+
     <UserAgreementDialog
       :open="showUserAgreement"
       :user-agreement="viewerUserAgreement"
@@ -177,7 +176,7 @@
     }),
 
     computed: {
-      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement' ]),
+      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement', 'viewerPrivacyStatement' ]),
       ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
       ...mapGetters('data', [ 'timeExtent', 'flattenedLayers', 'displayLayers' ]),
       formattedTimeExtent() {
