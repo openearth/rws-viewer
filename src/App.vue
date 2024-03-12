@@ -11,6 +11,7 @@
       <burger-menu
         :loadingburger="localeIsLoading"
         @open-contact-form="onOpenContactForm"
+        @open-user-agreement="onClickOpenContactForm"
       />
     </template>
     <div v-if="!showApiLayer">
@@ -31,12 +32,12 @@
 
     <feedback-dialog
       :open="feedbackDialogOpen"
-      @close="closeFeedbackDialog"
       :privacy-statement="viewerPrivacyStatement"
+      @close="closeFeedbackDialog"
     />
 
     <UserAgreementDialog
-      :open="showUserAgreement"
+      :open="showUserAgreement || clickedUserAgreementOpen"
       :user-agreement="viewerUserAgreement"
       @close="closeUserAgreementDialog"
     />
@@ -173,6 +174,7 @@
       localeItems: availableLocales.map(locale => ({ title: locale })),
       userAgreementOpen: true,
       feedbackDialogOpen: false,
+      clickedUserAgreementOpen: false,
     }),
 
     computed: {
@@ -315,6 +317,7 @@
 
       closeUserAgreementDialog() {
         this.userAgreementOpen = false
+        this.clickedUserAgreementOpen = false
       },
       showTour () {
         this.$tours.introduction.start()
@@ -341,6 +344,9 @@
       },
       closeFeedbackDialog() {
         this.feedbackDialogOpen = false
+      },
+      onClickOpenContactForm() {
+        this.clickedUserAgreementOpen = true
       },
     },
   }

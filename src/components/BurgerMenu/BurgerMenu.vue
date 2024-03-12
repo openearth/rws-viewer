@@ -52,6 +52,8 @@
           window.open(item.url, '_blank')
         } if (item.title ==='Contact') {
           this.$emit('open-contact-form')
+        } if (item.title ==='Disclaimer') {
+          this.$emit('open-user-agreement')
         }
       },
     },
