@@ -11,7 +11,7 @@
           unit: 'metric',
         })
 
-        map.addControl(mbScale, 'top-right')
+        map.addControl(mbScale, 'bottom-right')
       },
     },
 

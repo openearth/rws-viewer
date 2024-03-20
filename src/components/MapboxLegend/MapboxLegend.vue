@@ -93,7 +93,7 @@
     display: flex;
     position: absolute;
     z-index: 2;
-    right: $spacing-default;
+    right: calc(#{$spacing-default} * 7);
     bottom: 0;
     bottom: $spacing-medium;
     flex-direction: column;

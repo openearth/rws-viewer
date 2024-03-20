@@ -8,6 +8,11 @@
         :items="localeItems"
         @input="switchLocaleAndAddViewerData($event.title)"
       />
+      <burger-menu
+        :loadingburger="localeIsLoading"
+        @open-contact-form="onOpenContactForm"
+        @open-user-agreement="onClickOpenContactForm"
+      />
     </template>
     <div v-if="!showApiLayer">
       <v-fade-transition mode="out-in">
@@ -25,8 +30,14 @@
       @close="closeLayersDialog"
     />
 
+    <feedback-dialog
+      :open="feedbackDialogOpen"
+      :privacy-statement="viewerPrivacyStatement"
+      @close="closeFeedbackDialog"
+    />
+
     <UserAgreementDialog
-      :open="showUserAgreement"
+      :open="showUserAgreement || clickedUserAgreementOpen"
       :user-agreement="viewerUserAgreement"
       @close="closeUserAgreementDialog"
     />
@@ -76,7 +87,7 @@
       <mapbox-scale-control />
       <map-zoom :extent="zoomExtent" />
       <MapMouseMove @mousemove="onMouseMove" />
-      <v-mapbox-navigation-control />
+      <v-mapbox-navigation-control position="bottom-right" />
       <mapbox-draw-control
         :draw-mode="drawMode"
         :drawn-features="drawnFeatures"
@@ -102,6 +113,7 @@
   import MapLayerInfo from './components/MapComponents/MapLayerInfo'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
   import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
+  import BurgerMenu from '~/components/BurgerMenu/BurgerMenu'
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
   import LayerOrder from '~/components/LayerOrder/LayerOrder'
   import TimeSlider from '~/components/TimeSlider'
@@ -117,6 +129,7 @@
   import UserAgreementDialog from '~/components/UserAgreementDialog/UserAgreementDialog.vue'
   import { defaultLocale, availableLocales } from '~/plugins/i18n'
   import { tourConfig, generateTourSteps, tourStepCount } from '@/plugins/vue-tour'
+  import FeedbackDialog from './components/FeedbackDialog/FeedbackDialog.vue'
 
   const removeRegion = locale => locale.replace(/-.+/, '')
   const localeIsAvailable = locale => availableLocales.includes(locale)
@@ -130,6 +143,7 @@
       MapboxDrawControl,
       LayerOrder,
       LocaleSwitcher,
+      BurgerMenu,
       MapboxDrawControl,
       MapboxSelectPointControl,
       MapboxLegend,
@@ -140,6 +154,7 @@
       SearchBar,
       MapboxScaleControl,
       UserAgreementDialog,
+      FeedbackDialog,
     },
 
     data: () => ({
@@ -158,10 +173,12 @@
       loadedLocales: [ defaultLocale ],
       localeItems: availableLocales.map(locale => ({ title: locale })),
       userAgreementOpen: true,
+      feedbackDialogOpen: false,
+      clickedUserAgreementOpen: false,
     }),
 
     computed: {
-      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement' ]),
+      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement', 'viewerPrivacyStatement' ]),
       ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
       ...mapGetters('data', [ 'timeExtent', 'flattenedLayers', 'displayLayers' ]),
       formattedTimeExtent() {
@@ -300,6 +317,7 @@
 
       closeUserAgreementDialog() {
         this.userAgreementOpen = false
+        this.clickedUserAgreementOpen = false
       },
       showTour () {
         this.$tours.introduction.start()
@@ -320,6 +338,15 @@
             },
           })
         }
+      },
+      onOpenContactForm() {
+        this.feedbackDialogOpen = true
+      },
+      closeFeedbackDialog() {
+        this.feedbackDialogOpen = false
+      },
+      onClickOpenContactForm() {
+        this.clickedUserAgreementOpen = true
       },
     },
   }
