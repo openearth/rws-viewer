@@ -164,10 +164,12 @@
     watch: {
       searchString(newValue, oldValue) {
         if (oldValue === '') {
+          console.log('updateTree')
           this.$refs.tree.updateAll(true)
         }
       },
       onlyActive(newValue) {
+        console.log('updateTere onlyActive', newValue)
         this.$refs.tree.updateAll(newValue)
       },
       '$route.query'() {
@@ -175,8 +177,12 @@
           this.openedItems = (this.$route.query.folders || '').split(',')
         } 
       },
+      openedItems() {
+        console.log('this.openedItems', this.openedItems)
+      },
     },
     beforeMount () {
+      console.log('beforeMount')
       const searchParams = new URLSearchParams(window.location.search)
       const folders = (searchParams.get('folders') || '').split(',')
       this.openedItems = folders
