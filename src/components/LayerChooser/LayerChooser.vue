@@ -181,11 +181,16 @@
         console.log('this.openedItems', this.openedItems)
       },
     },
-    beforeMount () {
-      console.log('beforeMount')
+    mounted () {
+      console.log('mounted')
       const searchParams = new URLSearchParams(window.location.search)
       const folders = (searchParams.get('folders') || '').split(',')
-      this.openedItems = folders
+      console.log('folders', folders)
+      folders.forEach(folder => {
+        this.openedItems = [ folder, ...this.openedItems ]
+        console.log('opendItems', this.openedItems)
+      })
+      console.log('this.openedItems in mounted', this.openedItems)
     },
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity', 'updateZoomExtent' ]),
