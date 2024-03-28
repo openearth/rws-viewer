@@ -300,7 +300,6 @@
         const serviceType = this.selectedLayerData.serviceType
 
         this.layerCapabilities = null
-
         getCapabilities(serviceUrl, serviceType).then(capabilities => {
           this.layerCapabilities = Object.freeze(capabilities)
         })
@@ -321,7 +320,6 @@
       },
 
       onAreaSelection(id) {
-        console.log('id',id)
         this.setDrawMode({ mode: null })
 
         if (id === NO_SELECTION_ID) {

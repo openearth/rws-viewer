@@ -62,7 +62,9 @@ export async function getCapabilities(service, type) {
    */
   const _type = type
   const serviceUrl = new URL(service)
+ 
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
+ 
   const { data } = await axios(`${ servicePath }?${ createParameters(_type) }`)
   return new DOMParser().parseFromString(data, 'text/xml')
 }
@@ -162,7 +164,7 @@ export function getLayerProperties(capabilities, layer) {
     readBbox,
   )()
   
-  const keywords = pipe(
+  let keywords = pipe(
     () => [ ...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]') ],
     getChildTags('Name'),
     findLayer(layer),
@@ -171,6 +173,16 @@ export function getLayerProperties(capabilities, layer) {
     getTags('Keyword'),
     map(getTagContent),  
   )()
+  
+  if (!keywords.length) {
+    
+    keywords = pipe(
+      () => [ capabilities.querySelector('KeywordList') ],  
+      getTags('Keyword'), 
+      map(getTagContent), 
+    )()
+    
+  }
   const serviceType = [ 'features', 'wfs', 'FEATURES', 'WFS' ].some(val => keywords.includes(val)) ? 'wfs' 
         :[ 'WCS', 'GeoTIFF', 'wcs' ].some(val => keywords.includes(val)) ? 'wcs' 
         : null
