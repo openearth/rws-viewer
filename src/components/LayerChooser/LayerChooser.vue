@@ -32,8 +32,8 @@
     </div>
     <div class="layers-scrollable">
       <v-treeview
-        data-v-step="2"
         ref="tree"
+        data-v-step="2"
         class="layer-chooser__tree"
         :value="activeFlattenedLayerIds"
         hoverable
@@ -176,7 +176,7 @@
         } 
       },
     },
-    mounted () {
+    beforeMount () {
       const searchParams = new URLSearchParams(window.location.search)
       const folders = (searchParams.get('folders') || '').split(',')
       this.openedItems = folders

@@ -72,6 +72,7 @@
         this.$emit('close')
       },
       showLayer(id) {
+        console.log('showLayer calls the loadLayerOnMap')
         this.resetLayers()
         const layer = this.flattenedLayers.find(({ id: layerId }) => id === layerId)
         this.loadLayerOnMap({ layers: [ layer ] })
