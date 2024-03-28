@@ -63,7 +63,6 @@ export default {
   actions: {
     async getAppData({ dispatch }, { route, locale }) {
       const viewer = route?.params?.config
-
       //Set viewer configuration
       const { mapCenter, mapZoom, defaultLayer, privacyStatement, userAgreement } = await getViewerConfiguration(viewer)
 
@@ -84,7 +83,6 @@ export default {
         initialLayerIds.push(defaultLayer.id)
         layersById = getLayersById(layers, initialLayerIds)
       }
-
       if (layersById.length) {
         dispatch('map/loadLayerOnMap', { layers: layersById }, { root: true })
       }

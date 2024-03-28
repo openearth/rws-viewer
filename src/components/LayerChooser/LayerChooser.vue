@@ -32,8 +32,8 @@
     </div>
     <div class="layers-scrollable">
       <v-treeview
-        data-v-step="2"
         ref="tree"
+        data-v-step="2"
         class="layer-chooser__tree"
         :value="activeFlattenedLayerIds"
         hoverable
@@ -164,10 +164,12 @@
     watch: {
       searchString(newValue, oldValue) {
         if (oldValue === '') {
+          console.log('updateTree')
           this.$refs.tree.updateAll(true)
         }
       },
       onlyActive(newValue) {
+        console.log('updateTere onlyActive', newValue)
         this.$refs.tree.updateAll(newValue)
       },
       '$route.query'() {
@@ -175,11 +177,20 @@
           this.openedItems = (this.$route.query.folders || '').split(',')
         } 
       },
+      openedItems() {
+        console.log('this.openedItems', this.openedItems)
+      },
     },
     mounted () {
+      console.log('mounted')
       const searchParams = new URLSearchParams(window.location.search)
       const folders = (searchParams.get('folders') || '').split(',')
-      this.openedItems = folders
+      console.log('folders', folders)
+      folders.forEach(folder => {
+        this.openedItems = [ folder, ...this.openedItems ]
+        console.log('opendItems', this.openedItems)
+      })
+      console.log('this.openedItems in mounted', this.openedItems)
     },
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity', 'updateZoomExtent' ]),
