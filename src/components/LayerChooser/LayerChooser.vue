@@ -43,7 +43,7 @@
         :items="layersWithParents"
         :search="search"
         :filter="activeFilter"
-        :open="openedItems"
+        :open="['156216757','143810679']"
         @input="handleInput"
         @update:open="handleOpenedFolders"
       >
