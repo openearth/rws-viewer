@@ -45,84 +45,83 @@
         :filter="activeFilter"
         :open="openedItems"
         @input="handleInput"
-      />
-      <!--  @update:open="handleOpenedFolders" -->
-      <template #prepend="{selected, open, item, indeterminate}">
-        <div v-if="!item.layer">
-          <v-icon>
-            <template v-if="selected">
-              {{ open
-                ? `mdi-folder-open${selected ? '' : '-outline'}`
-                : `mdi-folder${selected ? '-check' : '-outline'}`
-              }}
+      >
+        <template #prepend="{selected, open, item, indeterminate}">
+          <div v-if="!item.layer">
+            <v-icon>
+              <template v-if="selected">
+                {{ open
+                  ? `mdi-folder-open${selected ? '' : '-outline'}`
+                  : `mdi-folder${selected ? '-check' : '-outline'}`
+                }}
+              </template>
+              <template v-else-if="indeterminate">
+                {{ open
+                  ? `mdi-folder-open`
+                  : `mdi-folder`
+                }}
+              </template>
+              <template v-else>
+                {{ open
+                  ? `mdi-folder-open-outline`
+                  : `mdi-folder-outline`
+                }}
+              </template>
+            </v-icon>
+          </div>
+          <div v-else>
+            <v-row no-gutters>
+              <v-col class="ml-n5">
+                <v-icon v-if="item.timeFilter">
+                  {{ selected ? 'mdi-clock-time-three' : 'mdi-clock-time-three-outline' }}
+                </v-icon>
+              </v-col>
+              <v-col>
+                <v-icon v-if="item.layer">
+                  {{ selected ? 'mdi-layers' : 'mdi-layers-outline' }}
+                </v-icon>
+              </v-col>
+            </v-row>
+          </div>
+        </template>
+        <template #label="{ item, selected }">
+          <layer-control
+            :id="item.id"
+            :name="item.name"
+            :selected="selected"
+            :parent-ids="item.parentIds.toString()"
+            :is-layer="!!item.layer"
+            :has-metadata="!!item.metadata.length || getUrl(item) !== ''"
+            @update-layer-opacity="updateLayerOpacity"
+            @zoom-to-layer-extent="zoomToLayerExtent"
+            @select="handleSelect"
+          >
+            <template #info="{ isOpen, close, showFeedbackDialog }">
+              <layer-info-dialog
+                :title="item.name"
+                :content="item.metadata"
+                :share-url="getUrl(item)"
+                :open="isOpen"
+                :layer-id="item.id"
+                :layer="item.layer"
+                :url="item.url"
+                :viewer-name="viewerName"
+                @close="close"
+                @showFeedbackDialog="showFeedbackDialog"
+              />
             </template>
-            <template v-else-if="indeterminate">
-              {{ open
-                ? `mdi-folder-open`
-                : `mdi-folder`
-              }}
+            <template #feedback="{ isOpen, close }">
+              <feedback-dialog
+                :open="isOpen"
+                :menu-or-layer="item"
+                :viewer="viewerName"
+                :share-url="getUrl(item)"
+                :privacy-statement="viewerPrivacyStatement"
+                @close="close"
+              />
             </template>
-            <template v-else>
-              {{ open
-                ? `mdi-folder-open-outline`
-                : `mdi-folder-outline`
-              }}
-            </template>
-          </v-icon>
-        </div>
-        <div v-else>
-          <v-row no-gutters>
-            <v-col class="ml-n5">
-              <v-icon v-if="item.timeFilter">
-                {{ selected ? 'mdi-clock-time-three' : 'mdi-clock-time-three-outline' }}
-              </v-icon>
-            </v-col>
-            <v-col>
-              <v-icon v-if="item.layer">
-                {{ selected ? 'mdi-layers' : 'mdi-layers-outline' }}
-              </v-icon>
-            </v-col>
-          </v-row>
-        </div>
-      </template>
-      <template #label="{ item, selected }">
-        <layer-control
-          :id="item.id"
-          :name="item.name"
-          :selected="selected"
-          :parent-ids="item.parentIds.toString()"
-          :is-layer="!!item.layer"
-          :has-metadata="!!item.metadata.length || getUrl(item) !== ''"
-          @update-layer-opacity="updateLayerOpacity"
-          @zoom-to-layer-extent="zoomToLayerExtent"
-          @select="handleSelect"
-        >
-          <template #info="{ isOpen, close, showFeedbackDialog }">
-            <layer-info-dialog
-              :title="item.name"
-              :content="item.metadata"
-              :share-url="getUrl(item)"
-              :open="isOpen"
-              :layer-id="item.id"
-              :layer="item.layer"
-              :url="item.url"
-              :viewer-name="viewerName"
-              @close="close"
-              @showFeedbackDialog="showFeedbackDialog"
-            />
-          </template>
-          <template #feedback="{ isOpen, close }">
-            <feedback-dialog
-              :open="isOpen"
-              :menu-or-layer="item"
-              :viewer="viewerName"
-              :share-url="getUrl(item)"
-              :privacy-statement="viewerPrivacyStatement"
-              @close="close"
-            />
-          </template>
-        </layer-control>
-      </template>
+          </layer-control>
+        </template>
       </v-treeview>
     </div>
   </v-sheet>
