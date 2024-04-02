@@ -189,8 +189,10 @@
       const searchParams = new URLSearchParams(window.location.search)
       const folders = (searchParams.get('folders') || '').split(',')
       
-      this.openedItems = folders
-      this.keyForceTreeUpdate = 1
+      setTimeout(() => {
+        this.openedItems = folders
+      }, '200')
+      
       
     
     },
