@@ -182,13 +182,13 @@
         console.log('this.openedItems', this.openedItems)
       },
     },
-    mounted () {
+    created () {
       console.log('mounted')
       const searchParams = new URLSearchParams(window.location.search)
       const folders = (searchParams.get('folders') || '').split(',')
-      setTimeout(() => {
-        this.openedItems = folders
-      }, '1000')
+      //setTimeout(() => {
+      this.openedItems = folders
+      //}, '500')
     
     },
     methods: {
