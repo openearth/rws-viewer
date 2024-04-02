@@ -32,8 +32,9 @@
     </div>
     <div class="layers-scrollable">
       <v-treeview
-        data-v-step="2"
+        :key="keyForceTreeUpdate"
         ref="tree"
+        data-v-step="2"
         class="layer-chooser__tree"
         :value="activeFlattenedLayerIds"
         hoverable
@@ -147,6 +148,7 @@
       value: [],
       onlyActive: false,
       openedItems: [],
+      keyForceTreeUpdate:0,
     }),
 
     computed: {
@@ -163,30 +165,44 @@
 
     watch: {
       searchString(newValue, oldValue) {
+        console.log('searchString')
         if (oldValue === '') {
           this.$refs.tree.updateAll(true)
         }
       },
       onlyActive(newValue) {
+        console.log('only Active')
         this.$refs.tree.updateAll(newValue)
       },
       '$route.query'() {
+        console.log('route.query')
         if (this.$route.query.folders) {
           this.openedItems = (this.$route.query.folders || '').split(',')
         } 
       },
+      openedItems() {
+        console.log('this.openedItems', this.openedItems)
+      },
     },
     mounted () {
+      console.log('mounted')
       const searchParams = new URLSearchParams(window.location.search)
       const folders = (searchParams.get('folders') || '').split(',')
-      this.openedItems = folders
+      
+      setTimeout(() => {
+        this.openedItems = folders
+      }, '500')
+      
+      
+    
     },
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity', 'updateZoomExtent' ]),
       handleOpenedFolders(newValue, oldValue) {
-        if (newValue.length === 0 && !oldValue) {
+        console.log('hanldeOpenedFolders newValue and OldValue', newValue, oldValue)
+        /*  if (newValue.length === 0 && !oldValue) {
           return 
-        }
+        } */
         const url = new URL(window.location.href)
         if (url.searchParams.get('folders') === newValue.join(',')) {
           return 
@@ -211,9 +227,11 @@
         }
       },
       expandAll() {
+        console.log('expand all')
         this.$refs.tree.updateAll(true)
       },
       collapseAll() {
+        console.log('collapseAll')
         this.$refs.tree.updateAll(false)
       },
       activeFilter(item, input, textKey) {
