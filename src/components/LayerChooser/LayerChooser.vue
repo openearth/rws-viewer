@@ -43,7 +43,7 @@
         :items="layersWithParents"
         :search="search"
         :filter="activeFilter"
-        :open="['156216757','143810679']"
+        :open="openedItems"
         @input="handleInput"
         @update:open="handleOpenedFolders"
       >
@@ -185,12 +185,7 @@
       console.log('mounted')
       const searchParams = new URLSearchParams(window.location.search)
       const folders = (searchParams.get('folders') || '').split(',')
-      console.log('folders', folders)
-      folders.forEach(folder => {
-        this.openedItems = [ folder, ...this.openedItems ]
-        console.log('opendItems', this.openedItems)
-      })
-      console.log('this.openedItems in mounted', this.openedItems)
+      this.openedItems = folders
     },
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity', 'updateZoomExtent' ]),
