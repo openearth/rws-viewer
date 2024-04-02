@@ -45,6 +45,7 @@
         :filter="activeFilter"
         :open="openedItems"
         @input="handleInput"
+        @update:open="handleOpenedFolders"
       >
         <template #prepend="{selected, open, item, indeterminate}">
           <div v-if="!item.layer">
@@ -185,7 +186,10 @@
       console.log('mounted')
       const searchParams = new URLSearchParams(window.location.search)
       const folders = (searchParams.get('folders') || '').split(',')
-      this.openedItems = folders
+      setTimeout(() => {
+        this.openedItems = folders
+      }, '1000')
+    
     },
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity', 'updateZoomExtent' ]),
