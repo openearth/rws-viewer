@@ -163,16 +163,17 @@
 
     watch: {
       searchString(newValue, oldValue) {
+        console.log('searchString')
         if (oldValue === '') {
-          console.log('updateTree')
           this.$refs.tree.updateAll(true)
         }
       },
       onlyActive(newValue) {
-        console.log('updateTere onlyActive', newValue)
+        console.log('only Active')
         this.$refs.tree.updateAll(newValue)
       },
       '$route.query'() {
+        console.log('route.query')
         if (this.$route.query.folders) {
           this.openedItems = (this.$route.query.folders || '').split(',')
         } 
@@ -190,6 +191,7 @@
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity', 'updateZoomExtent' ]),
       handleOpenedFolders(newValue, oldValue) {
+        console.log('hanldeOpenedFolders newValue and OldValue', newValue, oldValue)
         if (newValue.length === 0 && !oldValue) {
           return 
         }
@@ -217,9 +219,11 @@
         }
       },
       expandAll() {
+        console.log('expand all')
         this.$refs.tree.updateAll(true)
       },
       collapseAll() {
+        console.log('collapseAll')
         this.$refs.tree.updateAll(false)
       },
       activeFilter(item, input, textKey) {
