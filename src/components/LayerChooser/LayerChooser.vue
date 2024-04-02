@@ -32,6 +32,7 @@
     </div>
     <div class="layers-scrollable">
       <v-treeview
+        :key="keyForceTreeUpdate"
         ref="tree"
         data-v-step="2"
         class="layer-chooser__tree"
@@ -147,6 +148,7 @@
       value: [],
       onlyActive: false,
       openedItems: [],
+      keyForceTreeUpdate:0,
     }),
 
     computed: {
@@ -186,9 +188,10 @@
       console.log('mounted')
       const searchParams = new URLSearchParams(window.location.search)
       const folders = (searchParams.get('folders') || '').split(',')
-      setTimeout(() => {
-        this.openedItems = folders
-      }, '200')
+      
+      this.openedItems = folders
+      this.keyForceTreeUpdate = 1
+      
     
     },
     methods: {
