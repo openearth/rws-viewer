@@ -17,6 +17,7 @@ export default {
     selectedTimestamp: null, // needed in ISOstring format
     cqlFilter: null,
     apis,
+    openedFolders: [], // folders that are open in the layer structure
   }),
 
   getters: {
@@ -34,6 +35,7 @@ export default {
     timeExtent: state => state.timeExtent,
     selectedTimestamp: state => state.selectedTimestamp,
     cqlFilter: state => state.cqlFilter,
+    openedFolders: state => state.openedFolders,
   },
 
   mutations: {
@@ -58,10 +60,13 @@ export default {
     RESET_TIME_EXTENT(state) {
       state.timeExtent = []
     },
+    SET_OPENED_FOLDERS(state, folders) {
+      state.openedFolders = folders
+    },
   },
 
   actions: {
-    async getAppData({ dispatch }, { route, locale }) {
+    async getAppData({ dispatch, commit }, { route, locale }) {
       const viewer = route?.params?.config
 
       //Set viewer configuration
@@ -78,6 +83,9 @@ export default {
 
       const searchParams = new URLSearchParams(window.location.search)
       const initialLayerIds = (searchParams.get('layers') || '').split(',')
+      const folders = (searchParams.get('folders') || '').split(',')
+      //if there are folders in the url, store them in the openedFolders state
+      commit('SET_OPENED_FOLDERS', folders)
       let layersById = getLayersById(layers, initialLayerIds)
 
       if (!layersById.length && defaultLayer?.id) {

@@ -43,7 +43,7 @@
         :items="layersWithParents"
         :search="search"
         :filter="activeFilter"
-        :open="openedItems"
+        :open="openedFolders"
         @input="handleInput"
         @update:open="handleOpenedFolders"
       >
@@ -151,7 +151,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerConfig', 'viewerName', 'viewerPrivacyStatement' ]),
-      ...mapGetters('data', [ 'displayLayers' ]),
+      ...mapGetters('data', [ 'displayLayers', 'openedFolders' ]),
       ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
       layersWithParents() {
         return addParentIdToLayers(this.displayLayers)
