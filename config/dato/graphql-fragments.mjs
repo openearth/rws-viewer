@@ -24,6 +24,7 @@ fragment menuWithLayers on MenuRecord {
       freehandRectangleDrawing
       pointSelection
       multipleSelection
+      selectableLayer
     }
     tags {
       title
