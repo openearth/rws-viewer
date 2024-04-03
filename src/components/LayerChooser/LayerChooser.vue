@@ -146,7 +146,6 @@
       searchString: '',
       value: [],
       onlyActive: false,
-      openedItems: [],
     }),
 
     computed: {
@@ -172,19 +171,14 @@
       },
       '$route.query'() {
         if (this.$route.query.folders) {
-          this.openedItems = (this.$route.query.folders || '').split(',')
+          const folders = (this.$route.query.folders || '').split(',')
+          this.setOpenedFolders(folders)
         } 
       },
     },
-    mounted () {
-      const searchParams = new URLSearchParams(window.location.search)
-      const folders = (searchParams.get('folders') || '').split(',')
-      setTimeout(() => {
-        this.openedItems = folders
-      }, '500')
-    },
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity', 'updateZoomExtent' ]),
+      ...mapActions('data', [ 'setOpenedFolders' ]),
       handleOpenedFolders(newValue, oldValue) {
         if (newValue.length === 0 && !oldValue) {
           return 

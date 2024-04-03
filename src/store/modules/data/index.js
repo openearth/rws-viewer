@@ -171,5 +171,8 @@ export default {
     setCQLFilter({ commit }, filter) {
       commit('SET_CQL_FILTER', filter)
     }, 
+    setOpenedFolders({ commit }, folders) {
+      commit('SET_OPENED_FOLDERS', folders)
+    },
   },
 }
