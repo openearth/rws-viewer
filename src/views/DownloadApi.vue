@@ -58,8 +58,7 @@
           </v-btn>
         </v-col>
       </v-row>
-      <!-- TODO: fix hardcoded part -->
-      <div v-if="selectedApi.name === 'AquaDesk'">
+      <div v-if="selectedApi.pointSelection">
         <v-subheader>or </v-subheader>
         <v-row v-if="selectedApi">
           <v-col>
@@ -74,7 +73,8 @@
             </v-btn>
           </v-col>
         </v-row>
-
+      </div>
+      <div v-if="selectedApi.freehandRectangleDrawing">
         <v-subheader> or </v-subheader>
         <v-row>
           <v-col v-if="drawRectangle">
@@ -252,7 +252,6 @@
     },
     mounted() {
       this.hideActiveLayers()
-
     },
     updated() {
       this.hideActiveLayers()
@@ -391,7 +390,7 @@
           return
         }
 
-        if (this.selectedLayerToDownloadFrom && _.get(this.selectedLayerToDownloadFrom.externalApi[0], 'name') === 'AquaDesk') {
+        if (this.selectedLayerToDownloadFrom && this.selectedLayerToDownloadFrom.externalApi[0].selectableLayer) {
 
           this.updateWmsLayerOpacity({ id: this.selectedLayerToDownloadFrom.id, opacity: 1 })
           const restActiveFlattenedLayers = this.activeFlattenedLayers.filter(activeLayer => activeLayer.id != this.selectedLayerToDownloadFrom.id)

@@ -32,8 +32,8 @@
     </div>
     <div class="layers-scrollable">
       <v-treeview
-        data-v-step="2"
         ref="tree"
+        data-v-step="2"
         class="layer-chooser__tree"
         :value="activeFlattenedLayerIds"
         hoverable
@@ -43,7 +43,7 @@
         :items="layersWithParents"
         :search="search"
         :filter="activeFilter"
-        :open="openedItems"
+        :open="openedFolders"
         @input="handleInput"
         @update:open="handleOpenedFolders"
       >
@@ -146,12 +146,11 @@
       searchString: '',
       value: [],
       onlyActive: false,
-      openedItems: [],
     }),
 
     computed: {
       ...mapGetters('app', [ 'viewerConfig', 'viewerName', 'viewerPrivacyStatement' ]),
-      ...mapGetters('data', [ 'displayLayers' ]),
+      ...mapGetters('data', [ 'displayLayers', 'openedFolders' ]),
       ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
       layersWithParents() {
         return addParentIdToLayers(this.displayLayers)
@@ -172,17 +171,14 @@
       },
       '$route.query'() {
         if (this.$route.query.folders) {
-          this.openedItems = (this.$route.query.folders || '').split(',')
+          const folders = (this.$route.query.folders || '').split(',')
+          this.setOpenedFolders(folders)
         } 
       },
     },
-    mounted () {
-      const searchParams = new URLSearchParams(window.location.search)
-      const folders = (searchParams.get('folders') || '').split(',')
-      this.openedItems = folders
-    },
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity', 'updateZoomExtent' ]),
+      ...mapActions('data', [ 'setOpenedFolders' ]),
       handleOpenedFolders(newValue, oldValue) {
         if (newValue.length === 0 && !oldValue) {
           return 

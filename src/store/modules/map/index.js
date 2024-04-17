@@ -169,7 +169,7 @@ export default {
       commit('SET_MAP_LOADED')
     },
     loadLayerOnMap({ commit, state }, { layers }) {
-
+    
       const layersToAdd = difference(layers, state.activeFlattenedLayers)
 
       layersToAdd.forEach((layer) => {
