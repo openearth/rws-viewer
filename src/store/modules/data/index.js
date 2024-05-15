@@ -17,6 +17,7 @@ export default {
     selectedTimestamp: null, // needed in ISOstring format
     cqlFilter: null,
     apis,
+
   }),
 
   getters: {
@@ -65,7 +66,7 @@ export default {
       const viewer = route?.params?.config
 
       //Set viewer configuration
-      const { mapCenter, mapZoom, defaultLayer, privacyStatement, userAgreement } = await getViewerConfiguration(viewer)
+      const { mapCenter, mapZoom, defaultLayer, privacyStatement, userAgreement, acknowledgments } = await getViewerConfiguration(viewer)
 
       dispatch('map/setMapCenter', mapCenter, { root: true })
       dispatch('map/setMapZoom', mapZoom, { root: true })
@@ -75,6 +76,7 @@ export default {
       dispatch('app/setViewerName', { name }, { root: true })
       dispatch('app/setViewerPrivacyStatement', { privacyStatement }, { root: true })
       dispatch('app/setViewerUserAgreement', { userAgreement }, { root: true })
+      dispatch('app/setViewerAcknowledgments', { acknowledgments }, { root: true })
 
       const searchParams = new URLSearchParams(window.location.search)
       const initialLayerIds = (searchParams.get('layers') || '').split(',')

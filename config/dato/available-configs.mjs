@@ -14,6 +14,7 @@ query {
     }
     privacyStatement
     userAgreement
+    acknowledgments
   }
 }
 `
@@ -33,6 +34,7 @@ export default async function dumpAvailableConfigs() {
       defaultLayer: config.defaultLayer,
       privacyStatement: config.privacyStatement,
       userAgreement: config.userAgreement,
+      acknowledgments: config.acknowledgments
     }
   })
 

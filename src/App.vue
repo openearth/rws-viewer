@@ -12,6 +12,7 @@
         :loadingburger="localeIsLoading"
         @open-contact-form="onOpenContactForm"
         @open-user-agreement="onClickOpenContactForm"
+        @open-privacy-statement="onOpenPrivacyStatement"
       />
     </template>
     <div v-if="!showApiLayer">
@@ -347,6 +348,9 @@
       },
       onClickOpenContactForm() {
         this.clickedUserAgreementOpen = true
+      },
+      onOpenPrivacyStatement() {
+        window.open(this.viewerPrivacyStatement, '_blank')
       },
     },
   }

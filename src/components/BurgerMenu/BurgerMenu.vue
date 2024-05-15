@@ -29,6 +29,8 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
+  
   export default {
     props: {
       loadingburger: {
@@ -36,16 +38,27 @@
         required: true,
       },
     },
-    data: () => ({
+
+    computed: {
+      ...mapGetters('app', [ 'viewerPrivacyStatement' ]),
+
       // TODO: make the names change based on selected language
-      items: [
-        { title: 'Manual', url: 'https://waterinfo-extra.rws.nl/doorverwijzingen/overzicht-handleidingen-viewer/'  },
-        { title: 'Contact' },
-        { title: 'Acknowledgments' },
-        { title: 'Disclaimer' },
-        { title: 'Privacy statement' },
-      ],
-    }),
+      items() {
+        let baseItems = [
+          { title: 'Manual', url: 'https://waterinfo-extra.rws.nl/doorverwijzingen/overzicht-handleidingen-viewer/' },
+          { title: 'Contact' },
+          { title: 'Acknowledgments' },
+          { title: 'Disclaimer' },
+        ]
+
+        if (this.viewerPrivacyStatement) {
+          baseItems.push({ title: 'Privacy statement' })
+        }
+
+        return baseItems
+      },
+    },
+
     methods: {
       handleItemClick(item) {
         if (item.url) {
@@ -54,6 +67,8 @@
           this.$emit('open-contact-form')
         } if (item.title ==='Disclaimer') {
           this.$emit('open-user-agreement')
+        } if (item.title ==='Privacy statement') {
+          this.$emit('open-privacy-statement')
         }
       },
     },
