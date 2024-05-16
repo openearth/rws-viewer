@@ -40,17 +40,21 @@
     },
 
     computed: {
-      ...mapGetters('app', [ 'viewerPrivacyStatement' ]),
+      ...mapGetters('app', [ 'viewerPrivacyStatement', 'acknowledgments', 'viewerUserAgreement' ]),
 
       // TODO: make the names change based on selected language
       items() {
         let baseItems = [
           { title: 'Manual', url: 'https://waterinfo-extra.rws.nl/doorverwijzingen/overzicht-handleidingen-viewer/' },
           { title: 'Contact' },
-          { title: 'Acknowledgments' },
-          { title: 'Disclaimer' },
-        ]
 
+        ]
+        if (this.acknowledgments) {
+          baseItems.push({ title: 'Acknowledgments' })
+        }
+        if (this.viewerUserAgreement) {
+          baseItems.push({ title: 'Disclaimer' })
+        }
         if (this.viewerPrivacyStatement) {
           baseItems.push({ title: 'Privacy statement' })
         }
@@ -65,6 +69,8 @@
           window.open(item.url, '_blank')
         } if (item.title ==='Contact') {
           this.$emit('open-contact-form')
+        } if (item.title ==='Acknowledgments') {
+          this.$emit('open-acknowledgments')
         } if (item.title ==='Disclaimer') {
           this.$emit('open-user-agreement')
         } if (item.title ==='Privacy statement') {

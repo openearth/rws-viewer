@@ -73,5 +73,6 @@
   "sendFeedbackError": "Something went wrong during sending feedback.",
   "feedbackDescription": "Contact us",
   "conditionsOfUseConsent": "I agree with the Conditions of Use",
-  "iAgree": "I agree"
+  "iAgree": "I agree",
+  "acknowledgments": "Acknowledgments"
 }

@@ -11,6 +11,7 @@
       <burger-menu
         :loadingburger="localeIsLoading"
         @open-contact-form="onOpenContactForm"
+        @open-acknowledgments="onOpenAcknowledgments"
         @open-user-agreement="onClickOpenContactForm"
         @open-privacy-statement="onOpenPrivacyStatement"
       />
@@ -41,6 +42,12 @@
       :open="showUserAgreement || clickedUserAgreementOpen"
       :user-agreement="viewerUserAgreement"
       @close="closeUserAgreementDialog"
+    />
+
+    <acknowledgments-dialog
+      :open="acknowledgmentsDialogOpen"
+      :acknowledgments="acknowledgments"
+      @close="closeAcknowledgmentsDialog"
     />
 
     <v-tour
@@ -131,6 +138,7 @@
   import { defaultLocale, availableLocales } from '~/plugins/i18n'
   import { tourConfig, generateTourSteps, tourStepCount } from '@/plugins/vue-tour'
   import FeedbackDialog from './components/FeedbackDialog/FeedbackDialog.vue'
+  import AcknowledgmentsDialog from '~/components/AcknowledgmentsDialog/AcknowledgmentsDialog.vue'
 
   const removeRegion = locale => locale.replace(/-.+/, '')
   const localeIsAvailable = locale => availableLocales.includes(locale)
@@ -156,6 +164,7 @@
       MapboxScaleControl,
       UserAgreementDialog,
       FeedbackDialog,
+      AcknowledgmentsDialog,
     },
 
     data: () => ({
@@ -176,10 +185,11 @@
       userAgreementOpen: true,
       feedbackDialogOpen: false,
       clickedUserAgreementOpen: false,
+      acknowledgmentsDialogOpen: false,
     }),
 
     computed: {
-      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement', 'viewerPrivacyStatement' ]),
+      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement', 'viewerPrivacyStatement', 'acknowledgments' ]),
       ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
       ...mapGetters('data', [ 'timeExtent', 'flattenedLayers', 'displayLayers' ]),
       formattedTimeExtent() {
@@ -351,6 +361,12 @@
       },
       onOpenPrivacyStatement() {
         window.open(this.viewerPrivacyStatement, '_blank')
+      },
+      onOpenAcknowledgments() {
+        this.acknowledgmentsDialogOpen = true
+      },
+      closeAcknowledgmentsDialog() {
+        this.acknowledgmentsDialogOpen = false
       },
     },
   }
