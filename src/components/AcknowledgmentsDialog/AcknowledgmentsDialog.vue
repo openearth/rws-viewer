@@ -31,6 +31,7 @@
         default: false,
       },
       acknowledgments: {
+        type: String,
         required: true,
       },
     },
