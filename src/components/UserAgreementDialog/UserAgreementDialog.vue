@@ -5,9 +5,15 @@
     persistent
     width="800"
   >
-    <v-card class="pa-3">
-      <div class="scrollbar" v-html="userAgreement" />
-      <v-card :flat="true" class="pa-2">
+    <v-card>
+      <v-app-bar class="pr-1 pl-2" flat>
+        <v-toolbar-title>{{ $t('disclaimer') }}</v-toolbar-title>
+      </v-app-bar>
+
+      <v-divider />
+
+      <div class="px-7 py-3 flex-grow-1 overflow-y-auto justify-center" v-html="userAgreement" />
+      <v-card-text>
         <v-form>
           <v-checkbox
             v-model="conditionsOfUse"
@@ -23,7 +29,7 @@
             </v-btn>
           </div>
         </v-form>
-      </v-card>
+      </v-card-text>
     </v-card>
   </v-dialog>
 </template>
@@ -57,7 +63,4 @@
 </script>
 
 <style>
-  .scrollbar {
-    overflow-y: scroll;
-  }
 </style>
