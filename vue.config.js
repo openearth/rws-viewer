@@ -14,19 +14,16 @@ module.exports = {
         '~': path.resolve(__dirname, 'src/'),
       },
     },
+    module: {
+      rules: [
+        {
+          test: /\.md$/,
+          loader: 'raw-loader',
+        },
+      ],
+    },
   },
   devServer: {
     progress: false,
-  },
-  chainWebpack: (config) => {
-    config.module
-      .rule("markdown")
-      .test(/\.md$/)
-      .use("html-loader")
-      .loader("html-loader")
-      .end()
-      .use("markdown-loader")
-      .loader("markdown-loader")
-      .end();
   },
 }

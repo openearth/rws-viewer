@@ -43,9 +43,10 @@
       :user-agreement="viewerUserAgreement"
       @close="closeUserAgreementDialog"
     />
-    <!-- :acknowledgments="acknowledgments" -->
+   
     <acknowledgments-dialog
       :open="acknowledgmentsDialogOpen"
+      :acknowledgments="acknowledgments" 
       @close="closeAcknowledgmentsDialog"
     />
 

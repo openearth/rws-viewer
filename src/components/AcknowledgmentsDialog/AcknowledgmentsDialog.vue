@@ -17,31 +17,34 @@
       </v-app-bar>
 
       <v-divider />
-
-      <div class="px-4 py-5 flex-grow-1 overflow-y-auto justify-center" v-html="acknowledgments" />
+      <vue-markdown class="px-4 py-5 flex-grow-1 overflow-y-auto justify-center" :source="acknowledgments" />
+      <!-- <div class="px-4 py-5 flex-grow-1 overflow-y-auto justify-center" v-html="acknowledgments" /> -->
     </v-card>
   </v-dialog>
 </template>
 
 <script>
-  import acknowledgments from './acknowledgments.md'
-
+/*   import acknowledgments from './acknowledgments.md' */
+  import VueMarkdown from 'vue-markdown-render'
   export default {
+    components: {
+      VueMarkdown,
+    },
     props: {
       open: {
         type: Boolean,
         default: false,
       },
-      // acknowledgments: {
-      //   type: String,
-      //   required: true,
-      // },
+      acknowledgments: {
+        type: String,
+        required: true,
+      },
     },
 
     data() {
       return {
         conditionsOfUse: false,
-        acknowledgments,
+        /* acknowledgments, */
       }
     },
 
