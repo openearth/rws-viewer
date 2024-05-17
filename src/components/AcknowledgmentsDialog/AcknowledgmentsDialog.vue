@@ -24,21 +24,24 @@
 </template>
 
 <script>
+  import acknowledgments from './acknowledgments.md'
+
   export default {
     props: {
       open: {
         type: Boolean,
         default: false,
       },
-      acknowledgments: {
-        type: String,
-        required: true,
-      },
+      // acknowledgments: {
+      //   type: String,
+      //   required: true,
+      // },
     },
 
     data() {
       return {
         conditionsOfUse: false,
+        acknowledgments,
       }
     },
 
