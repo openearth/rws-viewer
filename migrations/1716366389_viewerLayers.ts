@@ -80,10 +80,8 @@ export default async function (client: Client) {
    * CONTENT MIGRATIONS
    */
 
-  // mock content
   const viewers = [];
 
-  // TODO: only enable when all migrations work
   for await (const record of client.items.listPagedIterator({
     filter: {
       type: "menu",
@@ -97,7 +95,6 @@ export default async function (client: Client) {
   console.log("Found viewers:", viewers.length);
   console.log("Attempting to update viewers");
 
-  // move the 'published' field to the 'meta -> published_at/first_published_at' field
   const updatedViewers = await Promise.all(
     viewers.map(async (viewer) => {
       console.log("Updating viewer:", viewer.id);
