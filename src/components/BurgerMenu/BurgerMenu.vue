@@ -50,7 +50,7 @@
 
         ]
         if (this.acknowledgments) {
-          baseItems.push({ title: this.$t('acknowledgements') })
+          baseItems.push({ title: this.$t('acknowledgments') })
         }
         if (this.viewerUserAgreement) {
           baseItems.push({ title: this.$t('disclaimer') })
