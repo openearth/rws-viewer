@@ -45,18 +45,18 @@
       // TODO: make the names change based on selected language
       items() {
         let baseItems = [
-          { title: 'Manual', url: 'https://waterinfo-extra.rws.nl/doorverwijzingen/overzicht-handleidingen-viewer/' },
-          { title: 'Contact' },
+          { title: this.$t('manual'), url: 'https://waterinfo-extra.rws.nl/doorverwijzingen/overzicht-handleidingen-viewer/' },
+          { title: this.$t('contact') },
 
         ]
         if (this.acknowledgments) {
-          baseItems.push({ title: 'Acknowledgments' })
+          baseItems.push({ title: this.$t('acknowledgements') })
         }
         if (this.viewerUserAgreement) {
-          baseItems.push({ title: 'Disclaimer' })
+          baseItems.push({ title: this.$t('disclaimer') })
         }
         if (this.viewerPrivacyStatement) {
-          baseItems.push({ title: 'Privacy statement' })
+          baseItems.push({ title: this.$t('privacyStatement') })
         }
 
         return baseItems

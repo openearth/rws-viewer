@@ -83,5 +83,12 @@
   "tour4": "Bekijk de bijbehorende legenda's",
   "tour5": "Download lagen",
   "tour6": "Beheer favoriete lagen",
-  "tour7": "Pas laag tijd aan"
+  "tour7": "Pas laag tijd aan",
+  "tourNext": "Volgende",
+  "tourPrevious": "Vorige",
+  "tourSkip": "Einde",
+  "tourStop": "Tour overslaan",
+  "manual": "Handleiding",
+  "contact": "Contact",
+  "privacyStatement": "Privacy Statement"
 }

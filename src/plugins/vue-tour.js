@@ -1,9 +1,15 @@
 import Vue from 'vue'
 import VueTour from 'vue-tour'
 import 'vue-tour/dist/vue-tour.css'
-import {i18n} from './i18n.js'
+import { i18n } from './i18n.js'
 export const tourConfig = {
   useKeyboardNavigation: true,
+  labels: {
+    buttonNext: i18n.t('tourNext'),
+    buttonPrevious: i18n.t('tourPrevious'),
+    buttonSkip: i18n.t('tourSkip'),
+    buttonStop: i18n.t('tourStop'),
+  },
 }
 
 Vue.use(VueTour)

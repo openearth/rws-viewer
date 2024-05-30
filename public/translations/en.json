@@ -83,5 +83,12 @@
   "tour4": "View the legends of the layers",
   "tour5": "Download layers",
   "tour6": "Manage favourite layers",
-  "tour7": "Control layer time"
+  "tour7": "Control layer time",
+  "tourNext": "Next",
+  "tourPrevious": "Previous",
+  "tourSkip": "Skip tour",
+  "tourStop": "Finish",
+  "manual": "Manual",
+  "contact": "Contact",
+  "privacyStatement": "Privacy Statement"
 }
