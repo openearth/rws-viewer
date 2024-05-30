@@ -67,13 +67,13 @@
       handleItemClick(item) {
         if (item.url) {
           window.open(item.url, '_blank')
-        } if (item.title ==='Contact') {
+        } if (item.title === this.$t('contact')) {
           this.$emit('open-contact-form')
-        } if (item.title ==='Acknowledgments') {
+        } if (item.title === this.$t('acknowledgments')) {
           this.$emit('open-acknowledgments')
-        } if (item.title ==='Disclaimer') {
+        } if (item.title === this.$t('disclaimer')) {
           this.$emit('open-user-agreement')
-        } if (item.title ==='Privacy statement') {
+        } if (item.title === this.$t('privacyStatement')) {
           this.$emit('open-privacy-statement')
         }
       },
