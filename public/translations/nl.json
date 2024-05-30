@@ -75,5 +75,13 @@
   "conditionsOfUseConsent": "Ik ga akkoord met de Gebruiksvoorwaarden",
   "iAgree": "Ik ga akkoord",
   "acknowledgments": "Colofon",
-  "disclaimer": "Disclaimer"
+  "disclaimer": "Disclaimer",
+  "tour1a": "Welkom op het ",
+  "tour1b": " platform!",
+  "tour2": "Selecteer één of meer lagen om te visualiseren",
+  "tour3": "Pas de volgorde van de geselecteerde lagen aan",
+  "tour4": "Bekijk de bijbehorende legenda's",
+  "tour5": "Download lagen",
+  "tour6": "Beheer favoriete lagen",
+  "tour7": "Pas laag tijd aan"
 }
