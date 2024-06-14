@@ -26,6 +26,7 @@ function executeFetch(token, variables, query) {
       'Content-Type': 'application/json',
       Accept: 'application/json',
       Authorization: `Bearer ${ token }`,
+      'X-Environment': 'translations'
     },
     data: { query, variables },
   }).then(res => {

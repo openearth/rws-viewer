@@ -10,7 +10,9 @@ module.exports = {
     chrome: true,
     Vue: 'readable',
   },
-  plugins: [ 'vue' ], // required to lint *.vue files
+  plugins: [
+    'vue',
+  ], // required to lint *.vue files
   extends: [
     'plugin:vue/essential',
     'plugin:vue/strongly-recommended',
