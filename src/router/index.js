@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
-import { VALID_VIEWER_NAMES } from '../lib/constants'
+import { getValidViewerNames } from '../lib/viewer-configs'
+import { app } from '../main'
+import { i18n } from '../plugins/i18n'
 
 let hasHadFirstRoute = false
 
@@ -59,10 +61,12 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  const locale = i18n.locale
   const storedConfig = store.getters['app/viewerConfig']
-  const config = VALID_VIEWER_NAMES.includes(to.params.config)
-      ? to.params.config
-      : VALID_VIEWER_NAMES[0]
+  const validViewerNames = getValidViewerNames(locale)
+  const config = validViewerNames.includes(to.params.config)
+    ? to.params.config
+    : validViewerNames[0]
 
   if (!storedConfig) {
     store.commit('app/SET_VIEWER_CONFIG', config)

@@ -3,7 +3,7 @@ import dumpMenus from './menu-helpers.mjs'
 import { MenuWithLayersFragment } from './graphql-fragments.mjs'
 
 const query = /* graphql */ `
-${ MenuWithLayersFragment }
+${MenuWithLayersFragment}
 
 query ($first: IntType, $skip: IntType = 0, $locale: SiteLocale) {
   menus: allMenus(first: $first, skip: $skip, locale: $locale) {
@@ -15,9 +15,9 @@ query ($first: IntType, $skip: IntType = 0, $locale: SiteLocale) {
 }
 `
 
-export default async function dumpNLConfig() {
+export default async function dumpConfig(locale) {
   const { data: { menus } } = await datocmsRequest(process.env.DATO_API_TOKEN, {
-    locale: 'nl',
-  }, query) 
-  dumpMenus(menus, 'nl')
+    locale,
+  }, query)
+  dumpMenus(menus, locale)
 }

@@ -2,6 +2,7 @@ import {
   type Client,
   buildBlockRecord,
 } from "@datocms/cli/lib/cma-client-node";
+import { backOff } from "exponential-backoff";
 import * as deepl from "deepl-node";
 import { type TextResult } from "deepl-node";
 
@@ -11,8 +12,6 @@ export const translator = new deepl.Translator(authKey);
 export const translateToEn = async (text: string): Promise<string> => {
   if (!text) return text;
 
-  return `Translated: ${text}`;
-
   const translatedText = (await translator.translateText(
     text,
     "nl",
@@ -21,6 +20,36 @@ export const translateToEn = async (text: string): Promise<string> => {
 
   return translatedText.text;
 };
+
+export async function fetchWithBackoff(url: string, options = {}) {
+  const fetchFunction = async () => {
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return response;
+  };
+
+  try {
+    const response = await backOff(fetchFunction, {
+      retry: (error, attemptNumber) => {
+        console.log(`Attempt ${attemptNumber}: ${error.message}`);
+        return true; // Retry on any error
+      },
+      startingDelay: 500, // Initial delay in milliseconds
+      maxDelay: 5000, // Maximum delay in milliseconds
+      numOfAttempts: 5, // Total number of attempts
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Fetch failed after multiple attempts:", error);
+    throw error;
+  }
+}
+
 
 export const updateFieldLocalization = async (
   client: Client,

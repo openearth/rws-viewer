@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { curry, times, pipe, split, map } from 'ramda'
 import slugify from '@sindresorhus/slugify'
+import { datoEnvironment } from './constants.mjs'
 
 const capitaliseFirstLetter = ([ first, ...rest ]) => first.toUpperCase() + rest.join('')
 const lowerCaseFirstLetter =  ([ first, ...rest ]) => first.toLowerCase() + rest.join('')
@@ -26,7 +27,7 @@ function executeFetch(token, variables, query) {
       'Content-Type': 'application/json',
       Accept: 'application/json',
       Authorization: `Bearer ${ token }`,
-      'X-Environment': 'translations'
+      'X-Environment': datoEnvironment,
     },
     data: { query, variables },
   }).then(res => {

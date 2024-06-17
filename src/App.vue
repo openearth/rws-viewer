@@ -130,7 +130,6 @@
       MapboxDrawControl,
       LayerOrder,
       LocaleSwitcher,
-      MapboxDrawControl,
       MapboxSelectPointControl,
       MapboxLegend,
       TimeSlider,
