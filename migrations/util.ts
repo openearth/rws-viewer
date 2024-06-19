@@ -21,35 +21,86 @@ export const translateToEn = async (text: string): Promise<string> => {
   return translatedText.text;
 };
 
-export async function fetchWithBackoff(url: string, options = {}) {
-  const fetchFunction = async () => {
-    const response = await fetch(url, options);
+export class FetchWithThrottle {
+  private maxRequestsPerInterval: number;
+  private interval: number;
+  private queue: Array<{
+    url: string;
+    options?: RequestInit;
+    resolve: (value: any) => void;
+    reject: (reason?: any) => void;
+    retries: number;
+    retryDelay: number;
+  }>;
+  private currentRequests: number;
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+  constructor(maxRequestsPerInterval: number, interval: number) {
+    this.maxRequestsPerInterval = maxRequestsPerInterval;
+    this.interval = interval;
+    this.queue = [];
+    this.currentRequests = 0;
 
-    return response;
+    setInterval(this.processQueue, this.interval);
+  }
+
+  public fetchWithThrottle = (
+    url: string,
+    options?: RequestInit,
+    retries = 3,
+    retryDelay = 1000
+  ): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      this.queue.push({ url, options, resolve, reject, retries, retryDelay });
+      this.processQueue();
+    });
   };
 
-  try {
-    const response = await backOff(fetchFunction, {
-      retry: (error, attemptNumber) => {
-        console.log(`Attempt ${attemptNumber}: ${error.message}`);
-        return true; // Retry on any error
-      },
-      startingDelay: 500, // Initial delay in milliseconds
-      maxDelay: 5000, // Maximum delay in milliseconds
-      numOfAttempts: 5, // Total number of attempts
-    });
+  private processQueue = (): void => {
+    while (
+      this.queue.length > 0 &&
+      this.currentRequests < this.maxRequestsPerInterval
+    ) {
+      const { url, options, resolve, reject, retries, retryDelay } =
+        this.queue.shift()!;
+      this.currentRequests++;
+      this.makeFetchRequest(url, options, resolve, reject, retries, retryDelay);
+    }
+  };
 
-    return response;
-  } catch (error) {
-    console.error("Fetch failed after multiple attempts:", error);
-    throw error;
-  }
+  private makeFetchRequest = (
+    url: string,
+    options: RequestInit | undefined,
+    resolve: (value: any) => void,
+    reject: (reason?: any) => void,
+    retries: number,
+    retryDelay: number
+  ): void => {
+    fetch(url, options)
+      .then((response) => {
+        this.currentRequests--;
+        resolve(response);
+        this.processQueue();
+      })
+      .catch((error) => {
+        if (retries > 0) {
+          setTimeout(() => {
+            this.makeFetchRequest(
+              url,
+              options,
+              resolve,
+              reject,
+              retries - 1,
+              retryDelay
+            );
+          }, retryDelay);
+        } else {
+          this.currentRequests--;
+          reject(error);
+          this.processQueue();
+        }
+      });
+  };
 }
-
 
 export const updateFieldLocalization = async (
   client: Client,

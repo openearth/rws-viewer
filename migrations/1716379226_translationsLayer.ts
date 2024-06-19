@@ -1,6 +1,6 @@
 import { Client } from "@datocms/cli/lib/cma-client-node";
 import {
-  fetchWithBackoff,
+  FetchWithThrottle,
   translateNestedModularContent,
   translateToEn,
   updateFieldLocalization,
@@ -92,17 +92,18 @@ const migrateContent = async (client: Client) => {
 
     await Promise.all(
       layers.map(async (layer) => {
+        console.log("Attempting update for layer", layer.id);
+
         try {
           const updatedLayer = await translateLayerFields(layer, client);
-          console.log("Attempting update for layer", layer.id);
+
           await client.items.update(layer.id, updatedLayer);
+
+          console.log(`Layer with ID ${layer.id} updated successfully`);
         } catch (error: any) {
           failedIds.push(layer.id);
 
-          console.error(
-            `Error updating layer with ID: ${layer.id}`,
-            error?.cause?.code
-          );
+          console.error(`Error updating layer with ID: ${layer.id}`, error);
         }
       })
     );
@@ -121,7 +122,9 @@ const migrateContent = async (client: Client) => {
 };
 
 export default async function (client: Client) {
-  client.config.fetchFn = fetchWithBackoff as typeof client.config.fetchFn;
+  const fetcher = new FetchWithThrottle(30, 1000);
+  client.config.fetchFn =
+    fetcher.fetchWithThrottle as typeof client.config.fetchFn;
 
   try {
     await updateFields(client);

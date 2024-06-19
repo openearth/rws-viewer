@@ -1,6 +1,6 @@
 import { Client } from "@datocms/cli/lib/cma-client-node";
 import {
-  fetchWithBackoff,
+  FetchWithThrottle,
   translateToEn,
   updateFieldLocalization,
 } from "./util";
@@ -60,22 +60,30 @@ const migrateContent = async (client: Client) => {
         type: "menu",
       },
     })) {
-      viewers.push(record);
+      if (viewers.length < 200) {
+        viewers.push(record);
+      }
     }
 
     console.log(`Found ${viewers.length} viewers to migrate`);
 
     await Promise.all(
       viewers.map(async (viewer) => {
+        console.log("Attempting update for viewer", viewer.id);
+
+        const updatedViewer = await translateViewerFields(viewer, client);
+
         try {
-          const updatedViewer = await translateViewerFields(viewer, client);
           await client.items.update(viewer.id, updatedViewer);
+
+          console.log(`Viewer with ID ${viewer.id} updated successfully`);
         } catch (error: any) {
           failedIds.push(viewer.id);
 
           console.error(
             `Error updating viewer with ID ${viewer.id}:`,
-            error.cause.code
+            error,
+            `data: ${JSON.stringify(updatedViewer)}`
           );
         }
       })
@@ -95,7 +103,9 @@ const migrateContent = async (client: Client) => {
 };
 
 export default async function (client: Client) {
-  client.config.fetchFn = fetchWithBackoff as typeof client.config.fetchFn;
+  const fetcher = new FetchWithThrottle(5, 1000);
+  client.config.fetchFn =
+    fetcher.fetchWithThrottle as typeof client.config.fetchFn;
 
   try {
     await updateFields(client);
