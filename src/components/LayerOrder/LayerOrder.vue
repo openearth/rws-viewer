@@ -55,7 +55,7 @@
       ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
       ...mapGetters('data', [ 'flattenedLayers' ]),
       activeLayers() {
-        return this.activeFlattenedLayerIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
+        return this.activeFlattenedLayerIds.map(id => this.flattenedLayers.find(layer => layer?.id === id))
       },
     },
 
