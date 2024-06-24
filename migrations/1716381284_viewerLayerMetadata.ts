@@ -1,5 +1,160 @@
 /* eslint-disable */
-import { Client, SimpleSchemaTypes } from "@datocms/cli/lib/cma-client-node";
+import {
+  Client,
+  SimpleSchemaTypes,
+  buildBlockRecord,
+} from "@datocms/cli/lib/cma-client-node";
+
+// Function to create fields
+async function createField(client: Client, modelId: string, fieldConfig: any) {
+  try {
+    await client.fields.create(modelId, fieldConfig);
+    console.log(`Field "${fieldConfig.label}" created successfully.`);
+  } catch (error) {
+    console.error(`Error creating field "${fieldConfig.label}":`, error);
+  }
+}
+
+// Function to delete fields
+async function deleteField(client: Client, fieldId: string) {
+  try {
+    await client.fields.destroy(fieldId);
+    console.log(`Field "${fieldId}" deleted successfully.`);
+  } catch (error) {
+    console.error(`Error deleting field "${fieldId}":`, error);
+  }
+}
+
+// Function to fetch content for any array of IDs
+async function fetchContentByIds(
+  client: Client,
+  ids: string[]
+): Promise<any[]> {
+  try {
+    return await Promise.all(ids.map((id) => client.items.find(id)));
+  } catch (error) {
+    console.error("Error fetching content", error);
+    return [];
+  }
+}
+
+// Function to fetch viewer records
+async function fetchViewerRecords(client: Client): Promise<any[]> {
+  const records: any[] = [];
+  for await (const record of client.items.listPagedIterator({
+    filter: {
+      type: "menu",
+      // TODO: remove filter when all migrations work
+      ids: "93795018",
+    },
+  })) {
+    records.push(record);
+  }
+  return records;
+}
+
+// Function to create a viewer layer
+async function createViewerLayer(
+  client: Client,
+  layer: any
+): Promise<any | null> {
+  try {
+    return await client.items.create({
+      item_type: {
+        id: "AZBPikJtQD6zem3SEFbUOg",
+        type: "item_type",
+      },
+      layer: layer,
+    });
+  } catch (error) {
+    console.error("Error creating viewer layer", layer, error);
+    return null;
+  }
+}
+
+// Function to update a viewer with new layers
+async function updateViewerWithLayers(
+  client: Client,
+  viewerId: string,
+  viewerLayers: any[]
+) {
+  try {
+    await client.items.update(viewerId, {
+      viewer_layers: viewerLayers.map((layer) => layer?.id),
+    });
+  } catch (error) {
+    console.error("Error updating viewer", viewerId, error);
+  }
+}
+
+// Function to fetch and update viewer layers
+async function fetchAndUpdateViewerLayers(client: Client, viewer: any) {
+  const layers = viewer.layers as any[];
+  const viewerLayers = viewer.viewer_layers as string[];
+
+  const layerContent = await Promise.all(
+    layers.map(async (layer) => {
+      const content = await client.items.find(layer);
+      const [linksContent, pocOrganisationsContent, metadataContent] =
+        await Promise.all([
+          // @ts-expect-error - TS doesn't know that these are arrays
+          fetchContentByIds(client, content.links),
+          // @ts-expect-error - TS doesn't know that these are arrays
+          fetchContentByIds(client, content.point_of_contact_organisations),
+          // @ts-expect-error - TS doesn't know that these are arrays
+          fetchContentByIds(client, content.metadata),
+        ]);
+
+      return {
+        use_factsheet_as_metadata: content.use_factsheet_as_metadata,
+        factsheets: content.factsheets,
+        inspire_metadata: content.inspire_metadata,
+        links: await Promise.all(
+          linksContent.map(({ id, ...link }) => buildBlockRecord(link))
+        ),
+        point_of_contact_organisations: await Promise.all(
+          pocOrganisationsContent.map(({ id, ...org }) => buildBlockRecord(org))
+        ),
+        metadata: await Promise.all(
+          metadataContent.map(({ id, ...metadata }) =>
+            buildBlockRecord(metadata)
+          )
+        ),
+      };
+    })
+  );
+
+  await Promise.all(
+    viewerLayers.map(async (viewerLayer, index) => {
+      console.log("Updating viewer layer", viewerLayer);
+      await client.items.update(viewerLayer, layerContent[index]);
+    })
+  );
+}
+
+// Main function to migrate content
+async function migrateContent(client: Client) {
+  let viewers = await fetchViewerRecords(client);
+  console.log("Found viewers:", viewers.length);
+
+  const updatePromises = viewers.map(async (viewer) => {
+    const viewerLayers = await Promise.all(
+      viewer.layers.map((layer) => createViewerLayer(client, layer))
+    );
+    await updateViewerWithLayers(client, viewer.id, viewerLayers);
+  });
+
+  await Promise.all(updatePromises);
+
+  viewers = await fetchViewerRecords(client);
+  console.log("Updated viewers:", viewers.length);
+
+  const updateLayerPromises = viewers.map((viewer) =>
+    fetchAndUpdateViewerLayers(client, viewer)
+  );
+  await Promise.all(updateLayerPromises);
+  console.log("Updated viewer layers");
+}
 
 export default async function (client: Client) {
   /**
@@ -7,31 +162,21 @@ export default async function (client: Client) {
    */
   console.log("Creating new fields/fieldsets");
 
-  console.log(
-    'Create fieldset "Metadata" in model "Viewer Layer" (`viewer_layer`)'
-  );
   await client.fieldsets.create("AZBPikJtQD6zem3SEFbUOg", {
     id: "fn_svHXtTV-fHFVwauCMMA",
     title: "Metadata",
   });
 
-  console.log(
-    'Create Boolean field "Use factsheet as metadata" (`use_factsheet_as_metadata`) in model "Viewer Layer" (`viewer_layer`)'
-  );
-  await client.fields.create("AZBPikJtQD6zem3SEFbUOg", {
+  await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
     id: "SFMZ15rQT96BWMlk-oNTKw",
     label: "Use factsheet as metadata",
     field_type: "boolean",
     api_key: "use_factsheet_as_metadata",
     appearance: { addons: [], editor: "boolean", parameters: {} },
-    default_value: null,
     fieldset: { id: "fn_svHXtTV-fHFVwauCMMA", type: "fieldset" },
   });
 
-  console.log(
-    'Create Multiple links field "Factsheets" (`factsheets`) in model "Viewer Layer" (`viewer_layer`)'
-  );
-  await client.fields.create("AZBPikJtQD6zem3SEFbUOg", {
+  await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
     id: "cdI3aQqZSm6KSDB7ZjYliA",
     label: "Factsheets",
     field_type: "links",
@@ -46,14 +191,10 @@ export default async function (client: Client) {
       size: { max: 1 },
     },
     appearance: { addons: [], editor: "links_select", parameters: {} },
-    default_value: null,
     fieldset: { id: "fn_svHXtTV-fHFVwauCMMA", type: "fieldset" },
   });
 
-  console.log(
-    'Create Single link field "Inspire Metadata" (`inspire_metadata`) in model "Viewer Layer" (`viewer_layer`)'
-  );
-  await client.fields.create("AZBPikJtQD6zem3SEFbUOg", {
+  await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
     id: "L2-PJwMoQYG8GvmMPHLfnw",
     label: "Inspire Metadata",
     field_type: "link",
@@ -67,14 +208,10 @@ export default async function (client: Client) {
       },
     },
     appearance: { addons: [], editor: "link_select", parameters: {} },
-    default_value: null,
     fieldset: { id: "fn_svHXtTV-fHFVwauCMMA", type: "fieldset" },
   });
 
-  console.log(
-    'Create Modular Content (Multiple blocks) field "Links" (`links`) in model "Viewer Layer" (`viewer_layer`)'
-  );
-  await client.fields.create("AZBPikJtQD6zem3SEFbUOg", {
+  await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
     id: "QMWqj9_vQTW9nDDsJNum3g",
     label: "Links",
     field_type: "rich_text",
@@ -85,14 +222,10 @@ export default async function (client: Client) {
       editor: "rich_text",
       parameters: { start_collapsed: false },
     },
-    default_value: null,
     fieldset: { id: "fn_svHXtTV-fHFVwauCMMA", type: "fieldset" },
   });
 
-  console.log(
-    'Create Modular Content (Multiple blocks) field "Point of contact organisations" (`point_of_contact_organisations`) in model "Viewer Layer" (`viewer_layer`)'
-  );
-  await client.fields.create("AZBPikJtQD6zem3SEFbUOg", {
+  await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
     id: "GBKyE8E-QG-TAoIl_3o2RQ",
     label: "Point of contact organisations",
     field_type: "rich_text",
@@ -103,14 +236,10 @@ export default async function (client: Client) {
       editor: "rich_text",
       parameters: { start_collapsed: false },
     },
-    default_value: null,
     fieldset: { id: "fn_svHXtTV-fHFVwauCMMA", type: "fieldset" },
   });
 
-  console.log(
-    'Create Modular Content (Multiple blocks) field "Custom metadata" (`metadata`) in model "Viewer Layer" (`viewer_layer`)'
-  );
-  await client.fields.create("AZBPikJtQD6zem3SEFbUOg", {
+  await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
     id: "ONdAuSZHSL2lnCanvP1Qow",
     label: "Custom metadata",
     field_type: "rich_text",
@@ -121,13 +250,9 @@ export default async function (client: Client) {
       editor: "rich_text",
       parameters: { start_collapsed: false },
     },
-    default_value: null,
     fieldset: { id: "fn_svHXtTV-fHFVwauCMMA", type: "fieldset" },
   });
 
-  console.log("Finalize models/block models");
-
-  console.log('Update model "Viewer Layer" (`viewer_layer`)');
   await client.itemTypes.update("AZBPikJtQD6zem3SEFbUOg", {
     title_field: { id: "C49FZ0DJQuqOqgb4cfSEfw", type: "field" },
   });
@@ -135,128 +260,7 @@ export default async function (client: Client) {
   /**
    * CONTENT MIGRATIONS
    */
+  await migrateContent(client);
 
-  // Function to fetch viewer records
-  async function fetchViewerRecords() {
-    const records = [];
-    for await (const record of client.items.listPagedIterator({
-      filter: {
-        type: "menu",
-        // TODO: remove filter when all migrations work
-        ids: "93795018",
-      },
-    })) {
-      records.push(record);
-    }
-    return records;
-  }
-
-  // Function to create a viewer layer
-  async function createViewerLayer(layer) {
-    try {
-      const createdLayer = await client.items.create({
-        item_type: {
-          id: "AZBPikJtQD6zem3SEFbUOg",
-          type: "item_type",
-        },
-        layer: layer,
-      });
-      return createdLayer;
-    } catch (error) {
-      console.error("Error creating viewer layer", layer, error);
-      return null;
-    }
-  }
-
-  // Function to update a viewer with new layers
-  async function updateViewerWithLayers(viewerId, viewerLayers) {
-    try {
-      await client.items.update(viewerId, {
-        viewer_layers: viewerLayers.map((layer) => layer?.id),
-      });
-    } catch (error) {
-      console.error("Error updating viewer", viewerId, error);
-    }
-  }
-
-  // General function to fetch content for any array of IDs
-  async function fetchContentByIds(ids) {
-    try {
-      const contentArray = await Promise.all(
-        ids.map(async (id) => {
-          const content = await client.items.find(id);
-          return content;
-        })
-      );
-      return contentArray;
-    } catch (error) {
-      console.error("Error fetching content", error);
-      return [];
-    }
-  }
-
-  // Function to fetch and update viewer layers
-  async function fetchAndUpdateViewerLayers(viewer) {
-    const layers = viewer.layers as any[];
-    const viewerLayers = viewer.viewer_layers as string[];
-
-    const layerContent = await Promise.all(
-      layers.map(async (layer) => {
-        const content = await client.items.find(layer);
-
-        // Fetch content for links, point_of_contact_organisations, and metadata
-        const linksContent = await fetchContentByIds(content.links);
-        console.log("Links content", linksContent);
-        // const pocOrganisationsContent = await fetchContentByIds(content.point_of_contact_organisations);
-        // const metadataContent = await fetchContentByIds(content.metadata);
-
-        return {
-          use_factsheet_as_metadata: content.use_factsheet_as_metadata,
-          factsheets: content.factsheets,
-          inspire_metadata: content?.inspire_metadata,
-          // links: linksContent,
-          // point_of_contact_organisations: pocOrganisationsContent,
-          // metadata: metadataContent,
-        };
-      })
-    );
-
-    await Promise.all(
-      viewerLayers.map(async (viewerLayer, index) => {
-        console.log("Updating viewer layer", viewerLayer);
-        await client.items.update(viewerLayer, layerContent[index]);
-      })
-    );
-  }
-
-  // Main function to migrate content
-  async function migrateContent() {
-    let viewers = await fetchViewerRecords();
-    console.log("Found viewers:", viewers.length);
-    console.log("Attempting to update viewers");
-
-    const updatePromises = viewers.map(async (viewer) => {
-      const viewerLayers = await Promise.all(
-        (viewer.layers as any).map((layer) => createViewerLayer(layer))
-      );
-
-      await updateViewerWithLayers(viewer.id, viewerLayers);
-    });
-
-    await Promise.all(updatePromises);
-
-    // Fetch the updated viewers records
-    viewers = await fetchViewerRecords();
-    console.log("Updated viewers:", viewers.length);
-
-    const updateLayerPromises = viewers.map(async (viewer) => {
-      await fetchAndUpdateViewerLayers(viewer);
-    });
-
-    await Promise.all(updateLayerPromises);
-    console.log("Updated viewer layers");
-  }
-
-  // Execute the migration
-  migrateContent();
+  await deleteField(client, "7583020");
 }
