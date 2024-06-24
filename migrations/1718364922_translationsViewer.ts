@@ -12,7 +12,7 @@ export const translateViewerFields = async (viewer: any, client: Client) => {
     return {
       ...viewerFields,
       user_agreement: {
-        en: await translateToEn(viewer.user_agreement.en),
+        en: viewer.user_agreement.en,
         nl: viewer.user_agreement.en,
       },
       acknowledgments: {
@@ -29,13 +29,6 @@ export const translateViewerFields = async (viewer: any, client: Client) => {
 const updateFields = async (client: Client) => {
   console.log("Update existing fields/fieldsets");
   try {
-    await updateFieldLocalization(
-      client,
-      "10491841",
-      "Multiple-paragraph text field 'User agreement'",
-      "Menu"
-    );
-
     await updateFieldLocalization(
       client,
       "H7cTIWERTG-z24IE8ILCUw",
@@ -60,7 +53,7 @@ const migrateContent = async (client: Client) => {
         type: "menu",
       },
     })) {
-      if (viewers.length < 200) {
+      if (viewers.length < 100) {
         viewers.push(record);
       }
     }
@@ -110,7 +103,11 @@ export default async function (client: Client) {
   try {
     await updateFields(client);
     await migrateContent(client);
+
+    process.exit(0);
   } catch (error) {
     console.error("Migration failed:", error);
+
+    process.exit(1);
   }
 }

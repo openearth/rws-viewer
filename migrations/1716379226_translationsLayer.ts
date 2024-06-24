@@ -87,8 +87,12 @@ const migrateContent = async (client: Client) => {
         type: "layer",
       },
     })) {
-      layers.push(record);
+      if (layers.length < 100) {
+        layers.push(record);
+      }
     }
+
+    console.log(`Found ${layers.length} layers to migrate`);
 
     await Promise.all(
       layers.map(async (layer) => {
@@ -129,7 +133,11 @@ export default async function (client: Client) {
   try {
     await updateFields(client);
     await migrateContent(client);
+
+    process.exit(0);
   } catch (error) {
     console.error("Migration failed", error);
+
+    process.exit(1);
   }
 }

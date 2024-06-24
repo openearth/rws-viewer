@@ -2,7 +2,6 @@ import {
   type Client,
   buildBlockRecord,
 } from "@datocms/cli/lib/cma-client-node";
-import { backOff } from "exponential-backoff";
 import * as deepl from "deepl-node";
 import { type TextResult } from "deepl-node";
 
