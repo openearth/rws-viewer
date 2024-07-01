@@ -86,9 +86,7 @@ const migrateContent = async (client: Client) => {
         type: "layer",
       },
     })) {
-      if (layers.length < 10) {
-        layers.push(record);
-      }
+      layers.push(record);
     }
 
     console.log(`Found ${layers.length} layers to migrate`);
