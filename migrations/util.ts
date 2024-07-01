@@ -5,7 +5,7 @@ import {
 import * as deepl from "deepl-node";
 import { type TextResult } from "deepl-node";
 
-const authKey = "1009e706-f52b-458b-b767-caefd5c216b0";
+const authKey = process.env.DEEPL_KEY || "";
 export const translator = new deepl.Translator(authKey);
 
 export const translateToEn = async (text: string): Promise<string> => {
