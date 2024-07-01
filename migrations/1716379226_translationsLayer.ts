@@ -7,7 +7,6 @@ import {
 } from "./util";
 
 export const translateLayerFields = async (layer: any, client: Client) => {
-  client.config;
   const { updatedAt, createdAt, ...layerFields } = layer;
 
   try {
@@ -87,7 +86,7 @@ const migrateContent = async (client: Client) => {
         type: "layer",
       },
     })) {
-      if (layers.length < 100) {
+      if (layers.length < 10) {
         layers.push(record);
       }
     }
@@ -134,9 +133,11 @@ export default async function (client: Client) {
     await updateFields(client);
     await migrateContent(client);
 
-    process.exit(0);
+    await client.itemTypes.update("layer", {
+      all_locales_required: true,
+    });
   } catch (error) {
-    console.error("Migration failed", error);
+    console.error("Layers migration failed", error);
 
     process.exit(1);
   }

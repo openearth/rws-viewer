@@ -7,14 +7,7 @@ import {
 
 export const translateViewerFields = async (viewer: any, client: Client) => {
   try {
-    const { updatedAt, createdAt, ...viewerFields } = viewer;
-
     return {
-      ...viewerFields,
-      user_agreement: {
-        en: viewer.user_agreement.en,
-        nl: viewer.user_agreement.en,
-      },
       acknowledgments: {
         en: await translateToEn(viewer.acknowledgments.en),
         nl: viewer.acknowledgments.en,
@@ -53,9 +46,7 @@ const migrateContent = async (client: Client) => {
         type: "menu",
       },
     })) {
-      if (viewers.length < 100) {
-        viewers.push(record);
-      }
+      viewers.push(record);
     }
 
     console.log(`Found ${viewers.length} viewers to migrate`);
@@ -67,7 +58,12 @@ const migrateContent = async (client: Client) => {
         const updatedViewer = await translateViewerFields(viewer, client);
 
         try {
-          await client.items.update(viewer.id, updatedViewer);
+          const currentViewerInstance = await client.items.find(viewer.id);
+
+          await client.items.update(viewer.id, {
+            ...currentViewerInstance,
+            ...updatedViewer,
+          });
 
           console.log(`Viewer with ID ${viewer.id} updated successfully`);
         } catch (error: any) {
@@ -104,9 +100,11 @@ export default async function (client: Client) {
     await updateFields(client);
     await migrateContent(client);
 
-    process.exit(0);
+    await client.itemTypes.update("menu", {
+      all_locales_required: true,
+    });
   } catch (error) {
-    console.error("Migration failed:", error);
+    console.error("Viewers migration failed:", error);
 
     process.exit(1);
   }
