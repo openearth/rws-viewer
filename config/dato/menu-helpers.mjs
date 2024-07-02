@@ -15,9 +15,7 @@ function buildChildrenTree(items) {
           child.tags = child.tags.map(({ title }) => title)
         }
 
-        return {
-          ...child,
-        } 
+        return child
       })
     }
     

@@ -12,9 +12,7 @@ module.exports = {
   },
   plugins: [
     'vue',
-    // "plugin:@typescript-eslint/eslint-recommended",
-    // "plugin:@typescript-eslint/recommended"
-  ], // required to lint *.vue files
+  ],
   extends: [
     'plugin:vue/essential',
     'plugin:vue/strongly-recommended',
@@ -40,4 +38,17 @@ module.exports = {
     'vue/script-indent': [ 'error', 2, { baseIndent: 1 } ],
     'vue/no-v-html': 'off',
   },
+  overrides: [
+    {
+      files: ['*.ts', '*.tsx'],
+      parser: '@typescript-eslint/parser',
+      plugins: [
+        '@typescript-eslint',
+      ],
+      extends: [
+        'plugin:@typescript-eslint/eslint-recommended',
+        'plugin:@typescript-eslint/recommended',
+      ],
+    },
+  ],
 }
