@@ -20,7 +20,6 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:vue/essential',
-    // 'plugin:@typescript-eslint/recommended',
   ],
   rules: {
     'array-bracket-spacing': [ 'warn', 'always' ],
@@ -41,4 +40,17 @@ module.exports = {
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/camelcase': 'off',
   },
+  overrides: [
+    {
+      files: ['*.ts', '*.tsx'],
+      parser: '@typescript-eslint/parser',
+      plugins: [
+        '@typescript-eslint',
+      ],
+      extends: [
+        'plugin:@typescript-eslint/eslint-recommended',
+        'plugin:@typescript-eslint/recommended',
+      ],
+    },
+  ],
 }
