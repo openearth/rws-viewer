@@ -15,9 +15,7 @@ module.exports = {
   },
   plugins: [
     'vue',
-    // "plugin:@typescript-eslint/eslint-recommended",
-    // "plugin:@typescript-eslint/recommended"
-  ], // required to lint *.vue files
+  ],
   extends: [
     'eslint:recommended',
     'plugin:vue/essential',
