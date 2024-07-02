@@ -24,7 +24,7 @@
       ...mapGetters('map', [ 'activeFlattenedLayerIds', 'activeFlattenedLayers' ]),
 
       activeLayers() {
-        return this.activeFlattenedLayerIds.map(id => this.flattenedLayers.find(layer => layer.id === id))
+        return this.activeFlattenedLayerIds.map(id => this.flattenedLayers.find(layer => layer?.id === id))
       },
     },
 
@@ -46,7 +46,7 @@
 
       onSelectLayers(layerIds) {
         const layers = layerIds
-          .map(layerId => this.flattenedLayers.find(({ id }) => id === layerId))
+          .map(layerId => this.flattenedLayers.find((l) => l?.id === layerId))
 
         if (layers.length) {
           this.$trackEvent('layers', 'select', layers.map(layer => layer.name).join(','))
@@ -57,7 +57,7 @@
 
       onRemoveLayer(layerIds) {
         const layers = layerIds
-          .map(layerId => this.flattenedLayers.find(({ id }) => id === layerId))
+          .map(layerId => this.flattenedLayers.find((l) => l?.id === layerId))
 
         if (layers.length) {
           this.$trackEvent('layers', 'deselect', layers.map(layer => layer.name).join(','))
