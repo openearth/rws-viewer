@@ -31,10 +31,10 @@
     watch: {
       drawMode(mode) {
         if (mode) {
-          map.getCanvas().style.cursor = 'crosshair'
+          window.map.getCanvas().style.cursor = 'crosshair'
           this.mbDraw.changeMode(`draw_${ mode }`)
         } else {
-          map.getCanvas().style.cursor = ''
+          window.map.getCanvas().style.cursor = ''
           this.mbDraw.changeMode('simple_select')
         }
       },

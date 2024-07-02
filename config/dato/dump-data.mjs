@@ -10,8 +10,7 @@ import { PUBLIC_DIR } from './constants.mjs'
 import dumpApiData from './api.mjs'
 import dumpAppConfig from './appconfig.mjs'
 import dumpAvailableConfigs from './available-configs.mjs'
-import dumpENConfig from './en-config.mjs'
-import dumpNLConfig from './nl-config.mjs'
+import dumpConfig from './config.mjs'
 
 async function run() {
   try {
@@ -21,9 +20,10 @@ async function run() {
     await Promise.all([
       dumpApiData(),
       dumpAppConfig(),
-      dumpAvailableConfigs(),
-      dumpENConfig(),
-      dumpNLConfig(),
+      dumpAvailableConfigs('en'),
+      dumpAvailableConfigs('nl'),
+      dumpConfig('en'),
+      dumpConfig('nl'),
     ])
 
     console.log('Dumped all data')

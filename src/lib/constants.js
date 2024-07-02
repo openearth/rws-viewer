@@ -1,6 +1,6 @@
-export const VALID_VIEWER_CONFIGS = require('../../public/data/available-configs-viewers.json')
+// export const VALID_VIEWER_CONFIGS = require('../../public/data/available-configs-viewers.json')
 
-export const VALID_VIEWER_NAMES =  VALID_VIEWER_CONFIGS.map(({ name }) => name)
+// export const VALID_VIEWER_NAMES =  VALID_VIEWER_CONFIGS.map(({ name }) => name)
 
 export const CATEGORIES = require('../../public/data/app.json').categories
 

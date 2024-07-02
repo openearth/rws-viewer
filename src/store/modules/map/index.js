@@ -52,8 +52,6 @@ export default {
     mapCenter: state => state.mapCenter,
     mapZoom: state => state.mapZoom,
     zoomExtent: state => state.zoomExtent,
-    filteredLayerId: state => state.filteredLayerId,
-    selectedLayerForSelection: state => state.selectedLayerForSelection,
     multipleSelection: state => state.multipleSelection,
   },
 
@@ -156,9 +154,6 @@ export default {
     UPDATE_ZOOM_EXTENT(state, bbox) {
       state.zoomExtent = bbox
     },
-    SET_SELECTED_LAYER_FOR_SELECTION(state, layer) {
-      state.selectedLayerForSelection = layer
-    },
     SET_MULTIPLE_SELECTION(state, boolean) {
       state.multipleSelection = boolean
     },
@@ -202,7 +197,7 @@ export default {
       })
     },
 
-    loadApiLayerOnMap({ commit, state }, layer) {
+    loadApiLayerOnMap({ commit }, layer) {
       getWmsCapabilities(layer.url)
       .then(capabilities => getLayerProperties(capabilities, layer.layer))
       .then(({ serviceType, timeExtent, wmsVersion, bbox }) => {
@@ -210,7 +205,7 @@ export default {
       },
       )
     },
-    removeApiLayerFromMap({ commit, state }) {
+    removeApiLayerFromMap({ commit }) {
       commit('REMOVE_WMS_API_LAYER')
     },
     removeFilteredLayerId({ commit }) {
