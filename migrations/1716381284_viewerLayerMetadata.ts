@@ -45,7 +45,7 @@ async function fetchViewerRecords(client: Client): Promise<any[]> {
     filter: {
       type: "menu",
       // TODO: remove filter when all migrations work
-      ids: "93795018",
+      ids: "96814771",
     },
   })) {
     records.push(record);
@@ -139,7 +139,7 @@ async function migrateContent(client: Client) {
 
   const updatePromises = viewers.map(async (viewer) => {
     const viewerLayers = await Promise.all(
-      viewer.layers.map((layer) => createViewerLayer(client, layer))
+      viewer.layers.map((layer: any) => createViewerLayer(client, layer))
     );
     await updateViewerWithLayers(client, viewer.id, viewerLayers);
   });
@@ -162,10 +162,12 @@ export default async function (client: Client) {
    */
   console.log("Creating new fields/fieldsets");
 
-  await client.fieldsets.create("AZBPikJtQD6zem3SEFbUOg", {
-    id: "fn_svHXtTV-fHFVwauCMMA",
-    title: "Metadata",
-  });
+  const metaDataFieldset = await client.fieldsets.create(
+    "AZBPikJtQD6zem3SEFbUOg",
+    {
+      title: "Metadata",
+    }
+  );
 
   await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
     id: "SFMZ15rQT96BWMlk-oNTKw",
@@ -173,7 +175,7 @@ export default async function (client: Client) {
     field_type: "boolean",
     api_key: "use_factsheet_as_metadata",
     appearance: { addons: [], editor: "boolean", parameters: {} },
-    fieldset: { id: "fn_svHXtTV-fHFVwauCMMA", type: "fieldset" },
+    fieldset: { id: metaDataFieldset.id, type: "fieldset" },
   });
 
   await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
@@ -191,7 +193,7 @@ export default async function (client: Client) {
       size: { max: 1 },
     },
     appearance: { addons: [], editor: "links_select", parameters: {} },
-    fieldset: { id: "fn_svHXtTV-fHFVwauCMMA", type: "fieldset" },
+    fieldset: { id: metaDataFieldset.id, type: "fieldset" },
   });
 
   await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
@@ -208,7 +210,7 @@ export default async function (client: Client) {
       },
     },
     appearance: { addons: [], editor: "link_select", parameters: {} },
-    fieldset: { id: "fn_svHXtTV-fHFVwauCMMA", type: "fieldset" },
+    fieldset: { id: metaDataFieldset.id, type: "fieldset" },
   });
 
   await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
@@ -222,7 +224,7 @@ export default async function (client: Client) {
       editor: "rich_text",
       parameters: { start_collapsed: false },
     },
-    fieldset: { id: "fn_svHXtTV-fHFVwauCMMA", type: "fieldset" },
+    fieldset: { id: metaDataFieldset.id, type: "fieldset" },
   });
 
   await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
@@ -236,7 +238,12 @@ export default async function (client: Client) {
       editor: "rich_text",
       parameters: { start_collapsed: false },
     },
-    fieldset: { id: "fn_svHXtTV-fHFVwauCMMA", type: "fieldset" },
+    fieldset: { id: metaDataFieldset.id, type: "fieldset" },
+  });
+
+  const menuFieldSet = await client.fieldsets.create("AZBPikJtQD6zem3SEFbUOg", {
+    title: "i MENU inhoud",
+    hint: "Hierin worden de 'wijzigbare onderdelen' van het i-menu ondergebracht. Diverse onderdelen van het i-menu worden automatisch gekoppeld tijdens het opvragen van het i-menu in de viewer.",
   });
 
   await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
@@ -250,11 +257,69 @@ export default async function (client: Client) {
       editor: "rich_text",
       parameters: { start_collapsed: false },
     },
-    fieldset: { id: "fn_svHXtTV-fHFVwauCMMA", type: "fieldset" },
+    fieldset: { id: menuFieldSet.id, type: "fieldset" },
+  });
+
+  await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
+    label: "Bron",
+    field_type: "string",
+    api_key: "bron",
+    appearance: {
+      addons: [],
+      editor: "single_line",
+      parameters: {
+        heading: false,
+      },
+    },
+    validators: {
+      format: {
+        predefined_pattern: "url",
+      },
+    },
+    fieldset: { id: menuFieldSet.id, type: "fieldset" },
+  });
+
+  await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
+    label: "Info",
+    field_type: "string",
+    api_key: "info",
+    appearance: {
+      addons: [],
+      editor: "single_line",
+      parameters: {
+        heading: false,
+      },
+    },
+    validators: {
+      format: {
+        predefined_pattern: "url",
+      },
+    },
+    fieldset: { id: menuFieldSet.id, type: "fieldset" },
+  });
+
+  await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
+    label: "Bijsluiter",
+    field_type: "string",
+    api_key: "bijsluiter",
+    appearance: {
+      addons: [],
+      editor: "single_line",
+      parameters: {
+        heading: false,
+      },
+    },
+    validators: {
+      format: {
+        predefined_pattern: "url",
+      },
+    },
+    fieldset: { id: menuFieldSet.id, type: "fieldset" },
   });
 
   await client.itemTypes.update("AZBPikJtQD6zem3SEFbUOg", {
     title_field: { id: "C49FZ0DJQuqOqgb4cfSEfw", type: "field" },
+    image_preview_field: { id: "C49FZ0DJQuqOqgb4cfSEfw", type: "field" },
   });
 
   /**
