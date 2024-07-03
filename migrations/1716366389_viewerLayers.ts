@@ -1,7 +1,12 @@
 /* eslint-disable */
 import { Client, SimpleSchemaTypes } from "@datocms/cli/lib/cma-client-node";
+import { FetchWithThrottle } from "./util";
 
 export default async function (client: Client) {
+  const fetcher = new FetchWithThrottle(30, 1000);
+  client.config.fetchFn =
+    fetcher.fetchWithThrottle as typeof client.config.fetchFn;
+
   /**
    * SCHEMA MIGRATIONS
    */

@@ -4,6 +4,7 @@ import {
   SimpleSchemaTypes,
   buildBlockRecord,
 } from "@datocms/cli/lib/cma-client-node";
+import { FetchWithThrottle } from "./util";
 
 // Function to create fields
 async function createField(client: Client, modelId: string, fieldConfig: any) {
@@ -41,15 +42,15 @@ async function fetchContentByIds(
 // Function to fetch viewer records
 async function fetchViewerRecords(client: Client): Promise<any[]> {
   const records: any[] = [];
+
   for await (const record of client.items.listPagedIterator({
     filter: {
       type: "menu",
-      // TODO: remove filter when all migrations work
-      ids: "96814771",
     },
   })) {
     records.push(record);
   }
+
   return records;
 }
 
@@ -157,6 +158,10 @@ async function migrateContent(client: Client) {
 }
 
 export default async function (client: Client) {
+  const fetcher = new FetchWithThrottle(1, 1000);
+  client.config.fetchFn =
+    fetcher.fetchWithThrottle as typeof client.config.fetchFn;
+
   /**
    * SCHEMA MIGRATIONS
    */
