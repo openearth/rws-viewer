@@ -135,30 +135,35 @@ async function fetchAndUpdateViewerLayers(client: Client, viewer: any) {
 
 // Main function to migrate content
 async function migrateContent(client: Client) {
-  let viewers = await fetchViewerRecords(client);
-  console.log("Found viewers:", viewers.length);
+  let viewersArr = await fetchViewerRecords(client);
+  console.log("Found viewers:", viewersArr.length);
 
-  const updatePromises = viewers.map(async (viewer) => {
-    const viewerLayers = await Promise.all(
-      viewer.layers.map((layer: any) => createViewerLayer(client, layer))
+  const chunkedViewers = chunkArray(viewersArr, 10);
+
+  for (let viewers of chunkedViewers) {
+    console.log("Processing chunk of viewers: ", viewers.length)
+    const updatePromises = viewers.map(async (viewer: any) => {
+      const viewerLayers = await Promise.all(
+        viewer.layers.map((layer: any) => createViewerLayer(client, layer))
+      );
+      await updateViewerWithLayers(client, viewer.id, viewerLayers);
+    });
+
+    await Promise.all(updatePromises);
+
+    // viewers = await fetchViewerRecords(client);
+    // console.log("Updated viewers:", viewers.length);
+
+    const updateLayerPromises = viewers.map((viewer: any) =>
+      fetchAndUpdateViewerLayers(client, viewer)
     );
-    await updateViewerWithLayers(client, viewer.id, viewerLayers);
-  });
-
-  await Promise.all(updatePromises);
-
-  viewers = await fetchViewerRecords(client);
-  console.log("Updated viewers:", viewers.length);
-
-  const updateLayerPromises = viewers.map((viewer) =>
-    fetchAndUpdateViewerLayers(client, viewer)
-  );
-  await Promise.all(updateLayerPromises);
-  console.log("Updated viewer layers");
+    await Promise.all(updateLayerPromises);
+    console.log("Updated viewer layers");
+  }
 }
 
 export default async function (client: Client) {
-  const fetcher = new FetchWithThrottle(1, 1000);
+  const fetcher = new FetchWithThrottle(15, 1000);
   client.config.fetchFn =
     fetcher.fetchWithThrottle as typeof client.config.fetchFn;
 
@@ -333,4 +338,13 @@ export default async function (client: Client) {
   await migrateContent(client);
 
   await deleteField(client, "7583020");
+}
+
+function chunkArray(array: any, chunkSize: number) {
+  const result = [];
+  for (let i = 0; i < array.length; i += chunkSize) {
+      const chunk = array.slice(i, i + chunkSize);
+      result.push(chunk);
+  }
+  return result;
 }
