@@ -8,7 +8,10 @@ function buildChildrenTree(items) {
     if (item.children) {
       item.children = item.children.map(child => {
         if (child.layerInstance) {
-          child = child.layerInstance
+          child = {
+            ...child,
+            ...child.layerInstance,
+          }
         }
 
         if (child.tags) {
