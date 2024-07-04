@@ -30,10 +30,10 @@ fragment menuWithLayers on MenuRecord {
       tags {
         title
       }
-      metadata {
-        key: title
-        value: content
-      }
+    }
+    metadata {
+      key: title
+      value: content
     }
   }
   parent {
