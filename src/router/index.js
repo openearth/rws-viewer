@@ -1,8 +1,8 @@
+
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import store from '../store'
 import { getValidViewerNames } from '../lib/viewer-configs'
-import { app } from '../main'
 import { i18n } from '../plugins/i18n'
 
 let hasHadFirstRoute = false
