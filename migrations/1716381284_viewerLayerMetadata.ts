@@ -26,6 +26,16 @@ async function deleteField(client: Client, fieldId: string) {
   }
 }
 
+// Function to delete fieldsets
+async function deleteFieldset(client: Client, fieldsetId: string) {
+  try {
+    await client.fieldsets.destroy(fieldsetId);
+    console.log(`Fieldset "${fieldsetId}" deleted successfully.`);
+  } catch (error) {
+    console.error(`Error deleting fieldset "${fieldsetId}":`, error);
+  }
+}
+
 // Function to fetch content for any array of IDs
 async function fetchContentByIds(
   client: Client,
@@ -39,13 +49,29 @@ async function fetchContentByIds(
   }
 }
 
+async function fetchContentByIdsTranslated(
+  client: Client,
+  ids: { en: string[]; nl: string[] }
+): Promise<any> {
+  try {
+    return {
+      en: await Promise.all(ids.en.map((id) => client.items.find(id))),
+      nl: await Promise.all(ids.nl.map((id) => client.items.find(id))),
+    };
+  } catch (error) {
+    console.error("Error fetching content", error);
+    return [];
+  }
+}
+
 // Function to fetch viewer records
-async function fetchViewerRecords(client: Client): Promise<any[]> {
+async function fetchViewerRecords(client: Client, ids?: string[]): Promise<any[]> {
   const records: any[] = [];
 
   for await (const record of client.items.listPagedIterator({
     filter: {
       type: "menu",
+      ...(ids && { ids: ids.join(",") }),
     },
   })) {
     records.push(record);
@@ -66,6 +92,18 @@ async function createViewerLayer(
         type: "item_type",
       },
       layer: layer,
+      use_factsheet_as_metadata: null,
+      factsheets: null,
+      inspire_metadata: null,
+      point_of_contact_organisations: [],
+      links: {
+        nl: [],
+        en: [],
+      },
+      metadata: {
+        nl: [],
+        en: [],
+      },
     });
   } catch (error) {
     console.error("Error creating viewer layer", layer, error);
@@ -96,31 +134,48 @@ async function fetchAndUpdateViewerLayers(client: Client, viewer: any) {
   const layerContent = await Promise.all(
     layers.map(async (layer) => {
       const content = await client.items.find(layer);
-      const [linksContent, pocOrganisationsContent, metadataContent] =
+
+      const [pocOrganisationsContent, linksContent, metadataContent] =
         await Promise.all([
-          // @ts-expect-error - TS doesn't know that these are arrays
-          fetchContentByIds(client, content.links),
           // @ts-expect-error - TS doesn't know that these are arrays
           fetchContentByIds(client, content.point_of_contact_organisations),
           // @ts-expect-error - TS doesn't know that these are arrays
-          fetchContentByIds(client, content.metadata),
+          fetchContentByIdsTranslated(client, content.links),
+          // @ts-expect-error - TS doesn't know that these are arrays
+          fetchContentByIdsTranslated(client, content.metadata),
         ]);
 
       return {
         use_factsheet_as_metadata: content.use_factsheet_as_metadata,
         factsheets: content.factsheets,
         inspire_metadata: content.inspire_metadata,
-        links: await Promise.all(
-          linksContent.map(({ id, ...link }) => buildBlockRecord(link))
-        ),
         point_of_contact_organisations: await Promise.all(
           pocOrganisationsContent.map(({ id, ...org }) => buildBlockRecord(org))
         ),
-        metadata: await Promise.all(
-          metadataContent.map(({ id, ...metadata }) =>
-            buildBlockRecord(metadata)
-          )
-        ),
+        links: {
+          nl: await Promise.all(
+            linksContent.nl.map(({ id, ...link }: any) =>
+              buildBlockRecord(link)
+            )
+          ),
+          en: await Promise.all(
+            linksContent.en.map(({ id, ...link }: any) =>
+              buildBlockRecord(link)
+            )
+          ),
+        },
+        metadata: {
+          nl: await Promise.all(
+            metadataContent.nl.map(({ id, ...meta }: any) =>
+              buildBlockRecord(meta)
+            )
+          ),
+          en: await Promise.all(
+            metadataContent.en.map(({ id, ...meta }: any) =>
+              buildBlockRecord(meta)
+            )
+          ),
+        },
       };
     })
   );
@@ -141,18 +196,21 @@ async function migrateContent(client: Client) {
   const chunkedViewers = chunkArray(viewersArr, 10);
 
   for (let viewers of chunkedViewers) {
-    console.log("Processing chunk of viewers: ", viewers.length)
+    console.log("Processing chunk of viewers: ", viewers.length);
     const updatePromises = viewers.map(async (viewer: any) => {
       const viewerLayers = await Promise.all(
-        viewer.layers.map((layer: any) => createViewerLayer(client, layer))
+        viewer.layers.map(async (layer: any) => {
+          return await createViewerLayer(client, layer);
+        })
       );
+
       await updateViewerWithLayers(client, viewer.id, viewerLayers);
     });
 
     await Promise.all(updatePromises);
 
-    // viewers = await fetchViewerRecords(client);
-    // console.log("Updated viewers:", viewers.length);
+    viewers = await fetchViewerRecords(client, viewers.map((v: any) => v.id));
+    console.log("Updated viewers:", viewers.map((v: any) => v.id).join(", "));
 
     const updateLayerPromises = viewers.map((viewer: any) =>
       fetchAndUpdateViewerLayers(client, viewer)
@@ -235,6 +293,8 @@ export default async function (client: Client) {
       parameters: { start_collapsed: false },
     },
     fieldset: { id: metaDataFieldset.id, type: "fieldset" },
+    localized: true,
+    default_value: { en: null, nl: null },
   });
 
   await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
@@ -268,6 +328,8 @@ export default async function (client: Client) {
       parameters: { start_collapsed: false },
     },
     fieldset: { id: menuFieldSet.id, type: "fieldset" },
+    localized: true,
+    default_value: { en: null, nl: null },
   });
 
   await createField(client, "AZBPikJtQD6zem3SEFbUOg", {
@@ -337,14 +399,25 @@ export default async function (client: Client) {
    */
   await migrateContent(client);
 
+  await deleteFieldset(client, "560793");
   await deleteField(client, "7583020");
+  await deleteField(client, "10333354");
+  await deleteField(client, "10143356");
+  await deleteField(client, "10143358");
+  await deleteField(client, "10343008");
+  await deleteField(client, "7788918");
+  await deleteField(client, "10343584");
+  await deleteFieldset(client, "bUd1-swWQMqSqAJ9PIkIVw");
+  await deleteField(client, "PmGnFVE8S5-Lkg9Hk2Z1Tg");
+  await deleteField(client, "X7JuNRJMT7mz4MxNHJcEEA");
+  await deleteField(client, "efOlEbSZTWO926t5AlRY6w");
 }
 
 function chunkArray(array: any, chunkSize: number) {
   const result = [];
   for (let i = 0; i < array.length; i += chunkSize) {
-      const chunk = array.slice(i, i + chunkSize);
-      result.push(chunk);
+    const chunk = array.slice(i, i + chunkSize);
+    result.push(chunk);
   }
   return result;
 }
