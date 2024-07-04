@@ -8,6 +8,10 @@ import {
 export const translateViewerFields = async (viewer: any, client: Client) => {
   try {
     return {
+      name: {
+        en: await translateToEn(viewer.name.en),
+        nl: viewer.name.en,
+      },
       acknowledgments: {
         en: await translateToEn(viewer.acknowledgments.en),
         nl: viewer.acknowledgments.en,
@@ -22,6 +26,13 @@ export const translateViewerFields = async (viewer: any, client: Client) => {
 const updateFields = async (client: Client) => {
   console.log("Update existing fields/fieldsets");
   try {
+    await updateFieldLocalization(
+      client,
+      "7582166",
+      "Single-line string field 'Name'",
+      "Menu"
+    );
+
     await updateFieldLocalization(
       client,
       "H7cTIWERTG-z24IE8ILCUw",
