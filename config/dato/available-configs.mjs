@@ -4,8 +4,8 @@ import { PUBLIC_DIR } from './constants.mjs'
 import datocmsRequest from './datocms.mjs'
 
 const query = /* graphql */ `
-query {
-  configs: allMenus(filter: { parent: { exists: false } }) {
+query($locale: SiteLocale) {
+  configs: allMenus(filter: { parent: { exists: false } }, locale: $locale) {
     name
     mapZoom
     mapCenter
@@ -18,10 +18,10 @@ query {
 }
 `
 
-export default async function dumpAvailableConfigs() {
+export default async function dumpAvailableConfigs(locale) {
   const { data: { configs } } = await datocmsRequest(
     process.env.DATO_API_TOKEN,
-    {},
+    { locale },
     query,
   )
 
@@ -36,8 +36,10 @@ export default async function dumpAvailableConfigs() {
     }
   })
 
+  await fs.mkdir(`${PUBLIC_DIR}/${locale}`, { recursive: true })
+
   await fs.writeFile(
-    `${ PUBLIC_DIR }/available-configs-viewers.json`,
+    `${PUBLIC_DIR}/${locale}/available-configs-viewers.json`,
     JSON.stringify(availableConfigs, null, 2),
   )
 }

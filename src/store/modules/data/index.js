@@ -70,7 +70,7 @@ export default {
       const viewer = route?.params?.config
 
       //Set viewer configuration
-      const { mapCenter, mapZoom, defaultLayer, privacyStatement, userAgreement } = await getViewerConfiguration(viewer)
+      const { mapCenter, mapZoom, defaultLayer, privacyStatement, userAgreement } = await getViewerConfiguration(viewer, locale)
 
       dispatch('map/setMapCenter', mapCenter, { root: true })
       dispatch('map/setMapZoom', mapZoom, { root: true })

@@ -1,8 +1,9 @@
-import { VALID_VIEWER_CONFIGS, VALID_VIEWER_NAMES } from '~/lib/constants'
+import { getValidViewerConfigs, getValidViewerNames } from '~/lib/viewer-configs'
 import axios from 'axios'
 
-export function getViewerConfiguration(viewer) {
-  const viewerConfiguration = VALID_VIEWER_CONFIGS.find(config => config.name === viewer)
+export function getViewerConfiguration(viewer, locale) {
+  const viewerConfiguration = getValidViewerConfigs(locale)
+    .find(config => config.name === viewer)
   return viewerConfiguration
 }
 
@@ -14,12 +15,14 @@ async function getViewerData(viewer, locale) {
  
 const configRepo = {
   async getConfig(viewers, locale) {
+    const validViewerNames = getValidViewerNames(locale)
+
     const validViewers = viewers
       .split(',')
-      .filter(viewer => VALID_VIEWER_NAMES.includes(viewer))
+      .filter(viewer => validViewerNames.includes(viewer))
 
     if (validViewers.length === 0) {
-      const viewerToUse = VALID_VIEWER_NAMES[0]
+      const viewerToUse = validViewerNames[0]
       validViewers.push(viewerToUse)
       console.warn(`No (valid) viewer provided, falling back to ${ viewerToUse.name }`)
     }
