@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { map, uniq, pipe, find, propEq } from 'ramda'
+import { map, uniq, pipe } from 'ramda'
 
 
 import {
