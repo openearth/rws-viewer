@@ -104,7 +104,8 @@ export default {
       commit('SET_DISPLAY_LAYERS', { layers: [ ...viewerLayers ] })
 
       const flattenedViewerLayers = flattenLayers(viewerLayers)
-      const flattenedLayers = uniqBy(layer => layer.id, [ ...flattenedViewerLayers ])
+
+      const flattenedLayers = uniqBy(layer => layer?.id, [ ...flattenedViewerLayers ])
       commit('SET_FLATTENED_LAYERS', { layers: flattenedLayers })
 
       const viewerTags = getLayersTags(flattenedViewerLayers)

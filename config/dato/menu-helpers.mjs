@@ -5,11 +5,21 @@ import mkdirp from 'mkdirp'
 
 function buildChildrenTree(items) {
   items.forEach(item => {
-    
     if (item.children) {
-      item.children.forEach(child => {
+      item.children = item.children.map(child => {
+        if (child.layerInstance) {
+          child = {
+            ...child,
+            ...child.layerInstance,
+          }
+        }
+
         if (child.tags) {
           child.tags = child.tags.map(({ title }) => title)
+        }
+
+        return {
+          ...child,
         }
       })
     }

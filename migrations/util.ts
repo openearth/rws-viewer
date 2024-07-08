@@ -100,7 +100,6 @@ export class FetchWithThrottle {
       });
   };
 }
-
 export const updateFieldLocalization = async (
   client: Client,
   fieldId: string,

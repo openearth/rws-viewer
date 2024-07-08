@@ -15,7 +15,6 @@ module.exports = {
   },
   plugins: [
     'vue',
-    '@typescript-eslint',
   ],
   extends: [
     'eslint:recommended',
