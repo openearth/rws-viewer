@@ -137,12 +137,12 @@ export default {
     opacity() {
       this.setOpacity()
     },
-    before(onTopLayer) {
+    before(onTopLayer, beforeLayer) {
       const map = this.getMap()
       map.moveLayer(this.options.id, onTopLayer)
       if (!onTopLayer) {
         map.moveLayer(this.options.id, 'gl-draw-polygon-fill-inactive.cold')
-      }
+      } 
      },
   },
 }

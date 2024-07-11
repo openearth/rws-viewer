@@ -37,8 +37,6 @@ module.exports = {
     'vue/no-unused-components': 'warn',
     'vue/script-indent': [ 'error', 2, { baseIndent: 1 } ],
     'vue/no-v-html': 'off',
-    'vue/no-v-text-v-html-on-component': 'off',
-    'vue/multi-word-component-names': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/camelcase': 'off',
   },

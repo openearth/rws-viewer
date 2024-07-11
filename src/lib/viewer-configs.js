@@ -3,7 +3,7 @@ export function getValidViewerConfigs(locale) {
     return []
   }
 
-  return require(`../../public/data/${ locale }/available-configs-viewers.json`)
+  return require(`../../public/data/${locale}/available-configs-viewers.json`)
 }
 
 export function getValidViewerNames(locale) {

@@ -503,7 +503,9 @@
           formatCsv,
           fileName,
         })
-          .then(() => this.$trackEvent('download', 'api'))
+          .then(({ fileSize }) => {
+            this.$trackEvent('download', 'api')
+          })
           .finally(() => {
             this.isDownloading = false
           }).catch(err => {
