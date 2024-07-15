@@ -2,7 +2,10 @@ import Vue from 'vue'
 import VueTour from 'vue-tour'
 import 'vue-tour/dist/vue-tour.css'
 import { i18n } from './i18n.js'
-export const tourConfig = {
+
+Vue.use(VueTour)
+
+export const tourConfig = Vue.observable({
   useKeyboardNavigation: true,
   labels: {
     buttonNext: i18n.t('tourNext'),
@@ -10,16 +13,20 @@ export const tourConfig = {
     buttonSkip: i18n.t('tourSkip'),
     buttonStop: i18n.t('tourStop'),
   },
-}
+})
 
-Vue.use(VueTour)
+i18n.vm.$watch('locale', () => {
+  tourConfig.labels.buttonNext = i18n.t('tourNext')
+  tourConfig.labels.buttonPrevious = i18n.t('tourPrevious')
+  tourConfig.labels.buttonSkip = i18n.t('tourSkip')
+  tourConfig.labels.buttonStop = i18n.t('tourStop')
+})
 
 export let tourStepCount = null
-
 export const generateTourSteps = (data) => ([
   {
     target: '[data-v-step="1"]',
-    content: i18n.t('tour1a') + data.title.bold() + i18n.t('tour1b'), // TODO: make the title of the platform in bold to take it automatically, like the viewer header title
+    content: i18n.t('tour1a') + data.title.bold() + i18n.t('tour1b'),
     params: {
       enableScrolling: false,
       placement: 'bottom',
