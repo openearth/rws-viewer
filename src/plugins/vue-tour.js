@@ -1,18 +1,32 @@
 import Vue from 'vue'
 import VueTour from 'vue-tour'
 import 'vue-tour/dist/vue-tour.css'
-export const tourConfig = {
-  useKeyboardNavigation: true,
-}
+import { i18n } from './i18n.js'
 
 Vue.use(VueTour)
 
-export let tourStepCount = null
+export const tourConfig = Vue.observable({
+  useKeyboardNavigation: true,
+  labels: {
+    buttonNext: i18n.t('tourNext'),
+    buttonPrevious: i18n.t('tourPrevious'),
+    buttonSkip: i18n.t('tourSkip'),
+    buttonStop: i18n.t('tourStop'),
+  },
+})
 
+i18n.vm.$watch('locale', () => {
+  tourConfig.labels.buttonNext = i18n.t('tourNext')
+  tourConfig.labels.buttonPrevious = i18n.t('tourPrevious')
+  tourConfig.labels.buttonSkip = i18n.t('tourSkip')
+  tourConfig.labels.buttonStop = i18n.t('tourStop')
+})
+
+export let tourStepCount = null
 export const generateTourSteps = (data) => ([
   {
     target: '[data-v-step="1"]',
-    content: 'Welcome to the <strong>'+ data.title +'</strong> platform!', // TODO: make the title of the platform in bold to take it automatically, like the viewer header title
+    content: i18n.t('tour1a') + data.title.bold() + i18n.t('tour1b'),
     params: {
       enableScrolling: false,
       placement: 'bottom',
@@ -23,7 +37,7 @@ export const generateTourSteps = (data) => ([
   },
   {
     target: '[data-v-step="2"]',
-    content: 'Select one or more layers to visualize',
+    content: i18n.t('tour2'),
     params: {
       enableScrolling: false,
       placement: 'top',
@@ -34,7 +48,7 @@ export const generateTourSteps = (data) => ([
   },
   {
     target: '[data-v-step="3"]',
-    content: 'Change the order of the selected layers',
+    content: i18n.t('tour3'),
     params: {
       enableScrolling: false,
       placement: 'right',
@@ -51,7 +65,7 @@ export const generateTourSteps = (data) => ([
   },
   {
     target: '[data-v-step="4"]',
-    content: 'View the legends of the layers',
+    content: i18n.t('tour4'),
     params: {
       enableScrolling: false,
       placement: 'left',
@@ -68,7 +82,7 @@ export const generateTourSteps = (data) => ([
   },
   {
     target: '[data-v-step="5"]',
-    content: 'Download layers',
+    content: i18n.t('tour5'),
     params: {
       enableScrolling: false,
       placement: 'bottom',
@@ -79,7 +93,7 @@ export const generateTourSteps = (data) => ([
   },
   {
     target: '[data-v-step="6"]',
-    content: 'Manage favourite layers',
+    content: i18n.t('tour6'),
     params: {
       enableScrolling: false,
       placement: 'bottom',
@@ -90,7 +104,7 @@ export const generateTourSteps = (data) => ([
   },
   {
     target: '[data-v-step="7"]',
-    content: 'Control layer time',
+    content: i18n.t('tour7'),
     params: {
       enableScrolling: false,
       placement: 'bottom',

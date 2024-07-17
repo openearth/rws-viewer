@@ -8,6 +8,13 @@
         :items="localeItems"
         @input="switchLocaleAndAddViewerData($event.title)"
       />
+      <burger-menu
+        :loadingburger="localeIsLoading"
+        @open-contact-form="onOpenContactForm"
+        @open-acknowledgments="onOpenAcknowledgments"
+        @open-user-agreement="onClickOpenContactForm"
+        @open-privacy-statement="onOpenPrivacyStatement"
+      />
     </template>
     <div v-if="!showApiLayer">
       <v-fade-transition mode="out-in">
@@ -25,10 +32,22 @@
       @close="closeLayersDialog"
     />
 
+    <feedback-dialog
+      :open="feedbackDialogOpen"
+      :privacy-statement="viewerPrivacyStatement"
+      @close="closeFeedbackDialog"
+    />
+
     <UserAgreementDialog
-      :open="showUserAgreement"
+      :open="showUserAgreement || clickedUserAgreementOpen"
       :user-agreement="viewerUserAgreement"
       @close="closeUserAgreementDialog"
+    />
+   
+    <acknowledgments-dialog
+      :open="acknowledgmentsDialogOpen"
+      :acknowledgments="acknowledgments" 
+      @close="closeAcknowledgmentsDialog"
     />
 
     <v-tour
@@ -76,7 +95,7 @@
       <mapbox-scale-control />
       <map-zoom :extent="zoomExtent" />
       <MapMouseMove @mousemove="onMouseMove" />
-      <v-mapbox-navigation-control />
+      <v-mapbox-navigation-control position="bottom-right" />
       <mapbox-draw-control
         :draw-mode="drawMode"
         :drawn-features="drawnFeatures"
@@ -102,6 +121,7 @@
   import MapLayerInfo from './components/MapComponents/MapLayerInfo'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
   import LocaleSwitcher from '~/components/LocaleSwitcher/LocaleSwitcher'
+  import BurgerMenu from '~/components/BurgerMenu/BurgerMenu'
   import MapboxLegend from '~/components/MapboxLegend/MapboxLegend'
   import LayerOrder from '~/components/LayerOrder/LayerOrder'
   import TimeSlider from '~/components/TimeSlider'
@@ -117,6 +137,8 @@
   import UserAgreementDialog from '~/components/UserAgreementDialog/UserAgreementDialog.vue'
   import { defaultLocale, availableLocales } from '~/plugins/i18n'
   import { tourConfig, generateTourSteps, tourStepCount } from '@/plugins/vue-tour'
+  import FeedbackDialog from './components/FeedbackDialog/FeedbackDialog.vue'
+  import AcknowledgmentsDialog from '~/components/AcknowledgmentsDialog/AcknowledgmentsDialog.vue'
 
   const removeRegion = locale => locale.replace(/-.+/, '')
   const localeIsAvailable = locale => availableLocales.includes(locale)
@@ -130,6 +152,8 @@
       MapboxDrawControl,
       LayerOrder,
       LocaleSwitcher,
+      BurgerMenu,
+      MapboxDrawControl,
       MapboxSelectPointControl,
       MapboxLegend,
       TimeSlider,
@@ -139,6 +163,8 @@
       SearchBar,
       MapboxScaleControl,
       UserAgreementDialog,
+      FeedbackDialog,
+      AcknowledgmentsDialog,
     },
 
     data: () => ({
@@ -157,10 +183,13 @@
       loadedLocales: [ defaultLocale ],
       localeItems: availableLocales.map(locale => ({ title: locale })),
       userAgreementOpen: true,
+      feedbackDialogOpen: false,
+      clickedUserAgreementOpen: false,
+      acknowledgmentsDialogOpen: false,
     }),
 
     computed: {
-      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement' ]),
+      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement', 'viewerPrivacyStatement', 'acknowledgments' ]),
       ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
       ...mapGetters('data', [ 'timeExtent', 'flattenedLayers', 'displayLayers' ]),
       formattedTimeExtent() {
@@ -299,6 +328,7 @@
 
       closeUserAgreementDialog() {
         this.userAgreementOpen = false
+        this.clickedUserAgreementOpen = false
       },
       showTour () {
         this.$tours.introduction.start()
@@ -319,6 +349,24 @@
             },
           })
         }
+      },
+      onOpenContactForm() {
+        this.feedbackDialogOpen = true
+      },
+      closeFeedbackDialog() {
+        this.feedbackDialogOpen = false
+      },
+      onClickOpenContactForm() {
+        this.clickedUserAgreementOpen = true
+      },
+      onOpenPrivacyStatement() {
+        window.open(this.viewerPrivacyStatement, '_blank')
+      },
+      onOpenAcknowledgments() {
+        this.acknowledgmentsDialogOpen = true
+      },
+      closeAcknowledgmentsDialog() {
+        this.acknowledgmentsDialogOpen = false
       },
     },
   }

@@ -73,5 +73,22 @@
   "sendFeedbackError": "Something went wrong during sending feedback.",
   "feedbackDescription": "Contact us",
   "conditionsOfUseConsent": "I agree with the Conditions of Use",
-  "iAgree": "I agree"
+  "iAgree": "I agree",
+  "acknowledgments": "Colophon",
+  "disclaimer": "Disclaimer",
+  "tour1a": "Welcome to the ",
+  "tour1b": " platform!",
+  "tour2": "Select one or more layers to visualize",
+  "tour3": "Change the order of the selected layers",
+  "tour4": "View the legends of the layers",
+  "tour5": "Download layers",
+  "tour6": "Manage favourite layers",
+  "tour7": "Control layer time",
+  "tourNext": "Next",
+  "tourPrevious": "Previous",
+  "tourSkip": "Skip tour",
+  "tourStop": "Finish",
+  "manual": "Manual",
+  "contact": "Contact",
+  "privacyStatement": "Privacy Statement"
 }

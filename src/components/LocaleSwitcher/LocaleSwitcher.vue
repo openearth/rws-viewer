@@ -1,5 +1,5 @@
 <template>
-  <v-menu>
+  <v-menu offset-y>
     <template #activator="{ on, attrs }">
       <v-btn
         text

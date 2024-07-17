@@ -73,5 +73,22 @@
   "sendFeedbackError": "Er ging iets mis bij het verzenden van feedback.",
   "feedbackDescription": "Neem contact op",
   "conditionsOfUseConsent": "Ik ga akkoord met de Gebruiksvoorwaarden",
-  "iAgree": "Ik ga akkoord"
+  "iAgree": "Ik ga akkoord",
+  "acknowledgments": "Colofon",
+  "disclaimer": "Disclaimer",
+  "tour1a": "Welkom op het ",
+  "tour1b": " platform!",
+  "tour2": "Selecteer één of meer lagen om te visualiseren",
+  "tour3": "Pas de volgorde van de geselecteerde lagen aan",
+  "tour4": "Bekijk de bijbehorende legenda's",
+  "tour5": "Download lagen",
+  "tour6": "Beheer favoriete lagen",
+  "tour7": "Pas laag tijd aan",
+  "tourNext": "Volgende",
+  "tourPrevious": "Vorige",
+  "tourSkip": "Einde",
+  "tourStop": "Tour overslaan",
+  "manual": "Handleiding",
+  "contact": "Contact",
+  "privacyStatement": "Privacy Statement"
 }

@@ -14,6 +14,14 @@ module.exports = {
         '~': path.resolve(__dirname, 'src/'),
       },
     },
+    module: {
+      rules: [
+        {
+          test: /\.md$/,
+          loader: 'raw-loader',
+        },
+      ],
+    },
   },
   devServer: {
     progress: false,
