@@ -11,7 +11,7 @@ The [OpenEarth Viewer](https://rws-viewer.netlify.app/) gives insight in a wide 
 ```sh
 git clone git@github.com:openearth/rws-viewer.git
 cd rws-viewer
-npm run install
+npm install --legacy-peer-deps
 ```
 
 - Copy `.env.example` to `.env`. And set all variables.
