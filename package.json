@@ -12,9 +12,9 @@
   "scripts": {
     "postinstall": "patch-package",
     "dato": "node ./config/dato/dump-data.mjs",
-    "prebuild": "yarn dato",
+    "prebuild": "npm run dato",
     "build": "vue-cli-service build",
-    "predev": "yarn dato",
+    "predev": "npm run dato",
     "dev": "run-p serve start-server",
     "fix": "run-s fix:*",
     "fix:js": "vue-cli-service lint",
@@ -23,7 +23,7 @@
     "lint:js": "vue-cli-service lint --no-fix",
     "lint:scss": "stylelint ./src/**/*.{vue,scss}",
     "serve": "vue-cli-service serve --port 3000 --color",
-    "start": "yarn serve",
+    "start": "npm run serve",
     "start-server": "netlify dev",
     "add-translation": "node scripts/add-translation/index.mjs",
     "add-config-to-dato": "node scripts/add-config-to-dato/index.mjs"
@@ -91,6 +91,5 @@
     "vue-cli-plugin-vuetify": "^2.4.3",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.9.2"
-  },
-  "packageManager": "yarn@1.22.1"
+  }
 }
