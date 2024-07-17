@@ -153,7 +153,6 @@
       LayerOrder,
       LocaleSwitcher,
       BurgerMenu,
-      MapboxDrawControl,
       MapboxSelectPointControl,
       MapboxLegend,
       TimeSlider,
