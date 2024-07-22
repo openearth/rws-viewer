@@ -94,6 +94,6 @@
   "whatCanBeImproved": "Submit your comment here",
   "whatIsYourEmail": "What is your email?",
   "whoAreYou": "Who are you?",
-  "wmsName": "Service layer name",
-  "wmsUrl": "URL naar de service"
+  "wmsLayer": "WMS layer",
+  "wmsUrl": "WMS url"
 }

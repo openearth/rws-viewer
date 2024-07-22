@@ -105,7 +105,7 @@
               </dt>
               <dd class="layer-info-dialog__metadata-value">
                 <a :href="shareUrl" target="_blank">
-                  {{ $t('shareUrl') }}
+                  {{ shareUrl }}
                 </a>
               </dd>
 
@@ -118,17 +118,20 @@
                 </dt>
                 <dd class="layer-info-dialog__metadata-value">
                   <a :href="wmsUrl" target="_blank">
-                    {{ title }}
+                    {{ wmsUrl }}
                   </a>
                 </dd>
               </template>
 
-              <template v-if="downloadLayer">
+              <template v-if="downloadLayer || layer">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
-                  {{ $t('wmsUrl') }}
+                  {{ $t('wmsLayer') }}
+                  <v-btn icon @click="copyUrlToClipboard(downloadLayer || layer)">
+                    <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
+                  </v-btn>
                 </dt>
                 <dd class="layer-info-dialog__metadata-value">
-                  {{ downloadLayer }}
+                  {{ downloadLayer || layer }}
                 </dd>
               </template>
 
