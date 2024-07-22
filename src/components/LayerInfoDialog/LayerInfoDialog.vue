@@ -40,7 +40,7 @@
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
                   {{ $t('description') }}
                 </dt>
-                <dd class="layer-info dialog__metadata-value">
+                <dd class="layer-info-dialog__metadata-value">
                   {{ description }}
                 </dd>
               </templates>
@@ -48,7 +48,7 @@
               <template v-if="source">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
                   {{ $t('source') }}
-                  <v-btn icon @click="copyUrlToClipboard(shareUrl)">
+                  <v-btn icon @click="copyUrlToClipboard(source)">
                     <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                   </v-btn>
                 </dt>
@@ -62,11 +62,11 @@
               <template v-if="instructionManual">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
                   {{ $t('instructionManual') }}
-                  <v-btn icon @click="copyUrlToClipboard(shareUrl)">
+                  <v-btn icon @click="copyUrlToClipboard(instructionManual)">
                     <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                   </v-btn> 
                 </dt>
-                <dd class="layer-info dialog__metadata-value">
+                <dd class="layer-info-dialog__metadata-value">
                   <a :href="instructionManual" target="_blank">
                     {{ instructionManual }}
                   </a>
@@ -76,11 +76,11 @@
               <template v-if="info">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
                   {{ $t('info') }}
-                  <v-btn icon @click="copyUrlToClipboard(shareUrl)">
+                  <v-btn icon @click="copyUrlToClipboard(info)">
                     <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                   </v-btn>
                 </dt>
-                <dd class="layer-info dialog__metadata-value">
+                <dd class="layer-info-dialog__metadata-value">
                   <a :href="info" target="_blank">
                     {{ info }}
                   </a>
@@ -98,22 +98,15 @@
               </div>
 
               <dt class="font-weight-bold layer-info-dialog__metadata-key">
-                Feedback
-              </dt>
-              <dd class="layer-info-dialog__metadata-value">
-                <a @click="$emit('showFeedbackDialog')">
-                  {{ $t('feedbackDescription') }}
-                </a>
-              </dd>
-
-              <dt class="font-weight-bold layer-info-dialog__metadata-key">
                 {{ $t('shareUrl') }}
                 <v-btn icon @click="copyUrlToClipboard(shareUrl)">
                   <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                 </v-btn>
               </dt>
               <dd class="layer-info-dialog__metadata-value">
-                {{ shareUrl }}
+                <a :href="shareUrl" target="_blank">
+                  {{ $t('shareUrl') }}
+                </a>
               </dd>
 
               <template v-if="wmsUrl !== ''">
@@ -139,6 +132,26 @@
                 </dd>
               </template>
 
+              <div v-if="!isLoading && !errorMessage && recordUrl">
+                <dt class="font-weight-bold layer-info-dialog__metadata-key">
+                  Metadata url
+                </dt>
+                <dd class="layer-info-dialog__metadata-value">
+                  <a :href="recordUrl" target="_blank">
+                    {{ recordUrl }}
+                  </a>
+                </dd>
+              </div>
+
+              <dt class="font-weight-bold layer-info-dialog__metadata-key">
+                Feedback
+              </dt>
+              <dd class="layer-info-dialog__metadata-value">
+                <a @click="$emit('showFeedbackDialog')">
+                  {{ $t('feedbackDescription') }}
+                </a>
+              </dd>
+
               <template v-if="errorMessage">
                 <dt class="layer-info-dialog__metadata-key" />
                 <dd class="layer-info-dialog__metadata-value red--text">
@@ -152,17 +165,6 @@
                   <v-progress-circular indeterminate color="primary" />
                 </dd>
               </template>
-
-              <div v-if="!isLoading && !errorMessage && recordUrl">
-                <dt class="font-weight-bold layer-info-dialog__metadata-key">
-                  Metadata url
-                </dt>
-                <dd class="layer-info-dialog__metadata-value">
-                  <a :href="recordUrl" target="_blank">
-                    {{ recordUrl }}
-                  </a>
-                </dd>
-              </div>
             </dl>
           </v-card-text>
         </div>
@@ -318,11 +320,11 @@
   }
 
   .layer-info-dialog__metadata-key {
-    width: 100px;
+    width: 170px;
   }
 
   .layer-info-dialog__metadata-value {
-    max-width: 440px;
+    max-width: 350px;
     margin: auto 0;
   }
 
