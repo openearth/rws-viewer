@@ -47,5 +47,8 @@ fragment menuWithLayers on MenuRecord {
     key: title
     value: content
   }
+  bron
+  bijsluiter
+  info
 }
 `
