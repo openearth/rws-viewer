@@ -29,6 +29,64 @@
         <div class="px-2 py-2 flex-grow-1 overflow-y-auto justify-center">
           <v-card-text>
             <dl class="layer-info-dialog__metadata">
+              <dt class="font-weight-bold layer-info-dialog__metadata-key">
+                {{ $t('layerName') }}
+              </dt>
+              <dd class="layer-info-dialog__metadata-value">
+                {{ title }}
+              </dd>
+
+              <templates v-if="description">
+                <dt class="font-weight-bold layer-info-dialog__metadata-key">
+                  {{ $t('description') }}
+                </dt>
+                <dd class="layer-info dialog__metadata-value">
+                  {{ description }}
+                </dd>
+              </templates>
+
+              <template v-if="source">
+                <dt class="font-weight-bold layer-info-dialog__metadata-key">
+                  {{ $t('source') }}
+                  <v-btn icon @click="copyUrlToClipboard(shareUrl)">
+                    <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
+                  </v-btn>
+                </dt>
+                <dd class="layer-info-dialog__metadata-value">
+                  <a :href="source" target="_blank">
+                    {{ source }}
+                  </a>
+                </dd>
+              </template>
+
+              <template v-if="instructionManual">
+                <dt class="font-weight-bold layer-info-dialog__metadata-key">
+                  {{ $t('instructionManual') }}
+                  <v-btn icon @click="copyUrlToClipboard(shareUrl)">
+                    <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
+                  </v-btn> 
+                </dt>
+                <dd class="layer-info dialog__metadata-value">
+                  <a :href="instructionManual" target="_blank">
+                    {{ instructionManual }}
+                  </a>
+                </dd>
+              </template>
+
+              <template v-if="info">
+                <dt class="font-weight-bold layer-info-dialog__metadata-key">
+                  {{ $t('info') }}
+                  <v-btn icon @click="copyUrlToClipboard(shareUrl)">
+                    <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
+                  </v-btn>
+                </dt>
+                <dd class="layer-info dialog__metadata-value">
+                  <a :href="info" target="_blank">
+                    {{ info }}
+                  </a>
+                </dd>
+              </template>
+            
               <div v-for="item in content" :key="item.key">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
                   {{ item.key }}
@@ -72,6 +130,14 @@
                 </dd>
               </template>
 
+              <template v-if="downloadLayer">
+                <dt class="font-weight-bold layer-info-dialog__metadata-key">
+                  {{ $t('wmsUrl') }}
+                </dt>
+                <dd class="layer-info-dialog__metadata-value">
+                  {{ downloadLayer }}
+                </dd>
+              </template>
 
               <template v-if="errorMessage">
                 <dt class="layer-info-dialog__metadata-key" />
@@ -120,6 +186,10 @@
         type: String,
         default: '',
       },
+      description: {
+        type: String,
+        default: '',
+      },
       content: {
         type: Array,
         default: () => [],
@@ -144,6 +214,26 @@
         type: String,
         required: true,
       },
+      downloadUrl: {
+        type: String,
+        default: '',
+      },
+      downloadLayer: {
+        type: String,
+        default: '',
+      },
+      source: {
+        type: String,
+        default: '',
+      },
+      instructionManual: {
+        type: String,
+        default: '',
+      },
+      info: {
+        type: String,
+        default: '',
+      }
     },
 
     data() {
@@ -191,6 +281,10 @@
         alert(`The following url is copied to clipboard! ${ url }`)
       },
       async getWmsUrl() {
+        if (this.downloadUrl) {
+          return this.downloadUrl
+        }
+        
         const capabilities = await getWmsCapabilities(this.url)
         const { bbox } = getLayerProperties(capabilities, this.layer)
         return buildGeoserverUrl({

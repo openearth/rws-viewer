@@ -6,6 +6,7 @@ fragment menuWithLayers on MenuRecord {
     layerInstance: layer {
       id
       name
+      description
       url
       layer
       downloadUrl
@@ -35,6 +36,9 @@ fragment menuWithLayers on MenuRecord {
       key: title
       value: content
     }
+    bron
+    bijsluiter
+    info
   }
   parent {
     id
