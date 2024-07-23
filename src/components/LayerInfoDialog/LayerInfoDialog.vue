@@ -55,14 +55,14 @@
                 <dd class="layer-info-dialog__metadata-value" v-html="source" />
               </template>
 
-              <template v-if="instructionManual">
+              <template v-if="leaflet">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
-                  {{ $t('instructionManual') }}
-                  <v-btn icon @click="copyUrlToClipboard(instructionManual)">
+                  {{ $t('leaflet') }}
+                  <v-btn icon @click="copyUrlToClipboard(leaflet)">
                     <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                   </v-btn> 
                 </dt>
-                <dd class="layer-info-dialog__metadata-value" v-html="instructionManual" />
+                <dd class="layer-info-dialog__metadata-value" v-html="leaflet" />
               </template>
 
               <template v-if="info">
@@ -219,7 +219,7 @@
         type: String,
         default: '',
       },
-      instructionManual: {
+      leaflet: {
         type: String,
         default: '',
       },
