@@ -52,11 +52,7 @@
                     <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                   </v-btn>
                 </dt>
-                <dd class="layer-info-dialog__metadata-value">
-                  <a :href="source" target="_blank">
-                    {{ source }}
-                  </a>
-                </dd>
+                <dd class="layer-info-dialog__metadata-value" v-html="source" />
               </template>
 
               <template v-if="instructionManual">
@@ -66,11 +62,7 @@
                     <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                   </v-btn> 
                 </dt>
-                <dd class="layer-info-dialog__metadata-value">
-                  <a :href="instructionManual" target="_blank">
-                    {{ instructionManual }}
-                  </a>
-                </dd>
+                <dd class="layer-info-dialog__metadata-value" v-html="instructionManual" />
               </template>
 
               <template v-if="info">
@@ -80,11 +72,7 @@
                     <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                   </v-btn>
                 </dt>
-                <dd class="layer-info-dialog__metadata-value">
-                  <a :href="info" target="_blank">
-                    {{ info }}
-                  </a>
-                </dd>
+                <dd class="layer-info-dialog__metadata-value" v-html="info" />
               </template>
             
               <div v-for="item in content" :key="item.key">
