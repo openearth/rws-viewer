@@ -4,7 +4,7 @@ import {
   translateNestedModularContent,
   translateToEn,
   updateFieldLocalization,
-} from "./util";
+} from "../migrations/util";
 
 export const translateLayerFields = async (layer: any, client: Client) => {
   const { updatedAt, createdAt, ...layerFields } = layer;
