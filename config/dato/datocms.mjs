@@ -31,8 +31,8 @@ function executeFetch(token, variables, query) {
     },
     data: { query, variables },
   }).then(res => {
-    if (res.errors) {
-      throw new Error(JSON.stringify(res.errors))
+    if (res.data.errors) {
+      throw new Error(JSON.stringify(res.data.errors))
     }
     return res
   })
@@ -46,8 +46,6 @@ function getPaginatedData(token, variables, query) {
     try {
       allKey = Object.keys(response.data.data).find(key => keyRegex.test(key))
     } catch (error) {
-      console.log({ query, variables, responseData: response })
-      console.log(response)
       console.error(error)
     }
 
