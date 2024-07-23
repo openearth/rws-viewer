@@ -111,7 +111,7 @@
                 :download-url="item.downloadUrl"
                 :download-layer="item.downloadLayer"
                 :source="item.bron"
-                :instruction-manual="item.bijsluiter"
+                :leaflet="item.bijsluiter"
                 :info="item.info"
                 @close="close"
                 @showFeedbackDialog="showFeedbackDialog"
