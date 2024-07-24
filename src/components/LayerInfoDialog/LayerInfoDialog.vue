@@ -93,7 +93,7 @@
               </dt>
               <dd class="layer-info-dialog__metadata-value">
                 <a :href="shareUrl" target="_blank">
-                  {{ shareUrl }}
+                  {{ $t('shareUrl') }}
                 </a>
               </dd>
 
@@ -106,7 +106,7 @@
                 </dt>
                 <dd class="layer-info-dialog__metadata-value">
                   <a :href="wmsUrl" target="_blank">
-                    {{ wmsUrl }}
+                    {{ $t('wmsUrl') }}
                   </a>
                 </dd>
               </template>
@@ -166,8 +166,6 @@
 
 <script>
   import axios from 'axios'
-  import buildGeoserverUrl from '~/lib/build-geoserver-url'
-  import { getWmsCapabilities, getLayerProperties } from '~/lib/get-capabilities'
 
   export default {
     props: {
@@ -277,22 +275,8 @@
         if (this.downloadUrl) {
           return this.downloadUrl
         }
-        
-        const capabilities = await getWmsCapabilities(this.url)
-        const { bbox } = getLayerProperties(capabilities, this.layer)
-        return buildGeoserverUrl({
-          url: this.url,
-          request: 'GetMap',
-          service: 'WMS',
-          version: '1.1.0',
-          format: 'application/openlayers',
-          srs: 'EPSG:4258',
-          layers: this.layer,
-          width: 700,
-          height: 500,
-          bbox: bbox.flat().join(','),
-          styles: '',
-        })
+
+        return this.url
       },
     },
   }
