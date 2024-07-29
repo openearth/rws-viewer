@@ -27,6 +27,8 @@ async function convertToWysiwyg(name: string, fieldId: string, client: Client) {
 export default async function (client: Client) {
   console.log("Update existing fields/fieldsets");
 
+  await convertToWysiwyg("Layer/Description", "10270437", client);
+
   await convertToWysiwyg("ViewerLayer/Bron", "Omki1ydUSZSIg35I0RmtWg", client);
   await convertToWysiwyg("ViewerLayer/Info", "c1CbH0YhR1avFBq0oY7Y3Q", client);
   await convertToWysiwyg("ViewerLayer/Bijsluiter", "LfUiZwnBRrCFL8FvgJBiog", client);

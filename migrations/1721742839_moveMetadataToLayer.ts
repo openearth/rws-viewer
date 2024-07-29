@@ -1,4 +1,6 @@
-import { Client, buildBlockRecord } from '@datocms/cli/lib/cma-client-node';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Client, buildBlockRecord } from "@datocms/cli/lib/cma-client-node";
 
 async function fetchContentByIdsTranslated(
   client: Client,
@@ -6,8 +8,12 @@ async function fetchContentByIdsTranslated(
 ): Promise<any> {
   try {
     return {
-      en: await Promise.all((ids?.en || [])?.map((id) => client.items.find(id))),
-      nl: await Promise.all((ids?.nl || [])?.map((id) => client.items.find(id))),
+      en: await Promise.all(
+        (ids?.en || [])?.map((id) => client.items.find(id))
+      ),
+      nl: await Promise.all(
+        (ids?.nl || [])?.map((id) => client.items.find(id))
+      ),
     };
   } catch (error) {
     console.error("Error fetching content", error);
@@ -16,7 +22,6 @@ async function fetchContentByIdsTranslated(
 }
 
 // Function to create fields
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function createField(client: Client, modelId: string, fieldConfig: any) {
   try {
     await client.fields.create(modelId, fieldConfig);
@@ -39,7 +44,7 @@ async function migrateContent(client: Client) {
     layers.push(record);
   }
 
-  console.log('fetching viewerLayers...');
+  console.log("fetching viewerLayers...");
 
   const viewerLayers = [];
 
@@ -51,10 +56,12 @@ async function migrateContent(client: Client) {
     viewerLayers.push(record);
   }
 
-  const newData = []
+  const newData = [];
 
   for (const layer of layers) {
-    const parentViewerLayer = viewerLayers.find(viewerLayer => viewerLayer.layer === layer.id);
+    const parentViewerLayer = viewerLayers.find(
+      (viewerLayer) => viewerLayer.layer === layer.id
+    );
 
     newData.push({
       layer,
@@ -63,40 +70,51 @@ async function migrateContent(client: Client) {
   }
 
   for (const newDataItem of newData) {
-    console.log('updating layer', newDataItem.layer.id, 'with viewerLayer', newDataItem.viewerLayer?.id);
+    console.log(
+      "updating layer",
+      newDataItem.layer.id,
+      "with viewerLayer",
+      newDataItem.viewerLayer?.id
+    );
 
     if (newDataItem.viewerLayer) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newMetadataContent = await fetchContentByIdsTranslated(client, newDataItem.viewerLayer?.metadata as any);
-  
+      const newMetadataContent = await fetchContentByIdsTranslated(
+        client,
+        newDataItem.viewerLayer?.metadata as any
+      );
+
       await client.items.update(newDataItem.layer.id, {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         metadata: {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-          en: newMetadataContent.en.map(({ id, ...content }: any) => buildBlockRecord(content)),
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-          nl: newMetadataContent.nl.map(({ id, ...content }: any) => buildBlockRecord(content)),
+          en: newMetadataContent.en.map(
+            ({ id, updated_at, created_at, ...content }: any) =>
+              buildBlockRecord(content)
+          ),
+          nl: newMetadataContent.nl.map(
+            ({ id, updated_at, created_at, ...content }: any) =>
+              buildBlockRecord(content)
+          ),
         },
         bron: {
           en: newDataItem.viewerLayer?.bron,
-          nl: newDataItem.viewerLayer?.bron
+          nl: newDataItem.viewerLayer?.bron,
         },
         info: {
           en: newDataItem.viewerLayer?.info,
-          nl: newDataItem.viewerLayer?.info
+          nl: newDataItem.viewerLayer?.info,
         },
         bijsluiter: {
           en: newDataItem.viewerLayer?.bijsluiter,
-          nl: newDataItem.viewerLayer?.bijsluiter
-        }
-      }); 
+          nl: newDataItem.viewerLayer?.bijsluiter,
+        },
+      });
     } else {
-      console.log('No viewerLayer found for layer', newDataItem.layer.id);
+      console.log("No viewerLayer found for layer", newDataItem.layer.id);
     }
-  } 
+  }
 }
 
-export default async function(client: Client): Promise<void> {
+export default async function (client: Client): Promise<void> {
   const menuFieldSet = await client.fieldsets.create("1518125", {
     title: "i MENU inhoud",
     hint: "Hierin worden de 'wijzigbare onderdelen' van het i-menu ondergebracht. Diverse onderdelen van het i-menu worden automatisch gekoppeld tijdens het opvragen van het i-menu in de viewer.",
@@ -125,9 +143,7 @@ export default async function(client: Client): Promise<void> {
       editor: "wysiwyg",
       addons: [],
       parameters: {
-        toolbar: [
-          "link"
-        ]
+        toolbar: ["link"],
       },
       type: "wysiwyg",
     },
@@ -143,9 +159,7 @@ export default async function(client: Client): Promise<void> {
       editor: "wysiwyg",
       addons: [],
       parameters: {
-        toolbar: [
-          "link"
-        ]
+        toolbar: ["link"],
       },
       type: "wysiwyg",
     },
@@ -161,9 +175,7 @@ export default async function(client: Client): Promise<void> {
       editor: "wysiwyg",
       addons: [],
       parameters: {
-        toolbar: [
-          "link"
-        ]
+        toolbar: ["link"],
       },
       type: "wysiwyg",
     },

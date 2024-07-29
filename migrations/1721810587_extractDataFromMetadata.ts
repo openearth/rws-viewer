@@ -1,5 +1,6 @@
-import { Client } from '@datocms/cli/lib/cma-client-node';
-import { FetchWithThrottle } from './util';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Client } from "@datocms/cli/lib/cma-client-node";
+import { FetchWithThrottle } from "./util";
 
 async function fetchContentByIdsTranslated(
   client: Client,
@@ -17,20 +18,23 @@ async function fetchContentByIdsTranslated(
 }
 
 function getFieldFromMetadata(metadata: any, fieldNl: string, fieldEn: string) {
-  const nlItem = metadata.nl.find((meta: any) => meta.title.toLowerCase() === fieldNl.toLowerCase());
-  const enItem = metadata.en.find((meta: any) => meta.title.toLowerCase() === fieldEn.toLowerCase());
+  const nlItem = metadata.nl.find(
+    (meta: any) => meta.title.toLowerCase() === fieldNl.toLowerCase()
+  );
+  const enItem = metadata.en.find(
+    (meta: any) => meta.title.toLowerCase() === fieldEn.toLowerCase()
+  );
 
   return {
     nl: nlItem,
-    en: enItem
+    en: enItem,
   };
 }
 
-export default async function(client: Client): Promise<void> {
+export default async function (client: Client): Promise<void> {
   const fetcher = new FetchWithThrottle(15, 1000);
   client.config.fetchFn =
     fetcher.fetchWithThrottle as typeof client.config.fetchFn;
-
 
   console.log("Fetching layers...");
   const layers = [];
@@ -44,39 +48,60 @@ export default async function(client: Client): Promise<void> {
   }
 
   for (const layer of layers) {
-    const metadata = await fetchContentByIdsTranslated(client, layer.metadata);
-    const bron = getFieldFromMetadata(metadata, 'bron', 'source');
-    const info = getFieldFromMetadata(metadata, 'info', 'info');
-    const bijsluiter = getFieldFromMetadata(metadata, 'bijsluiter', 'package insert');
-    const beschrijving = getFieldFromMetadata(metadata, 'beschrijving', 'description');
+    const metadata = await fetchContentByIdsTranslated(
+      client,
+      layer.metadata as any
+    );
+    const bron = getFieldFromMetadata(metadata, "bron", "source");
+    const info = getFieldFromMetadata(metadata, "info", "info");
+    const bijsluiter = getFieldFromMetadata(
+      metadata,
+      "bijsluiter",
+      "package insert"
+    );
+    const beschrijving = getFieldFromMetadata(
+      metadata,
+      "beschrijving",
+      "description"
+    );
 
     await client.items.update(layer.id, {
       metadata: {
-        en: layer.metadata.en.filter(
-          item => ![bron?.en?.id, info?.en?.id, bijsluiter?.en?.id, beschrijving?.en?.id].includes(item)
+        en: (layer.metadata as any).en.filter(
+          (item: any) =>
+            ![
+              bron?.en?.id,
+              info?.en?.id,
+              bijsluiter?.en?.id,
+              beschrijving?.en?.id,
+            ].includes(item)
         ),
-        nl: layer.metadata.nl.filter(
-          item => ![bron?.nl?.id, info?.nl?.id, bijsluiter?.nl?.id, beschrijving?.nl?.id].includes(item)
+        nl: (layer.metadata as any).nl.filter(
+          (item: any) =>
+            ![
+              bron?.nl?.id,
+              info?.nl?.id,
+              bijsluiter?.nl?.id,
+              beschrijving?.nl?.id,
+            ].includes(item)
         ),
+      },
+      description: {
+        en: (layer.description as any)?.en || beschrijving?.en?.content || "",
+        nl: (layer.description as any)?.nl || beschrijving?.nl?.content || "",
       },
       bron: {
-        en: bron?.en?.content || '',
-        nl: bron?.nl?.content || '',
+        en: bron?.en?.content || "",
+        nl: bron?.nl?.content || "",
       },
       info: {
-        en: info?.en?.content || '',
-        nl: info?.nl?.content || '',
+        en: info?.en?.content || "",
+        nl: info?.nl?.content || "",
       },
       bijsluiter: {
-        en: bijsluiter?.en?.content || '',
-        nl: bijsluiter?.nl?.content || ''
-      }
+        en: bijsluiter?.en?.content || "",
+        nl: bijsluiter?.nl?.content || "",
+      },
     });
   }
-  
-  await client.fieldsets.destroy('En1oNd5IQ3-b9Y1qQhuS2Q')
-  await client.fields.destroy('ONdAuSZHSL2lnCanvP1Qow')
-  await client.fields.destroy('Omki1ydUSZSIg35I0RmtWg')
-  await client.fields.destroy('c1CbH0YhR1avFBq0oY7Y3Q')
-  await client.fields.destroy('LfUiZwnBRrCFL8FvgJBiog')
 }

@@ -40,9 +40,7 @@
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
                   {{ $t('description') }}
                 </dt>
-                <dd class="layer-info-dialog__metadata-value">
-                  {{ description }}
-                </dd>
+                <dd class="layer-info-dialog__metadata-value" v-html="description"></dd>
               </template>
 
               <template v-if="source">
@@ -129,7 +127,7 @@
                 </dt>
                 <dd class="layer-info-dialog__metadata-value">
                   <a :href="recordUrl" target="_blank">
-                    {{ recordUrl }}
+                    Metadata url
                   </a>
                 </dd>
               </div>
@@ -301,6 +299,19 @@
   .layer-info-dialog__metadata-value {
     max-width: 350px;
     margin: auto 0;
+  }
+
+  .layer-info-dialog__metadata-value table {
+    width: 100%;
+    border: 1px solid grey;
+    border-collapse: collapse;
+  }
+
+  .layer-info-dialog__metadata-value table th,
+  .layer-info-dialog__metadata-value table td {
+    text-align: start;
+    border: 1px solid grey;
+    padding: 5px;
   }
 
   .layer-info-dialog__title--wrapping {

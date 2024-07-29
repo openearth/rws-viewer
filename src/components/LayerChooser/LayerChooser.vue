@@ -237,10 +237,6 @@
         this.updateZoomExtent(id)
       },
       getUrl(item) {
-        if (item.id === '85222873') {
-          console.log(item)
-        }
-
         let folders = {}
         folders = [ ...item.parentIds ]
         let layers = item.id
