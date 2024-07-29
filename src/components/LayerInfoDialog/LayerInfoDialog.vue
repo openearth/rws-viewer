@@ -36,14 +36,14 @@
                 {{ title }}
               </dd>
 
-              <templates v-if="description">
+              <template v-if="description">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
                   {{ $t('description') }}
                 </dt>
                 <dd class="layer-info-dialog__metadata-value">
                   {{ description }}
                 </dd>
-              </templates>
+              </template>
 
               <template v-if="source">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">

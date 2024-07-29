@@ -43,7 +43,7 @@ fragment menuWithLayers on MenuRecord {
   parent {
     id
   }
-  metadata {
+  metadata: viewerMetadata {
     key: title
     value: content
   }

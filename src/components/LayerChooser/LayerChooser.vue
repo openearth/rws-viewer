@@ -100,7 +100,7 @@
             <template #info="{ isOpen, close, showFeedbackDialog }">
               <layer-info-dialog
                 :title="item.name"
-                :discription="item.description"
+                :description="item.description"
                 :content="item.metadata"
                 :share-url="getUrl(item)"
                 :open="isOpen"
@@ -237,6 +237,10 @@
         this.updateZoomExtent(id)
       },
       getUrl(item) {
+        if (item.id === '85222873') {
+          console.log(item)
+        }
+
         let folders = {}
         folders = [ ...item.parentIds ]
         let layers = item.id
