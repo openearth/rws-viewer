@@ -35,6 +35,9 @@ const updateFields = async (client: Client) => {
 
     await updateFieldLocalization(
       client,
+      // rws-viewer:
+      // H7cTIWERTG-z24IE8ILCUw
+      // data-viewer:
       "cwH6Kg6_TaSoLn1W_n2Wxw",
       "Multiple-paragraph text field 'Acknowledgments'",
       "Menu"
