@@ -35,7 +35,7 @@ const updateFields = async (client: Client) => {
 
     await updateFieldLocalization(
       client,
-      "H7cTIWERTG-z24IE8ILCUw",
+      "cwH6Kg6_TaSoLn1W_n2Wxw",
       "Multiple-paragraph text field 'Acknowledgments'",
       "Menu"
     );
