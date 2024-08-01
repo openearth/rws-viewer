@@ -29,7 +29,10 @@ export const translateLayerFields = async (layer: any, client: Client) => {
         en: await translateToEn(layer.description.en),
         nl: layer.description.en,
       },
-      preview: { en: layer.preview.en, nl: layer.preview.en },
+      preview:
+        layer.preview === null
+          ? null
+          : { en: layer.preview?.en, nl: layer.preview?.en },
       links: translatedLinks,
       metadata: translatedCustomMetadata,
     };

@@ -19,6 +19,13 @@ async function createField(client: Client, modelId: string, fieldConfig: any) {
 // Function to delete fields
 async function deleteField(client: Client, fieldId: string) {
   try {
+    await client.fields.find(fieldId);
+  } catch (error) {
+    console.log(`Ignoring deletion of field "${fieldId}" as it doesn't exist.`);
+    return;
+  }
+
+  try {
     await client.fields.destroy(fieldId);
     console.log(`Field "${fieldId}" deleted successfully.`);
   } catch (error) {
@@ -28,6 +35,15 @@ async function deleteField(client: Client, fieldId: string) {
 
 // Function to delete fieldsets
 async function deleteFieldset(client: Client, fieldsetId: string) {
+  try {
+    await client.fieldsets.find(fieldsetId);
+  } catch (error) {
+    console.log(
+      `Ignoring deletion of fieldset "${fieldsetId}" as it doesn't exist.`
+    );
+    return;
+  }
+
   try {
     await client.fieldsets.destroy(fieldsetId);
     console.log(`Fieldset "${fieldsetId}" deleted successfully.`);
