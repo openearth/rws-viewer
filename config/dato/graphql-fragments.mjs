@@ -3,6 +3,7 @@ fragment menuWithLayers on MenuRecord {
   id
   name
   children: viewerLayers {
+    viewerLayerId: id
     layerInstance: layer {
       id
       name

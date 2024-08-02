@@ -191,6 +191,10 @@
         type: String,
         required: true,
       },
+      viewerLayerId: {
+        type: String,
+        required: true,
+      },
       layer: {
         type: String,
         default: '',
@@ -241,7 +245,7 @@
             this.errorMessage = ''
             this.isLoading = true
             const { data } = await axios(
-              `/api/record-register?record=${ this.layerId }&viewer=${ this.viewerName }`,
+              `/api/record-register?record=${ this.viewerLayerId }&viewer=${ this.viewerName }`,
             )
             this.recordUrl = data
           } catch (e) {
@@ -256,6 +260,8 @@
     },
 
     async mounted() {
+      console.log(this.viewerLayerId)
+
       if (this.layer && this.url) {
         this.wmsUrl = await this.getWmsUrl()
       }

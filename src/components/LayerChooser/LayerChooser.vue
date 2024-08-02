@@ -105,6 +105,7 @@
                 :share-url="getUrl(item)"
                 :open="isOpen"
                 :layer-id="item.id"
+                :viewer-layer-id="item.viewerLayerId"
                 :layer="item.layer"
                 :url="item.url"
                 :viewer-name="viewerName"
