@@ -121,6 +121,13 @@
                 </dd>
               </template>
 
+              <template v-if="isLoading">
+                <dt class="layer-info-dialog__metadata-key" />
+                <dd class="layer-info-dialog__metadata-value">
+                  <v-progress-circular indeterminate color="primary" />
+                </dd>
+              </template>
+
               <div v-if="!isLoading && !errorMessage && recordUrl">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
                   Metadata url
@@ -145,13 +152,6 @@
                 <dt class="layer-info-dialog__metadata-key" />
                 <dd class="layer-info-dialog__metadata-value red--text">
                   {{ errorMessage }}
-                </dd>
-              </template>
-
-              <template v-if="isLoading">
-                <dt class="layer-info-dialog__metadata-key" />
-                <dd class="layer-info-dialog__metadata-value">
-                  <v-progress-circular indeterminate color="primary" />
                 </dd>
               </template>
             </dl>
