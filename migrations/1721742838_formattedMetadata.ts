@@ -29,11 +29,41 @@ export default async function (client: Client) {
 
   await convertToWysiwyg("Layer/Description", "10270437", client);
 
-  await convertToWysiwyg("ViewerLayer/Bron", "Omki1ydUSZSIg35I0RmtWg", client);
-  await convertToWysiwyg("ViewerLayer/Info", "c1CbH0YhR1avFBq0oY7Y3Q", client);
-  await convertToWysiwyg("ViewerLayer/Bijsluiter", "LfUiZwnBRrCFL8FvgJBiog", client);
+  // rws-viewer:
+  // await convertToWysiwyg("ViewerLayer/Bron", "Omki1ydUSZSIg35I0RmtWg", client);
+  // data-viewer:
+  await convertToWysiwyg("ViewerLayer/Bron", "cwH6Kg6_TaSoLn1W_n2Wxw", client);
 
-  await convertToWysiwyg('Menu/Bron', "FiC9xyA4TCiYmbYF4xgxew", client);
-  await convertToWysiwyg('Menu/Info', "Ios1GGfvQ0-85isRxDEilw", client);
-  await convertToWysiwyg('Menu/Bijsluiter', "FLexmOHuRhCJ5ANcwgTWrg", client);
+  // rws-viewer:
+  // await convertToWysiwyg("ViewerLayer/Info", "c1CbH0YhR1avFBq0oY7Y3Q", client);
+  // data-viewer:
+  await convertToWysiwyg("ViewerLayer/Info", "JlW7SHg7THKeG9a16PaWeA", client);
+
+  // rws-viewer:
+  // await convertToWysiwyg(
+  //   "ViewerLayer/Bijsluiter",
+  //   "LfUiZwnBRrCFL8FvgJBiog",
+  //   client
+  // );
+  // data-viewer:
+  await convertToWysiwyg(
+    "ViewerLayer/Bijsluiter",
+    "GeJ-0iuNQlWPut-RC0hFvQ",
+    client
+  );
+
+  // rws-viewer:
+  // await convertToWysiwyg("Menu/Bron", "FiC9xyA4TCiYmbYF4xgxew", client);
+  // data-viewer:
+  await convertToWysiwyg("Menu/Bron", "OfiKgaT3SaWxmzi8moptGw", client);
+
+  // rws-viewer:
+  // await convertToWysiwyg("Menu/Info", "Ios1GGfvQ0-85isRxDEilw", client);
+  // data-viewer:
+  await convertToWysiwyg("Menu/Info", "J-R7QQ_rQuKk32MSmezsgw", client);
+
+  // rws-viewer:
+  // await convertToWysiwyg("Menu/Bijsluiter", "FLexmOHuRhCJ5ANcwgTWrg", client);
+  // data-viewer:
+  await convertToWysiwyg("Menu/Bijsluiter", "eioF30ylQJis-yFLvHwT1g", client);
 }
