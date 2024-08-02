@@ -31,14 +31,14 @@ fragment menuWithLayers on MenuRecord {
       tags {
         title
       }
+      metadata {
+        key: title
+        value: content
+      }
+      bron
+      bijsluiter
+      info
     }
-    metadata {
-      key: title
-      value: content
-    }
-    bron
-    bijsluiter
-    info
   }
   parent {
     id

@@ -36,14 +36,12 @@
                 {{ title }}
               </dd>
 
-              <templates v-if="description">
+              <template v-if="description">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
                   {{ $t('description') }}
                 </dt>
-                <dd class="layer-info-dialog__metadata-value">
-                  {{ description }}
-                </dd>
-              </templates>
+                <dd class="layer-info-dialog__metadata-value" v-html="description"></dd>
+              </template>
 
               <template v-if="source">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
@@ -52,25 +50,17 @@
                     <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                   </v-btn>
                 </dt>
-                <dd class="layer-info-dialog__metadata-value">
-                  <a :href="source" target="_blank">
-                    {{ source }}
-                  </a>
-                </dd>
+                <dd class="layer-info-dialog__metadata-value" v-html="source" />
               </template>
 
-              <template v-if="instructionManual">
+              <template v-if="leaflet">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
-                  {{ $t('instructionManual') }}
-                  <v-btn icon @click="copyUrlToClipboard(instructionManual)">
+                  {{ $t('leaflet') }}
+                  <v-btn icon @click="copyUrlToClipboard(leaflet)">
                     <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                   </v-btn> 
                 </dt>
-                <dd class="layer-info-dialog__metadata-value">
-                  <a :href="instructionManual" target="_blank">
-                    {{ instructionManual }}
-                  </a>
-                </dd>
+                <dd class="layer-info-dialog__metadata-value" v-html="leaflet" />
               </template>
 
               <template v-if="info">
@@ -80,11 +70,7 @@
                     <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                   </v-btn>
                 </dt>
-                <dd class="layer-info-dialog__metadata-value">
-                  <a :href="info" target="_blank">
-                    {{ info }}
-                  </a>
-                </dd>
+                <dd class="layer-info-dialog__metadata-value" v-html="info" />
               </template>
             
               <div v-for="item in content" :key="item.key">
@@ -105,7 +91,7 @@
               </dt>
               <dd class="layer-info-dialog__metadata-value">
                 <a :href="shareUrl" target="_blank">
-                  {{ shareUrl }}
+                  {{ $t('shareUrl') }}
                 </a>
               </dd>
 
@@ -118,7 +104,7 @@
                 </dt>
                 <dd class="layer-info-dialog__metadata-value">
                   <a :href="wmsUrl" target="_blank">
-                    {{ wmsUrl }}
+                    {{ $t('wmsUrl') }}
                   </a>
                 </dd>
               </template>
@@ -141,7 +127,7 @@
                 </dt>
                 <dd class="layer-info-dialog__metadata-value">
                   <a :href="recordUrl" target="_blank">
-                    {{ recordUrl }}
+                    Metadata url
                   </a>
                 </dd>
               </div>
@@ -178,8 +164,6 @@
 
 <script>
   import axios from 'axios'
-  import buildGeoserverUrl from '~/lib/build-geoserver-url'
-  import { getWmsCapabilities, getLayerProperties } from '~/lib/get-capabilities'
 
   export default {
     props: {
@@ -231,7 +215,7 @@
         type: String,
         default: '',
       },
-      instructionManual: {
+      leaflet: {
         type: String,
         default: '',
       },
@@ -289,22 +273,8 @@
         if (this.downloadUrl) {
           return this.downloadUrl
         }
-        
-        const capabilities = await getWmsCapabilities(this.url)
-        const { bbox } = getLayerProperties(capabilities, this.layer)
-        return buildGeoserverUrl({
-          url: this.url,
-          request: 'GetMap',
-          service: 'WMS',
-          version: '1.1.0',
-          format: 'application/openlayers',
-          srs: 'EPSG:4258',
-          layers: this.layer,
-          width: 700,
-          height: 500,
-          bbox: bbox.flat().join(','),
-          styles: '',
-        })
+
+        return this.url
       },
     },
   }
@@ -329,6 +299,19 @@
   .layer-info-dialog__metadata-value {
     max-width: 350px;
     margin: auto 0;
+  }
+
+  .layer-info-dialog__metadata-value table {
+    width: 100%;
+    border: 1px solid grey;
+    border-collapse: collapse;
+  }
+
+  .layer-info-dialog__metadata-value table th,
+  .layer-info-dialog__metadata-value table td {
+    text-align: start;
+    border: 1px solid grey;
+    padding: 5px;
   }
 
   .layer-info-dialog__title--wrapping {

@@ -100,7 +100,7 @@
             <template #info="{ isOpen, close, showFeedbackDialog }">
               <layer-info-dialog
                 :title="item.name"
-                :discription="item.description"
+                :description="item.description"
                 :content="item.metadata"
                 :share-url="getUrl(item)"
                 :open="isOpen"
@@ -111,7 +111,7 @@
                 :download-url="item.downloadUrl"
                 :download-layer="item.downloadLayer"
                 :source="item.bron"
-                :instruction-manual="item.bijsluiter"
+                :leaflet="item.bijsluiter"
                 :info="item.info"
                 @close="close"
                 @showFeedbackDialog="showFeedbackDialog"

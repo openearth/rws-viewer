@@ -81,7 +81,10 @@ async function fetchContentByIdsTranslated(
 }
 
 // Function to fetch viewer records
-async function fetchViewerRecords(client: Client, ids?: string[]): Promise<any[]> {
+async function fetchViewerRecords(
+  client: Client,
+  ids?: string[]
+): Promise<any[]> {
   const records: any[] = [];
 
   for await (const record of client.items.listPagedIterator({
@@ -225,7 +228,10 @@ async function migrateContent(client: Client) {
 
     await Promise.all(updatePromises);
 
-    viewers = await fetchViewerRecords(client, viewers.map((v: any) => v.id));
+    viewers = await fetchViewerRecords(
+      client,
+      viewers.map((v: any) => v.id)
+    );
     console.log("Updated viewers:", viewers.map((v: any) => v.id).join(", "));
 
     const updateLayerPromises = viewers.map((viewer: any) =>
