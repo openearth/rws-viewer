@@ -53,16 +53,6 @@
                 <dd class="layer-info-dialog__metadata-value" v-html="source" />
               </template>
 
-              <template v-if="leaflet">
-                <dt class="font-weight-bold layer-info-dialog__metadata-key">
-                  {{ $t('leaflet') }}
-                  <v-btn icon @click="copyUrlToClipboard(leaflet)">
-                    <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
-                  </v-btn> 
-                </dt>
-                <dd class="layer-info-dialog__metadata-value" v-html="leaflet" />
-              </template>
-
               <template v-if="info">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
                   {{ $t('info') }}
@@ -71,6 +61,16 @@
                   </v-btn>
                 </dt>
                 <dd class="layer-info-dialog__metadata-value" v-html="info" />
+              </template>
+
+              <template v-if="leaflet">
+                <dt class="font-weight-bold layer-info-dialog__metadata-key">
+                  {{ $t('leaflet') }}
+                  <v-btn icon @click="copyUrlToClipboard(leaflet)">
+                    <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
+                  </v-btn> 
+                </dt>
+                <dd class="layer-info-dialog__metadata-value" v-html="leaflet" />
               </template>
             
               <div v-for="item in content" :key="item.key">
