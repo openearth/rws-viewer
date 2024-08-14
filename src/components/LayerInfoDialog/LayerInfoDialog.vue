@@ -244,9 +244,12 @@
           try {
             this.errorMessage = ''
             this.isLoading = true
-            const { data } = await axios(
-              `/api/record-register?record=${ this.viewerLayerId }&viewer=${ this.viewerName }`,
-            )
+
+            const data = await this.multipleFetch([
+              `/api/record-register?record=${this.layerId}&viewer=${this.viewerName}`,
+              `/api/record-register?record=${this.viewerLayerId}&viewer=${this.viewerName}`,
+            ])
+
             this.recordUrl = data
           } catch (e) {
             if (!e.response.data.error) {
@@ -260,8 +263,6 @@
     },
 
     async mounted() {
-      console.log(this.viewerLayerId)
-
       if (this.layer && this.url) {
         this.wmsUrl = await this.getWmsUrl()
       }
@@ -282,6 +283,19 @@
 
         return this.url
       },
+      async multipleFetch(urls) {
+        for (let i = 0; i < urls.length; i++) {
+          try {
+            const response = await axios.get(urls[i]);
+
+            return response.data;
+          } catch (error) {
+            console.error(`Failed to fetch from URL ${i + 1}:`, error.message);
+          }
+        }
+
+        throw new Error('All fetch attempts failed');
+      } 
     },
   }
 </script>
