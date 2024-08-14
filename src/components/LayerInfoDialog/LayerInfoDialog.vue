@@ -46,7 +46,11 @@
               <template v-if="source">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
                   {{ $t('source') }}
-                  <v-btn icon @click="copyUrlToClipboard(source)">
+                  <v-btn
+                    v-if="hasUrl(source)"
+                    icon
+                    @click="copyUrlToClipboard(extractUrlFromHTML(source))"
+                  >
                     <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                   </v-btn>
                 </dt>
@@ -56,7 +60,11 @@
               <template v-if="info">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
                   {{ $t('info') }}
-                  <v-btn icon @click="copyUrlToClipboard(info)">
+                  <v-btn
+                    v-if="hasUrl(info)"
+                    icon
+                    @click="copyUrlToClipboard(extractUrlFromHTML(info))"
+                  >
                     <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                   </v-btn>
                 </dt>
@@ -66,7 +74,11 @@
               <template v-if="leaflet">
                 <dt class="font-weight-bold layer-info-dialog__metadata-key">
                   {{ $t('leaflet') }}
-                  <v-btn icon @click="copyUrlToClipboard(leaflet)">
+                  <v-btn
+                    v-if="hasUrl(leaflet)"
+                    icon
+                    @click="copyUrlToClipboard(extractUrlFromHTML(leaflet))"
+                  >
                     <v-icon>mdi-clipboard-arrow-down-outline</v-icon>
                   </v-btn> 
                 </dt>
@@ -272,8 +284,12 @@
       close() {
         this.$emit('close')
       },
+      hasUrl(html) {
+        return Boolean(this.extractUrlFromHTML(html))
+      },
       async copyUrlToClipboard(url) {
         await navigator.clipboard.writeText(url)
+
         alert(`The following url is copied to clipboard! ${ url }`)
       },
       async getWmsUrl() {
@@ -295,7 +311,14 @@
         }
 
         throw new Error('All fetch attempts failed');
-      } 
+      },
+      extractUrlFromHTML(html) {
+        const parser = new DOMParser()
+        const doc = parser.parseFromString(html, 'text/html')
+        const a = doc.querySelector('a')
+
+        return a ? a.href : ''
+      },
     },
   }
 </script>
