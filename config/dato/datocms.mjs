@@ -54,6 +54,12 @@ function getPaginatedData(token, variables, query) {
       const [ , originalKey ] = allKey.match(keyRegex).map(camelCase)
       const itemsInResponse = response.data.data[originalKey]
       const remainingAmount = count - itemsInResponse.length
+
+      if (remainingAmount <= 0) {
+        delete response.data.data[allKey]
+        return response
+      }
+
       const totalRemainingRequests = Math.ceil(
         remainingAmount / itemsInResponse.length,
       )

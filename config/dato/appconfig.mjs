@@ -16,9 +16,9 @@ query {
 export default async function dumpAppConfig() {
   const { data: { appConfig } } = await datocmsRequest(process.env.DATO_API_TOKEN, {}, query)
   
-  const categories = appConfig.categories.map((category) =>
+  const categories = appConfig?.categories.map((category) =>
     slugify(category.name),
-  )
+  ) || []
 
   const config = {
     ...appConfig,
