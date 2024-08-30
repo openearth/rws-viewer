@@ -3,4 +3,4 @@ import { URL } from 'url'
 
 const __dirname = new URL('.', import.meta.url).pathname
 export const PUBLIC_DIR = path.join(__dirname, '../..', 'public/data')
-export const datoEnvironment = 'production'
+export const datoEnvironment = 'main'
