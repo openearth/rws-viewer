@@ -4,8 +4,6 @@ import { DatoClient } from "./utils";
 async function main() {
   const { instances } = await import("../../config/dato/instances.js");
 
-  console.log(instances);
-
   for (const instance of instances) {
     console.log(`Setting up staging environment for ${instance.name}`);
 
