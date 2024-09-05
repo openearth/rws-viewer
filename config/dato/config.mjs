@@ -16,7 +16,7 @@ query ($first: IntType, $skip: IntType = 0, $locale: SiteLocale) {
 `
 
 export default async function dumpConfig(locale) {
-  const { data: { menus } } = await datocmsRequest(process.env.DATO_API_TOKEN, {
+  const { data: { menus } } = await datocmsRequest({
     locale,
   }, query)
   dumpMenus(menus, locale)

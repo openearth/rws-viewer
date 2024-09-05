@@ -1,4 +1,7 @@
-import { Client, SimpleSchemaTypes } from "@datocms/cli/lib/cma-client-node";
+import type {
+  Client,
+  SimpleSchemaTypes,
+} from "@datocms/cli/lib/cma-client-node";
 
 export default async function (client: Client) {
   console.log("Configure new locales");
@@ -307,15 +310,6 @@ export default async function (client: Client) {
     }
   );
 
-  console.log("Creating new fields/fieldsets");
-
-  console.log('Create fieldset "i MENU inhoud" in model "Layer" (`layer`)');
-  await client.fieldsets.create(newItemTypes["1518125"], {
-    id: "fl8ztEqVSRGlgIkNPJ7Q6A",
-    title: "i MENU inhoud",
-    hint: "Hierin worden de 'wijzigbare onderdelen' van het i-menu ondergebracht. Diverse onderdelen van het i-menu worden automatisch gekoppeld tijdens het opvragen van het i-menu in de viewer.",
-  });
-
   console.log(
     'Create Single-line string field "Name" (`name`) in model "Layer" (`layer`)'
   );
@@ -331,26 +325,6 @@ export default async function (client: Client) {
       parameters: { heading: false, placeholder: null },
     },
     default_value: { en: "", nl: "" },
-  });
-
-  console.log(
-    'Create Modular Content (Multiple blocks) field "Custom metadata" (`metadata`) in model "Layer" (`layer`)'
-  );
-  await client.fields.create(newItemTypes["1518125"], {
-    id: "AnW00ZQ9SD24bxIA_Jsybw",
-    label: "Custom metadata",
-    field_type: "rich_text",
-    api_key: "metadata",
-    localized: true,
-    validators: {
-      rich_text_blocks: { item_types: [newItemTypes["1556543"].id] },
-    },
-    appearance: {
-      addons: [],
-      editor: "rich_text",
-      parameters: { start_collapsed: false },
-    },
-    fieldset: { id: "fl8ztEqVSRGlgIkNPJ7Q6A", type: "fieldset" },
   });
 
   console.log(
@@ -371,25 +345,6 @@ export default async function (client: Client) {
   });
 
   console.log(
-    'Create Multiple-paragraph text field "Bron" (`bron`) in model "Layer" (`layer`)'
-  );
-  await client.fields.create(newItemTypes["1518125"], {
-    id: "MST_hSw-RoCAnLWs8zG0lQ",
-    label: "Bron",
-    field_type: "text",
-    api_key: "bron",
-    localized: true,
-    appearance: {
-      addons: [],
-      editor: "wysiwyg",
-      parameters: { toolbar: ["link"] },
-      type: "wysiwyg",
-    },
-    default_value: { en: "", nl: "" },
-    fieldset: { id: "fl8ztEqVSRGlgIkNPJ7Q6A", type: "fieldset" },
-  });
-
-  console.log(
     'Create Single-line string field "Layer" (`layer`) in model "Layer" (`layer`)'
   );
   newFields["7581678"] = await client.fields.create(newItemTypes["1518125"], {
@@ -407,25 +362,6 @@ export default async function (client: Client) {
   });
 
   console.log(
-    'Create Multiple-paragraph text field "Info" (`info`) in model "Layer" (`layer`)'
-  );
-  await client.fields.create(newItemTypes["1518125"], {
-    id: "AlZmC-hgTQit4j1Q2F5tiw",
-    label: "Info",
-    field_type: "text",
-    api_key: "info",
-    localized: true,
-    appearance: {
-      addons: [],
-      editor: "wysiwyg",
-      parameters: { toolbar: ["link"] },
-      type: "wysiwyg",
-    },
-    default_value: { en: "", nl: "" },
-    fieldset: { id: "fl8ztEqVSRGlgIkNPJ7Q6A", type: "fieldset" },
-  });
-
-  console.log(
     'Create Multiple-paragraph text field "Description" (`description`) in model "Layer" (`layer`)'
   );
   newFields["10270437"] = await client.fields.create(newItemTypes["1518125"], {
@@ -440,25 +376,6 @@ export default async function (client: Client) {
       type: "wysiwyg",
     },
     default_value: { en: "", nl: "" },
-  });
-
-  console.log(
-    'Create Multiple-paragraph text field "Bijsluiter" (`bijsluiter`) in model "Layer" (`layer`)'
-  );
-  await client.fields.create(newItemTypes["1518125"], {
-    id: "UScG4yk-TCa813E85W-apg",
-    label: "Bijsluiter",
-    field_type: "text",
-    api_key: "bijsluiter",
-    localized: true,
-    appearance: {
-      addons: [],
-      editor: "wysiwyg",
-      parameters: { toolbar: ["link"] },
-      type: "wysiwyg",
-    },
-    default_value: { en: "", nl: "" },
-    fieldset: { id: "fl8ztEqVSRGlgIkNPJ7Q6A", type: "fieldset" },
   });
 
   console.log(
@@ -513,6 +430,88 @@ export default async function (client: Client) {
     api_key: "column_filter",
     appearance: { addons: [], editor: "json", parameters: {} },
     default_value: null,
+  });
+
+  console.log('Create fieldset "i MENU inhoud" in model "Layer" (`layer`)');
+  await client.fieldsets.create(newItemTypes["1518125"], {
+    id: "fl8ztEqVSRGlgIkNPJ7Q6A",
+    title: "i MENU inhoud",
+    hint: "Hierin worden de 'wijzigbare onderdelen' van het i-menu ondergebracht. Diverse onderdelen van het i-menu worden automatisch gekoppeld tijdens het opvragen van het i-menu in de viewer.",
+  });
+
+  console.log(
+    'Create Modular Content (Multiple blocks) field "Custom metadata" (`metadata`) in model "Layer" (`layer`)'
+  );
+  await client.fields.create(newItemTypes["1518125"], {
+    id: "AnW00ZQ9SD24bxIA_Jsybw",
+    label: "Custom metadata",
+    field_type: "rich_text",
+    api_key: "metadata",
+    localized: true,
+    validators: {
+      rich_text_blocks: { item_types: [newItemTypes["1556543"].id] },
+    },
+    appearance: {
+      addons: [],
+      editor: "rich_text",
+      parameters: { start_collapsed: false },
+    },
+    fieldset: { id: "fl8ztEqVSRGlgIkNPJ7Q6A", type: "fieldset" },
+  });
+
+  console.log(
+    'Create Multiple-paragraph text field "Bron" (`bron`) in model "Layer" (`layer`)'
+  );
+  await client.fields.create(newItemTypes["1518125"], {
+    id: "MST_hSw-RoCAnLWs8zG0lQ",
+    label: "Bron",
+    field_type: "text",
+    api_key: "bron",
+    localized: true,
+    appearance: {
+      addons: [],
+      editor: "wysiwyg",
+      parameters: { toolbar: ["link"] },
+      type: "wysiwyg",
+    },
+    default_value: { en: "", nl: "" },
+    fieldset: { id: "fl8ztEqVSRGlgIkNPJ7Q6A", type: "fieldset" },
+  });
+  console.log(
+    'Create Multiple-paragraph text field "Info" (`info`) in model "Layer" (`layer`)'
+  );
+  await client.fields.create(newItemTypes["1518125"], {
+    id: "AlZmC-hgTQit4j1Q2F5tiw",
+    label: "Info",
+    field_type: "text",
+    api_key: "info",
+    localized: true,
+    appearance: {
+      addons: [],
+      editor: "wysiwyg",
+      parameters: { toolbar: ["link"] },
+      type: "wysiwyg",
+    },
+    default_value: { en: "", nl: "" },
+    fieldset: { id: "fl8ztEqVSRGlgIkNPJ7Q6A", type: "fieldset" },
+  });
+  console.log(
+    'Create Multiple-paragraph text field "Bijsluiter" (`bijsluiter`) in model "Layer" (`layer`)'
+  );
+  await client.fields.create(newItemTypes["1518125"], {
+    id: "UScG4yk-TCa813E85W-apg",
+    label: "Bijsluiter",
+    field_type: "text",
+    api_key: "bijsluiter",
+    localized: true,
+    appearance: {
+      addons: [],
+      editor: "wysiwyg",
+      parameters: { toolbar: ["link"] },
+      type: "wysiwyg",
+    },
+    default_value: { en: "", nl: "" },
+    fieldset: { id: "fl8ztEqVSRGlgIkNPJ7Q6A", type: "fieldset" },
   });
 
   console.log(
@@ -611,13 +610,6 @@ export default async function (client: Client) {
     default_value: "",
   });
 
-  console.log('Create fieldset "i MENU inhoud" in model "Menu" (`menu`)');
-  await client.fieldsets.create(newItemTypes["1518226"], {
-    id: "bMDW38YXQ9K0I493NSD9ow",
-    title: "i MENU inhoud",
-    hint: "Hierin worden de 'wijzigbare onderdelen' van het i-menu ondergebracht. Diverse onderdelen van het i-menu worden automatisch gekoppeld tijdens het opvragen van het i-menu in de viewer.",
-  });
-
   console.log(
     'Create Single-line string field "Name" (`name`) in model "Menu" (`menu`)'
   );
@@ -633,44 +625,6 @@ export default async function (client: Client) {
       parameters: { heading: false, placeholder: null },
     },
     default_value: { en: "", nl: "" },
-  });
-
-  console.log(
-    'Create Modular Content (Multiple blocks) field "Custom metadata" (`viewer_metadata`) in model "Menu" (`menu`)'
-  );
-  await client.fields.create(newItemTypes["1518226"], {
-    id: "Mdo6gWiHREKoGwN3ndV2WQ",
-    label: "Custom metadata",
-    field_type: "rich_text",
-    api_key: "viewer_metadata",
-    localized: true,
-    validators: {
-      rich_text_blocks: { item_types: [newItemTypes["1556543"].id] },
-    },
-    appearance: {
-      addons: [],
-      editor: "rich_text",
-      parameters: { start_collapsed: false },
-    },
-    fieldset: { id: "bMDW38YXQ9K0I493NSD9ow", type: "fieldset" },
-  });
-
-  console.log(
-    'Create Multiple-paragraph text field "Bron" (`bron`) in model "Menu" (`menu`)'
-  );
-  await client.fields.create(newItemTypes["1518226"], {
-    id: "OfiKgaT3SaWxmzi8moptGw",
-    label: "Bron",
-    field_type: "text",
-    api_key: "bron",
-    appearance: {
-      addons: [],
-      editor: "wysiwyg",
-      parameters: { toolbar: ["link"] },
-      type: "wysiwyg",
-    },
-    default_value: "",
-    fieldset: { id: "bMDW38YXQ9K0I493NSD9ow", type: "fieldset" },
   });
 
   console.log(
@@ -712,24 +666,6 @@ export default async function (client: Client) {
   });
 
   console.log(
-    'Create Multiple-paragraph text field "Info" (`info`) in model "Menu" (`menu`)'
-  );
-  await client.fields.create(newItemTypes["1518226"], {
-    id: "J-R7QQ_rQuKk32MSmezsgw",
-    label: "Info",
-    field_type: "text",
-    api_key: "info",
-    appearance: {
-      addons: [],
-      editor: "wysiwyg",
-      parameters: { toolbar: ["link"] },
-      type: "wysiwyg",
-    },
-    default_value: "",
-    fieldset: { id: "bMDW38YXQ9K0I493NSD9ow", type: "fieldset" },
-  });
-
-  console.log(
     'Create Floating-point number field "Map Zoom" (`map_zoom`) in model "Menu" (`menu`)'
   );
   newFields["10315056"] = await client.fields.create(newItemTypes["1518226"], {
@@ -742,24 +678,6 @@ export default async function (client: Client) {
       parameters: { placeholder: null },
     },
     default_value: 7,
-  });
-
-  console.log(
-    'Create Multiple-paragraph text field "Bijsluiter" (`bijsluiter`) in model "Menu" (`menu`)'
-  );
-  await client.fields.create(newItemTypes["1518226"], {
-    id: "eioF30ylQJis-yFLvHwT1g",
-    label: "Bijsluiter",
-    field_type: "text",
-    api_key: "bijsluiter",
-    appearance: {
-      addons: [],
-      editor: "wysiwyg",
-      parameters: { toolbar: ["link"] },
-      type: "wysiwyg",
-    },
-    default_value: "",
-    fieldset: { id: "bMDW38YXQ9K0I493NSD9ow", type: "fieldset" },
   });
 
   console.log(
@@ -907,6 +825,83 @@ export default async function (client: Client) {
       type: "wysiwyg",
     },
     default_value: { en: "", nl: "" },
+  });
+
+  console.log('Create fieldset "i MENU inhoud" in model "Menu" (`menu`)');
+  await client.fieldsets.create(newItemTypes["1518226"], {
+    id: "bMDW38YXQ9K0I493NSD9ow",
+    title: "i MENU inhoud",
+    hint: "Hierin worden de 'wijzigbare onderdelen' van het i-menu ondergebracht. Diverse onderdelen van het i-menu worden automatisch gekoppeld tijdens het opvragen van het i-menu in de viewer.",
+  });
+  console.log(
+    'Create Modular Content (Multiple blocks) field "Custom metadata" (`viewer_metadata`) in model "Menu" (`menu`)'
+  );
+  await client.fields.create(newItemTypes["1518226"], {
+    id: "Mdo6gWiHREKoGwN3ndV2WQ",
+    label: "Custom metadata",
+    field_type: "rich_text",
+    api_key: "viewer_metadata",
+    localized: true,
+    validators: {
+      rich_text_blocks: { item_types: [newItemTypes["1556543"].id] },
+    },
+    appearance: {
+      addons: [],
+      editor: "rich_text",
+      parameters: { start_collapsed: false },
+    },
+    fieldset: { id: "bMDW38YXQ9K0I493NSD9ow", type: "fieldset" },
+  });
+  console.log(
+    'Create Multiple-paragraph text field "Bron" (`bron`) in model "Menu" (`menu`)'
+  );
+  await client.fields.create(newItemTypes["1518226"], {
+    id: "OfiKgaT3SaWxmzi8moptGw",
+    label: "Bron",
+    field_type: "text",
+    api_key: "bron",
+    appearance: {
+      addons: [],
+      editor: "wysiwyg",
+      parameters: { toolbar: ["link"] },
+      type: "wysiwyg",
+    },
+    default_value: "",
+    fieldset: { id: "bMDW38YXQ9K0I493NSD9ow", type: "fieldset" },
+  });
+  console.log(
+    'Create Multiple-paragraph text field "Info" (`info`) in model "Menu" (`menu`)'
+  );
+  await client.fields.create(newItemTypes["1518226"], {
+    id: "J-R7QQ_rQuKk32MSmezsgw",
+    label: "Info",
+    field_type: "text",
+    api_key: "info",
+    appearance: {
+      addons: [],
+      editor: "wysiwyg",
+      parameters: { toolbar: ["link"] },
+      type: "wysiwyg",
+    },
+    default_value: "",
+    fieldset: { id: "bMDW38YXQ9K0I493NSD9ow", type: "fieldset" },
+  });
+  console.log(
+    'Create Multiple-paragraph text field "Bijsluiter" (`bijsluiter`) in model "Menu" (`menu`)'
+  );
+  await client.fields.create(newItemTypes["1518226"], {
+    id: "eioF30ylQJis-yFLvHwT1g",
+    label: "Bijsluiter",
+    field_type: "text",
+    api_key: "bijsluiter",
+    appearance: {
+      addons: [],
+      editor: "wysiwyg",
+      parameters: { toolbar: ["link"] },
+      type: "wysiwyg",
+    },
+    default_value: "",
+    fieldset: { id: "bMDW38YXQ9K0I493NSD9ow", type: "fieldset" },
   });
 
   console.log(

@@ -21,7 +21,6 @@ query($locale: SiteLocale) {
 
 export default async function dumpAvailableConfigs(locale) {
   const { data: { configs } } = await datocmsRequest(
-    process.env.DATO_API_TOKEN,
     { locale },
     query,
   )
