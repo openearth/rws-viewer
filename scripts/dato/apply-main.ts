@@ -9,6 +9,8 @@ async function main() {
 
     const client = new DatoClient(instance.key);
 
+    await client.runCommand(["maintenance:on"]);
+
     const existingEnvironments = await client.listEnvironments();
 
     const stagingExists = existingEnvironments?.some(
