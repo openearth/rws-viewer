@@ -1,0 +1,40 @@
+name: Apply staging migrations on PR when there are changes in the migrations folder
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  check-folder-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Check for changes in specific folder
+        id: check_changes
+        run: |
+          if git diff --name-only origin/main...HEAD | grep -q '^src/specific-folder/'; then
+            echo "changes=true" >> $GITHUB_ENV
+          else
+            echo "changes=false" >> $GITHUB_ENV
+          fi
+
+  apply-staging:
+    needs: check-folder-changes
+    if: env.changes == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run TypeScript script
+        run: npm run migrations:apply-staging
