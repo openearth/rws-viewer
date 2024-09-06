@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { map, uniq, pipe } from 'ramda'
 
-
 import {
   WCS_LAYER_TYPE,
   WFS_LAYER_TYPE,
@@ -52,7 +51,19 @@ function createParameters(type) {
   }
 }
 
-
+async function getType(service) {
+  try {
+     await axios.get(`${ service }?${ createParameters('WFS') }`)
+     return 'WFS'
+  } catch (error) {
+      try {
+          await axios.get(`${ service.replace('wfs', 'wcs') }?${ createParameters('WCS') }`)
+          return 'WCS'
+      } catch (error) {
+          return 'Unknown'
+      }
+  }
+}
  
 export async function getCapabilities(service, type) {
   /**
@@ -60,7 +71,14 @@ export async function getCapabilities(service, type) {
    * create parameters and make the request
    * parse it as a dom element
    */
-  const _type = type
+  let _type = type
+
+  if (!_type) {
+    _type = await getType(service)
+  }
+
+  console.log(_type)
+
   const serviceUrl = new URL(service)
  
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
