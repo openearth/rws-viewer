@@ -77,8 +77,6 @@ export async function getCapabilities(service, type) {
     _type = await getType(service)
   }
 
-  console.log(_type)
-
   const serviceUrl = new URL(service)
  
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
