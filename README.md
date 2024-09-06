@@ -42,9 +42,9 @@ Usage:
 npm run migrations:create
 ```
 
-### Apply Migrations (`migrations:apply`)
+### Apply Migrations To Staging (`migrations:apply-staging`)
 
-**File:** `scripts/dato/run.ts`
+**File:** `scripts/dato/apply-staging.ts`
 
 This script applies migrations to the staging environment for all configured DatoCMS instances.
 
@@ -60,3 +60,29 @@ Usage:
 ```bash
 npm run migrations:apply
 ```
+
+### Apply Migrations to Main (`migrations:apply-main`)
+
+🚧 Please do not use this script unless you know what you are doing. This will update the main environment for all configured DatoCMS instances and can cause data loss. Typically this will only be run from a GitHub action.
+
+**File:** `scripts/dato/apply-main.ts`
+
+This script applies migrations to the main environment for all configured DatoCMS instances.
+
+For each instance:
+
+1. Destroys the existing staging environment if it exists.
+2. Creates a fresh staging environment by forking from the main environment.
+3. Applies all migrations in the `migrations` directory to the staging environment.
+4. Promotes the staging environment to main.
+5. Destroys the old main environment.
+6. Renames the staging environment to main.
+
+Usage:
+
+```bash
+bash
+npm run migrations:apply-main
+```
+
+This update adds a new section to the `README.md` file, documenting the `apply-main` script and its usage.
