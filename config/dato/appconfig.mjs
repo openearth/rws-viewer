@@ -14,11 +14,11 @@ query {
 `
 
 export default async function dumpAppConfig() {
-  const { data: { appConfig } } = await datocmsRequest(process.env.DATO_API_TOKEN, {}, query)
+  const { data: { appConfig } } = await datocmsRequest({}, query)
   
-  const categories = appConfig.categories.map((category) =>
+  const categories = appConfig?.categories.map((category) =>
     slugify(category.name),
-  )
+  ) || []
 
   const config = {
     ...appConfig,

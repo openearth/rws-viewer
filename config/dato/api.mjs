@@ -23,6 +23,6 @@ query {
 }`
 
 export default async function dumpApiData() {
-  const { data } = await datocmsRequest(process.env.DATO_API_TOKEN, {}, query)
+  const { data } = await datocmsRequest({}, query)
   await fs.writeFile(`${ PUBLIC_DIR }/api.json`, JSON.stringify(data, null, 2))
 }

@@ -21,3 +21,42 @@ npm install --legacy-peer-deps
 ```sh
 npm run dev
 ```
+
+## Migrations
+
+This project uses [DatoCMS migrations](https://www.datocms.com/docs/content-management-api/migrations) for managing the models and moving data around in the DatoCMS instances. It uses custom scripts to generate the migrations, and to apply them.
+
+### Create Migration (`migrations:create`)
+
+**File:** `scripts/dato/create.ts`
+
+This script creates a new migration file for DatoCMS.
+
+- Prompts the user for a migration name.
+- Uses the current DatoCMS instance specified in the environment variable `DATO_INSTANCE_CURRENT`.
+- Creates a new migration file using the DatoCMS CLI.
+
+Usage:
+
+```bash
+npm run migrations:create
+```
+
+### Apply Migrations (`migrations:apply`)
+
+**File:** `scripts/dato/run.ts`
+
+This script applies migrations to the staging environment for all configured DatoCMS instances.
+
+For each instance:
+
+1. Sets up a staging environment.
+2. Destroys the existing staging environment if it exists.
+3. Creates a fresh staging environment by forking from the main environment.
+4. Applies all migrations in the `migrations` directory to the staging environment.
+
+Usage:
+
+```bash
+npm run migrations:apply
+```
