@@ -27,7 +27,8 @@
     "start-server": "netlify dev",
     "add-translation": "node scripts/add-translation/index.mjs",
     "migrations:create": "ts-node  scripts/dato/create",
-    "migrations:apply": "ts-node  scripts/dato/run"
+    "migrations:apply-staging": "ts-node  scripts/dato/apply-staging",
+    "migrations:apply-main": "ts-node  scripts/dato/apply-main"
   },
   "dependencies": {
     "@datocms/cli": "^2.0.14",

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DatoClient } from "./utils";
+import { DatoClient } from "./utils.js";
 
 async function main() {
   const { instances } = await import("../../config/dato/instances.js");
