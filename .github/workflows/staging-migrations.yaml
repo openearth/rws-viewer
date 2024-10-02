@@ -15,7 +15,7 @@ jobs:
         id: check_changes
         run: |
           git fetch origin main
-          git checkout ${{ github.ref_name }}
+          git checkout ${{ github.head_ref || github.ref_name }}
 
           if git diff --name-only origin/main...HEAD | grep -q '^migrations/'; then
             echo "changes=true" >> $GITHUB_ENV
