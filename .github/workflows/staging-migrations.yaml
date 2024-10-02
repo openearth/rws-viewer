@@ -11,12 +11,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Fetch latest changes
-        run: git fetch origin main
-
       - name: Check for changes in migrations folder
         id: check_changes
         run: |
+          git fetch origin main
+
           if git diff --name-only origin/main...HEAD | grep -q '^migrations/'; then
             echo "changes=true" >> $GITHUB_ENV
           else
