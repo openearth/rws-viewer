@@ -30,6 +30,8 @@ async function main() {
     await client.destroyEnvironment("main");
 
     await client.runCommand(["environments:rename", "staging", "main"]);
+
+    await client.runCommand(["maintenance:off"]);
   }
 }
 

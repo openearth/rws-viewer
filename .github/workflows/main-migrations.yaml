@@ -1,0 +1,44 @@
+name: Apply main migrations on PR merge
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  apply-main-migrations:
+    if: ${{ github.event.pull_request.merged == true }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for changes in migrations folder
+        id: check_changes
+        run: |
+          git fetch origin main
+
+          if git diff --quiet HEAD^ HEAD migrations; then
+            echo "CHANGES=false" >> $GITHUB_ENV
+          else
+            echo "CHANGES=true" >> $GITHUB_ENV
+          fi
+
+      - name: Set up Node.js
+        if: ${{ env.CHANGES == 'true' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        if: ${{ env.CHANGES == 'true' }}
+        run: npm install --force
+
+      - name: Run TypeScript script
+        if: ${{ env.CHANGES == 'true' }}
+        env:
+          DATO_API_KEY_OPENEARTH_RWS_VIEWER: ${{ secrets.DATO_API_KEY_OPENEARTH_RWS_VIEWER }}
+          DATO_API_KEY_OPENEARTH_DATA_VIEWER: ${{ secrets.DATO_API_KEY_OPENEARTH_DATA_VIEWER }}
+          DATO_API_KEY_NL2120: ${{ secrets.DATO_API_KEY_NL2120 }}
+        run: npm run migrations:apply-main
