@@ -7,11 +7,12 @@ on:
 jobs:
   check-folder-changes:
     runs-on: ubuntu-latest
-    outputs:
-      changes: ${{ steps.check_changes.outputs.changes }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Fetch latest changes
+        run: git fetch origin main
 
       - name: Check for changes in migrations folder
         id: check_changes
