@@ -1,4 +1,4 @@
-name: Apply main migrations on PR merge
+name: Main migrations
 
 on:
   pull_request:

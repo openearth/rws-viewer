@@ -1,4 +1,4 @@
-name: Apply staging migrations on PR when there are changes in the migrations folder
+name: Staging migrations
 
 on:
   pull_request:
