@@ -12,7 +12,7 @@ if (!currentInstance) {
   throw new Error("No current instance found");
 }
 
-const apiKey = currentInstance.key;
+const apiKey = currentInstance.datoApiKey;
 const client = new DatoClient(apiKey);
 
 const promptGet = promisify(prompt.get);

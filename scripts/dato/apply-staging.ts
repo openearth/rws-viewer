@@ -7,7 +7,7 @@ async function main() {
   for (const instance of instances) {
     console.log(`Setting up staging environment for ${instance.name}`);
 
-    const client = new DatoClient(instance.key);
+    const client = new DatoClient(instance.datoApiKey);
 
     const existingEnvironments = await client.listEnvironments();
 

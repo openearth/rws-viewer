@@ -1,4 +1,4 @@
-name: Main migrations
+name: Deploy production
 
 on:
   pull_request:
