@@ -1,4 +1,4 @@
-name: Deploy staging
+name: Deploy to staging
 
 on:
   pull_request:
@@ -45,6 +45,7 @@ jobs:
         run: npm run migrations:apply-staging
 
   prepare:
+    needs: apply-staging-migrations
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
@@ -106,7 +107,9 @@ jobs:
           publish-dir: "./dist"
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: Preview deployment for ${{ matrix.name }}
+          enable-commit-comment: false
+          enable-pull-request-comment: true
+          overwrites-pull-request-comment: true
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ matrix.netlifySiteId }}
