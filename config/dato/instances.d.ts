@@ -1,4 +1,5 @@
 export const instances: Array<{
   name: string;
-  key: string;
+  datoApiKey: string;
+  netlifySiteId: string;
 }>;

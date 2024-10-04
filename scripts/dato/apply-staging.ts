@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DatoClient } from "./utils.js";
+import { DatoClient } from "./utils";
 
 async function main() {
   const { instances } = await import("../../config/dato/instances.js");
@@ -7,7 +7,7 @@ async function main() {
   for (const instance of instances) {
     console.log(`Setting up staging environment for ${instance.name}`);
 
-    const client = new DatoClient(instance.key);
+    const client = new DatoClient(instance.datoApiKey);
 
     const existingEnvironments = await client.listEnvironments();
 

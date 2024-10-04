@@ -23,7 +23,7 @@ if (!currentInstance) {
   throw new Error("No current instance found");
 }
 
-const token = currentInstance.key;
+const token = currentInstance.datoApiKey;
 
 const endpoint =
   process.env.NODE_ENV === 'production'

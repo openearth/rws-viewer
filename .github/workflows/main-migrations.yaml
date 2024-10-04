@@ -1,0 +1,111 @@
+name: Deploy production
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  apply-main-migrations:
+    if: ${{ github.event.pull_request.merged == true }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for changes in migrations folder
+        id: check_changes
+        run: |
+          git fetch origin main
+
+          if git diff --quiet HEAD^ HEAD migrations; then
+            echo "CHANGES=false" >> $GITHUB_ENV
+          else
+            echo "CHANGES=true" >> $GITHUB_ENV
+          fi
+
+      - name: Set up Node.js
+        if: ${{ env.CHANGES == 'true' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        if: ${{ env.CHANGES == 'true' }}
+        run: npm install --force
+
+      - name: Run TypeScript script
+        if: ${{ env.CHANGES == 'true' }}
+        env:
+          DATO_API_KEY_OPENEARTH_RWS_VIEWER: ${{ secrets.DATO_API_KEY_OPENEARTH_RWS_VIEWER }}
+          DATO_API_KEY_OPENEARTH_DATA_VIEWER: ${{ secrets.DATO_API_KEY_OPENEARTH_DATA_VIEWER }}
+          DATO_API_KEY_NL2120: ${{ secrets.DATO_API_KEY_NL2120 }}
+        run: npm run migrations:apply-main
+
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install --force
+
+      - name: Set matrix data
+        id: set-matrix
+        run: |
+          instances=$(node -e 'console.log(JSON.stringify(require("./config/dato/instances.js").instances))')
+          echo "matrix=$(echo $instances | jq -c '.')" >> $GITHUB_OUTPUT
+          echo "matrix is set to: $instances"
+
+  deploy-application:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install --force
+
+      - name: Build application
+        run: NODE_OPTIONS="--openssl-legacy-provider" npm run build
+        env:
+          DATO_API_KEY_OPENEARTH_RWS_VIEWER: ${{ secrets.DATO_API_KEY_OPENEARTH_RWS_VIEWER }}
+          DATO_API_KEY_OPENEARTH_DATA_VIEWER: ${{ secrets.DATO_API_KEY_OPENEARTH_DATA_VIEWER }}
+          DATO_API_KEY_NL2120: ${{ secrets.DATO_API_KEY_NL2120 }}
+          DATO_INSTANCE_CURRENT: ${{ matrix.name }}
+          DATO_ENVIRONMENT: main
+          VUE_APP_MAPBOX_TOKEN: ${{ secrets.VUE_APP_MAPBOX_TOKEN }}
+          VUE_APP_API_ENDPOINT: ${{ secrets.VUE_APP_API_ENDPOINT }}
+          VUE_APP_AQUADESK_KEY: ${{ secrets.VUE_APP_AQUADESK_KEY }}
+          VUE_APP_PIWIK_CONTAINER_ID: ${{ secrets.VUE_APP_PIWIK_CONTAINER_ID }}
+          VUE_APP_WMR_KEY: ${{ secrets.VUE_APP_WMR_KEY }}
+          DEEPL_KEY: ${{ secrets.DEEPL_KEY }}
+
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: "./dist"
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: Production deployment for ${{ matrix.name }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ matrix.netlifySiteId }}
