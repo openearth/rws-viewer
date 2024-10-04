@@ -109,7 +109,6 @@ jobs:
           publish-dir: "./dist"
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: Production deployment for ${{ matrix.name }}
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ matrix.netlifySiteId }}
