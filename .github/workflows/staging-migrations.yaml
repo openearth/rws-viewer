@@ -45,6 +45,7 @@ jobs:
         run: npm run migrations:apply-staging
 
   prepare:
+    needs: apply-staging-migrations
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}

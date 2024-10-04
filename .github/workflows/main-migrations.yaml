@@ -3,6 +3,9 @@ name: Deploy production
 on:
   pull_request:
     types: [closed]
+  push:
+    branches:
+      - main
 
 jobs:
   apply-main-migrations:
@@ -44,6 +47,7 @@ jobs:
         run: npm run migrations:apply-main
 
   prepare:
+    needs: apply-main-migrations
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
