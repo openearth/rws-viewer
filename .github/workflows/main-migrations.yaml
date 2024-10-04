@@ -1,4 +1,4 @@
-name: Deploy production
+name: Deploy to production
 
 on:
   pull_request:
