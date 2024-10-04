@@ -107,8 +107,9 @@ jobs:
           publish-dir: "./dist"
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          enable-pull-request-comment: true
           enable-commit-comment: false
+          enable-pull-request-comment: true
+          overwrites-pull-request-comment: true
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ matrix.netlifySiteId }}
