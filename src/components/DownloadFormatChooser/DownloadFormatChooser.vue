@@ -53,8 +53,8 @@
     
     async mounted() {
       let supportedOutputFormats = getSupportedOutputFormats(this.layer.serviceType, this.layerCapabilities)
-      supportedOutputFormats = moveInArrayByValue(supportedOutputFormats, 'csv', 0)
-      supportedOutputFormats = moveInArrayByValue(supportedOutputFormats, 'SHAPE-ZIP', 1)
+      supportedOutputFormats = moveInArrayByValue(supportedOutputFormats || [], 'csv', 0)
+      supportedOutputFormats = moveInArrayByValue(supportedOutputFormats || [], 'SHAPE-ZIP', 1)
 
       this.supportedFormats = supportedOutputFormats
     },
