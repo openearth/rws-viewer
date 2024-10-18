@@ -156,6 +156,16 @@ export default async function (client: Client) {
     console.log(
       'Create Modular Content (Multiple blocks) field "Trefwoord" (`descriptivekeywords_keywords`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
+
+    const item_types = await client.itemTypes.list();
+    const metadataTextItemType = item_types.find(
+      (itemType: any) => itemType.api_key === "metadata_text_item"
+    );
+
+    if (metadataTextItemType === undefined) {
+      throw new Error("Item type 'metadata_text_item' not found");
+    }
+
     newFields["10143360"] = await client.fields.create(
       inspireDatasetItemType.id,
       {
@@ -164,7 +174,7 @@ export default async function (client: Client) {
         api_key: "descriptivekeywords_keywords",
         hint: 'Voor datasets en dataset series die betrekking hebben op INSPIRE dient het de relevante thema\u2019s te beschrijven zoals ze zijn gedefinieerd in annex I, II en III van de directive.  Zie ook <a href="https://docs.geostandaarden.nl/md/mdprofiel-iso19115/#trefwoord" target="_blank">ISO 19115 NL profiel</a>',
         validators: {
-          rich_text_blocks: { item_types: ["VqJRRvRLQyy0_Vv5ybG3Ng"] },
+          rich_text_blocks: { item_types: [metadataTextItemType.id] },
           size: { min: 1 },
         },
         appearance: {
@@ -528,6 +538,15 @@ export default async function (client: Client) {
     console.log(
       'Create Modular Content (Multiple blocks) field "Links" (`links`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
+
+    const metadataLinkItemType = itemTypes.find(
+      (itemType: any) => itemType.api_key === "metadata_link"
+    );
+
+    if (metadataLinkItemType === undefined) {
+      throw new Error("Item type 'metadata_link' not found");
+    }
+
     newFields["11526998"] = await client.fields.create(
       inspireDatasetItemType.id,
       {
@@ -535,7 +554,7 @@ export default async function (client: Client) {
         field_type: "rich_text",
         api_key: "links",
         validators: {
-          rich_text_blocks: { item_types: ["IB2KUCI8RzKBHRc48YoHyA"] },
+          rich_text_blocks: { item_types: [metadataLinkItemType.id] },
         },
         appearance: {
           addons: [],
@@ -887,13 +906,22 @@ export default async function (client: Client) {
     console.log(
       'Create Modular Content (Multiple blocks) field "Verantwoordelijk organisatie metadata" (`verantwoordelijk_organisatie_metadata`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
+
+    const metadataOrganisationItemType = itemTypes.find(
+      (itemType: any) => itemType.api_key === "metadata_organisation"
+    );
+
+    if (metadataOrganisationItemType === undefined) {
+      throw new Error("Item type 'metadata_organisation' not found");
+    }
+
     await client.fields.create(inspireDatasetItemType.id, {
       id: "GbevT-_8T1O68xw1ijxFXQ",
       label: "Verantwoordelijk organisatie metadata",
       field_type: "rich_text",
       api_key: "verantwoordelijk_organisatie_metadata",
       validators: {
-        rich_text_blocks: { item_types: ["R_ytpGxJRt-hPe_gjbBqiw"] },
+        rich_text_blocks: { item_types: [metadataOrganisationItemType.id] },
       },
       appearance: {
         addons: [],
@@ -935,6 +963,15 @@ export default async function (client: Client) {
     console.log(
       'Create Modular Content (Multiple blocks) field "Onderwerp" (`topiccategories`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
+
+    const topicCategoryItemType = itemTypes.find(
+      (itemType: any) => itemType.api_key === "topic_category"
+    );
+
+    if (topicCategoryItemType === undefined) {
+      throw new Error("Item type 'topic_category' not found");
+    }
+
     newFields["10163089"] = await client.fields.create(
       inspireDatasetItemType.id,
       {
@@ -943,7 +980,7 @@ export default async function (client: Client) {
         api_key: "topiccategories",
         hint: "Dit is een specifieke aanduiding die in de catalogus (geonetwork) zorgt voor een categorisering van de gegevens. ",
         validators: {
-          rich_text_blocks: { item_types: ["2022974"] },
+          rich_text_blocks: { item_types: [topicCategoryItemType.id] },
           size: { eq: 1 },
         },
         appearance: {
