@@ -81,8 +81,25 @@ For each instance:
 Usage:
 
 ```bash
-bash
 npm run migrations:apply-main
 ```
 
-This update adds a new section to the `README.md` file, documenting the `apply-main` script and its usage.
+## GitHub Actions Workflows
+
+### Deploy to Production
+
+The `main-migrations.yaml` workflow is triggered on a push to the `main` branch. It performs the following steps:
+
+1. Checks out the repository.
+1. Checks for changes in the `migrations` folder.
+1. If changes are detected, sets up Node.js, installs dependencies, and runs the `migrations:apply-main` script.
+1. Deploys the application to Netlify using the specified instances.
+
+### Deploy to Staging
+
+The `staging-migrations.yaml` workflow is triggered on pull request events (opened or synchronized). It performs the following steps:
+
+1. Checks out the repository.
+1. Checks for changes in the `migrations` folder.
+1. If changes are detected, sets up Node.js, installs dependencies, and runs the `migrations:apply-staging` script.
+1. Deploys the application to Netlify using the specified instances.
