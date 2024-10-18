@@ -13,7 +13,7 @@
     "postinstall": "patch-package",
     "dato": "node ./config/dato/dump-data.mjs",
     "prebuild": "npm run dato",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build && cp netlify.toml dist/netlify.toml",
     "predev": "npm run dato",
     "dev": "run-p serve start-server",
     "fix": "run-s fix:*",
