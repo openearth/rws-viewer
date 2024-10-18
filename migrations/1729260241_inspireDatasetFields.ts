@@ -27,7 +27,7 @@ export default async function (client: Client) {
       'Create fieldset "Informatie over de bron" in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFieldsets["560136"] = await client.fieldsets.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         title: "Informatie over de bron",
       }
@@ -40,7 +40,7 @@ export default async function (client: Client) {
     console.log(
       'Create fieldset "Verantwoordelijke organisatie bron" in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fieldsets.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fieldsets.create(inspireDatasetItemType.id, {
       id: "INy1cspgRTCwgrfVa2fTDw",
       title: "Verantwoordelijke organisatie bron",
       hint: "Gebruik de volledig uitgeschreven naam van de verantwoordelijke organisatie. De afkorting kan toegevoegd worden aan de organisatienaam. verantwoordelijke organisatie van de bron, bij voorkeur uri uit bijvoorbeeld http://standaarden.overheid.nl/owms/terms/Overheidsorganisatie.html",
@@ -54,7 +54,7 @@ export default async function (client: Client) {
       'Create fieldset "Trefwoorden" in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFieldsets["560134"] = await client.fieldsets.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         title: "Trefwoorden",
       }
@@ -68,7 +68,7 @@ export default async function (client: Client) {
       'Create fieldset "Beperkingen" in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFieldsets["560132"] = await client.fieldsets.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         title: "Beperkingen",
       }
@@ -82,7 +82,7 @@ export default async function (client: Client) {
       'Create fieldset "Ruimtelijke informatie bron" in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFieldsets["560133"] = await client.fieldsets.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         title: "Ruimtelijke informatie bron",
       }
@@ -95,7 +95,7 @@ export default async function (client: Client) {
     console.log(
       'Create fieldset "Kwaliteitsinformatie" in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fieldsets.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fieldsets.create(inspireDatasetItemType.id, {
       id: "TOSwC4esQFKcXNrW20gK1Q",
       title: "Kwaliteitsinformatie",
     });
@@ -108,7 +108,7 @@ export default async function (client: Client) {
       'Create fieldset "Informatie over de metadata" in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFieldsets["561206"] = await client.fieldsets.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         title: "Informatie over de metadata",
       }
@@ -123,7 +123,7 @@ export default async function (client: Client) {
     console.log(
       'Create fieldset "Verantwoordelijke organisatie metadata" in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fieldsets.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fieldsets.create(inspireDatasetItemType.id, {
       id: "c4ZNV0cQTamwB4mBwbSFpg",
       title: "Verantwoordelijke organisatie metadata",
       hint: "Dit element bevat de naam van de organisatie verantwoordelijk voor de metadata.",
@@ -136,7 +136,7 @@ export default async function (client: Client) {
     console.log(
       'Create fieldset "Metadata standaard" in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fieldsets.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fieldsets.create(inspireDatasetItemType.id, {
       id: "d5CCVL3pSxGMdchqXBBQJQ",
       title: "Metadata standaard",
       hint: "De gehanteerde metadata standaard",
@@ -152,7 +152,7 @@ export default async function (client: Client) {
       'Create Modular Content (Multiple blocks) field "Trefwoord" (`descriptivekeywords_keywords`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["10143360"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Trefwoord",
         field_type: "rich_text",
@@ -181,7 +181,7 @@ export default async function (client: Client) {
       'Create Single-line string field "Juridische toegangsrestricties" (`resourceconstraints_accessconstraints`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["10143362"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Juridische toegangsrestricties",
         field_type: "string",
@@ -248,7 +248,7 @@ export default async function (client: Client) {
       'Create Single-line string field "Titel van de bron" (`citation_title`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["10143371"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Titel van de bron",
         field_type: "string",
@@ -272,7 +272,7 @@ export default async function (client: Client) {
       'Create Single-line string field "Hi\u00EBrarchieniveau" (`hierarchylevel`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["10162515"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Hi\u00EBrarchieniveau",
         field_type: "string",
@@ -310,7 +310,7 @@ export default async function (client: Client) {
     console.log(
       'Create Single-line string field "Niveau kwaliteitsbeschrijving" (`level`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fields.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fields.create(inspireDatasetItemType.id, {
       id: "MciOlCyATDqKAeWCVthfgg",
       label: "Niveau kwaliteitsbeschrijving",
       field_type: "string",
@@ -346,7 +346,7 @@ export default async function (client: Client) {
     console.log(
       'Create Single-line string field "Ruimtelijk schema" (`md_spatialrepresentationtypecode`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fields.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fields.create(inspireDatasetItemType.id, {
       id: "fFAppifMRJeYDqnflH6d8w",
       label: "Ruimtelijk schema",
       field_type: "string",
@@ -390,7 +390,7 @@ export default async function (client: Client) {
     console.log(
       'Create Single-line string field "Organisatie" (`organisationname`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fields.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fields.create(inspireDatasetItemType.id, {
       id: "EToHPBiYTSOZ80SxmAWcpg",
       label: "Organisatie",
       field_type: "string",
@@ -414,7 +414,7 @@ export default async function (client: Client) {
       'Create Single-line string field "Gebruiksbeperkingen" (`resourceconstraints_useconstraints`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["10143361"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Gebruiksbeperkingen",
         field_type: "string",
@@ -452,7 +452,7 @@ export default async function (client: Client) {
       'Create Single-line string field "Datumtype van de bron" (`citation_date_datetype`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["10143370"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Datumtype van de bron",
         field_type: "string",
@@ -499,7 +499,7 @@ export default async function (client: Client) {
       'Create Multiple-paragraph text field "Algemene beschrijving herkomst" (`lineage_statement`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["10162665"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Algemene beschrijving herkomst",
         field_type: "text",
@@ -524,7 +524,7 @@ export default async function (client: Client) {
       'Create Modular Content (Multiple blocks) field "Links" (`links`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["11526998"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Links",
         field_type: "rich_text",
@@ -548,7 +548,7 @@ export default async function (client: Client) {
     console.log(
       'Create Single-line string field "e-mail" (`electronicmailaddress`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fields.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fields.create(inspireDatasetItemType.id, {
       id: "NzxaGK5sSoyuErg9Tabo1Q",
       label: "e-mail",
       field_type: "string",
@@ -572,7 +572,7 @@ export default async function (client: Client) {
     console.log(
       'Create Single-line string field "Metadatastandaard versie" (`metadatastandardversion`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fields.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fields.create(inspireDatasetItemType.id, {
       id: "BEF9VIoJRgiKa6SZSZQTDw",
       label: "Metadatastandaard versie",
       field_type: "string",
@@ -594,7 +594,7 @@ export default async function (client: Client) {
     console.log(
       'Create Single-line string field "Thesaurusname" (`thesaurusname`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fields.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fields.create(inspireDatasetItemType.id, {
       id: "LoXTVry5RTWfgDj2l9OAhw",
       label: "Thesaurusname",
       field_type: "string",
@@ -627,7 +627,7 @@ export default async function (client: Client) {
       'Create Date field "Datum van de bron" (`citation_date_date`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["10143369"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Datum van de bron",
         field_type: "date",
@@ -646,7 +646,7 @@ export default async function (client: Client) {
     console.log(
       'Create Single-line string field "rol" (`role`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fields.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fields.create(inspireDatasetItemType.id, {
       id: "ELSrYu9EQO60TyeUB_bDzA",
       label: "rol",
       field_type: "string",
@@ -728,7 +728,7 @@ export default async function (client: Client) {
       'Create Single-line string field "Juridische toegangsrestricties" (`resourceconstraints_accessconstraints`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["10143362"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Juridische toegangsrestricties",
         field_type: "string",
@@ -795,7 +795,7 @@ export default async function (client: Client) {
       'Create Single-line string field "Titel van de bron" (`citation_title`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["10143371"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Titel van de bron",
         field_type: "string",
@@ -821,7 +821,7 @@ export default async function (client: Client) {
       'Create Single-line string field "Hi\u00EBrarchieniveau" (`hierarchylevel`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["10162515"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Hi\u00EBrarchieniveau",
         field_type: "string",
@@ -859,7 +859,7 @@ export default async function (client: Client) {
     console.log(
       'Create Single-line string field "Metadata standaard naam" (`metadatastandardname`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fields.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fields.create(inspireDatasetItemType.id, {
       id: "Ei2sKTDgSZO6RsFquxiiaw",
       label: "Metadata standaard naam",
       field_type: "string",
@@ -882,7 +882,7 @@ export default async function (client: Client) {
     console.log(
       'Create Modular Content (Multiple blocks) field "Verantwoordelijk organisatie metadata" (`verantwoordelijk_organisatie_metadata`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fields.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fields.create(inspireDatasetItemType.id, {
       id: "GbevT-_8T1O68xw1ijxFXQ",
       label: "Verantwoordelijk organisatie metadata",
       field_type: "rich_text",
@@ -906,7 +906,7 @@ export default async function (client: Client) {
       'Create Multiple-paragraph text field "Samenvatting" (`abstract`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["10143368"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Samenvatting",
         field_type: "text",
@@ -931,7 +931,7 @@ export default async function (client: Client) {
       'Create Modular Content (Multiple blocks) field "Onderwerp" (`topiccategories`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
     newFields["10163089"] = await client.fields.create(
-      "Liewx4sGRMCAGCch2TKjaA",
+      inspireDatasetItemType.id,
       {
         label: "Onderwerp",
         field_type: "rich_text",
@@ -957,7 +957,7 @@ export default async function (client: Client) {
     console.log(
       'Create Single-line string field "Taal van de bron" (`language`) in model "Inspire Dataset" (`inspire_dataset`)'
     );
-    await client.fields.create("Liewx4sGRMCAGCch2TKjaA", {
+    await client.fields.create(inspireDatasetItemType.id, {
       id: "Bw5WSGe9TGu_3LhSFjJobw",
       label: "Taal van de bron",
       field_type: "string",
@@ -979,7 +979,7 @@ export default async function (client: Client) {
   //   'Reorder fields/fieldsets for model "Inspire Dataset" (`inspire_dataset`)'
   // );
   // await client.itemTypes.rawReorderFieldsAndFieldsets(
-  //   "Liewx4sGRMCAGCch2TKjaA",
+  //   inspireDatasetItemType.id,
   //   {
   //     data: [
   //       {
@@ -1230,7 +1230,7 @@ export default async function (client: Client) {
   // console.log("Finalize models/block models");
 
   // console.log('Update model "Inspire Dataset" (`inspire_dataset`)');
-  // await client.itemTypes.update("Liewx4sGRMCAGCch2TKjaA", {
+  // await client.itemTypes.update(inspireDatasetItemType.id, {
   //   title_field: newFields["10143371"],
   // });
 }
