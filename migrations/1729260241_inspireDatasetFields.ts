@@ -7,11 +7,16 @@ export default async function (client: Client) {
 
   console.log("Creating new fields/fieldsets");
 
-  const fieldsets = await client.fieldsets.list("Liewx4sGRMCAGCch2TKjaA");
+  const itemTypes = await client.itemTypes.list();
+  const inspireDatasetItemType = itemTypes.find(
+    (itemType: any) => itemType.apiKey === "inspire_dataset"
+  ) || { id: "" };
+
+  const fieldsets = await client.fieldsets.list(inspireDatasetItemType.id);
   const findFieldset = (title: string) =>
     fieldsets.find((fieldset: any) => fieldset.title === title);
 
-  const fields = await client.fields.list("Liewx4sGRMCAGCch2TKjaA");
+  const fields = await client.fields.list(inspireDatasetItemType.id);
   const findField = (label: string) =>
     fields.find((field: any) => field.label === label);
 
