@@ -8,9 +8,14 @@ export default async function (client: Client) {
   console.log("Creating new fields/fieldsets");
 
   const itemTypes = await client.itemTypes.list();
+
   const inspireDatasetItemType = itemTypes.find(
-    (itemType: any) => itemType.apiKey === "inspire_dataset"
+    (itemType: any) => itemType.api_key === "inspire_dataset"
   ) || { id: "" };
+
+  if (inspireDatasetItemType === undefined) {
+    throw new Error("Item type 'inspire_dataset' not found");
+  }
 
   const fieldsets = await client.fieldsets.list(inspireDatasetItemType.id);
   const findFieldset = (title: string) =>
