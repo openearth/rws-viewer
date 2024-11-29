@@ -17,7 +17,7 @@ export default async function (client: Client) {
     console.log(
       'Create Multiple links field "Error notification contacts" (`error_notification_contacts`) in model "Menu" (`menu`)'
     );
-    await client.fields.create("UyXBcHy5TSC45Ah_bll9LQ", {
+    await client.fields.create(menuItemType.id, {
       id: "GlLvpmJFTBup26dDM2OMuQ",
       label: "Error notification contacts",
       field_type: "links",
@@ -40,7 +40,7 @@ export default async function (client: Client) {
     console.log(
       'Create Multiple links field "Feedback contacts" (`feedback_contacts`) in model "Menu" (`menu`)'
     );
-    await client.fields.create("UyXBcHy5TSC45Ah_bll9LQ", {
+    await client.fields.create(menuItemType.id, {
       id: "CPxFkf5cRPKm0ORLakLX3Q",
       label: "Feedback contacts",
       field_type: "links",
