@@ -92,6 +92,13 @@
         :opacity="layer.opacity"
       />
 
+      <map-layer-wmts
+        v-for="(layer, index) in wmtsLayers"
+        :key="layer.id"
+        :before="wmsLayerIds[index - 1]"
+        :options="layer"
+        :opacity="layer.opacity"
+      />
       <mapbox-scale-control />
       <map-zoom :extent="zoomExtent" />
       <MapMouseMove @mousemove="onMouseMove" />
@@ -117,6 +124,7 @@
   import { mapActions, mapGetters } from 'vuex'
   import AppShell from './components/AppShell/AppShell'
   import MapLayer from './components/MapComponents/MapLayer.js'
+  import MapLayerWmts from './components/MapComponents/MapLayerWmts.js'
   import MapZoom from './components/MapComponents/MapZoom.js'
   import MapLayerInfo from './components/MapComponents/MapLayerInfo'
   import MapboxDrawControl from '~/components/MapboxDrawControl/MapboxDrawControl'
@@ -147,6 +155,7 @@
     components: {
       AppShell,
       MapLayer,
+      MapLayerWmts,
       MapZoom,
       MapLayerInfo,
       MapboxDrawControl,
@@ -189,7 +198,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement', 'viewerPrivacyStatement', 'acknowledgments' ]),
-      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
+      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers','wmtsLayers', 'wmtsSources', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
       ...mapGetters('data', [ 'timeExtent', 'flattenedLayers', 'displayLayers' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)

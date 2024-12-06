@@ -84,6 +84,15 @@ export async function getWmsCapabilities(service) {
 
 }
 
+export async function getWmtsCapabilities(service) {
+  const servicePath = `${ service.origin }${ service.pathname }`;
+  const { data } = await axios(
+    `${ servicePath }?service=WMTS&request=GetCapabilities`
+  );
+  return new DOMParser().parseFromString(data, "text/xml");
+}
+
+
 export function getSupportedOutputFormats(type, capabilities) {
   
   //wfs
@@ -137,19 +146,19 @@ export function isRasterLayer(type, capabilities, layer) {
   return keywords.includes('GeoTIFF')
 }
 
-export function getLayerProperties(capabilities, layer) {
 /**
  * function that reads the wms capabilities response of the workpspace
  * 1. find the given layer
- * 2. extracts:   
- *    -wmsVersion
- *    -bbox of layer
- *    -keywords (that contain the service type)
- *    -service type of layer (wfs or wcs)
- *    -time extent of layer
- *  
- *  * */
-
+ * 2. extracts:
+ *    - wmsVersion
+ *    - bbox of layer
+ *    - keywords (that contain the service type)
+ *    - service type of layer (wfs or wcs)
+ *    - time extent of layer
+ *    @param {Object} capabilities - XML response of capabilities
+ *    @param {string} layer - layer name
+ */
+export function getLayerProperties(capabilities, layer) {
   const wmsVersion = pipe(
     () => capabilities.querySelector('WMS_Capabilities'),
     el => el.getAttribute('version'),
@@ -201,4 +210,43 @@ export function getLayerProperties(capabilities, layer) {
   return { serviceType, timeExtent, wmsVersion, bbox }
 }
 
+/**
+ * function that reads the wms capabilities response of the workpspace
+ * 1. find the given layer
+ * 2. extracts:
+ *    - wmsVersion
+ *    - bbox of layer
+ *    - keywords (that contain the service type)
+ *    - service type of layer (wfs or wcs)
+ *    - time extent of layer
+ *    @param {Object} capabilities - XML response of capabilities
+ *    @param {('WMS'|'WMTS')} type - type of service
+ *    @param {Object} layerObject - layer name
+ */
+export function getWmtsLayerProperties(capabilities, layerObject) {
+  const version = pipe(
+    () => capabilities.querySelector(`Capabilities`),
+    (el) => el.getAttribute("version")
+  )();
+  const workspaceLayer =  layerObject.layer.split(":")
+  const layer = workspaceLayer.pop();
+  const workspace = workspaceLayer.pop();
 
+  const keywords = pipe(
+    () => [
+      capabilities.querySelector("KeywordList") ||
+      capabilities.querySelector("Keywords"),
+    ],
+    getTags("Keyword"),
+    map(getTagContent)
+  )();
+
+  const serviceType = [ "features", "wfs", "FEATURES", "WFS" ].some((val) =>
+    keywords.includes(val)
+  )
+    ? "wfs"
+    : [ "WCS", "GeoTIFF", "wcs" ].some((val) => keywords.includes(val))
+      ? "wcs"
+      : null;
+  return { version, keywords, serviceType, workspace, layer };
+}
