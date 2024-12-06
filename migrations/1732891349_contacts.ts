@@ -5,6 +5,9 @@ export default async function (client: Client) {
   const menuItemType = itemTypes.find(
     (itemType: { api_key: string }) => itemType.api_key === "menu"
   ) || { id: "" };
+  const contactItemType = itemTypes.find(
+    (itemType: { api_key: string }) => itemType.api_key === "contact"
+  ) || { id: "" };
 
   const fields = await client.fields.list(menuItemType.id);
   const findField = (label: string) =>
@@ -27,7 +30,7 @@ export default async function (client: Client) {
           on_publish_with_unpublished_references_strategy: "fail",
           on_reference_unpublish_strategy: "delete_references",
           on_reference_delete_strategy: "delete_references",
-          item_types: [menuItemType.id],
+          item_types: [contactItemType.id],
         },
       },
       appearance: { addons: [], editor: "links_select", parameters: {} },
@@ -50,7 +53,7 @@ export default async function (client: Client) {
           on_publish_with_unpublished_references_strategy: "fail",
           on_reference_unpublish_strategy: "delete_references",
           on_reference_delete_strategy: "delete_references",
-          item_types: [menuItemType.id],
+          item_types: [contactItemType.id],
         },
       },
       appearance: { addons: [], editor: "links_select", parameters: {} },
