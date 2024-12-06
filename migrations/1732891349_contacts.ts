@@ -13,7 +13,7 @@ export default async function (client: Client) {
   const errorNotificationContactsField = findField(
     "Error notification contacts"
   );
-  if (errorNotificationContactsField) {
+  if (!errorNotificationContactsField) {
     console.log(
       'Create Multiple links field "Error notification contacts" (`error_notification_contacts`) in model "Menu" (`menu`)'
     );
@@ -27,7 +27,7 @@ export default async function (client: Client) {
           on_publish_with_unpublished_references_strategy: "fail",
           on_reference_unpublish_strategy: "delete_references",
           on_reference_delete_strategy: "delete_references",
-          item_types: ["T0Kyoa-nToO3QpdYisEoqw"],
+          item_types: [menuItemType.id],
         },
       },
       appearance: { addons: [], editor: "links_select", parameters: {} },
@@ -50,7 +50,7 @@ export default async function (client: Client) {
           on_publish_with_unpublished_references_strategy: "fail",
           on_reference_unpublish_strategy: "delete_references",
           on_reference_delete_strategy: "delete_references",
-          item_types: ["T0Kyoa-nToO3QpdYisEoqw"],
+          item_types: [menuItemType.id],
         },
       },
       appearance: { addons: [], editor: "links_select", parameters: {} },
