@@ -17,7 +17,7 @@
       </v-app-bar>
 
       <v-divider />
-      <vue-markdown class="px-4 py-5 flex-grow-1 overflow-y-auto justify-center" :source="acknowledgments" />
+      <vue-markdown class="px-4 py-5 flex-grow-1 overflow-y-auto justify-center markdown-body" :source="acknowledgments" />
       <!-- <div class="px-4 py-5 flex-grow-1 overflow-y-auto justify-center" v-html="acknowledgments" /> -->
     </v-card>
   </v-dialog>
@@ -57,4 +57,10 @@
 </script>
 
 <style>
+/* make image max 300 width */
+.markdown-body img {
+  width: 100%;
+  max-width: 500px;
+}
 </style>
+
