@@ -1,12 +1,12 @@
-import { difference, update } from "ramda";
-import buildWmsLayer from "~/lib/build-wms-layer";
-import addFilterAttributesToLayer from "~/lib/add-filter-attributes-to-layer";
+import { difference, update } from 'ramda'
+import buildWmsLayer from '~/lib/build-wms-layer'
+import addFilterAttributesToLayer from '~/lib/add-filter-attributes-to-layer'
 import {
   getLayerProperties,
   getWmsCapabilities, getWmtsCapabilities, getWmtsLayerProperties,
-} from "~/lib/get-capabilities";
-import { NETHERLANDS_MAP_CENTER, NETHERLANDS_MAP_ZOOM } from "~/lib/constants";
-import { buildWmtsLayer, loadWmtsLayer } from "~/lib/wmts-layer";
+} from '~/lib/get-capabilities'
+import { NETHERLANDS_MAP_CENTER, NETHERLANDS_MAP_ZOOM } from '~/lib/constants'
+import { buildWmtsLayer } from '~/lib/wmts-layer'
 
 export default {
   namespaced: true,
@@ -36,41 +36,35 @@ export default {
       (state.activeFlattenedLayers || []).map(({ id }) => id),
     activeFlattenedLayersIdsWithTimeOption(state, getters) {
       if (!getters.activeFlattenedLayers) {
-        return [];
+        return []
       }
       return getters.activeFlattenedLayers
         .filter((layer) => layer?.timeFilter)
-        .map(({ id }) => id);
+        .map(({ id }) => id)
     },
     wmsLayers(state) {
       if (!state.mapLoaded) {
-        return [];
+        return []
       }
-      return state.wmsLayers;
+      return state.wmsLayers
     },
     wmtsSources(state) {
       if (!state.mapLoaded) {
-        return [];
+        return []
       }
-      return state.wmtsSources;
+      return state.wmtsSources
     },
     wmtsLayers(state) {
       if (!state.mapLoaded) {
-        return [];
+        return []
       }
-      return state.wmtsLayers;
+      return state.wmtsLayers
     },
     wmsApiLayer(state) {
       if (!state.mapLoaded) {
-        return [];
+        return []
       }
-      return state.wmsApiLayer;
-    },
-    wmtsApiLayer(state) {
-      if (!state.mapLoaded) {
-        return [];
-      }
-      return state.wmtsApiLayer;
+      return state.wmsApiLayer
     },
     wmsLayerIds: (state) =>
       (state.activeFlattenedLayers || []).map(({ id }) => id),
@@ -86,155 +80,155 @@ export default {
 
   mutations: {
     SET_MAP_LOADED(state) {
-      state.mapLoaded = true;
+      state.mapLoaded = true
     },
     SET_RASTER_LAYERS(state, { layers }) {
-      state.activeFlattenedLayers = layers;
+      state.activeFlattenedLayers = layers
     },
     ADD_ACTIVE_FLATTENED_LAYER(state, layer) {
-      state.activeFlattenedLayers = [ layer, ...state.activeFlattenedLayers ];
+      state.activeFlattenedLayers = [ layer, ...state.activeFlattenedLayers ]
     },
     MOVE_ACTIVE_FLATTENED_LAYER(state, { fromIndex, toIndex }) {
-      var element = state.activeFlattenedLayers[fromIndex];
-      state.activeFlattenedLayers.splice(fromIndex, 1);
-      state.activeFlattenedLayers.splice(toIndex, 0, element);
+      var element = state.activeFlattenedLayers[fromIndex]
+      state.activeFlattenedLayers.splice(fromIndex, 1)
+      state.activeFlattenedLayers.splice(toIndex, 0, element)
     },
     MOVE_WMS_LAYER(state, { fromIndex, toIndex }) {
-      var element = state.wmsLayers[fromIndex];
-      state.wmsLayers.splice(fromIndex, 1);
-      state.wmsLayers.splice(toIndex, 0, element);
+      var element = state.wmsLayers[fromIndex]
+      state.wmsLayers.splice(fromIndex, 1)
+      state.wmsLayers.splice(toIndex, 0, element)
     },
     REMOVE_ACTIVE_FLATTENED_LAYER(state, { layer }) {
       state.activeFlattenedLayers = state.activeFlattenedLayers.filter(
         (activeLayer) => activeLayer.id !== layer.id
-      );
+      )
     },
     ADD_WMS_LAYER(state, layer) {
-      state.wmsLayers = [ layer, ...state.wmsLayers ];
+      state.wmsLayers = [ layer, ...state.wmsLayers ]
     },
     REMOVE_WMS_LAYER(state, layerId) {
       state.wmsLayers = state.wmsLayers.filter(
         (wmsLayer) => wmsLayer.id !== layerId
-      );
+      )
     },
     ADD_WMS_API_LAYER(state, layer) {
-      state.wmsApiLayer = layer;
+      state.wmsApiLayer = layer
     },
     REMOVE_WMS_API_LAYER(state) {
-      state.wmsApiLayer = null;
+      state.wmsApiLayer = null
     },
 
     ADD_WMTS_LAYER(state, layer) {
-      state.wmtsLayers = [ layer, ...state.wmtsLayers ];
+      state.wmtsLayers = [ layer, ...state.wmtsLayers ]
     },
     ADD_WMTS_SOURCE(state, layer) {
-      state.wmtsSources = [ layer, ...state.wmtsSources ];
+      state.wmtsSources = [ layer, ...state.wmtsSources ]
     },
     REMOVE_WMTS_LAYER(state, layerId) {
       state.wmtsLayers = state.wmtsLayers.filter(
         (wmtsLayer) => wmtsLayer.layer.id !== layerId
-      );
+      )
     },
 
     ADD_WMTS_API_LAYER(state, layer) {
-      state.wmtsApiLayer = layer;
+      state.wmtsApiLayer = layer
     },
     REMOVE_WMTS_API_LAYER(state) {
-      state.wmtsApiLayer = null;
+      state.wmtsApiLayer = null
     },
 
     RESET_ACTIVE_FLATTENED_LAYERS(state) {
-      state.activeFlattenedLayers = [];
+      state.activeFlattenedLayers = []
     },
     RESET_WMS_LAYERS(state) {
-      state.wmsLayers = [];
+      state.wmsLayers = []
     },
     RESET_WMTS_LAYERS(state) {
-      state.wmtsLayers = [];
+      state.wmtsLayers = []
     },
     SET_DRAW_MODE(state, { mode }) {
-      state.drawMode = mode;
+      state.drawMode = mode
     },
     ADD_DRAWN_FEATURE(state, feature) {
       if (state.multipleSelection) {
         if (!state.drawnFeatures.find((f) => f.id === feature.id)) {
-          state.drawnFeatures = [ ...state.drawnFeatures, feature ];
+          state.drawnFeatures = [ ...state.drawnFeatures, feature ]
         }
       } else {
-        state.drawnFeatures = [ feature ];
+        state.drawnFeatures = [ feature ]
       }
     },
     REMOVE_DRAWN_FEATURE(state, feature) {
       if (state.multipleSelection) {
         state.drawnFeatures = state.drawnFeatures.filter(
           (f) => f.id !== feature.id
-        );
+        )
       } else {
-        state.drawnFeatures = [];
+        state.drawnFeatures = []
       }
     },
     SET_DRAWN_FEATURES(state, feature) {
-      state.drawnFeatures = Object.freeze(feature);
+      state.drawnFeatures = Object.freeze(feature)
     },
     UPDATE_WMS_LAYER_OPACITY(state, { id, opacity }) {
-      const layerToUpdate = state.wmsLayers.find((layer) => layer.id === id);
-      const index = state.wmsLayers.findIndex((layer) => layer.id === id);
+      const layerToUpdate = state.wmsLayers.find((layer) => layer.id === id)
+      const index = state.wmsLayers.findIndex((layer) => layer.id === id)
 
       if (!layerToUpdate) {
-        return;
+        return
       }
 
-      layerToUpdate.opacity = opacity;
-      state.wmsLayers = update(index, layerToUpdate, state.wmsLayers);
+      layerToUpdate.opacity = opacity
+      state.wmsLayers = update(index, layerToUpdate, state.wmsLayers)
     },
     SET_FILTERED_LAYER_ID(state, id) {
-      state.filteredLayerId = id;
+      state.filteredLayerId = id
     },
     REMOVE_FILTERED_LAYER_ID(state) {
-      state.filteredLayerId = null;
+      state.filteredLayerId = null
     },
     SET_SELECTED_LAYER_FOR_SELECTION(state, layer) {
-      state.selectedLayerForSelection = layer;
+      state.selectedLayerForSelection = layer
     },
     SET_MAP_CENTER(state, coords) {
-      state.mapCenter = coords;
+      state.mapCenter = coords
     },
     SET_MAP_ZOOM(state, zoom) {
-      state.mapZoom = zoom;
+      state.mapZoom = zoom
     },
     UPDATE_ZOOM_EXTENT(state, bbox) {
-      state.zoomExtent = bbox;
+      state.zoomExtent = bbox
     },
     SET_MULTIPLE_SELECTION(state, boolean) {
-      state.multipleSelection = boolean;
+      state.multipleSelection = boolean
     },
   },
 
   actions: {
     setMapLoaded({ commit }) {
-      commit("SET_MAP_LOADED");
+      commit('SET_MAP_LOADED')
     },
     async loadLayerOnMap({ commit, state }, { layers }) {
-      const layersToAdd = difference(layers, state.activeFlattenedLayers);
+      const layersToAdd = difference(layers, state.activeFlattenedLayers)
 
       await Promise.all(
         layersToAdd.map(async (layer) => {
-          const url = new URL(layer.url);
-          const serviceType = url.pathname.split("/").pop().toUpperCase();
-          if (serviceType === "WMTS") {
-            const capabilities = await getWmtsCapabilities(url);
-            const properties = getWmtsLayerProperties(capabilities, layer);
-            commit("ADD_ACTIVE_FLATTENED_LAYER", { ...layer, ...properties });
-            commit("ADD_WMTS_LAYER", buildWmtsLayer({ ...layer, ...properties }));
+          const url = new URL(layer.url)
+          const serviceType = url.pathname.split('/').pop().toUpperCase()
+          if (serviceType === 'WMTS') {
+            const capabilities = await getWmtsCapabilities(url)
+            const properties = getWmtsLayerProperties(capabilities, layer)
+            commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...properties })
+            commit('ADD_WMTS_LAYER', buildWmtsLayer({ ...layer, ...properties }))
           }
-          if (serviceType === "WMS") {
+          if (serviceType === 'WMS') {
             const capabilities = await getWmsCapabilities(url)
-            const properties = getLayerProperties(capabilities, layer.layer);
-            commit("ADD_ACTIVE_FLATTENED_LAYER", { ...layer, ...properties });
-            commit("ADD_WMS_LAYER", buildWmsLayer({ ...layer, ...properties }));
+            const properties = getLayerProperties(capabilities, layer.layer)
+            commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...properties })
+            commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...properties }))
           }
         })
-      );
+      )
     },
 
     reloadLayerOnMap({ commit, state, rootState }) {
@@ -242,24 +236,24 @@ export default {
       then in the filter tab the user can load on
       the map the layer with a new time or a new cql filter */
 
-      const { filteredLayerId, activeFlattenedLayers } = state;
-      commit("REMOVE_WMS_LAYER", filteredLayerId);
-      const { selectedTimestamp, cqlFilter } = rootState.data;
+      const { filteredLayerId, activeFlattenedLayers } = state
+      commit('REMOVE_WMS_LAYER', filteredLayerId)
+      const { selectedTimestamp, cqlFilter } = rootState.data
       const layer = addFilterAttributesToLayer(
         activeFlattenedLayers,
         filteredLayerId,
         selectedTimestamp,
         cqlFilter
-      );
+      )
 
-      commit("ADD_WMS_LAYER", buildWmsLayer(layer));
+      commit('ADD_WMS_LAYER', buildWmsLayer(layer))
     },
     removeLayerFromMap({ commit }, { layers }) {
       layers.forEach((layer) => {
-        commit("REMOVE_ACTIVE_FLATTENED_LAYER", { layer });
-        commit("REMOVE_WMS_LAYER", layer.id);
-        commit("REMOVE_WMTS_LAYER", layer.id);
-      });
+        commit('REMOVE_ACTIVE_FLATTENED_LAYER', { layer })
+        commit('REMOVE_WMS_LAYER', layer.id)
+        commit('REMOVE_WMTS_LAYER', layer.id)
+      })
     },
 
     loadApiLayerOnMap({ commit }, layer) {
@@ -267,7 +261,7 @@ export default {
         .then((capabilities) => getLayerProperties(capabilities, layer.layer))
         .then(({ serviceType, timeExtent, wmsVersion, bbox }) => {
           commit(
-            "ADD_WMS_API_LAYER",
+            'ADD_WMS_API_LAYER',
             buildWmsLayer({
               ...layer,
               ...{ serviceType: serviceType },
@@ -275,63 +269,63 @@ export default {
               ...{ version: wmsVersion },
               ...{ bbox: bbox },
             })
-          );
-        });
+          )
+        })
     },
     removeApiLayerFromMap({ commit }) {
-      commit("REMOVE_WMS_API_LAYER");
+      commit('REMOVE_WMS_API_LAYER')
     },
     removeFilteredLayerId({ commit }) {
-      commit("REMOVE_FILTERED_LAYER_ID");
+      commit('REMOVE_FILTERED_LAYER_ID')
     },
 
     resetLayers({ commit }) {
-      commit("RESET_ACTIVE_FLATTENED_LAYERS");
-      commit("RESET_WMS_LAYERS");
-      commit("REMOVE_FILTERED_LAYER_ID");
+      commit('RESET_ACTIVE_FLATTENED_LAYERS')
+      commit('RESET_WMS_LAYERS')
+      commit('REMOVE_FILTERED_LAYER_ID')
     },
 
     moveRasterLayer({ commit }, { fromIndex, toIndex }) {
-      commit("MOVE_ACTIVE_FLATTENED_LAYER", { fromIndex, toIndex });
-      commit("MOVE_WMS_LAYER", { fromIndex, toIndex });
+      commit('MOVE_ACTIVE_FLATTENED_LAYER', { fromIndex, toIndex })
+      commit('MOVE_WMS_LAYER', { fromIndex, toIndex })
     },
 
     setDrawMode({ commit, state }, { mode }) {
-      const modeToCommit = state.drawMode === mode ? null : mode;
-      commit("SET_DRAW_MODE", { mode: modeToCommit });
+      const modeToCommit = state.drawMode === mode ? null : mode
+      commit('SET_DRAW_MODE', { mode: modeToCommit })
     },
 
     addDrawnFeature({ commit }, feature) {
-      commit("ADD_DRAWN_FEATURE", feature);
+      commit('ADD_DRAWN_FEATURE', feature)
     },
 
     removeDrawnFeature({ commit }, feature) {
-      commit("REMOVE_DRAWN_FEATURE", feature);
+      commit('REMOVE_DRAWN_FEATURE', feature)
     },
 
     setDrawnFeatures({ commit }, features) {
-      commit("SET_DRAWN_FEATURES", features);
+      commit('SET_DRAWN_FEATURES', features)
     },
 
     clearDrawnFeatures({ commit }) {
-      commit("SET_DRAWN_FEATURES", []);
+      commit('SET_DRAWN_FEATURES', [])
     },
 
     updateWmsLayerOpacity({ commit }, { id, opacity }) {
-      commit("UPDATE_WMS_LAYER_OPACITY", { id, opacity });
+      commit('UPDATE_WMS_LAYER_OPACITY', { id, opacity })
     },
 
     setFilteredLayerId({ commit }, id) {
-      commit("SET_FILTERED_LAYER_ID", id);
+      commit('SET_FILTERED_LAYER_ID', id)
     },
     setSelectedLayerForSelection({ commit }, layer) {
-      commit("SET_SELECTED_LAYER_FOR_SELECTION", layer);
+      commit('SET_SELECTED_LAYER_FOR_SELECTION', layer)
     },
     setMapCenter({ commit }, coords) {
-      commit("SET_MAP_CENTER", coords);
+      commit('SET_MAP_CENTER', coords)
     },
     setMapZoom({ commit }, zoom) {
-      commit("SET_MAP_ZOOM", zoom);
+      commit('SET_MAP_ZOOM', zoom)
     },
     updateZoomExtent({ commit, state }, id) {
       //updates zoom extent based on the bbox of the layer.
@@ -339,11 +333,11 @@ export default {
       //activeFlattenedLayers
       const layerToZoom = state.activeFlattenedLayers.find(
         (layer) => layer.id === id
-      );
-      commit("UPDATE_ZOOM_EXTENT", layerToZoom.bbox);
+      )
+      commit('UPDATE_ZOOM_EXTENT', layerToZoom.bbox)
     },
     setMultipleSelection({ commit }, boolean) {
-      commit("SET_MULTIPLE_SELECTION", boolean);
+      commit('SET_MULTIPLE_SELECTION', boolean)
     },
   },
-};
+}
