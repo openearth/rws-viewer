@@ -24,7 +24,9 @@
       ...mapGetters('map', [ 'activeFlattenedLayerIds', 'activeFlattenedLayers' ]),
 
       activeLayers() {
-        return this.activeFlattenedLayerIds.map(id => this.flattenedLayers.find(layer => layer?.id === id))
+        return this.activeFlattenedLayerIds.map((id) =>
+          this.flattenedLayers.find((layer) => layer?.id === id)
+        )
       },
     },
 
@@ -42,25 +44,32 @@
     },
 
     methods: {
-      ...mapActions('map', [ 'loadLayerOnMap', 'removeLayerFromMap', 'removeFilteredLayerId' ]),
+      ...mapActions('map', [
+        'loadLayerOnMap',
+        'removeLayerFromMap',
+        'removeFilteredLayerId',
+      ]),
 
       onSelectLayers(layerIds) {
-        const layers = layerIds
-          .map(layerId => this.flattenedLayers.find((l) => l?.id === layerId))
+        const layers = layerIds.map((layerId) =>
+          this.flattenedLayers.find((l) => l?.id === layerId)
+        )
 
         if (layers.length) {
-          this.$trackEvent('layers', 'select', layers.map(layer => layer.name).join(','))
+          this.$trackEvent('layers', 'select', layers.map((layer) => layer.name).join(','))
 
           this.loadLayerOnMap({ layers })
         }
       },
 
       onRemoveLayer(layerIds) {
-        const layers = layerIds
-          .map(layerId => this.flattenedLayers.find((l) => l?.id === layerId))
+        const layers = layerIds.map((layerId) =>
+          this.flattenedLayers.find((l) => l?.id === layerId)
+        )
 
         if (layers.length) {
-          this.$trackEvent('layers', 'deselect', layers.map(layer => layer.name).join(','))
+          this.$trackEvent('layers', 'deselect', layers.map((layer) => layer.name).join(',')
+          )
 
           this.removeLayerFromMap({ layers })
           this.removeFilteredLayerId()

@@ -257,12 +257,10 @@
             this.errorMessage = ''
             this.isLoading = true
 
-            const data = await this.multipleFetch([
-              `/api/record-register?record=${this.layerId}&viewer=${this.viewerName}`,
-              `/api/record-register?record=${this.viewerLayerId}&viewer=${this.viewerName}`,
+            this.recordUrl = await this.multipleFetch([
+              `/api/record-register?record=${ this.layerId }&viewer=${ this.viewerName }`,
+              `/api/record-register?record=${ this.viewerLayerId }&viewer=${ this.viewerName }`,
             ])
-
-            this.recordUrl = data
           } catch (e) {
             if (!e.response.data.error) {
               this.errorMessage = this.$t('recordUrlFechingError') 
@@ -306,7 +304,7 @@
 
             return response.data;
           } catch (error) {
-            console.error(`Failed to fetch from URL ${i + 1}:`, error.message);
+            console.error(`Failed to fetch from URL ${ i + 1 }:`, error.message);
           }
         }
 
