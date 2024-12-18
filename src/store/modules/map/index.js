@@ -214,7 +214,8 @@ export default {
       await Promise.all(
         layersToAdd.map(async (layer) => {
           const url = new URL(layer.url)
-          const serviceType = url.pathname.split('/').pop().toUpperCase()
+          const serviceType = url.pathname.includes('wmts') ? 'WMTS' : 'WMS'
+
           if (serviceType === 'WMTS') {
             const capabilities = await getWmtsCapabilities(url)
             const properties = getWmtsLayerProperties(capabilities, layer)

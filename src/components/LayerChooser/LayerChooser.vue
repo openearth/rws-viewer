@@ -87,12 +87,13 @@
         </template>
         <template #label="{ item, selected }">
           <layer-control
+            v-if="item.name"
             :id="item.id"
             :name="item.name"
             :selected="selected"
             :parent-ids="item.parentIds.toString()"
             :is-layer="!!item.layer"
-            :has-metadata="!!item.metadata.length || getUrl(item) !== ''"
+            :has-metadata="!!item.metadata?.length || getUrl(item) !== ''"
             @update-layer-opacity="updateLayerOpacity"
             @zoom-to-layer-extent="zoomToLayerExtent"
             @select="handleSelect"

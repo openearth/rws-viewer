@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { map, uniq, pipe } from 'ramda'
+import { map, uniq, pipe, filter,  } from 'ramda'
 
 
 import {
@@ -231,6 +231,15 @@ export function getWmtsLayerProperties(capabilities, layerObject) {
   const workspaceLayer =  layerObject.layer.split(":")
   const layer = workspaceLayer.pop();
   const workspace = workspaceLayer.pop();
+  const acceptedFormats = pipe(
+    () => [ ...capabilities.querySelectorAll('Layer') ],
+    filter(el => {
+      return el.getElementsByTagName('ows:Identifier')[0].textContent === layerObject.layer
+    }),
+    getTags('Format'),
+    map(getTagContent),
+    uniq,
+  )()
 
   const keywords = pipe(
     () => [
@@ -248,5 +257,5 @@ export function getWmtsLayerProperties(capabilities, layerObject) {
     : [ "WCS", "GeoTIFF", "wcs" ].some((val) => keywords.includes(val))
       ? "wcs"
       : null;
-  return { version, keywords, serviceType, workspace, layer };
+  return { version, keywords, serviceType, workspace, layer, acceptedFormats };
 }

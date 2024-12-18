@@ -9,16 +9,19 @@ export function buildWmtsLayer ({
   workspace,
   styles = "",
   paint = {
-    'fill-color': '#0080ff',
-    'fill-opacity': 0.5
+    // TODO: make this configurable
+    'fill-color': '#FF0000',
   },
   time,
   filter,
   version,
+  acceptedFormats,
 })  {
   const url = new URL(rawUrl);
   const searchParamEntries = url.searchParams.entries();
   const searchParamsObject = Object.fromEntries(searchParamEntries);
+
+  const isVectorLayer = acceptedFormats.includes('application/vnd.mapbox-vector-tile');
 
   const tile = buildWmtsGeoserverUrl({
     request: "GetTile",
@@ -28,28 +31,45 @@ export function buildWmtsLayer ({
     url: url.origin + url.pathname,
     transparent: true,
     encode: false,
+    format: isVectorLayer ? 'application/vnd.mapbox-vector-tile' : 'image/png',
     ...(time && { time: time }),
     ...(filter && { cql_filter: filter }),
     ...searchParamsObject,
   });
 
-  return {
-    source: {
-      id,
-      key: layer,
-      type: "vector",
-      tiles: [ tile ],
-      minZoom: 6,
-      maxZoom: 20,
-    },
-    layer: {
-      id,
-      type: "fill",
-      source: layer,
-      "source-layer": layer,
-      paint,
-    },
-  };
+  if (isVectorLayer) {
+    return {
+      source: {
+        id,
+        key: layer,
+        type: "vector",
+        tiles: [ tile ],
+        minZoom: 6,
+        maxZoom: 20,
+      },
+      layer: {
+        id,
+        type: "fill",
+        source: layer,
+        "source-layer": layer,
+        paint,
+      },
+    };
+  } else {
+    return {
+      source: {
+        id,
+        key: layer,
+        type: "raster",
+        tiles: [ tile ],
+      },
+      layer: {
+        id,
+        type: "raster",
+        source: layer,
+      },
+    };
+  }
 }
 
 
