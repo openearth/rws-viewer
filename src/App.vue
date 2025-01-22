@@ -55,6 +55,7 @@
       :options="tourConfig"
       name="introduction"
       @click.native="nextStep"
+      :callbacks="tourCallbacks"
     />
 
     <v-mapbox
@@ -168,6 +169,7 @@
 
     data: () => ({
       tourConfig,
+      tourCallbacks: {},
       generateTourSteps,
       tourStepCount,
       accessToken: process.env.VUE_APP_MAPBOX_TOKEN,
@@ -237,6 +239,7 @@
         await this.getAppData({ route, locale: this.currentLocale } )
         this.localeIsLoading = false
       })
+      this.tourCallbacks = { onSkip: this.skipTourCallback, }
       this.showTour()
     },
 
@@ -331,6 +334,9 @@
       },
       showTour () {
         this.$tours.introduction.start()
+      },
+      skipTourCallback(currentStep) {
+        console.log("Skip button pressed!")
       },
       nextStep () {
         if (tourStepCount == 2 ) {
