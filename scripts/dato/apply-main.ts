@@ -7,7 +7,9 @@ async function main() {
   for (const instance of instances) {
     console.log(`Managing environments for ${instance.name}`);
 
-    const client = new DatoClient(instance.key);
+    const client = new DatoClient(instance.datoApiKey);
+
+    await client.runCommand(["maintenance:on"]);
 
     const existingEnvironments = await client.listEnvironments();
 
@@ -28,6 +30,8 @@ async function main() {
     await client.destroyEnvironment("main");
 
     await client.runCommand(["environments:rename", "staging", "main"]);
+
+    await client.runCommand(["maintenance:off"]);
   }
 }
 
