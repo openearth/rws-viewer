@@ -7,7 +7,12 @@ import {
 
 export default function({ layer = {}, filters = [], format, coordinates  = '' }) {
 
-  const { url } = layer
+  let url
+  if (layer.downloadUrl) {
+    url = layer.downloadUrl
+  } else {
+    url = layer.url
+  }
 
   const params = createDownloadParameters({ layerData: layer, filters, coordinates, format })
 
