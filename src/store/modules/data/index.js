@@ -57,6 +57,9 @@ export default {
     SET_CQL_FILTER(state, filter) {
       state.cqlFilter = filter
     },
+    RESET_CQL_FILTER(state) {
+      state.cqlFilter = null
+    },
     RESET_TIME_EXTENT(state) {
       state.timeExtent = []
     },
@@ -172,6 +175,9 @@ export default {
     },
     setCQLFilter({ commit }, filter) {
       commit('SET_CQL_FILTER', filter)
+    },
+    resetCQLFilter({commit}) {
+      commit('RESET_CQL_FILTER')
     }, 
     setOpenedFolders({ commit }, folders) {
       commit('SET_OPENED_FOLDERS', folders)
