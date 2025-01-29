@@ -337,14 +337,10 @@
           
           //TODO: find a better solution for layers that don't have workspace
           // the below if statement checks for workspace in layer name
-          let layerName
-          if (this.selectedLayerData.layer.includes(':')) {
-            layerName = this.selectedLayerData.layer.split(':')[1]
-          } else {
-            layerName = this.selectedLayerData.layer
-          }
+          const layerName = this.getLayerName()
           
           const filename = `${ layerName }.${ fileType }`
+          console.log("filename: "+ filename)
           
           return JSZipUtils.getBinaryContent(url)
             .then(data => zip.file(filename, data, { binary: true }))
@@ -366,8 +362,8 @@
         this.generateZipFile(downloadProps) 
           .then((content) => {
             this.$trackEvent('download', 'geoServer')
-            
-            saveAs(content, 'layer.zip')
+            const layerName = this.getLayerName()
+            saveAs(content, layerName)
           })
           .catch(err => {
             console.log(err)
@@ -393,6 +389,10 @@
         }
 
       },
+      getLayerName() {        
+        const layerName = this.selectedLayerData.name.split(' ').join('_')
+        return layerName
+      }
     },
   }
 </script>
