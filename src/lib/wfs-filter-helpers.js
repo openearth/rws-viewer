@@ -27,7 +27,9 @@ export async function describeFeatureType({ url, layer }) {
   excludes geom
 */
 export function readFeatureProperties(describeFeatureTypeResponse) {
-
+  if (describeFeatureTypeResponse === undefined) {
+    return []
+  }
   const { featureTypes } = describeFeatureTypeResponse
   const properties = featureTypes[0].properties
 
@@ -39,16 +41,20 @@ export function readFeatureProperties(describeFeatureTypeResponse) {
 }
 
 //const of the filterTemplate
-export const filterTemplate = (filters) =>
-  `
+export function filterTemplate(filters) {
+  if (filters.length) {
+    return `
 <ogc:Filter
 	xmlns:ogc="http://www.opengis.net/ogc">
 	<ogc:And>
-    ${ filters.length ? createOgcFiltersXml(filters) : '' }
+    ${ createOgcFiltersXml(filters) }
   </ogc:And>
 </ogc:Filter>
 
 `
+  }
+  return ''
+}
 //For each filter object in the filtersArray, calls the ogcFilterLibrary to create the filter based on the comparer case
 function createOgcFiltersXml(filtersArray) {
   let ogcFilters = ''

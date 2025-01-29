@@ -1,6 +1,6 @@
+/* Contains any functions and utils related to the wms, wfs and wcs getCapabilities */
 import axios from 'axios'
 import { map, uniq, pipe } from 'ramda'
-
 
 import {
   WCS_LAYER_TYPE,
@@ -52,7 +52,19 @@ function createParameters(type) {
   }
 }
 
-
+async function getServiceType(serviceUrl) {
+  try {
+     await axios.get(`${serviceUrl.replace('wms', 'wfs') }?${ createParameters('wfs') }`)
+     return 'wfs'
+  } catch (error) {
+      try {
+          await axios.get(`${ serviceUrl.replace('wfs', 'wcs') }?${ createParameters('wcs') }`)
+          return 'wcs'
+      } catch (error) {
+          return 'Unknown'
+      }
+  }
+}
  
 export async function getCapabilities(service, type) {
   /**
@@ -60,13 +72,25 @@ export async function getCapabilities(service, type) {
    * create parameters and make the request
    * parse it as a dom element
    */
-  const _type = type
+
+  
   const serviceUrl = new URL(service)
- 
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
  
-  const { data } = await axios(`${ servicePath }?${ createParameters(_type) }`)
-  return new DOMParser().parseFromString(data, 'text/xml')
+  
+  try {
+   
+    const {data} = await axios(`${ servicePath }?${ createParameters(type) }`)
+    let parsedData = new DOMParser().parseFromString(data, 'text/xml');
+    if (parsedData.getElementsByTagName('ServiceExceptionReport').length > 0) {
+      throw new Error('ServiceExceptionReport found');
+    }
+    return parsedData
+
+  }  catch (error) {
+    const {data} = await axios (`${servicePath.replace('wms', type) }?${ createParameters(type) }`)
+    return new DOMParser().parseFromString(data, 'text/xml')
+  } 
 }
 
 export async function getWmsCapabilities(service) {
@@ -77,7 +101,6 @@ export async function getWmsCapabilities(service) {
   //the getcapabilities returns the capabilities of the layers in the workspace. need to search for the layer first
   const serviceUrl = new URL(service)
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
-  
   const { data } = await axios(`${ servicePath }?service=WMS&request=GetCapabilities`)
 
   return new DOMParser().parseFromString(data, 'text/xml')
@@ -137,7 +160,7 @@ export function isRasterLayer(type, capabilities, layer) {
   return keywords.includes('GeoTIFF')
 }
 
-export function getLayerProperties(capabilities, layer) {
+export async function getLayerProperties(capabilities, layerObject) {
 /**
  * function that reads the wms capabilities response of the workpspace
  * 1. find the given layer
@@ -149,7 +172,8 @@ export function getLayerProperties(capabilities, layer) {
  *    -time extent of layer
  *  
  *  * */
-
+  const {layer} = layerObject
+  const serviceUrl = layerObject.downloadUrl || layerObject.url
   const wmsVersion = pipe(
     () => capabilities.querySelector('WMS_Capabilities'),
     el => el.getAttribute('version'),
@@ -173,7 +197,7 @@ export function getLayerProperties(capabilities, layer) {
     getTags('Keyword'),
     map(getTagContent),  
   )()
-  
+
   if (!keywords.length) {
     
     keywords = pipe(
@@ -183,10 +207,16 @@ export function getLayerProperties(capabilities, layer) {
     )()
     
   }
-  const serviceType = [ 'features', 'wfs', 'FEATURES', 'WFS' ].some(val => keywords.includes(val)) ? 'wfs' 
+ 
+  let serviceType = [ 'features', 'wfs', 'FEATURES', 'WFS' ].some(val => keywords.includes(val)) ? 'wfs' 
         :[ 'WCS', 'GeoTIFF', 'wcs' ].some(val => keywords.includes(val)) ? 'wcs' 
         : null
+  
 
+  if (!serviceType) {
+      serviceType = await getServiceType(serviceUrl)
+  }
+  
   const timeExtent = pipe(
     () => [ ...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]') ],
     getChildTags('Name'),
