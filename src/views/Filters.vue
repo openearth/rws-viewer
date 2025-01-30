@@ -110,6 +110,7 @@
       selectedLayer() {
         if (this.selectedLayer) {
           this.setTimeExtent(this.selectedLayer.timeExtent)
+          this.resetCQLFilter()
         }
       },
       selectedLayerCode( ) {
@@ -124,7 +125,7 @@
       },
     },
     methods: {
-      ...mapActions('data', [ 'setTimeExtent', 'setCQLFilter' ] ),
+      ...mapActions('data', [ 'setTimeExtent', 'setCQLFilter', 'resetCQLFilter' ] ),
       ...mapActions('map', [ 'setFilteredLayerId', 'reloadLayerOnMap' ]),
       setFilter(value) {
         const filter = `${ this.filterName }='${ value }'`
