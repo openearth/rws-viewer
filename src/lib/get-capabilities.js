@@ -14,17 +14,17 @@ const textToArray = text => text.split(',') //split at comma
 
 
 const getTags = (tagName) => root =>
-  [ ...root ]
-    .map(el => [ ...el.getElementsByTagName(tagName) ])
+  [...root]
+    .map(el => [...el.getElementsByTagName(tagName)])
     .flat()
 
 const getChildTags = (tagName) => root =>
-  [ ...root ]
-    .map(el => [ ...el.querySelectorAll(`:scope > ${ tagName }`) ])
+  [...root]
+    .map(el => [...el.querySelectorAll(`:scope > ${tagName}`)])
     .flat()
 
 const findLayer = id => (layers) => {
-  
+
   let layer = layers.find(layer => layer.textContent === id)
   if (layer) {
     return layer
@@ -32,14 +32,14 @@ const findLayer = id => (layers) => {
     const idWithoutWorkspace = id.split(':')[1]
     layer = layers.find(layer => layer.textContent === idWithoutWorkspace)
     return layer
-  } 
+  }
 }
 
 function readBbox(bboxElement) {
-  const bbox = [ [ bboxElement.getElementsByTagName('westBoundLongitude')[0].textContent,
-  bboxElement.getElementsByTagName('southBoundLatitude')[0].textContent ], 
-  [ bboxElement.getElementsByTagName('eastBoundLongitude')[0].textContent,
-  bboxElement.getElementsByTagName('northBoundLatitude')[0].textContent ] ]
+  const bbox = [[bboxElement.getElementsByTagName('westBoundLongitude')[0].textContent,
+  bboxElement.getElementsByTagName('southBoundLatitude')[0].textContent],
+  [bboxElement.getElementsByTagName('eastBoundLongitude')[0].textContent,
+  bboxElement.getElementsByTagName('northBoundLatitude')[0].textContent]]
   return bbox
 }
 
@@ -52,20 +52,53 @@ function createParameters(type) {
   }
 }
 
-async function getServiceType(serviceUrl) {
-  try {
-     await axios.get(`${serviceUrl.replace('wms', 'wfs') }?${ createParameters('wfs') }`)
-     return 'wfs'
-  } catch (error) {
-      try {
-          await axios.get(`${ serviceUrl.replace('wfs', 'wcs') }?${ createParameters('wcs') }`)
-          return 'wcs'
-      } catch (error) {
-          return 'Unknown'
-      }
+async function getServiceType(capabilities, layerObject) {
+  const { layer } = layerObject
+  const serviceUrl = layerObject.downloadUrl || layerObject.url
+  let keywords = pipe(
+    () => [...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]')],
+    getChildTags('Name'),
+    findLayer(layer),
+    getParentNode,
+    el => el.getElementsByTagName('KeywordList'),
+    getTags('Keyword'),
+    map(getTagContent),
+  )()
+
+  if (!keywords.length) {
+
+    keywords = pipe(
+      () => [capabilities.querySelector('KeywordList')],
+      getTags('Keyword'),
+      map(getTagContent),
+    )()
+
   }
+
+  let serviceType = ['wfs', 'WFS'].some(val => keywords.includes(val)) ? 'wfs'
+    : ['WCS', 'GeoTIFF', 'wcs'].some(val => keywords.includes(val)) ? 'wcs'
+      : null
+
+  if (!serviceType) {
+
+    if (layerObject.downloadUrl.includes("wfs") || layerObject.url.includes("wfs")) {
+      serviceType = "wfs"
+    }
+
+    else {
+      try {
+        await axios.get(`${serviceUrl.replace('wms', 'wcs')}?${createParameters('wcs')}`)
+        serviceType = "wcs"
+      } catch (error) {
+        serviceType = "wms"
+      }
+    }
+  }
+  return serviceType
 }
- 
+
+
+
 export async function getCapabilities(service, type) {
   /**
    * GetCapabilities wfs or wcs based on the input type
@@ -73,58 +106,58 @@ export async function getCapabilities(service, type) {
    * parse it as a dom element
    */
 
-  
+
   const serviceUrl = new URL(service)
-  const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
- 
-  
+  const servicePath = `${serviceUrl.origin}${serviceUrl.pathname}`
+
+
   try {
-   
-    const {data} = await axios(`${ servicePath }?${ createParameters(type) }`)
+
+    const { data } = await axios(`${servicePath}?${createParameters(type)}`)
     let parsedData = new DOMParser().parseFromString(data, 'text/xml');
     if (parsedData.getElementsByTagName('ServiceExceptionReport').length > 0) {
       throw new Error('ServiceExceptionReport found');
     }
     return parsedData
 
-  }  catch (error) {
-    const {data} = await axios (`${servicePath.replace('wms', type) }?${ createParameters(type) }`)
+  } catch (error) {
+    const { data } = await axios(`${servicePath.replace('wms', type)}?${createParameters(type)}`)
     return new DOMParser().parseFromString(data, 'text/xml')
-  } 
+  }
 }
 
 export async function getWmsCapabilities(service) {
   /** 
  * The getWmsCapabilitis is made when a layer is clicked.  
  * 
- * */ 
+ * */
   //the getcapabilities returns the capabilities of the layers in the workspace. need to search for the layer first
   const serviceUrl = new URL(service)
-  const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
-  const { data } = await axios(`${ servicePath }?service=WMS&request=GetCapabilities`)
+  const servicePath = `${serviceUrl.origin}${serviceUrl.pathname}`
+  const { data } = await axios(`${servicePath}?service=WMS&request=GetCapabilities`)
 
   return new DOMParser().parseFromString(data, 'text/xml')
 
 }
 
 export function getSupportedOutputFormats(type, capabilities) {
-  
+
   //wfs
   const outputFormats = pipe(
-      () => [ ...capabilities.querySelectorAll('[name="outputFormat"]') ],
-      getTags('ows:AllowedValues'),
-      getTags('ows:Value'),
-      map(getTagContent),
-      uniq,
-    )
+    () => [...capabilities.querySelectorAll('[name="outputFormat"]')],
+    getTags('ows:AllowedValues'),
+    getTags('ows:Value'),
+    map(getTagContent),
+    uniq,
+  )
   //wcs
   const formatSupported = pipe(
-      () => capabilities,
-      el => el.getElementsByTagName('wcs:Capabilities'),
-      getTags('wcs:ServiceMetadata'),
-      getTags('wcs:formatSupported'),
-      map(getTagContent),
-    )
+    () => capabilities,
+    el => el.getElementsByTagName('wcs:Capabilities'),
+    getTags('wcs:ServiceMetadata'),
+    getTags('wcs:formatSupported'),
+    map(getTagContent),
+  )
 
   if (type === WCS_LAYER_TYPE) {
     return formatSupported()
@@ -149,7 +182,7 @@ export function isRasterLayer(type, capabilities, layer) {
   }
 
   const keywords = pipe(
-    () => [ ...capabilities.querySelectorAll('CoverageId') ],
+    () => [...capabilities.querySelectorAll('CoverageId')],
     findCoverageForLayer(layer),
     getParentNode,
     el => el.getElementsByTagName('ows:Keywords'),
@@ -161,73 +194,47 @@ export function isRasterLayer(type, capabilities, layer) {
 }
 
 export async function getLayerProperties(capabilities, layerObject) {
-/**
- * function that reads the wms capabilities response of the workpspace
- * 1. find the given layer
- * 2. extracts:   
- *    -wmsVersion
- *    -bbox of layer
- *    -keywords (that contain the service type)
- *    -service type of layer (wfs or wcs)
- *    -time extent of layer
- *  
- *  * */
-  const {layer} = layerObject
-  const serviceUrl = layerObject.downloadUrl || layerObject.url
+  /**
+   * function that reads the wms capabilities response of the workpspace
+   * 1. find the given layer
+   * 2. extracts:   
+   *    -wmsVersion
+   *    -bbox of layer
+   *    -keywords (that contain the service type)
+   *    -service type of layer (wfs or wcs)
+   *    -time extent of layer
+   *  
+   *  * */
+  const { layer } = layerObject
   const wmsVersion = pipe(
     () => capabilities.querySelector('WMS_Capabilities'),
     el => el.getAttribute('version'),
   )()
 
   const bbox = pipe(
-    () => [ ...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]') ],
+    () => [...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]')],
     getChildTags('Name'),
     findLayer(layer),
     getParentNode,
     el => el.querySelector('EX_GeographicBoundingBox'),
     readBbox,
   )()
-  
-  let keywords = pipe(
-    () => [ ...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]') ],
-    getChildTags('Name'),
-    findLayer(layer),
-    getParentNode,
-    el => el.getElementsByTagName('KeywordList'),
-    getTags('Keyword'),
-    map(getTagContent),  
-  )()
 
-  if (!keywords.length) {
-    
-    keywords = pipe(
-      () => [ capabilities.querySelector('KeywordList') ],  
-      getTags('Keyword'), 
-      map(getTagContent), 
-    )()
-    
-  }
- 
-  let serviceType = [ 'features', 'wfs', 'FEATURES', 'WFS' ].some(val => keywords.includes(val)) ? 'wfs' 
-        :[ 'WCS', 'GeoTIFF', 'wcs' ].some(val => keywords.includes(val)) ? 'wcs' 
-        : null
-  
+  const serviceType = await getServiceType(capabilities, layerObject)
+  console.log(serviceType)
 
-  if (!serviceType) {
-      serviceType = await getServiceType(serviceUrl)
-  }
-  
+
   const timeExtent = pipe(
-    () => [ ...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]') ],
+    () => [...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]')],
     getChildTags('Name'),
     findLayer(layer),
     getParentNode,
-    el =>[ ...el.getElementsByTagName('Dimension') ],
+    el => [...el.getElementsByTagName('Dimension')],
     map(getTagContent),
     map(textToArray),
     (array) => array.flat(),
   )()
- 
+
   return { serviceType, timeExtent, wmsVersion, bbox }
 }
 
