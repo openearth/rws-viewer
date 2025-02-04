@@ -55,6 +55,7 @@
       :options="tourConfig"
       name="introduction"
       @click.native="nextStep"
+      :callbacks="tourCallbacks"
     />
 
     <v-mapbox
@@ -139,6 +140,7 @@
   import { tourConfig, generateTourSteps, tourStepCount } from '@/plugins/vue-tour'
   import FeedbackDialog from './components/FeedbackDialog/FeedbackDialog.vue'
   import AcknowledgmentsDialog from '~/components/AcknowledgmentsDialog/AcknowledgmentsDialog.vue'
+  import { getCookie, setCookie } from './lib/cookies'
 
   const removeRegion = locale => locale.replace(/-.+/, '')
   const localeIsAvailable = locale => availableLocales.includes(locale)
@@ -168,6 +170,7 @@
 
     data: () => ({
       tourConfig,
+      tourCallbacks: {},
       generateTourSteps,
       tourStepCount,
       accessToken: process.env.VUE_APP_MAPBOX_TOKEN,
@@ -237,7 +240,11 @@
         await this.getAppData({ route, locale: this.currentLocale } )
         this.localeIsLoading = false
       })
-      this.showTour()
+      this.tourCallbacks = { onSkip: this.skipTourCallback, }
+      const skipTourCookie = getCookie("skipTour")
+      if (!skipTourCookie) {
+        this.showTour()
+      }
     },
 
     methods: {
@@ -331,6 +338,9 @@
       },
       showTour () {
         this.$tours.introduction.start()
+      },
+      skipTourCallback() {
+        setCookie("skipTour", true, 30)        
       },
       nextStep () {
         if (tourStepCount == 2 ) {
