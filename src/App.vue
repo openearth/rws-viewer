@@ -8,6 +8,7 @@
         :items="localeItems"
         @input="switchLocaleAndAddViewerData($event.title)"
       />
+      <screenshot-button />
       <burger-menu
         :loadingburger="localeIsLoading"
         @open-contact-form="onOpenContactForm"
@@ -141,6 +142,7 @@
   import FeedbackDialog from './components/FeedbackDialog/FeedbackDialog.vue'
   import AcknowledgmentsDialog from '~/components/AcknowledgmentsDialog/AcknowledgmentsDialog.vue'
   import { getCookie, setCookie } from './lib/cookies'
+  import ScreenshotButton from '~/components/ScreenshotButton/ScreenshotButton'
 
   const removeRegion = locale => locale.replace(/-.+/, '')
   const localeIsAvailable = locale => availableLocales.includes(locale)
@@ -166,6 +168,7 @@
       UserAgreementDialog,
       FeedbackDialog,
       AcknowledgmentsDialog,
+      ScreenshotButton
     },
 
     data: () => ({
