@@ -6,7 +6,7 @@
         v-on="on"
         icon
       >
-        <v-icon>save</v-icon>
+        <v-icon> mdi-content-save </v-icon>
       </v-btn>
     </template>
     <span
