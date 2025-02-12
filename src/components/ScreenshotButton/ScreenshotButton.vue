@@ -5,18 +5,23 @@
         class="ma-auto"
         v-on="on"
         icon
+        target="blank"
+        download="coastviewer.png"
       >
         <v-icon> mdi-content-save </v-icon>
       </v-btn>
     </template>
-    <span
-      >Maak een snapshot van het huidige beeld en sla deze op naar
-      png.</span
-    >
+    <span>
+      {{ $t('screenshot') }}
+    </span>
   </v-tooltip>
 </template>
 
 <script>
   export default {
+    methods: {
+      snapShot () {
+      }
+    }
   }
 </script>
