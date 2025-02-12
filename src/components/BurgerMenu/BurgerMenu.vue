@@ -1,13 +1,12 @@
 <template>
   <v-menu offset-y>
-    <template #activator="{ on, attrs }">
+    <template #activator="{ attrs }">
       <v-btn
         dark
         v-bind="attrs"
         :loading="loadingburger"
         :disabled="loadingburger"
         icon
-        v-on="on"
       >
         <v-icon> mdi-menu </v-icon>
       </v-btn>
