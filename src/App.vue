@@ -8,7 +8,7 @@
         :items="localeItems"
         @input="switchLocaleAndAddViewerData($event.title)"
       />
-      <screenshot-button />
+      <screenshot-button  :map="mapInstance" />
       <burger-menu
         :loadingburger="localeIsLoading"
         @open-contact-form="onOpenContactForm"
@@ -60,6 +60,7 @@
     />
 
     <v-mapbox
+      ref="mapbox"
       slot="map"
       :access-token="accessToken"
       map-style="mapbox://styles/siggyf/ckww2c33f0xlf15nujlx41fe2"
@@ -67,6 +68,7 @@
       :zoom="mapZoom"
       class="mapbox-map"
       :style="`--sidebar-width: ${appNavigationWidth}px`"
+      :map-options="{ preserveDrawingBuffer: true }" 
       @mb-load="setMapLoaded"
     >
       <time-slider
@@ -143,6 +145,7 @@
   import AcknowledgmentsDialog from '~/components/AcknowledgmentsDialog/AcknowledgmentsDialog.vue'
   import { getCookie, setCookie } from './lib/cookies'
   import ScreenshotButton from '~/components/ScreenshotButton/ScreenshotButton'
+  import { provide } from 'vue';
 
   const removeRegion = locale => locale.replace(/-.+/, '')
   const localeIsAvailable = locale => availableLocales.includes(locale)
@@ -191,6 +194,7 @@
       feedbackDialogOpen: false,
       clickedUserAgreementOpen: false,
       acknowledgmentsDialogOpen: false,
+      mapInstance: null
     }),
 
     computed: {
@@ -223,6 +227,14 @@
     },
 
     mounted() {
+      this.$nextTick(() => {
+        if (this.$refs.mapbox && this.$refs.mapbox.map) {
+          this.mapInstance = this.$refs.mapbox.map;
+        } else {
+          console.error("Mapbox instance is not available");
+        }
+      });
+
       this.$router.onReady(async (route) => {
         const savedLocale = window.localStorage.getItem('locale')
         let browserLocales = []
