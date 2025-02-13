@@ -38,7 +38,7 @@
         }
         layerOrderElement.classList.add("layer-order--open");
       
-        // Ensure the Map Legend component is expanded before capturing
+        // Ensure the Mapbox Legend component is expanded before capturing
         const mapLegendElement = document.querySelector(".map-legend");
         if (!mapLegendElement) {
           console.error("Map legend UI not found");
@@ -46,40 +46,43 @@
         }
         mapLegendElement.classList.add("map-legend--open");
       
-        // Expand all v-expansion-panels inside Map Legend
+        // Expand all legend items
         document.querySelectorAll(".map-legend .v-expansion-panel").forEach(panel => {
           panel.classList.add("v-expansion-panel--active");
+          const panelContent = panel.querySelector(".v-expansion-panel-content");
+          if (panelContent) {
+            panelContent.style.display = "block";
+            panelContent.style.maxHeight = "none";
+          }
         });
       
-        // Apply computed styles to maintain appearance
-        const applyComputedStyles = (element) => {
-          const computedStyles = window.getComputedStyle(element);
-          const originalStyles = {};
-          for (let prop of computedStyles) {
-            originalStyles[prop] = element.style[prop];
-            element.style[prop] = computedStyles.getPropertyValue(prop);
-          }
-          return originalStyles;
-        };
+        // Clone the Layer Order component
+        const clonedLayerOrder = layerOrderElement.cloneNode(true);
+        clonedLayerOrder.style.position = "absolute";
+        clonedLayerOrder.style.left = "-9999px";
+        document.body.appendChild(clonedLayerOrder);
       
-        const originalLayerOrderStyles = applyComputedStyles(layerOrderElement);
-        const originalLegendStyles = applyComputedStyles(mapLegendElement);
+        // Clone the Mapbox Legend component
+        const clonedMapLegend = mapLegendElement.cloneNode(true);
+        clonedMapLegend.style.position = "absolute";
+        clonedMapLegend.style.left = "-9999px";
+        document.body.appendChild(clonedMapLegend);
+      
+        // Convert legend images to Base64 before capturing
+        await this.convertImagesToBase64(clonedMapLegend);
       
         this.map.once('render', async () => {
           const mapCanvas = this.map.getCanvas();
           const mapImage = mapCanvas.toDataURL("image/png");
         
-          // Capture Layer Order UI
-          const layerOrderCanvas = await html2canvas(layerOrderElement, { backgroundColor: null });
+          // Capture cloned components with html2canvas
+          const layerOrderCanvas = await html2canvas(clonedLayerOrder, { backgroundColor: null });
+          const mapLegendCanvas = await html2canvas(clonedMapLegend, { backgroundColor: null });
         
-          // Capture Map Legend UI
-          const mapLegendCanvas = await html2canvas(mapLegendElement, { backgroundColor: null });
+          document.body.removeChild(clonedLayerOrder);
+          document.body.removeChild(clonedMapLegend);
         
-          // Restore original styles
-          Object.assign(layerOrderElement.style, originalLayerOrderStyles);
-          Object.assign(mapLegendElement.style, originalLegendStyles);
-        
-          // Merge Map Image, Layer Order, and Legend
+          // Merge Map Image, Layer Order, and Map Legend
           const finalCanvas = document.createElement("canvas");
           finalCanvas.width = mapCanvas.width;
           finalCanvas.height = mapCanvas.height;
@@ -91,12 +94,12 @@
           await new Promise((resolve) => (mapImg.onload = resolve));
           ctx.drawImage(mapImg, 0, 0);
         
-          // Draw the layer order UI in the bottom left corner
+          // Draw the cloned layer order UI in the bottom left corner
           const layerX = 10;
           const layerY = finalCanvas.height - layerOrderCanvas.height - 10;
           ctx.drawImage(layerOrderCanvas, layerX, layerY);
         
-          // Draw the map legend UI in the bottom right corner
+          // Draw the cloned map legend UI in the bottom right corner
           const legendX = finalCanvas.width - mapLegendCanvas.width - 10;
           const legendY = finalCanvas.height - mapLegendCanvas.height - 10;
           ctx.drawImage(mapLegendCanvas, legendX, legendY);
@@ -113,6 +116,32 @@
         });
       
         this.map.triggerRepaint();
+      },
+
+      async convertImagesToBase64(container) {
+        const images = container.querySelectorAll("img");
+        const promises = Array.from(images).map(async (img) => {
+          if (!img.src.startsWith("data:image")) {
+            const base64 = await this.imageToBase64(img.src);
+            if (base64) {
+              img.src = base64;
+            }
+          }
+        });
+        await Promise.all(promises);
+      },
+
+      imageToBase64(url) {
+        return new Promise((resolve) => {
+          fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result);
+              reader.readAsDataURL(blob);
+            })
+            .catch(() => resolve(null));
+        });
       }
     }
   };
