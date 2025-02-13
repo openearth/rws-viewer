@@ -17,11 +17,15 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   import html2canvas from 'html2canvas';
 
   export default {
     props: {
       map: Object
+    },
+    computed: {
+      ...mapGetters('app', [ 'viewerName' ]),
     },
     methods: {
       async snapShot() {
@@ -93,6 +97,21 @@
           mapImg.src = mapImage;
           await new Promise((resolve) => (mapImg.onload = resolve));
           ctx.drawImage(mapImg, 0, 0);
+        
+          // Draw a white box with a grey border for the date and time
+          const timestamp = new Date().toLocaleString();
+          const text = this.viewerName + " - " + "Image generated at " + timestamp;
+          ctx.font = "16px Arial";
+          const textWidth = ctx.measureText(text).width + 20;
+          const textHeight = 30;
+          ctx.fillStyle = "white";
+          ctx.fillRect(5, 5, textWidth, textHeight);
+          ctx.strokeStyle = "grey";
+          ctx.strokeRect(5, 5, textWidth, textHeight);
+        
+          // Draw the timestamp text inside the box
+          ctx.fillStyle = "black";
+          ctx.fillText(text, 15, 25);
         
           // Draw the cloned layer order UI in the bottom left corner
           const layerX = 10;

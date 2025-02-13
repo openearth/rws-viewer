@@ -145,7 +145,6 @@
   import AcknowledgmentsDialog from '~/components/AcknowledgmentsDialog/AcknowledgmentsDialog.vue'
   import { getCookie, setCookie } from './lib/cookies'
   import ScreenshotButton from '~/components/ScreenshotButton/ScreenshotButton'
-  import { provide } from 'vue';
 
   const removeRegion = locale => locale.replace(/-.+/, '')
   const localeIsAvailable = locale => availableLocales.includes(locale)
