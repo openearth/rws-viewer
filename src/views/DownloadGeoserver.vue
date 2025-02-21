@@ -335,9 +335,8 @@
         let zip = new JSZip()
         return Promise.all(urls.map(async ({ url, fileType }) => {
           
-          //TODO: find a better solution for layers that don't have workspace
-          // the below if statement checks for workspace in layer name
-          const layerName = this.getLayerName()
+   
+          let layerName = this.getLayerName()
           
           const filename = `${ layerName }.${ fileType }`
           console.log("filename: "+ filename)
@@ -362,7 +361,7 @@
         this.generateZipFile(downloadProps) 
           .then((content) => {
             this.$trackEvent('download', 'geoServer')
-            const layerName = this.getLayerName()
+            const layerName = this.getLayerName() 
             saveAs(content, layerName)
           })
           .catch(err => {
@@ -390,7 +389,8 @@
 
       },
       getLayerName() {        
-        const layerName = this.selectedLayerData.name.split(' ').join('_')
+        let layerName = this.selectedLayerData.name.split(' ').join('_')
+        layerName =  layerName.replace(/[^\w\d-]/g, "_")
         return layerName
       }
     },
