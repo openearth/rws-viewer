@@ -94,6 +94,9 @@ jobs:
           DATO_API_KEY_NL2120: ${{ secrets.DATO_API_KEY_NL2120 }}
           DATO_INSTANCE_CURRENT: ${{ matrix.name }}
           DATO_ENVIRONMENT: staging
+          API_URL_OPENEARTH_DATA_VIEWER: ${{ secrets.API_URL_OPENEARTH_DATA_VIEWER }}
+          API_URL_OPENEARTH_RWS_VIEWER: ${{ secrets.API_URL_OPENEARTH_RWS_VIEWER }}
+          API_URL_NL2120: ${{ secrets.API_URL_NL2120 }}
           VUE_APP_MAPBOX_TOKEN: ${{ secrets.VUE_APP_MAPBOX_TOKEN }}
           VUE_APP_API_ENDPOINT: ${{ secrets.VUE_APP_API_ENDPOINT }}
           VUE_APP_AQUADESK_KEY: ${{ secrets.VUE_APP_AQUADESK_KEY }}
