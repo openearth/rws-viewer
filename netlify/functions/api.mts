@@ -1,4 +1,5 @@
 import type { Config } from "@netlify/functions";
+import { instances } from "../../config/dato/instances";
 
 export const config: Config = {
   path: ["/api-rewrite/*"],
@@ -6,9 +7,15 @@ export const config: Config = {
 
 export default async (req: Request) => {
   // a redirect to the configured env.API_URL
-  const apiUrl = process.env.API_URL;
+  const currentInstance = instances.find(
+    (instance) => instance.name === process.env.DATO_INSTANCE_CURRENT
+  );
 
-  console.log("apiUrl", apiUrl);
+  if (!currentInstance) {
+    return new Response("Current instance not found", { status: 500 });
+  }
+
+  const apiUrl = currentInstance.apiUrl;
 
   if (!apiUrl) {
     return new Response("API_URL is not configured", { status: 500 });
