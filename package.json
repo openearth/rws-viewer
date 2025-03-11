@@ -14,6 +14,7 @@
     "dato": "node ./config/dato/dump-data.mjs",
     "prebuild": "npm run dato",
     "build": "vue-cli-service build && cp netlify.toml dist/netlify.toml",
+    "postbuild": "mkdir -p dist/netlify/functions && cp -r netlify/functions dist/netlify/",
     "predev": "npm run dato",
     "dev": "run-p serve start-server",
     "fix": "run-s fix:*",
