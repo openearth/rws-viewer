@@ -8,17 +8,13 @@ export default async (event) => {
         );
 
         if (!currentInstance) {
-            return new Response("Current instance not found", {
-                status: 500
-            });
+            return createErrorResponse("Current instance not found", 500);
         }
 
         const apiUrl = currentInstance.apiUrl;
 
         if (!apiUrl) {
-            return new Response("API_URL is not configured", {
-                status: 500
-            });
+            return createErrorResponse("API_URL is not configured", 500);
         }
 
         // Get the path and query parameters from the request URL
@@ -45,65 +41,134 @@ export default async (event) => {
         // Convert to string for the fetch request
         const targetUrlString = targetUrl.toString();
 
-        console.log("targetUrl", targetUrlString);
-        console.log("event", event);
+        // Prepare headers to forward
+        const headers = new Headers();
+
+        // Forward relevant headers from the original request
+        if (event.headers) {
+            const headersToForward = [
+                'authorization',
+                'content-type',
+                'accept',
+                'user-agent',
+                'x-requested-with'
+            ];
+
+            for (const header of headersToForward) {
+                if (event.headers[header]) {
+                    headers.set(header, event.headers[header]);
+                }
+            }
+        }
+
+        // Prepare fetch options
+        const fetchOptions = {
+            method: event.httpMethod || 'GET',
+            headers
+        };
+
+        // Forward request body for POST, PUT, PATCH methods
+        if (['POST', 'PUT', 'PATCH'].includes(fetchOptions.method) && event.body) {
+            fetchOptions.body = event.body;
+        }
+
+        // Log request details (only in development)
+        if (process.env.NODE_ENV !== 'production') {
+            console.log(`Proxying ${fetchOptions.method} request to: ${targetUrlString}`);
+        }
 
         // Fetch the target URL and return its response
-        const response = await fetch(targetUrlString);
+        const response = await fetch(targetUrlString, fetchOptions);
 
         // Get the content type from the response headers
         const contentType = response.headers.get("Content-Type") || "";
 
-        // Check if the response is JSON
-        if (contentType.includes("application/json")) {
-            const jsonData = await response.text();
-
-            try {
-                // Return the JSON response
-                return new Response({
-                    data: jsonData,
-                }, {
-                    status: response.status,
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
-                });
-            } catch (error) {
-                console.error("Error parsing JSON:", error);
-
-                // Return as plain text if JSON parsing fails
-                return new Response({
-                    data: jsonData,
-                }, {
-                    status: response.status,
-                    headers: {
-                        "Content-Type": "text/plain"
-                    }
-                });
-            }
-        } else {
-            // Handle as text for non-JSON responses
-            const textData = await response.text();
-
-            return new Response({
-                data: textData,
-            }, {
-                status: response.status,
-                headers: {
-                    "Content-Type": contentType
-                }
-            });
+        // Log content type in development
+        if (process.env.NODE_ENV !== 'production') {
+            console.log(`Response content type: ${contentType}`);
         }
+
+        // Handle the response based on content type
+        let responseData;
+        // Check if the response is binary data
+        const isBinaryContent = contentType.includes('image/') ||
+            contentType.includes('application/pdf') ||
+            contentType.includes('application/octet-stream') ||
+            contentType.includes('application/x-netcdf') ||
+            contentType.includes('application/x-gzip') ||
+            contentType.includes('application/zip') ||
+            contentType.includes('application/vnd.google-earth.kml') ||
+            contentType.includes('application/x-netcdf4') ||
+            contentType.includes('image/tiff') ||
+            contentType.includes('application/vnd.') ||
+            contentType.includes('application/x-');
+
+        if (isBinaryContent) {
+            // For binary data, use arrayBuffer
+            responseData = await response.arrayBuffer();
+        } else {
+            try {
+                // For text/json data, use text
+                responseData = await response.text();
+
+                // Additional check: if the response contains null bytes, it's likely binary
+                if (responseData.includes('\0')) {
+                    if (process.env.NODE_ENV !== 'production') {
+                        console.log('Detected binary content with null bytes, switching to arrayBuffer');
+                    }
+                    // Re-fetch as binary
+                    responseData = await fetch(targetUrlString, fetchOptions).then(res => res.arrayBuffer());
+                }
+            } catch (error) {
+                if (process.env.NODE_ENV !== 'production') {
+                    console.log('Error processing as text, falling back to binary:', error);
+                }
+                // If text processing fails, fall back to binary
+                responseData = await fetch(targetUrlString, fetchOptions).then(res => res.arrayBuffer());
+            }
+        }
+
+        // Prepare response headers
+        const responseHeaders = new Headers();
+        responseHeaders.set("Content-Type", contentType);
+
+        // Add CORS headers
+        responseHeaders.set("Access-Control-Allow-Origin", "*");
+        responseHeaders.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        responseHeaders.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+        // Forward other important headers from the API response
+        const headersToForward = ['cache-control', 'etag', 'last-modified'];
+        for (const header of headersToForward) {
+            const value = response.headers.get(header);
+            if (value) {
+                responseHeaders.set(header, value);
+            }
+        }
+
+        // Return the response with appropriate content type
+        return new Response(responseData, {
+            status: response.status,
+            headers: Object.fromEntries(responseHeaders)
+        });
     } catch (error) {
         console.error("Error proxying request:", error);
-
-        return new Response("Error proxying request to API", {
-            status: 500
-        });
+        return createErrorResponse("Error proxying request to API", 500);
     }
 };
 
+// Helper function to create error responses
+function createErrorResponse(message, status) {
+    return new Response(JSON.stringify({ error: message }), {
+        status,
+        headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        }
+    });
+}
+
 // Configure the function path
 export const config = {
-    path: "/api-rewrite/*"
+    path: "/api/*"
 };
