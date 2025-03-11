@@ -83,11 +83,6 @@ export default async (event) => {
         // Get the content type from the response headers
         const contentType = response.headers.get("Content-Type") || "";
 
-        // Log content type in development
-        if (process.env.NODE_ENV !== 'production') {
-            console.log(`Response content type: ${contentType}`);
-        }
-
         // Handle the response based on content type
         let responseData;
         // Check if the response is binary data
@@ -107,25 +102,8 @@ export default async (event) => {
             // For binary data, use arrayBuffer
             responseData = await response.arrayBuffer();
         } else {
-            try {
-                // For text/json data, use text
-                responseData = await response.text();
-
-                // Additional check: if the response contains null bytes, it's likely binary
-                if (responseData.includes('\0')) {
-                    if (process.env.NODE_ENV !== 'production') {
-                        console.log('Detected binary content with null bytes, switching to arrayBuffer');
-                    }
-                    // Re-fetch as binary
-                    responseData = await fetch(targetUrlString, fetchOptions).then(res => res.arrayBuffer());
-                }
-            } catch (error) {
-                if (process.env.NODE_ENV !== 'production') {
-                    console.log('Error processing as text, falling back to binary:', error);
-                }
-                // If text processing fails, fall back to binary
-                responseData = await fetch(targetUrlString, fetchOptions).then(res => res.arrayBuffer());
-            }
+            // For text/json data, use text
+            responseData = await response.text();
         }
 
         // Prepare response headers
