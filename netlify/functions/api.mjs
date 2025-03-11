@@ -77,6 +77,8 @@ export default async (event) => {
             console.log(`Proxying ${fetchOptions.method} request to: ${targetUrlString}`);
         }
 
+        console.log('[TARGET URL]', targetUrlString);
+
         // Fetch the target URL and return its response
         const response = await fetch(targetUrlString, fetchOptions);
 
