@@ -19,6 +19,3 @@ status = 200
 
 [dev]
 targetPort = 3000
-
-[functions]
-directory = "netlify/functions"

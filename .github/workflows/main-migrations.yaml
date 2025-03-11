@@ -132,6 +132,7 @@ jobs:
         uses: nwtgck/actions-netlify@v3.0
         with:
           publish-dir: "./dist"
+          functions-dir: "./netlify/functions"
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
         env:
