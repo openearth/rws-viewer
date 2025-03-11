@@ -80,37 +80,7 @@ export default async (event) => {
         console.log('[TARGET URL]', targetUrlString);
 
         // Fetch the target URL and return its response
-        const response = await fetch(targetUrlString, fetchOptions);
-
-        // Get the content type from the response headers
-        const contentType = response.headers.get("Content-Type") || "";
-
-        // Get the response data
-        const responseData = await response.json();
-
-        // Prepare response headers
-        const responseHeaders = new Headers();
-        responseHeaders.set("Content-Type", contentType);
-
-        // Add CORS headers
-        responseHeaders.set("Access-Control-Allow-Origin", "*");
-        responseHeaders.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-        responseHeaders.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-        // Forward other important headers from the API response
-        const headersToForward = ['cache-control', 'etag', 'last-modified'];
-        for (const header of headersToForward) {
-            const value = response.headers.get(header);
-            if (value) {
-                responseHeaders.set(header, value);
-            }
-        }
-
-        // Return the response with appropriate content type
-        return Response.json(responseData, {
-            status: response.status,
-            headers: Object.fromEntries(responseHeaders)
-        });
+        return fetch(targetUrlString, fetchOptions);
     } catch (error) {
         console.error("Error proxying request:", error);
         return createErrorResponse("Error proxying request to API", 500);
