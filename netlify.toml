@@ -9,7 +9,7 @@ status = 301
 
 [[redirects]]
 from = "/api/*"
-to = "/api-rewrite/:splat"
+to = "/.netlify/functions/api"
 status = 200
 
 [[redirects]]
