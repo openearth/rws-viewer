@@ -79,8 +79,21 @@ export default async (event) => {
 
         console.log('[TARGET URL]', targetUrlString);
 
-        // Fetch the target URL and return its response
-        return fetch(targetUrlString, fetchOptions);
+        // Fetch the target URL and properly handle its response
+        const response = await fetch(targetUrlString, fetchOptions);
+
+        const json = await response.json();
+
+        console.log('[RESPONSE]', json);
+        console.log('[RESPONSE STATUS]', response.status);
+
+        // Simply return the response object directly - Edge Functions support this format
+        return new Response(JSON.stringify(json), {
+            status: response.status,
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
     } catch (error) {
         console.error("Error proxying request:", error);
         return createErrorResponse("Error proxying request to API", 500);
