@@ -108,6 +108,8 @@ export default async (event) => {
             responseData = await response.json();
         }
 
+        console.log(JSON.stringify(responseData, null, 2));
+
         // Prepare response headers
         const responseHeaders = new Headers();
         responseHeaders.set("Content-Type", contentType);
