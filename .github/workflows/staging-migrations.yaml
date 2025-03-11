@@ -94,17 +94,22 @@ jobs:
           DATO_API_KEY_NL2120: ${{ secrets.DATO_API_KEY_NL2120 }}
           DATO_INSTANCE_CURRENT: ${{ matrix.name }}
           DATO_ENVIRONMENT: staging
+          API_URL_OPENEARTH_DATA_VIEWER: ${{ secrets.API_URL_OPENEARTH_DATA_VIEWER }}
+          API_URL_OPENEARTH_RWS_VIEWER: ${{ secrets.API_URL_OPENEARTH_RWS_VIEWER }}
+          API_URL_NL2120: ${{ secrets.API_URL_NL2120 }}
           VUE_APP_MAPBOX_TOKEN: ${{ secrets.VUE_APP_MAPBOX_TOKEN }}
           VUE_APP_API_ENDPOINT: ${{ secrets.VUE_APP_API_ENDPOINT }}
           VUE_APP_AQUADESK_KEY: ${{ secrets.VUE_APP_AQUADESK_KEY }}
           VUE_APP_PIWIK_CONTAINER_ID: ${{ secrets.VUE_APP_PIWIK_CONTAINER_ID }}
           VUE_APP_WMR_KEY: ${{ secrets.VUE_APP_WMR_KEY }}
           DEEPL_KEY: ${{ secrets.DEEPL_KEY }}
+          YARN_FLAGS: --ignore-engines
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0
         with:
           publish-dir: "./dist"
+          functions-dir: "./out/netlify/functions"
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-commit-comment: false

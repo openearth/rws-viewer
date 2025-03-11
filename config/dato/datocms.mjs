@@ -4,8 +4,8 @@ import slugify from '@sindresorhus/slugify'
 import { datoEnvironment } from './constants.mjs'
 import { instances } from './instances.js'
 
-const capitaliseFirstLetter = ([ first, ...rest ]) => first.toUpperCase() + rest.join('')
-const lowerCaseFirstLetter =  ([ first, ...rest ]) => first.toLowerCase() + rest.join('')
+const capitaliseFirstLetter = ([first, ...rest]) => first.toUpperCase() + rest.join('')
+const lowerCaseFirstLetter = ([first, ...rest]) => first.toLowerCase() + rest.join('')
 const camelCase = pipe(
   slugify,
   split('-'),
@@ -37,7 +37,7 @@ function executeFetch(variables, query) {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json',
-      Authorization: `Bearer ${ token }`,
+      Authorization: `Bearer ${token}`,
       'X-Environment': datoEnvironment,
     },
     data: { query, variables },
@@ -62,7 +62,7 @@ function getPaginatedData(variables, query) {
 
     if (allKey) {
       const { count } = response.data.data[allKey]
-      const [ , originalKey ] = allKey.match(keyRegex).map(camelCase)
+      const [, originalKey] = allKey.match(keyRegex).map(camelCase)
       const itemsInResponse = response.data.data[originalKey]
       const remainingAmount = count - itemsInResponse.length
 

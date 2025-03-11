@@ -1,21 +1,21 @@
 [build]
-  command = "npm run build"
-  publish = "dist/"
+command = "vue-cli-service build"
+publish = "dist/"
 
 [[redirects]]
-  from = "https://rws-viewer.netlify.app/*"
-  to = "https://viewer.openearth.nl/:splat"
-  status = 301
+from = "https://rws-viewer.netlify.app/*"
+to = "https://viewer.openearth.nl/:splat"
+status = 301
 
 [[redirects]]
-  from = "/api/*"
-  to = "https://kaartenbak.netlify.app/api/:splat"
-  status = 200
+from = "/api/*"
+to = "/.netlify/functions/api"
+status = 200
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/*"
+to = "/index.html"
+status = 200
 
 [dev]
-  targetPort = 3000
+targetPort = 3000
