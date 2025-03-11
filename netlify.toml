@@ -1,5 +1,5 @@
 [build]
-command = "npm run build"
+command = "vue-cli-service build"
 publish = "dist/"
 
 [[redirects]]
