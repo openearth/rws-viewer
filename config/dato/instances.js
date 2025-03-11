@@ -1,6 +1,10 @@
-const dotenv = require("dotenv");
+// If the API keys are not set, load them from the .env file
+if (!process.env.DATO_API_KEY_NL2120) {
+  const dotenv = require("dotenv");
 
-dotenv.config();
+  dotenv.config();
+}
+
 
 module.exports.instances = [
   {
