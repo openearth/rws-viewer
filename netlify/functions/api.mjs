@@ -11,7 +11,7 @@ export default async (event) => {
             return createErrorResponse("Current instance not found", 500);
         }
 
-        const apiUrl = currentInstance.apiUrl;
+        const apiUrl = `${currentInstance.apiUrl}/api`;
 
         if (!apiUrl) {
             return createErrorResponse("API_URL is not configured", 500);
