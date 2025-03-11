@@ -58,11 +58,11 @@ export default async (event) => {
         if (contentType.includes("application/json")) {
             const jsonData = await response.text();
 
-            console.log("jsonData", jsonData);
-
             try {
                 // Return the JSON response
-                return new Response(jsonData, {
+                return new Response({
+                    data: jsonData,
+                }, {
                     status: response.status,
                     headers: {
                         "Content-Type": "application/json"
@@ -72,7 +72,9 @@ export default async (event) => {
                 console.error("Error parsing JSON:", error);
 
                 // Return as plain text if JSON parsing fails
-                return new Response(jsonData, {
+                return new Response({
+                    data: jsonData,
+                }, {
                     status: response.status,
                     headers: {
                         "Content-Type": "text/plain"
@@ -83,7 +85,9 @@ export default async (event) => {
             // Handle as text for non-JSON responses
             const textData = await response.text();
 
-            return new Response(textData, {
+            return new Response({
+                data: textData,
+            }, {
                 status: response.status,
                 headers: {
                     "Content-Type": contentType
