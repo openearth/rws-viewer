@@ -1,6 +1,7 @@
-import { instances } from "../../config/dato/instances";
+const { instances } = require("../../config/dato/instances");
 
-export default async (event) => {
+// Change to exports.handler format
+exports.handler = async (event, context) => {
     try {
         // Find the current instance
         const currentInstance = instances.find(
@@ -18,7 +19,7 @@ export default async (event) => {
         }
 
         // Get the path and query parameters from the request URL
-        const eventUrl = new URL(event.url);
+        const eventUrl = new URL(event.rawUrl || `https://${event.headers.host}${event.path}`);
         const path = eventUrl.pathname.replace('/.netlify/functions/api', '');
 
         // Create the target URL with the path
@@ -42,7 +43,7 @@ export default async (event) => {
         const targetUrlString = targetUrl.toString();
 
         // Prepare headers to forward
-        const headers = new Headers();
+        const headers = {};
 
         // Forward relevant headers from the original request
         if (event.headers) {
@@ -56,7 +57,7 @@ export default async (event) => {
 
             for (const header of headersToForward) {
                 if (event.headers[header]) {
-                    headers.set(header, event.headers[header]);
+                    headers[header] = event.headers[header];
                 }
             }
         }
@@ -87,31 +88,30 @@ export default async (event) => {
         console.log('[RESPONSE]', json);
         console.log('[RESPONSE STATUS]', response.status);
 
-        // Simply return the response object directly - Edge Functions support this format
-        return new Response(JSON.stringify(json), {
-            status: response.status,
+        // Return in the format expected by Netlify Functions
+        return {
+            statusCode: response.status,
+            body: JSON.stringify(json),
             headers: {
                 'Content-Type': 'application/json',
             }
-        });
+        };
     } catch (error) {
         console.error("Error proxying request:", error);
         return createErrorResponse("Error proxying request to API", 500);
     }
 };
 
-// Helper function to create error responses
-function createErrorResponse(message, status) {
-    return new Response(JSON.stringify({ error: message }), {
-        status,
+// Helper function to create error responses (updated for Netlify Functions format)
+function createErrorResponse(message, statusCode) {
+    return {
+        statusCode,
+        body: JSON.stringify({ error: message }),
         headers: {
             "Content-Type": "application/json",
             "Access-Control-Allow-Origin": "*"
         }
-    });
+    };
 }
 
-// Configure the function path
-export const config = {
-    path: "/api/*"
-};
+// The path configuration is handled differently in netlify.toml for traditional functions
