@@ -304,7 +304,7 @@
           try {
             const response = await axios.get(urls[i]);
 
-            return response.data;
+            return response.data.url;
           } catch (error) {
             console.error(`Failed to fetch from URL ${i + 1}:`, error.message);
           }
