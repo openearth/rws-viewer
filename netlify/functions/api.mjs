@@ -46,6 +46,7 @@ export default async (event) => {
         const targetUrlString = targetUrl.toString();
 
         console.log("targetUrl", targetUrlString);
+        console.log("event", event);
 
         // Fetch the target URL and return its response
         const response = await fetch(targetUrlString);
@@ -57,6 +58,8 @@ export default async (event) => {
         if (contentType.includes("application/json")) {
             const jsonData = await response.text();
 
+            console.log("jsonData", jsonData);
+
             try {
                 // Return the JSON response
                 return new Response(jsonData, {
@@ -66,6 +69,8 @@ export default async (event) => {
                     }
                 });
             } catch (error) {
+                console.error("Error parsing JSON:", error);
+
                 // Return as plain text if JSON parsing fails
                 return new Response(jsonData, {
                     status: response.status,
