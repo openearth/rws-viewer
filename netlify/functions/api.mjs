@@ -85,30 +85,8 @@ export default async (event) => {
         // Get the content type from the response headers
         const contentType = response.headers.get("Content-Type") || "";
 
-        // Handle the response based on content type
-        let responseData;
-        // Check if the response is binary data
-        const isBinaryContent = contentType.includes('image/') ||
-            contentType.includes('application/pdf') ||
-            contentType.includes('application/octet-stream') ||
-            contentType.includes('application/x-netcdf') ||
-            contentType.includes('application/x-gzip') ||
-            contentType.includes('application/zip') ||
-            contentType.includes('application/vnd.google-earth.kml') ||
-            contentType.includes('application/x-netcdf4') ||
-            contentType.includes('image/tiff') ||
-            contentType.includes('application/vnd.') ||
-            contentType.includes('application/x-');
-
-        if (isBinaryContent) {
-            // For binary data, use arrayBuffer
-            responseData = await response.arrayBuffer();
-        } else {
-            // For text/json data, use text
-            responseData = await response.json();
-        }
-
-        console.log(JSON.stringify(responseData, null, 2));
+        // Get the response data
+        const responseData = await response.json();
 
         // Prepare response headers
         const responseHeaders = new Headers();
@@ -129,7 +107,7 @@ export default async (event) => {
         }
 
         // Return the response with appropriate content type
-        return new Response(JSON.stringify(responseData), {
+        return Response.json(responseData, {
             status: response.status,
             headers: Object.fromEntries(responseHeaders)
         });
