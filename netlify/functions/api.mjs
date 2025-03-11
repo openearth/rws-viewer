@@ -103,7 +103,7 @@ export default async (event) => {
             responseData = await response.arrayBuffer();
         } else {
             // For text/json data, use text
-            responseData = await response.text();
+            responseData = await response.json();
         }
 
         // Prepare response headers
@@ -125,7 +125,7 @@ export default async (event) => {
         }
 
         // Return the response with appropriate content type
-        return new Response(responseData, {
+        return new Response(JSON.stringify(responseData), {
             status: response.status,
             headers: Object.fromEntries(responseHeaders)
         });
