@@ -220,16 +220,37 @@
         this.$refs.tree.updateAll(false)
       },
       activeFilter(item, input, textKey) {
-        switch (input) {
-        case ':active-only':
-          return this.activeFlattenedLayerIds.includes(item.id)
-        case ':in-active-only':
-          return this.activeFlattenedLayerIds.includes(item.id) === false
-        default:
-          return item.layer
-            ? item[textKey].toLowerCase().indexOf(input.toLowerCase()) > -1
-            : undefined
+        if (!input || input === ':active-only') {
+          return this.activeFlattenedLayerIds.includes(item.id);
         }
+
+        const searchLower = input.toLowerCase();
+
+        if (item.layer) {
+          // If it's a layer, check if its name matches
+          return item[textKey].toLowerCase().includes(searchLower);
+        } else {
+          // If it's a folder, check if its name matches or if it contains matching layers
+          const folderMatches = item[textKey].toLowerCase().includes(searchLower);
+          const hasMatchingChild = this.hasMatchingChild(item, searchLower);
+          
+          return folderMatches || hasMatchingChild;
+        }
+      },
+      hasMatchingChild(folder, searchLower) {
+        if (!folder.children || folder.children.length === 0) {
+          return false;
+        }
+
+        return folder.children.some(child => {
+          if (child.layer) {
+            // If it's a layer, check if it matches
+            return child.name.toLowerCase().includes(searchLower);
+          } else {
+            // If it's a folder, check its name or its children recursively
+            return child.name.toLowerCase().includes(searchLower) || this.hasMatchingChild(child, searchLower);
+          }
+        });
       },
       updateLayerOpacity({ id, opacity }) {
         this.updateWmsLayerOpacity({ id, opacity })
