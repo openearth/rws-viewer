@@ -160,7 +160,7 @@
       ...mapGetters('data', [ 'displayLayers', 'openedFolders' ]),
       ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
       layersWithParents() {
-        return addParentIdToLayers(this.displayLayers)
+        return this.getFilteredTree(addParentIdToLayers(this.displayLayers), this.searchString.toLowerCase());
       },
       search() {
         return this.onlyActive ? ':active-only' : this.searchString
@@ -186,6 +186,31 @@
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity', 'updateZoomExtent' ]),
       ...mapActions('data', [ 'setOpenedFolders' ]),
+      getFilteredTree(nodes, searchLower) {
+        if (!searchLower) {
+          return nodes;
+        } // No filtering if search is empty
+
+        return nodes
+          .map(node => {
+            if (node.layer) {
+              // If it's a layer, check if it matches the search
+              return node.name.toLowerCase().includes(searchLower) ? node : null;
+            } else {
+              // If it's a folder, process children first
+              const filteredChildren = this.getFilteredTree(node.children || [], searchLower);
+
+              // Keep the folder only if:
+              // - Its name matches the search
+              // - It has at least one matching child
+              if (node.name.toLowerCase().includes(searchLower) || filteredChildren.length > 0) {
+                return { ...node, children: filteredChildren };
+              }
+            }
+            return null; // Remove non-matching folders
+          })
+          .filter(node => node !== null); // Remove all null entries
+      },
       handleOpenedFolders(newValue, oldValue) {
         if (newValue.length === 0 && !oldValue) {
           return 
@@ -230,11 +255,8 @@
           // If it's a layer, check if its name matches
           return item[textKey].toLowerCase().includes(searchLower);
         } else {
-          // If it's a folder, check if its name matches or if it contains matching layers
-          const folderMatches = item[textKey].toLowerCase().includes(searchLower);
-          const hasMatchingChild = this.hasMatchingChild(item, searchLower);
-          
-          return folderMatches || hasMatchingChild;
+          // If it's a folder, check if it matches or contains matching children
+          return this.isRelevantFolder(item, searchLower);
         }
       },
       hasMatchingChild(folder, searchLower) {
@@ -244,11 +266,24 @@
 
         return folder.children.some(child => {
           if (child.layer) {
-            // If it's a layer, check if it matches
+            // If it's a layer, check if it matches the search
             return child.name.toLowerCase().includes(searchLower);
           } else {
-            // If it's a folder, check its name or its children recursively
+            // If it's a folder, check its own name or if it has matching descendants
             return child.name.toLowerCase().includes(searchLower) || this.hasMatchingChild(child, searchLower);
+          }
+        });
+      },
+      isRelevantFolder(folder, searchLower) {
+        if (!folder.children || folder.children.length === 0) {
+          return false;
+        }
+
+        return folder.children.some(child => {
+          if (child.layer) {
+            return child.name.toLowerCase().includes(searchLower);
+          } else {
+            return child.name.toLowerCase().includes(searchLower) || this.isRelevantFolder(child, searchLower);
           }
         });
       },
