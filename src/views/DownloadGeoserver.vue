@@ -182,7 +182,7 @@
   import metaRepo from '~/repo/metaRepo'
   import buildDownloadUrl from '~/lib/build-download-url'
   import { describeFeatureType, readFeatureProperties } from '~/lib/wfs-filter-helpers'
-  import { isRasterLayer, getCapabilities } from '~/lib/get-capabilities'
+  import { isRasterLayer, getDataServicesCapabilities } from '~/lib/get-capabilities'
 
   //import only for test
 
@@ -298,9 +298,8 @@
       reloadCapabilities() {
         const serviceUrl = this.selectedLayerData.downloadUrl || this.selectedLayerData.url
         const serviceType = this.selectedLayerData.serviceType
-
         this.layerCapabilities = null
-        getCapabilities(serviceUrl, serviceType).then(capabilities => {
+        getDataServicesCapabilities(serviceUrl, serviceType).then(capabilities => {
           this.layerCapabilities = Object.freeze(capabilities)
         })
       },
@@ -339,7 +338,6 @@
           let layerName = this.getLayerName()
           
           const filename = `${ layerName }.${ fileType }`
-          console.log("filename: "+ filename)
           
           return JSZipUtils.getBinaryContent(url)
             .then(data => zip.file(filename, data, { binary: true }))

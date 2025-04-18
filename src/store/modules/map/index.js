@@ -1,8 +1,10 @@
 import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
+import buildMapboxLayer from '~/lib/build-mapbox-layer'
 import addFilterAttributesToLayer from '~/lib/add-filter-attributes-to-layer'
-import { getWmsCapabilities, getLayerProperties } from '~/lib/get-capabilities'
+import { getMapServicesCapabilities, getLayerProperties } from '~/lib/get-capabilities'
 import { NETHERLANDS_MAP_CENTER, NETHERLANDS_MAP_ZOOM } from '~/lib/constants'
+
 
 export default {
   namespaced: true,
@@ -168,11 +170,12 @@ export default {
       const layersToAdd = difference(layers, state.activeFlattenedLayers)
 
       layersToAdd.forEach((layer) => {
-        getWmsCapabilities(layer.url)
+        getMapServicesCapabilities(layer.url) 
+        
           .then(capabilities => getLayerProperties(capabilities, layer))
-          .then(({ serviceType, timeExtent, wmsVersion, bbox }) => {
-            commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } } )
-            commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } }))
+          .then(({ dataServiceType, timeExtent, mapServiceVersion, bbox }) => {
+            commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: dataServiceType }, ... { timeExtent: timeExtent }, ... { version: mapServiceVersion }, ... { bbox: bbox } } )
+            commit('ADD_WMS_LAYER', buildMapboxLayer(layer, dataServiceType, timeExtent, mapServiceVersion, bbox))
           },
           )
       })
@@ -188,7 +191,7 @@ export default {
       const { selectedTimestamp, cqlFilter } = rootState.data
       const layer = addFilterAttributesToLayer(activeFlattenedLayers, filteredLayerId, selectedTimestamp, cqlFilter )
 
-      commit('ADD_WMS_LAYER', buildWmsLayer(layer))
+      commit('ADD_WMS_LAYER', buildWmsLayer(layer))//TODO: wmts support? where is this used?
     },
     removeLayerFromMap({ commit }, { layers }) {
       layers.forEach(layer => {
@@ -198,10 +201,10 @@ export default {
     },
 
     loadApiLayerOnMap({ commit }, layer) {
-      getWmsCapabilities(layer.url)
+      getMapServicesCapabilities(layer.url)
       .then(capabilities => getLayerProperties(capabilities, layer.layer))
-      .then(({ serviceType, timeExtent, wmsVersion, bbox }) => {
-        commit('ADD_WMS_API_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } }))
+      .then(({ serviceType, timeExtent, mapServiceVersion, bbox }) => {
+        commit('ADD_WMS_API_LAYER', buildMapboxLayer(layer, serviceType, timeExtent, mapServiceVersion, bbox))
       },
       )
     },
