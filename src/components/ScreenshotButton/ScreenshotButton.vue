@@ -81,15 +81,21 @@
 
         await this.$nextTick();
 
-        // Clone the Mapbox Legend component
-        const clonedMapLegend = mapLegendElement.cloneNode(true);
-        clonedMapLegend.style.position = "absolute";
-        clonedMapLegend.style.left = "-9999px";
-        document.body.appendChild(clonedMapLegend);
-        this.copyComputedStyles(mapLegendElement, clonedMapLegend);
+        // Ensure Map Legend is fully expanded
+        mapLegendElement.classList.add("map-legend--open");
+        document.querySelectorAll(".map-legend .v-expansion-panel").forEach(panel => {
+          panel.classList.add("v-expansion-panel--active");
+        });
+        document.querySelectorAll(".map-legend .v-expansion-panel-content").forEach(content => {
+          content.style.display = "block";
+          content.style.maxHeight = "none";
+        });
+
+        // Directly capture the real element
+        const mapLegendCanvas = await html2canvas(mapLegendElement, { backgroundColor: null });
       
         // Convert legend images to Base64 before capturing
-        await this.convertImagesToBase64(clonedMapLegend);
+        await this.convertImagesToBase64(mapLegendElement);
       
         this.map.once('render', async () => {
           const mapCanvas = this.map.getCanvas();
@@ -97,10 +103,8 @@
         
           // Capture cloned components with html2canvas
           const layerOrderCanvas = await html2canvas(clonedLayerOrder, { backgroundColor: null });
-          const mapLegendCanvas = await html2canvas(clonedMapLegend, { backgroundColor: null });
         
           document.body.removeChild(clonedLayerOrder);
-          document.body.removeChild(clonedMapLegend);
         
           // Merge Map Image, Layer Order, and Map Legend
           const finalCanvas = document.createElement("canvas");
