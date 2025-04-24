@@ -33,14 +33,14 @@
           console.error("Map instance is not available");
           return;
         }
-      
+
         // Ensure the Layer Order component is expanded before capturing
         const layerOrderElement = document.querySelector(".layer-order");
         if (!layerOrderElement) {
           console.error("Layer order UI not found");
           return;
         }
-        layerOrderElement.classList.add("layer-order--open");
+
       
         // Ensure the Mapbox Legend component is expanded before capturing
         const mapLegendElement = document.querySelector(".map-legend");
@@ -48,8 +48,23 @@
           console.error("Map legend UI not found");
           return;
         }
+
+        // Store initial states
+        const wasLayerOrderOpen = layerOrderElement.classList.contains("layer-order--open");
+        const wasMapLegendOpen = mapLegendElement.classList.contains("map-legend--open");
+
+        // Store which legend panels were open
+        const legendPanels = document.querySelectorAll(".map-legend .v-expansion-panel");
+        const openPanels = [];
+        legendPanels.forEach((panel, index) => {
+          if (panel.classList.contains("v-expansion-panel--active")) {
+            openPanels.push(index);
+          }
+        });
+
+        layerOrderElement.classList.add("layer-order--open");
         mapLegendElement.classList.add("map-legend--open");
-      
+        
         // Expand all legend items
         document.querySelectorAll(".map-legend .v-expansion-panel").forEach(panel => {
           panel.classList.add("v-expansion-panel--active");
@@ -212,7 +227,32 @@
             document.body.removeChild(link);
           }, "image/png");
         });
-      
+
+        // Restore Layer Order state
+        if (!wasLayerOrderOpen) {
+          layerOrderElement.classList.remove("layer-order--open");
+        }
+
+        // Restore Map Legend state
+        if (!wasMapLegendOpen) {
+          mapLegendElement.classList.remove("map-legend--open");
+        }
+
+        // Restore Legend Panels state
+        legendPanels.forEach((panel, index) => {
+          if (!openPanels.includes(index)) {
+            panel.classList.remove("v-expansion-panel--active");
+          }
+        });
+
+        // Clean inline styles we added
+        document.querySelectorAll(".map-legend .v-expansion-panel-content").forEach(content => {
+          content.style.display = "";
+          content.style.maxHeight = "";
+          content.style.opacity = "";
+          content.style.visibility = "";
+        });
+
         this.map.triggerRepaint();
       },
 
