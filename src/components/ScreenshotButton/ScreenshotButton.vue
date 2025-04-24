@@ -65,12 +65,28 @@
         clonedLayerOrder.style.position = "absolute";
         clonedLayerOrder.style.left = "-9999px";
         document.body.appendChild(clonedLayerOrder);
-      
+        this.copyComputedStyles(layerOrderElement, clonedLayerOrder);
+
+        // Stabilize Map Legend styling
+        document.querySelectorAll(".map-legend .v-expansion-panel").forEach(panel => {
+          panel.style.transition = "none";
+          panel.style.overflow = "visible";
+        });
+        document.querySelectorAll(".map-legend .v-expansion-panel-content").forEach(content => {
+          content.style.display = "block";
+          content.style.maxHeight = "none";
+          content.style.opacity = "1";
+          content.style.visibility = "visible";
+        });
+
+        await this.$nextTick();
+
         // Clone the Mapbox Legend component
         const clonedMapLegend = mapLegendElement.cloneNode(true);
         clonedMapLegend.style.position = "absolute";
         clonedMapLegend.style.left = "-9999px";
         document.body.appendChild(clonedMapLegend);
+        this.copyComputedStyles(mapLegendElement, clonedMapLegend);
       
         // Convert legend images to Base64 before capturing
         await this.convertImagesToBase64(clonedMapLegend);
@@ -160,6 +176,18 @@
               reader.readAsDataURL(blob);
             })
             .catch(() => resolve(null));
+        });
+      },
+
+      copyComputedStyles(sourceElement, targetElement) {
+        const computedStyle = window.getComputedStyle(sourceElement);
+        for (let key of computedStyle) {
+          targetElement.style[key] = computedStyle.getPropertyValue(key);
+        }
+        Array.from(sourceElement.children).forEach((child, index) => {
+          if (targetElement.children[index]) {
+            this.copyComputedStyles(child, targetElement.children[index]);
+          }
         });
       }
     }

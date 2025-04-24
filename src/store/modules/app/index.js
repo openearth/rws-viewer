@@ -37,7 +37,7 @@ export default {
     SET_VIEWER_USER_AGREEMENT(state, { userAgreement }) {
       state.viewerUserAgreement = userAgreement
     },
-    SET_VIEWER_ACKNOWLEDGMENTS(state, {acknowledgments}) {
+    SET_VIEWER_ACKNOWLEDGMENTS(state, { acknowledgments }) {
       state.acknowledgments = acknowledgments
     },
   },
@@ -60,8 +60,8 @@ export default {
       commit('SET_VIEWER_USER_AGREEMENT', { userAgreement })
     },
 
-    setViewerAcknowledgments ( {commit}, {acknowledgments}) {
-      commit('SET_VIEWER_ACKNOWLEDGMENTS', {acknowledgments})
+    setViewerAcknowledgments ( { commit }, { acknowledgments }) {
+      commit('SET_VIEWER_ACKNOWLEDGMENTS', { acknowledgments })
     },
   },
 }
