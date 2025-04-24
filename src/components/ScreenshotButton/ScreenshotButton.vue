@@ -91,11 +91,70 @@
           content.style.maxHeight = "none";
         });
 
-        // Directly capture the real element
-        const mapLegendCanvas = await html2canvas(mapLegendElement, { backgroundColor: null });
-      
+        // Clone the Mapbox Legend component
+        const clonedMapLegend = mapLegendElement.cloneNode(true);
+        clonedMapLegend.style.position = "absolute";
+        clonedMapLegend.style.left = "-9999px";
+        document.body.appendChild(clonedMapLegend);
+
+        document.body.appendChild(clonedMapLegend);
+        this.copyComputedStyles(mapLegendElement, clonedMapLegend);
+
+        // Force clean styling
+        clonedMapLegend.style.backgroundColor = "white";
+        clonedMapLegend.style.boxShadow = "none";
+
+        // Prevent cropping by enforcing layout rules
+        clonedMapLegend.style.height = "auto";
+        clonedMapLegend.style.maxHeight = "none";
+        clonedMapLegend.style.overflow = "visible";
+        clonedMapLegend.style.transform = "none";
+        clonedMapLegend.style.transition = "none";
+
+        clonedMapLegend.querySelectorAll('.v-expansion-panel, .v-expansion-panel-content').forEach(el => {
+          el.style.height = "auto";
+          el.style.maxHeight = "none";
+          el.style.overflow = "visible";
+          el.style.transform = "none";
+          el.style.transition = "none";
+        });
+
+        clonedMapLegend.querySelectorAll('.v-card, .v-card__text, .v-expansion-panel, .v-expansion-panel-content').forEach(el => {
+          el.style.backgroundColor = "white";
+          el.style.boxShadow = "none";
+          el.style.border = "none";
+          el.style.color = "black";
+        });
+
+        // Remove padding, margin, and gaps that cause extra space
+        clonedMapLegend.style.padding = "0";
+        clonedMapLegend.style.margin = "0";
+
+        clonedMapLegend.querySelectorAll('*').forEach(el => {
+          el.style.marginBottom = "0";
+          el.style.paddingBottom = "0";
+          el.style.rowGap = "0";
+          el.style.columnGap = "0";
+        });
+
+        clonedMapLegend.classList.remove('theme--light');
+        clonedMapLegend.querySelectorAll('[class*="elevation"]').forEach(el => {
+          el.classList.remove(...Array.from(el.classList).filter(cls => cls.startsWith('elevation')));
+        });
+
         // Convert legend images to Base64 before capturing
-        await this.convertImagesToBase64(mapLegendElement);
+        await this.convertImagesToBase64(clonedMapLegend);
+
+        // Capture the cloned Legend
+        await this.$nextTick();
+        await this.wait(100);
+        await this.ensureImagesLoaded(clonedMapLegend);
+
+        const mapLegendCanvas = await html2canvas(clonedMapLegend, { backgroundColor: null });
+
+        // Remove the clone after capture
+        document.body.removeChild(clonedMapLegend);
+
       
         this.map.once('render', async () => {
           const mapCanvas = this.map.getCanvas();
@@ -193,6 +252,23 @@
             this.copyComputedStyles(child, targetElement.children[index]);
           }
         });
+      },
+
+      wait(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      },
+
+      async ensureImagesLoaded(container) {
+        const images = container.querySelectorAll('img');
+        const promises = Array.from(images).map(img => {
+          if (img.complete) {
+            return Promise.resolve();
+          }
+          return new Promise(resolve => {
+            img.onload = img.onerror = resolve;
+          });
+        });
+        await Promise.all(promises);
       }
     }
   };
