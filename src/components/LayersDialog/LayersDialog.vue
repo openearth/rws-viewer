@@ -44,7 +44,8 @@
 </template>
 
 <script>
-  import { mapActions, mapGetters } from 'vuex'
+ 
+import { mapActions, mapGetters } from 'vuex'
 
   export default {
     props: {
@@ -72,8 +73,8 @@
         this.$emit('close')
       },
       showLayer(id) {
-        this.resetLayers()
-        const layer = this.flattenedLayers.find(({ id: layerId }) => id === layerId)
+        this.resetLayers()   
+        const layer = this.flattenedLayers.find(layer => layer && layer.id === id);    
         this.loadLayerOnMap({ layers: [ layer ] })
         this.$emit('close')
       },
