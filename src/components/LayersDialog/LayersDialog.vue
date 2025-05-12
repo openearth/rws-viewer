@@ -66,14 +66,12 @@
     methods: {
       ...mapActions('map', [
         'loadLayerOnMap',
-        'resetLayers',
       ]),
 
       close() {
         this.$emit('close')
       },
-      showLayer(id) {
-        this.resetLayers()   
+      showLayer(id) { 
         const layer = this.flattenedLayers.find(layer => layer && layer.id === id);    
         this.loadLayerOnMap({ layers: [ layer ] })
         this.$emit('close')
