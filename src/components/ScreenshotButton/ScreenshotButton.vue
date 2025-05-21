@@ -101,6 +101,7 @@
 
         // Force clean styling
         clonedMapLegend.style.backgroundColor = "white";
+        clonedMapLegend.style.border = "none";
         clonedMapLegend.style.boxShadow = "none";
 
         // Prevent cropping by enforcing layout rules
@@ -120,7 +121,6 @@
 
         clonedMapLegend.querySelectorAll('.v-card, .v-card__text, .v-expansion-panel, .v-expansion-panel-content').forEach(el => {
           el.style.backgroundColor = "white";
-          el.style.boxShadow = "none";
           el.style.border = "none";
           el.style.color = "black";
         });
@@ -191,11 +191,17 @@
           const legendY = finalCanvas.height - mapLegendCanvas.height - 10;
           ctx.drawImage(mapLegendCanvas, legendX, legendY);
         
+          // Format the timestamp safely for filenames
+          const now = new Date();
+          const pad = n => n.toString().padStart(2, '0');
+          const safeTimestamp = `${ now.getFullYear() }-${ pad(now.getMonth() + 1) }-${ pad(now.getDate()) }_${ pad(now.getHours()) }-${ pad(now.getMinutes()) }-${ pad(now.getSeconds()) }`;
+
+
           // Convert to an image and trigger download
           finalCanvas.toBlob((blob) => {
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = "map_with_legend.png";
+            link.download = `map_with_legend_${ safeTimestamp }.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
