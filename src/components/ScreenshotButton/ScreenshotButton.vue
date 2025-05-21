@@ -201,7 +201,8 @@
           finalCanvas.toBlob((blob) => {
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = `map_with_legend_${ safeTimestamp }.png`;
+            const formattedViewerName = this.viewerName.toString().replace (" ", "_")
+            link.download = `${ formattedViewerName }_${ safeTimestamp }.png`;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
