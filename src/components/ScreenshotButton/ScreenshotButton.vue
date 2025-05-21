@@ -34,13 +34,6 @@
           return;
         }
 
-        // Ensure the Layer Order component is expanded before capturing
-        const layerOrderElement = document.querySelector(".layer-order");
-        if (!layerOrderElement) {
-          console.error("Layer order UI not found");
-          return;
-        }
-
       
         // Ensure the Mapbox Legend component is expanded before capturing
         const mapLegendElement = document.querySelector(".map-legend");
@@ -50,7 +43,6 @@
         }
 
         // Store initial states
-        const wasLayerOrderOpen = layerOrderElement.classList.contains("layer-order--open");
         const wasMapLegendOpen = mapLegendElement.classList.contains("map-legend--open");
 
         // Store which legend panels were open
@@ -62,7 +54,6 @@
           }
         });
 
-        layerOrderElement.classList.add("layer-order--open");
         mapLegendElement.classList.add("map-legend--open");
         
         // Expand all legend items
@@ -74,13 +65,6 @@
             panelContent.style.maxHeight = "none";
           }
         });
-      
-        // Clone the Layer Order component
-        const clonedLayerOrder = layerOrderElement.cloneNode(true);
-        clonedLayerOrder.style.position = "absolute";
-        clonedLayerOrder.style.left = "-9999px";
-        document.body.appendChild(clonedLayerOrder);
-        this.copyComputedStyles(layerOrderElement, clonedLayerOrder);
 
         // Stabilize Map Legend styling
         document.querySelectorAll(".map-legend .v-expansion-panel").forEach(panel => {
@@ -175,11 +159,6 @@
           const mapCanvas = this.map.getCanvas();
           const mapImage = mapCanvas.toDataURL("image/png");
         
-          // Capture cloned components with html2canvas
-          const layerOrderCanvas = await html2canvas(clonedLayerOrder, { backgroundColor: null });
-        
-          document.body.removeChild(clonedLayerOrder);
-        
           // Merge Map Image, Layer Order, and Map Legend
           const finalCanvas = document.createElement("canvas");
           finalCanvas.width = mapCanvas.width;
@@ -207,11 +186,6 @@
           ctx.fillStyle = "black";
           ctx.fillText(text, 15, 25);
         
-          // Draw the cloned layer order UI in the bottom left corner
-          const layerX = 10;
-          const layerY = finalCanvas.height - layerOrderCanvas.height - 10;
-          ctx.drawImage(layerOrderCanvas, layerX, layerY);
-        
           // Draw the cloned map legend UI in the bottom right corner
           const legendX = finalCanvas.width - mapLegendCanvas.width - 10;
           const legendY = finalCanvas.height - mapLegendCanvas.height - 10;
@@ -221,17 +195,12 @@
           finalCanvas.toBlob((blob) => {
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
-            link.download = "map_with_layer_order_and_legend.png";
+            link.download = "map_with_legend.png";
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
           }, "image/png");
         });
-
-        // Restore Layer Order state
-        if (!wasLayerOrderOpen) {
-          layerOrderElement.classList.remove("layer-order--open");
-        }
 
         // Restore Map Legend state
         if (!wasMapLegendOpen) {
