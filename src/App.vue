@@ -86,7 +86,7 @@
       </div>
 
       <map-layer
-        v-for="(layer, index) in wmsLayers"
+        v-for="(layer, index) in mapboxLayers"
         :key="layer.id"
         :before="wmsLayerIds[index - 1]"
         :options="layer"
@@ -192,7 +192,7 @@
 
     computed: {
       ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement', 'viewerPrivacyStatement', 'acknowledgments' ]),
-      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'wmsLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
+      ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'mapboxLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
       ...mapGetters('data', [ 'timeExtent', 'flattenedLayers', 'displayLayers' ]),
       formattedTimeExtent() {
         return this.formatTimeExtent(this.timeExtent)
