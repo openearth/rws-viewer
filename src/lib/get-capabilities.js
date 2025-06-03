@@ -7,7 +7,7 @@ import {
   WCS_LAYER_TYPE,
   WFS_LAYER_TYPE,
 } from '~/lib/constants'
-import data from '~/store/modules/data'
+
 
 
 const getTagContent = tag => tag.textContent
@@ -345,16 +345,15 @@ async function readWmtsCapabilitiesProperties(capabilities, layerObject) {
   ]
 )();
 
-  // for the getDataServiceType the serviceUrl should not contain the gws but should be replace by the workspace
-  // the layer name also should be without the workspace
+  
   const workspaceLayer =  layerObject.layer.split(":")
   const layerName = workspaceLayer.pop();
   const workspace = workspaceLayer.pop();
-  //replace the gws in the url with the workspace and remove the 
-  const serviceUrl = layerObject.url.replace('/gwc/service/wmts', `/${ workspace }/wms`)
+  // for the wcs/wfs reqeusts we need to change the url to the wms url of the service
+  const wmsServiceUrl = layerObject.url.replace('/gwc/service/wmts', `/${ workspace }/wms`)
   
-  const dataServiceType = await getDataServiceType(serviceUrl, layerName)
-  return { dataServiceType, acceptedFormats, mapServiceVersion, bbox }
+  const dataServiceType = await getDataServiceType(wmsServiceUrl, layerName)
+  return { dataServiceType, acceptedFormats, mapServiceVersion, bbox, wmsServiceUrl }
 }
 export async function getLayerProperties(capabilities, layerObject) {
   const mapServiceType = checkMapServiceType(layerObject.url)

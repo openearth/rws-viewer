@@ -171,11 +171,10 @@ export default {
 
       layersToAdd.forEach((layer) => {
         getMapServicesCapabilities(layer.url) 
-        
           .then(capabilities => getLayerProperties(capabilities, layer))
-          .then(({ dataServiceType, timeExtent, mapServiceVersion, bbox }) => {
-            commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: dataServiceType }, ... { timeExtent: timeExtent }, ... { version: mapServiceVersion }, ... { bbox: bbox } } )
-            commit('ADD_MAPBOX_LAYER', buildMapboxLayer(layer, dataServiceType, timeExtent, mapServiceVersion, bbox))
+          .then((properties) => {
+            commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...properties } )
+            commit('ADD_MAPBOX_LAYER',buildMapboxLayer({ ...layer, ...properties }))
           },
           )
       })
@@ -191,7 +190,7 @@ export default {
       const { selectedTimestamp, cqlFilter } = rootState.data
       const layer = addFilterAttributesToLayer(activeFlattenedLayers, filteredLayerId, selectedTimestamp, cqlFilter )
 
-      commit('ADD_MAPBOX_LAYER', buildWmsLayer(layer))//TODO: wmts support? where is this used?
+      commit('ADD_MAPBOX_LAYER', buildWmsLayer(layer))
     },
     removeLayerFromMap({ commit }, { layers }) {
       layers.forEach(layer => {
@@ -199,12 +198,12 @@ export default {
         commit('REMOVE_MAPBOX_LAYER', layer.id)
       })
     },
-
+    //TODO: attention! Needs to check if it still works after the refactoring
     loadApiLayerOnMap({ commit }, layer) {
       getMapServicesCapabilities(layer.url)
-      .then(capabilities => getLayerProperties(capabilities, layer.layer))
-      .then(({ serviceType, timeExtent, mapServiceVersion, bbox }) => {
-        commit('ADD_WMS_API_LAYER', buildMapboxLayer(layer, serviceType, timeExtent, mapServiceVersion, bbox))
+      .then(capabilities => getLayerProperties(capabilities, layer))
+      .then((properties) => {
+        commit('ADD_WMS_API_LAYER', buildMapboxLayer({ ...layer, ...properties }))
       },
       )
     },
