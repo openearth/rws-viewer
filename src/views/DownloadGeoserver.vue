@@ -263,7 +263,7 @@
         }
 
         return isRasterLayer(
-          this.selectedLayerData.serviceType,
+          this.selectedLayerData.dataServiceType,
           this.layerCapabilities,
           this.selectedLayerData.layer,
         )
@@ -296,8 +296,8 @@
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
 
       reloadCapabilities() {
-        const serviceUrl = this.selectedLayerData.downloadUrl || this.selectedLayerData.url
-        const serviceType = this.selectedLayerData.serviceType
+        const serviceUrl = this.selectedLayerData.wmsServiceUrl ? this.selectedLayerData.wmsServiceUrl : this.selectedLayerData.url || this.selectedLayerData.downloadUrl
+        const serviceType = this.selectedLayerData.dataServiceType
         this.layerCapabilities = null
         getDataServicesCapabilities(serviceUrl, serviceType).then(capabilities => {
           this.layerCapabilities = Object.freeze(capabilities)
@@ -374,12 +374,12 @@
         this.selectedFilters = event
       },
       async getAttributesToFilter() {
-
-        const { serviceType, url, layer, downloadLayer } = this.selectedLayerData
+        const { dataServiceType, url, layer, downloadLayer, wmsServiceUrl } = this.selectedLayerData
         const layerName = downloadLayer ? downloadLayer : layer
-        if (serviceType === 'wfs') {
+        const serviceUrl = wmsServiceUrl ? wmsServiceUrl : url
+        if (dataServiceType === 'wfs') {
           const response = await describeFeatureType({
-            url,
+            serviceUrl,
             layer: layerName,
           })
           this.availableFiltersForSelectedLayer = readFeatureProperties(response)

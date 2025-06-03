@@ -2,7 +2,7 @@ import buildGeoserverUrl from './build-geoserver-url'
 
 const defaultUrl = process.env.VUE_APP_GEOSERVER_BASE_URL
 
-export default ({ url: rawUrl = defaultUrl, id, layer, style = '', paint = {}, version = '1.0.0', bbox = [] }) => {
+export default ({ url: rawUrl = defaultUrl, id, layer, style = '', paint = {}, mapServiceVersion = '1.0.0', bbox = [] }) => {
 
 
   const url = new URL(rawUrl)
@@ -12,7 +12,7 @@ export default ({ url: rawUrl = defaultUrl, id, layer, style = '', paint = {}, v
     request: 'GetTile',
     layer: layer, 
     style,
-    version, 
+    version:mapServiceVersion, 
     format: 'image/png',
     tilematrixset: 'EPSG:900913',
     tilematrix: 'EPSG:900913:{z}',
