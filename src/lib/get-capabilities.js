@@ -315,7 +315,6 @@ async function readWmtsCapabilitiesProperties(capabilities, layerObject) {
  *  * */
 
   const { layer } = layerObject
-  //const serviceUrl = layerObject.downloadUrl || layerObject.url
   const mapServiceVersion = pipe(
     () => capabilities.querySelector(`Capabilities`),
     (el) => el.getAttribute("version")

@@ -198,7 +198,7 @@ export default {
         commit('REMOVE_MAPBOX_LAYER', layer.id)
       })
     },
-    //TODO: attention! Needs to check if it still works after the refactoring
+  
     loadApiLayerOnMap({ commit }, layer) {
       getMapServicesCapabilities(layer.url)
       .then(capabilities => getLayerProperties(capabilities, layer))
