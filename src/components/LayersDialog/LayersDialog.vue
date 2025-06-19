@@ -76,15 +76,12 @@
       },
       showLayer(id) { 
         
-        const layer = this.flattenedLayers.find(layer => layer && layer.id === id); 
-         
-        if (!layer) {
-          const folders = findParentPathById(this.displayLayers, id)   
-          this.setOpenedFolders(folders)     
-          this.$emit('close')
-          return
+        const layer = this.flattenedLayers.find(layer => layer && layer.id === id);
+        if (layer) {
+          this.loadLayerOnMap({ layers: [ layer ] })
         }
-        this.loadLayerOnMap({ layers: [ layer ] })
+        const folders = findParentPathById(this.displayLayers, id)   
+        this.setOpenedFolders(folders)     
         this.$emit('close')
       },
     },
