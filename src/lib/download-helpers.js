@@ -18,7 +18,7 @@ const createWfsParameters = ({ layer = '', filters = '', coordinates, format = '
   })
 }
 
-//getCoverage request //TODO: add bbox in the request if an area is selected.
+
 const createWcsParameters = ({ layer = '', coordinates, format = '' }) => {
 
   return stringify({
@@ -59,7 +59,9 @@ export function createWfsDownloadFilter(filtersArray = [], coordinates = '') {
 
 
 export function createDownloadParameters({ layerData = {}, filters = '', format = '', coordinates }) {
+
   const { layer, dataServiceType, downloadLayer } = layerData
+
   if (!dataServiceType) {
     console.warn('No valid `downloadUrl` present for layer: ', layer)
     return null
@@ -84,6 +86,7 @@ export function createLegendDownloadParameters({ layerData = {} }) {
 }
 
 export const mapFormatToFileExtension = {
+  'image/tiff;application=geotiff': 'tif',
   'application/gml+xml': 'gml',
   'application/gml+xml; version=3.2': 'gml',
   'application/json': 'json',
