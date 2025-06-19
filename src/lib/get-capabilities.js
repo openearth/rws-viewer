@@ -54,7 +54,7 @@ function createParameters(type) {
 
 async function getServiceType(serviceUrl) {
   try {
-     await axios.get(`${serviceUrl.replace('wms', 'wfs') }?${ createParameters('wfs') }`)
+     await axios.get(`${ serviceUrl.replace('wms', 'wfs') }?${ createParameters('wfs') }`)
      return 'wfs'
   } catch (error) {
       try {
@@ -80,7 +80,7 @@ export async function getCapabilities(service, type) {
   
   try {
    
-    const {data} = await axios(`${ servicePath }?${ createParameters(type) }`)
+    const { data } = await axios(`${ servicePath }?${ createParameters(type) }`)
     let parsedData = new DOMParser().parseFromString(data, 'text/xml');
     if (parsedData.getElementsByTagName('ServiceExceptionReport').length > 0) {
       throw new Error('ServiceExceptionReport found');
@@ -88,7 +88,7 @@ export async function getCapabilities(service, type) {
     return parsedData
 
   }  catch (error) {
-    const {data} = await axios (`${servicePath.replace('wms', type) }?${ createParameters(type) }`)
+    const { data } = await axios (`${ servicePath.replace('wms', type) }?${ createParameters(type) }`)
     return new DOMParser().parseFromString(data, 'text/xml')
   } 
 }
@@ -172,7 +172,7 @@ export async function getLayerProperties(capabilities, layerObject) {
  *    -time extent of layer
  *  
  *  * */
-  const {layer} = layerObject
+  const { layer } = layerObject
   const serviceUrl = layerObject.downloadUrl || layerObject.url
   const wmsVersion = pipe(
     () => capabilities.querySelector('WMS_Capabilities'),
