@@ -54,9 +54,6 @@ function createParameters(type) {
   }
 }
 
-
-
-
 async function getDataServiceType(serviceUrl, wmsLayerName) {
   /**
  * Function to determine if the service is WFS or WCS based on the GetCapabilities response
