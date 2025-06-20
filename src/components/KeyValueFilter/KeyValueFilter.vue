@@ -111,7 +111,7 @@
         enabledFilters: [],
         selectedFilter: null,
         showDialog: false,
-        dateComparers: Object.freeze([ //TODO: make them prop
+        dateComparers: Object.freeze([ 
           'eq',
           'ne',
           'lt',
