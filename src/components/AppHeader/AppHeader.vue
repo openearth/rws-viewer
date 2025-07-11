@@ -17,6 +17,15 @@
       {{ title }}
     </v-toolbar-title>
 
+    <v-img
+    src="/test_tree.png"
+    max-height="50"
+    max-width="50"
+    style="margin-left: 20px"
+    >
+
+    </v-img>
+
     <v-spacer />
     <category-switcher />    
     <v-spacer />
