@@ -15,6 +15,7 @@ query($locale: SiteLocale) {
     privacyStatement
     userAgreement
     acknowledgments
+    logo
   }
 }
 `
@@ -33,14 +34,15 @@ export default async function dumpAvailableConfigs(locale) {
       defaultLayer: config.defaultLayer,
       privacyStatement: config.privacyStatement,
       userAgreement: config.userAgreement,
-      acknowledgments: config.acknowledgments
+      acknowledgments: config.acknowledgments,
+      logo: config.logo
     }
   })
 
-  await fs.mkdir(`${PUBLIC_DIR}/${locale}`, { recursive: true })
+  await fs.mkdir(`${ PUBLIC_DIR }/${ locale }`, { recursive: true })
 
   await fs.writeFile(
-    `${PUBLIC_DIR}/${locale}/available-configs-viewers.json`,
+    `${ PUBLIC_DIR }/${ locale }/available-configs-viewers.json`,
     JSON.stringify(availableConfigs, null, 2),
   )
 }

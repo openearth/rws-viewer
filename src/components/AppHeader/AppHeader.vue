@@ -17,6 +17,15 @@
       {{ title }}
     </v-toolbar-title>
 
+    <v-img
+    v-if="viewerLogo"
+    :src="viewerLogo"
+    max-height="50"
+    max-width="50"
+    style="margin-left: 20px"
+    >
+    </v-img>
+
     <v-spacer />
     <category-switcher />    
     <v-spacer />
@@ -48,7 +57,7 @@
       },
     },
     computed: {
-      ...mapGetters('app', [ 'appNavigationOpen' ]),
+      ...mapGetters('app', [ 'appNavigationOpen', 'viewerLogo' ]),
     },
     methods: {
       ...mapActions('app', [ 'setNavigationOpen' ]),

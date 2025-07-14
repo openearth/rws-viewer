@@ -9,6 +9,7 @@ export default {
     viewerPrivacyStatement: '',
     viewerUserAgreement: '',
     acknowledgments: '',
+    viewerLogo: '',
   }),
 
   getters: {
@@ -19,6 +20,7 @@ export default {
     viewerPrivacyStatement: state => state.viewerPrivacyStatement,
     viewerUserAgreement: state => state.viewerUserAgreement,
     acknowledgments: state => state.acknowledgments,
+    viewerLogo: state => state.viewerLogo,
   },
 
   mutations: {
@@ -37,8 +39,11 @@ export default {
     SET_VIEWER_USER_AGREEMENT(state, { userAgreement }) {
       state.viewerUserAgreement = userAgreement
     },
-    SET_VIEWER_ACKNOWLEDGMENTS(state, {acknowledgments}) {
+    SET_VIEWER_ACKNOWLEDGMENTS(state, { acknowledgments }) {
       state.acknowledgments = acknowledgments
+    },
+    SET_VIEWER_LOGO(state, { logo }) {
+      state.viewerLogo = logo
     },
   },
 
@@ -60,8 +65,12 @@ export default {
       commit('SET_VIEWER_USER_AGREEMENT', { userAgreement })
     },
 
-    setViewerAcknowledgments ( {commit}, {acknowledgments}) {
-      commit('SET_VIEWER_ACKNOWLEDGMENTS', {acknowledgments})
+    setViewerAcknowledgments ( { commit }, { acknowledgments }) {
+      commit('SET_VIEWER_ACKNOWLEDGMENTS', { acknowledgments })
+    },
+
+    setViewerLogo({ commit }, { logo }) {
+      commit('SET_VIEWER_LOGO', { logo })
     },
   },
 }
