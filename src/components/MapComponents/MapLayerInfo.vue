@@ -49,10 +49,11 @@
         } else {
           infoLayer = this.layer.layer
         }
+        
         const info = await getFeatureInfo({
           layer: infoLayer,
           url: this.layer.url,
-          serviceType: this.layer.serviceType,
+          serviceType: this.layer.dataServiceType,
           lng, lat,
         })
         

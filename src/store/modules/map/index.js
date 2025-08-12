@@ -1,8 +1,10 @@
 import { difference, update } from 'ramda'
 import buildWmsLayer from '~/lib/build-wms-layer'
+import buildMapboxLayer from '~/lib/build-mapbox-layer'
 import addFilterAttributesToLayer from '~/lib/add-filter-attributes-to-layer'
-import { getWmsCapabilities, getLayerProperties } from '~/lib/get-capabilities'
+import { getMapServicesCapabilities, getLayerProperties } from '~/lib/get-capabilities'
 import { NETHERLANDS_MAP_CENTER, NETHERLANDS_MAP_ZOOM } from '~/lib/constants'
+
 
 export default {
   namespaced: true,
@@ -13,7 +15,7 @@ export default {
     drawMode: null,
     drawnFeatures: [],
     filteredLayerId: null, // id of active layer to filter
-    wmsLayers: [],
+    mapboxLayers: [],
     wmsApiLayer: null,
     selectedLayerForSelection: null,
     mapCenter: NETHERLANDS_MAP_CENTER,
@@ -32,11 +34,11 @@ export default {
       }
       return getters.activeFlattenedLayers.filter(layer => layer?.timeFilter).map(({ id })=>id)
     },
-    wmsLayers(state) {
+    mapboxLayers(state) {
       if (!state.mapLoaded) {
         return []
       }
-      return state.wmsLayers
+      return state.mapboxLayers
     } ,
     wmsApiLayer(state) {
       if (!state.mapLoaded) {
@@ -70,19 +72,19 @@ export default {
       state.activeFlattenedLayers.splice(fromIndex, 1)
       state.activeFlattenedLayers.splice(toIndex, 0, element)
     },
-    MOVE_WMS_LAYER(state, { fromIndex, toIndex }) {
-      var element = state.wmsLayers[fromIndex]
-      state.wmsLayers.splice(fromIndex, 1)
-      state.wmsLayers.splice(toIndex, 0, element)
+    MOVE_MAPBOX_LAYER(state, { fromIndex, toIndex }) {
+      var element = state.mapboxLayers[fromIndex]
+      state.mapboxLayers.splice(fromIndex, 1)
+      state.mapboxLayers.splice(toIndex, 0, element)
     },
     REMOVE_ACTIVE_FLATTENED_LAYER(state, { layer }) {
       state.activeFlattenedLayers = state.activeFlattenedLayers.filter(activeLayer => activeLayer.id !== layer.id)
     },
-    ADD_WMS_LAYER(state, layer) {
-      state.wmsLayers = [ layer, ...state.wmsLayers ]
+    ADD_MAPBOX_LAYER(state, layer) {
+      state.mapboxLayers = [ layer, ...state.mapboxLayers ]
     },
-    REMOVE_WMS_LAYER(state, layerId) {
-      state.wmsLayers = state.wmsLayers.filter(wmsLayer => wmsLayer.id !== layerId)
+    REMOVE_MAPBOX_LAYER(state, layerId) {
+      state.mapboxLayers = state.mapboxLayers.filter(wmsLayer => wmsLayer.id !== layerId)
     },
 
     ADD_WMS_API_LAYER(state, layer) {
@@ -95,8 +97,8 @@ export default {
     RESET_ACTIVE_FLATTENED_LAYERS(state) {
       state.activeFlattenedLayers = []
     },
-    RESET_WMS_LAYERS(state) {
-      state.wmsLayers = []
+    RESET_MAPBOX_LAYERS(state) {
+      state.mapboxLayers = []
     },
     SET_DRAW_MODE(state, { mode }) {
       state.drawMode = mode
@@ -125,16 +127,16 @@ export default {
     SET_DRAWN_FEATURES(state, feature) {
       state.drawnFeatures = Object.freeze(feature)
     },
-    UPDATE_WMS_LAYER_OPACITY(state, { id, opacity }) {
-      const layerToUpdate = state.wmsLayers.find(layer => layer.id === id)
-      const index = state.wmsLayers.findIndex(layer => layer.id === id)
+    UPDATE_MAPBOX_LAYER_OPACITY(state, { id, opacity }) {
+      const layerToUpdate = state.mapboxLayers.find(layer => layer.id === id)
+      const index = state.mapboxLayers.findIndex(layer => layer.id === id)
 
       if (!layerToUpdate) {
         return
       }
 
       layerToUpdate.opacity = opacity
-      state.wmsLayers = update(index, layerToUpdate, state.wmsLayers)
+      state.mapboxLayers = update(index, layerToUpdate, state.mapboxLayers)
     },
     SET_FILTERED_LAYER_ID(state, id) {
       state.filteredLayerId = id
@@ -168,11 +170,11 @@ export default {
       const layersToAdd = difference(layers, state.activeFlattenedLayers)
 
       layersToAdd.forEach((layer) => {
-        getWmsCapabilities(layer.url)
+        getMapServicesCapabilities(layer.url) 
           .then(capabilities => getLayerProperties(capabilities, layer))
-          .then(({ serviceType, timeExtent, wmsVersion, bbox }) => {
-            commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } } )
-            commit('ADD_WMS_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } }))
+          .then((properties) => {
+            commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...properties } )
+            commit('ADD_MAPBOX_LAYER',buildMapboxLayer({ ...layer, ...properties }))
           },
           )
       })
@@ -184,24 +186,24 @@ export default {
       the map the layer with a new time or a new cql filter */
 
       const { filteredLayerId, activeFlattenedLayers } = state
-      commit('REMOVE_WMS_LAYER', filteredLayerId)
+      commit('REMOVE_MAPBOX_LAYER', filteredLayerId)
       const { selectedTimestamp, cqlFilter } = rootState.data
       const layer = addFilterAttributesToLayer(activeFlattenedLayers, filteredLayerId, selectedTimestamp, cqlFilter )
 
-      commit('ADD_WMS_LAYER', buildWmsLayer(layer))
+      commit('ADD_MAPBOX_LAYER', buildWmsLayer(layer))
     },
     removeLayerFromMap({ commit }, { layers }) {
       layers.forEach(layer => {
         commit('REMOVE_ACTIVE_FLATTENED_LAYER', { layer })
-        commit('REMOVE_WMS_LAYER', layer.id)
+        commit('REMOVE_MAPBOX_LAYER', layer.id)
       })
     },
-
+  
     loadApiLayerOnMap({ commit }, layer) {
-      getWmsCapabilities(layer.url)
-      .then(capabilities => getLayerProperties(capabilities, layer.layer))
-      .then(({ serviceType, timeExtent, wmsVersion, bbox }) => {
-        commit('ADD_WMS_API_LAYER', buildWmsLayer({ ...layer, ...{ serviceType: serviceType }, ... { timeExtent: timeExtent }, ... { version: wmsVersion }, ... { bbox: bbox } }))
+      getMapServicesCapabilities(layer.url)
+      .then(capabilities => getLayerProperties(capabilities, layer))
+      .then((properties) => {
+        commit('ADD_WMS_API_LAYER', buildMapboxLayer({ ...layer, ...properties }))
       },
       )
     },
@@ -214,13 +216,13 @@ export default {
 
     resetLayers({ commit }) {
       commit('RESET_ACTIVE_FLATTENED_LAYERS')
-      commit('RESET_WMS_LAYERS')
+      commit('RESET_MAPBOX_LAYERS')
       commit('REMOVE_FILTERED_LAYER_ID')
     },
 
     moveRasterLayer({ commit }, { fromIndex, toIndex }) {
       commit('MOVE_ACTIVE_FLATTENED_LAYER', { fromIndex, toIndex })
-      commit('MOVE_WMS_LAYER', { fromIndex, toIndex })
+      commit('MOVE_MAPBOX_LAYER', { fromIndex, toIndex })
     },
 
     setDrawMode({ commit, state }, { mode }) {
@@ -245,7 +247,7 @@ export default {
     },
 
     updateWmsLayerOpacity({ commit }, { id, opacity }) {
-      commit('UPDATE_WMS_LAYER_OPACITY', { id, opacity })
+      commit('UPDATE_MAPBOX_LAYER_OPACITY', { id, opacity })
     },
 
     setFilteredLayerId({ commit }, id) {

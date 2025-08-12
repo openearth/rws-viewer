@@ -182,7 +182,7 @@
   import metaRepo from '~/repo/metaRepo'
   import buildDownloadUrl from '~/lib/build-download-url'
   import { describeFeatureType, readFeatureProperties } from '~/lib/wfs-filter-helpers'
-  import { isRasterLayer, getCapabilities } from '~/lib/get-capabilities'
+  import { isRasterLayer, getDataServicesCapabilities } from '~/lib/get-capabilities'
 
   //import only for test
 
@@ -263,7 +263,7 @@
         }
 
         return isRasterLayer(
-          this.selectedLayerData.serviceType,
+          this.selectedLayerData.dataServiceType,
           this.layerCapabilities,
           this.selectedLayerData.layer,
         )
@@ -296,11 +296,10 @@
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
 
       reloadCapabilities() {
-        const serviceUrl = this.selectedLayerData.downloadUrl || this.selectedLayerData.url
-        const serviceType = this.selectedLayerData.serviceType
-
+        const serviceUrl = this.selectedLayerData.wmsServiceUrl ? this.selectedLayerData.wmsServiceUrl : this.selectedLayerData.url || this.selectedLayerData.downloadUrl
+        const serviceType = this.selectedLayerData.dataServiceType
         this.layerCapabilities = null
-        getCapabilities(serviceUrl, serviceType).then(capabilities => {
+        getDataServicesCapabilities(serviceUrl, serviceType).then(capabilities => {
           this.layerCapabilities = Object.freeze(capabilities)
         })
       },
@@ -335,12 +334,10 @@
         let zip = new JSZip()
         return Promise.all(urls.map(async ({ url, fileType }) => {
           
-          //TODO: find a better solution for layers that don't have workspace
-          // the below if statement checks for workspace in layer name
-          const layerName = this.getLayerName()
+   
+          let layerName = this.getLayerName()
           
           const filename = `${ layerName }.${ fileType }`
-          console.log("filename: "+ filename)
           
           return JSZipUtils.getBinaryContent(url)
             .then(data => zip.file(filename, data, { binary: true }))
@@ -362,7 +359,7 @@
         this.generateZipFile(downloadProps) 
           .then((content) => {
             this.$trackEvent('download', 'geoServer')
-            const layerName = this.getLayerName()
+            const layerName = this.getLayerName() 
             saveAs(content, layerName)
           })
           .catch(err => {
@@ -377,12 +374,12 @@
         this.selectedFilters = event
       },
       async getAttributesToFilter() {
-
-        const { serviceType, url, layer, downloadLayer } = this.selectedLayerData
+        const { dataServiceType, url, layer, downloadLayer, wmsServiceUrl } = this.selectedLayerData
         const layerName = downloadLayer ? downloadLayer : layer
-        if (serviceType === 'wfs') {
+        const serviceUrl = wmsServiceUrl ? wmsServiceUrl : url
+        if (dataServiceType === 'wfs') {
           const response = await describeFeatureType({
-            url,
+            serviceUrl,
             layer: layerName,
           })
           this.availableFiltersForSelectedLayer = readFeatureProperties(response)
@@ -390,7 +387,8 @@
 
       },
       getLayerName() {        
-        const layerName = this.selectedLayerData.name.split(' ').join('_')
+        let layerName = this.selectedLayerData.name.split(' ').join('_')
+        layerName =  layerName.replace(/[^\w\d-]/g, "_")
         return layerName
       }
     },

@@ -86,6 +86,7 @@ npm run migrations:apply-main
 
 ## GitHub Actions Workflows
 
+
 ### Deploy to Production
 
 The `main-migrations.yaml` workflow is triggered on a push to the `main` branch. It performs the following steps:
@@ -103,3 +104,4 @@ The `staging-migrations.yaml` workflow is triggered on pull request events (open
 1. Checks for changes in the `migrations` folder.
 1. If changes are detected, sets up Node.js, installs dependencies, and runs the `migrations:apply-staging` script.
 1. Deploys the application to Netlify using the specified instances.
+

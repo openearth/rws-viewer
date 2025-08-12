@@ -160,7 +160,10 @@
       ...mapGetters('data', [ 'displayLayers', 'openedFolders' ]),
       ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
       layersWithParents() {
-        return addParentIdToLayers(this.displayLayers)
+        if (!this.searchString) {
+          return addParentIdToLayers(this.displayLayers);
+        }
+        return this.getFilteredTree(addParentIdToLayers(this.displayLayers), this.searchString.toLowerCase());
       },
       search() {
         return this.onlyActive ? ':active-only' : this.searchString
@@ -186,6 +189,29 @@
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity', 'updateZoomExtent' ]),
       ...mapActions('data', [ 'setOpenedFolders' ]),
+      getFilteredTree(nodes, searchLower) {
+        if (!searchLower) {
+          return nodes;
+        }
+
+        return nodes
+          .map(node => {
+            if (node.layer) {
+              return node.name.toLowerCase().includes(searchLower) ? node : null;
+            } else {
+              const folderMatches = node.name.toLowerCase().includes(searchLower);
+              let filteredChildren = this.getFilteredTree(node.children || [], searchLower);
+
+              if (folderMatches) {
+                return { ...node, children: node.children || [] };
+              } else if (filteredChildren.length > 0) {
+                return { ...node, children: filteredChildren };
+              }
+            }
+            return null;
+          })
+          .filter(node => node !== null);
+      },
       handleOpenedFolders(newValue, oldValue) {
         if (newValue.length === 0 && !oldValue) {
           return 
@@ -220,16 +246,43 @@
         this.$refs.tree.updateAll(false)
       },
       activeFilter(item, input, textKey) {
-        switch (input) {
-        case ':active-only':
-          return this.activeFlattenedLayerIds.includes(item.id)
-        case ':in-active-only':
-          return this.activeFlattenedLayerIds.includes(item.id) === false
-        default:
-          return item.layer
-            ? item[textKey].toLowerCase().indexOf(input.toLowerCase()) > -1
-            : undefined
+        if (!input || input === ':active-only') {
+          return this.activeFlattenedLayerIds.includes(item.id);
         }
+
+        const searchLower = input.toLowerCase();
+
+        if (item.layer) {
+          return item[textKey].toLowerCase().includes(searchLower);
+        } else {
+          return this.isRelevantFolder(item, searchLower);
+        }
+      },
+      hasMatchingChild(folder, searchLower) {
+        if (!folder.children || folder.children.length === 0) {
+          return false;
+        }
+
+        return folder.children.some(child => {
+          if (child.layer) {
+            return child.name.toLowerCase().includes(searchLower);
+          } else {
+            return child.name.toLowerCase().includes(searchLower) || this.hasMatchingChild(child, searchLower);
+          }
+        });
+      },
+      isRelevantFolder(folder, searchLower) {
+        if (!folder.children || folder.children.length === 0) {
+          return false;
+        }
+
+        return folder.children.some(child => {
+          if (child.layer) {
+            return child.name.toLowerCase().includes(searchLower);
+          } else {
+            return child.name.toLowerCase().includes(searchLower) || this.isRelevantFolder(child, searchLower);
+          }
+        });
       },
       updateLayerOpacity({ id, opacity }) {
         this.updateWmsLayerOpacity({ id, opacity })

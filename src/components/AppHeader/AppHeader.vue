@@ -12,10 +12,15 @@
     <v-app-bar-nav-icon v-else @click.stop="onMenuButtonClick">
       <v-icon>mdi-arrow-right</v-icon>
     </v-app-bar-nav-icon>
-
     <v-toolbar-title v-if="title">
       {{ title }}
     </v-toolbar-title>
+    <img
+    v-if="viewerLogo"
+    :src="viewerLogo"
+    height="50"
+    style="margin-left: 20px;"
+    />
 
     <v-spacer />
     <category-switcher />    
@@ -48,7 +53,7 @@
       },
     },
     computed: {
-      ...mapGetters('app', [ 'appNavigationOpen' ]),
+      ...mapGetters('app', [ 'appNavigationOpen', 'viewerLogo' ]),
     },
     methods: {
       ...mapActions('app', [ 'setNavigationOpen' ]),
