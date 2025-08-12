@@ -1,11 +1,13 @@
 /* Contains any functions and utils related to the wms, wfs and wcs getCapabilities */
 import axios from 'axios'
-import { map, uniq, pipe } from 'ramda'
+import { map, uniq, pipe, filter } from 'ramda'
+import checkMapServiceType from './check-map-service-type'
 
 import {
   WCS_LAYER_TYPE,
   WFS_LAYER_TYPE,
 } from '~/lib/constants'
+
 
 
 const getTagContent = tag => tag.textContent
@@ -52,21 +54,78 @@ function createParameters(type) {
   }
 }
 
-async function getServiceType(serviceUrl) {
-  try {
-     await axios.get(`${serviceUrl.replace('wms', 'wfs') }?${ createParameters('wfs') }`)
-     return 'wfs'
-  } catch (error) {
-      try {
-          await axios.get(`${ serviceUrl.replace('wfs', 'wcs') }?${ createParameters('wcs') }`)
-          return 'wcs'
-      } catch (error) {
-          return 'Unknown'
+async function getDataServiceType(serviceUrl, wmsLayerName) {
+  /**
+ * Function to determine if the service is WFS or WCS based on the GetCapabilities response
+ * Create WFS and WCS URLs based on the service URL
+ * First Quick check if one of the requests fails to determine the service type
+ * If quick check failes then detailed check:
+ *    Parse the responses as XML
+ *    Check if the layer exists in the WFS or WCS response
+ *    Return 'wfs', 'wcs' or 'Unknown' based on the results
+ *    
+ *    Hanlde network errors that come out from the checks
+ */
+
+  const parser = new DOMParser()
+
+  const tryServiceType = async (url, type) => {
+    try {
+      const res = await axios.get(url, { validateStatus: () => true })
+      if (res.status >= 200 && res.status < 300) {
+        console.log(`[Handled] ${ type.toUpperCase() } detected successfully: ${ url }`)
+        return res.data
+      } else if (res.status === 404) {
+        console.log(`[Handled] ${ type.toUpperCase() } check failed with 404: ${ url }`)
+      } else {
+        console.log(`[Handled] ${ type.toUpperCase() } check failed with status ${ res.status }: ${ url }`)
       }
+    } catch (err) {
+      console.log(`[Handled] ${ type.toUpperCase() } network or Axios error: ${ url }`, err)
+    }
+    return null
   }
-}
+  const wfsUrl = `${ serviceUrl.replace(/(wms|wcs)/i, 'wfs') }?${ createParameters('wfs') }`
+  const wcsUrl = `${ serviceUrl.replace(/(wms|wfs)/i, 'wcs') }?${ createParameters('wcs') }`
+
  
-export async function getCapabilities(service, type) {
+  const [ wfsData, wcsData ] = await Promise.all([
+    tryServiceType(wfsUrl, 'wfs'),
+    tryServiceType(wcsUrl, 'wcs')
+  ])
+
+  if (wfsData && !wcsData) {
+return 'wfs'
+}
+  if (!wfsData && wcsData) {
+return 'wcs'
+}
+  if (!wfsData && !wcsData) {
+return 'Unknown'
+}
+
+  try {
+    const wfsXml = parser.parseFromString(wfsData, 'text/xml')
+    const wcsXml = parser.parseFromString(wcsData, 'text/xml')
+
+    const wfsLayers = Array.from(wfsXml.getElementsByTagName('ows:Title')).map(el => el.textContent) //TODO: coverageId or title? discuss with Gerrit
+    const wcsLayers = Array.from(wcsXml.getElementsByTagName('ows:Title')).map(el => el.textContent)
+    
+
+
+    if (wfsLayers.includes(wmsLayerName)) {
+return 'wfs'
+}
+    if (wcsLayers.includes(wmsLayerName)) {
+return 'wcs'
+}
+  } catch (err) {
+    console.log('[Handled] Error parsing GetCapabilities XML:', err)
+  }
+  return 'Unknown'
+}
+
+export async function getDataServicesCapabilities(service, type) {
   /**
    * GetCapabilities wfs or wcs based on the input type
    * create parameters and make the request
@@ -75,12 +134,10 @@ export async function getCapabilities(service, type) {
 
   
   const serviceUrl = new URL(service)
-  const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
  
-  
+  const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
   try {
-   
-    const {data} = await axios(`${ servicePath }?${ createParameters(type) }`)
+    const { data } = await axios(`${ servicePath }?${ createParameters(type) }`)
     let parsedData = new DOMParser().parseFromString(data, 'text/xml');
     if (parsedData.getElementsByTagName('ServiceExceptionReport').length > 0) {
       throw new Error('ServiceExceptionReport found');
@@ -88,27 +145,37 @@ export async function getCapabilities(service, type) {
     return parsedData
 
   }  catch (error) {
-    const {data} = await axios (`${servicePath.replace('wms', type) }?${ createParameters(type) }`)
+    const { data } = await axios (`${ servicePath.replace('wms', type) }?${ createParameters(type) }`)
     return new DOMParser().parseFromString(data, 'text/xml')
   } 
 }
 
-export async function getWmsCapabilities(service) {
+export async function getMapServicesCapabilities(service) {
   /** 
- * The getWmsCapabilitis is made when a layer is clicked.  
+ * The getMapServicesCapabilitis is made when a layer is clicked.  
  * 
  * */ 
-  //the getcapabilities returns the capabilities of the layers in the workspace. need to search for the layer first
+  //the getcapabilities returns the capabilities of the layers in the workspace. Need to search for the layer first
+
+
+  const mapServiceType = checkMapServiceType(service)
+
   const serviceUrl = new URL(service)
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
-  const { data } = await axios(`${ servicePath }?service=WMS&request=GetCapabilities`)
 
-  return new DOMParser().parseFromString(data, 'text/xml')
+  let response;
+  if (mapServiceType === 'wms') {
+    response = await axios(`${ servicePath }?service=WMS&request=GetCapabilities`)
+    
+  } else if (mapServiceType === 'wmts') {
+    response = await axios(`${ servicePath }?service=WMTS&request=GetCapabilities`)
+    
+  }
+  return new DOMParser().parseFromString(response.data, 'text/xml')
 
 }
 
 export function getSupportedOutputFormats(type, capabilities) {
-  
   //wfs
   const outputFormats = pipe(
       () => [ ...capabilities.querySelectorAll('[name="outputFormat"]') ],
@@ -159,22 +226,22 @@ export function isRasterLayer(type, capabilities, layer) {
 
   return keywords.includes('GeoTIFF')
 }
-
-export async function getLayerProperties(capabilities, layerObject) {
+async function readWmsCapabilitiesProperties(capabilities, layerObject) {
 /**
  * function that reads the wms capabilities response of the workpspace
  * 1. find the given layer
  * 2. extracts:   
  *    -wmsVersion
  *    -bbox of layer
- *    -keywords (that contain the service type)
+ *    -keywords (that contain the data service type)
  *    -service type of layer (wfs or wcs)
  *    -time extent of layer
  *  
  *  * */
-  const {layer} = layerObject
+  const { layer } = layerObject
   const serviceUrl = layerObject.downloadUrl || layerObject.url
-  const wmsVersion = pipe(
+
+  const mapServiceVersion = pipe(
     () => capabilities.querySelector('WMS_Capabilities'),
     el => el.getAttribute('version'),
   )()
@@ -187,7 +254,7 @@ export async function getLayerProperties(capabilities, layerObject) {
     el => el.querySelector('EX_GeographicBoundingBox'),
     readBbox,
   )()
-  
+ 
   let keywords = pipe(
     () => [ ...capabilities.querySelectorAll('[queryable="1"], [queryable="0"], [opaque="0"]') ],
     getChildTags('Name'),
@@ -208,13 +275,14 @@ export async function getLayerProperties(capabilities, layerObject) {
     
   }
  
-  let serviceType = [ 'features', 'wfs', 'FEATURES', 'WFS' ].some(val => keywords.includes(val)) ? 'wfs' 
+  let dataServiceType = [ 'features', 'wfs', 'FEATURES', 'WFS' ].some(val => keywords.includes(val)) ? 'wfs' 
         :[ 'WCS', 'GeoTIFF', 'wcs' ].some(val => keywords.includes(val)) ? 'wcs' 
         : null
   
 
-  if (!serviceType) {
-      serviceType = await getServiceType(serviceUrl)
+  if (!dataServiceType) {
+      dataServiceType = await getDataServiceType(serviceUrl, layer)
+   
   }
   
   const timeExtent = pipe(
@@ -227,8 +295,69 @@ export async function getLayerProperties(capabilities, layerObject) {
     map(textToArray),
     (array) => array.flat(),
   )()
- 
-  return { serviceType, timeExtent, wmsVersion, bbox }
+  return { dataServiceType, timeExtent, mapServiceVersion, bbox }
+}
+
+async function readWmtsCapabilitiesProperties(capabilities, layerObject) {
+  /**
+ * function that reads the wms capabilities response of the workpspace
+ * 1. find the given layer
+ * 2. extracts:   
+ *    -mapVersion
+ *    -bbox of layer
+ *    -keywords (that contain the data service type)
+ *    -service type of layer (wfs or wcs)
+ *    -time extent of layer
+ *  
+ *  * */
+
+  const { layer } = layerObject
+  const mapServiceVersion = pipe(
+    () => capabilities.querySelector(`Capabilities`),
+    (el) => el.getAttribute("version")
+  )();
+  const acceptedFormats = pipe(
+    () => [ ...capabilities.querySelectorAll('Layer') ],
+    filter(el => {
+      return el.getElementsByTagName('ows:Identifier')[0].textContent === layer
+    }),
+    getTags('Format'),
+    map(getTagContent),
+    uniq,
+  )()
+
+ const bbox = pipe(
+  () => [ ...capabilities.querySelectorAll('Layer') ],
+  filter(el => {
+    return el.getElementsByTagName('ows:Identifier')[0].textContent === layer;
+  }),
+  (els) => els[0],
+  el => el.getElementsByTagName('ows:WGS84BoundingBox')[0],
+  (bboxElement) => [
+    parseFloat(bboxElement.getElementsByTagName('ows:LowerCorner')[0].textContent.split(' ')[0]),
+    parseFloat(bboxElement.getElementsByTagName('ows:LowerCorner')[0].textContent.split(' ')[1]),
+    parseFloat(bboxElement.getElementsByTagName('ows:UpperCorner')[0].textContent.split(' ')[0]),
+    parseFloat(bboxElement.getElementsByTagName('ows:UpperCorner')[0].textContent.split(' ')[1])
+  ]
+)();
+
+  
+  const workspaceLayer =  layerObject.layer.split(":")
+  const layerName = workspaceLayer.pop();
+  const workspace = workspaceLayer.pop();
+  // for the wcs/wfs reqeusts we need to change the url to the wms url of the service
+  const wmsServiceUrl = layerObject.url.replace('/gwc/service/wmts', `/${ workspace }/wms`)
+  
+  const dataServiceType = await getDataServiceType(wmsServiceUrl, layerName)
+  return { dataServiceType, acceptedFormats, mapServiceVersion, bbox, wmsServiceUrl }
+}
+export async function getLayerProperties(capabilities, layerObject) {
+  const mapServiceType = checkMapServiceType(layerObject.url)
+  if (mapServiceType === 'wms'){
+    return readWmsCapabilitiesProperties(capabilities, layerObject)
+  } else if (mapServiceType === 'wmts') {
+    return readWmtsCapabilitiesProperties(capabilities, layerObject)
+  }
 }
 
 

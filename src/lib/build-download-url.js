@@ -8,7 +8,9 @@ import {
 export default function({ layer = {}, filters = [], format, coordinates  = '' }) {
 
   let url
-  if (layer.downloadUrl) {
+  if (layer.wmsServiceUrl) {
+    url = layer.wmsServiceUrl
+  } else if (layer.downloadUrl) {
     url = layer.downloadUrl
   } else {
     url = layer.url

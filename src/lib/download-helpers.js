@@ -18,7 +18,7 @@ const createWfsParameters = ({ layer = '', filters = '', coordinates, format = '
   })
 }
 
-//getCoverage request //TODO: add bbox in the request if an area is selected.
+
 const createWcsParameters = ({ layer = '', coordinates, format = '' }) => {
 
   return stringify({
@@ -59,21 +59,23 @@ export function createWfsDownloadFilter(filtersArray = [], coordinates = '') {
 
 
 export function createDownloadParameters({ layerData = {}, filters = '', format = '', coordinates }) {
-  const { layer, serviceType, downloadLayer } = layerData
-  if (!serviceType) {
+
+  const { layer, dataServiceType, downloadLayer } = layerData
+
+  if (!dataServiceType) {
     console.warn('No valid `downloadUrl` present for layer: ', layer)
     return null
   }
 
-  if (serviceType === 'wcs') {
+  if (dataServiceType === 'wcs') {
     return createWcsParameters({ layer, format, filters, coordinates })
   }
 
-  if (serviceType === 'wfs' && downloadLayer) {
+  if (dataServiceType === 'wfs' && downloadLayer) {
     return createWfsParameters({ layer:downloadLayer, filters, format, coordinates })
   }
 
-  if (serviceType === 'wfs' && !downloadLayer) {
+  if (dataServiceType === 'wfs' && !downloadLayer) {
     return createWfsParameters({ layer, filters, format, coordinates })
   }
 }
@@ -84,6 +86,7 @@ export function createLegendDownloadParameters({ layerData = {} }) {
 }
 
 export const mapFormatToFileExtension = {
+  'image/tiff;application=geotiff': 'tif',
   'application/gml+xml': 'gml',
   'application/gml+xml; version=3.2': 'gml',
   'application/json': 'json',

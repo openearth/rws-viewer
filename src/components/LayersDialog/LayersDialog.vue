@@ -34,7 +34,7 @@
             <p class="layers-dialog__layer-name">
               {{ layer.name }}
             </p>
-            <p>{{ layer.description }}</p>
+            <p v-html ="layer.description"> </p>
             <v-divider v-if="index !== layers.length - 1" />
           </div>
         </v-card-text>
@@ -44,8 +44,9 @@
 </template>
 
 <script>
+ 
   import { mapActions, mapGetters } from 'vuex'
-
+  import findParentPathById from '~/lib/find-parent-path-by-id'
   export default {
     props: {
       open: {
@@ -59,22 +60,28 @@
     },
 
     computed: {
-      ...mapGetters('data', [ 'flattenedLayers' ]),
+      ...mapGetters('data', [ 'flattenedLayers', 'displayLayers' ]),
     },
 
     methods: {
       ...mapActions('map', [
         'loadLayerOnMap',
-        'resetLayers',
+      ]),
+      ...mapActions('data', [
+        'setOpenedFolders',
       ]),
 
       close() {
         this.$emit('close')
       },
-      showLayer(id) {
-        this.resetLayers()
-        const layer = this.flattenedLayers.find(({ id: layerId }) => id === layerId)
-        this.loadLayerOnMap({ layers: [ layer ] })
+      showLayer(id) { 
+        
+        const layer = this.flattenedLayers.find(layer => layer && layer.id === id);
+        if (layer) {
+          this.loadLayerOnMap({ layers: [ layer ] })
+        }
+        const folders = findParentPathById(this.displayLayers, id)   
+        this.setOpenedFolders(folders)     
         this.$emit('close')
       },
     },

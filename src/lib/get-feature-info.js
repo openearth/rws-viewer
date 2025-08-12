@@ -49,7 +49,7 @@ export default async function getFeatureInfo({ url, lng, lat,  layer, serviceTyp
     service: 'WMS',
     version: '1.1.1',
     info_format: 'application/json',
-    crs: 'EPSG:4326',
+    crs: 'EPSG:4326',//TODO: some layers expect the use of SRS and the getFeatureInfo request fails without it
     layers: layer,
     query_layers: layer,
     width,

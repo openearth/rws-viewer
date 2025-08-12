@@ -2,8 +2,7 @@ import buildGeoserverUrl from './build-geoserver-url'
 
 const defaultUrl = process.env.VUE_APP_GEOSERVER_BASE_URL
 
-export default ({ url: rawUrl = defaultUrl, id, layer, styles = '', paint = {}, tileSize = 256, time, filter, version }) => {
-  
+export default ({ url: rawUrl = defaultUrl, id, layer, styles = '', paint = {}, tileSize = 256, time, filter, mapServiceVersion }) => {
   const url = new URL(rawUrl)
   const searchParamEntries = url.searchParams.entries()
   const searchParamsObject = Object.fromEntries(searchParamEntries)
@@ -16,7 +15,7 @@ export default ({ url: rawUrl = defaultUrl, id, layer, styles = '', paint = {}, 
     styles,
     width: 256,
     height: 256,
-    version,
+    version:mapServiceVersion,
     ...(time) && { time: time },
     ...(filter) && { cql_filter: filter },
     crs: 'EPSG:3857',
