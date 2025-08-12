@@ -73,7 +73,8 @@ export default {
       const viewer = route?.params?.config
 
       //Set viewer configuration
-      const { mapCenter, mapZoom, defaultLayer, privacyStatement, userAgreement, acknowledgments } = await getViewerConfiguration(viewer, locale)
+      const { mapCenter, mapZoom, defaultLayer, privacyStatement, userAgreement, acknowledgments, logo } = await getViewerConfiguration(viewer, locale)
+      
 
       dispatch('map/setMapCenter', mapCenter, { root: true })
       dispatch('map/setMapZoom', mapZoom, { root: true })
@@ -84,6 +85,7 @@ export default {
       dispatch('app/setViewerPrivacyStatement', { privacyStatement }, { root: true })
       dispatch('app/setViewerUserAgreement', { userAgreement }, { root: true })
       dispatch('app/setViewerAcknowledgments', { acknowledgments }, { root: true })
+      dispatch('app/setViewerLogo', { logo }, { root: true })
 
       const searchParams = new URLSearchParams(window.location.search)
       const initialLayerIds = (searchParams.get('layers') || '').split(',')
@@ -176,7 +178,7 @@ export default {
     setCQLFilter({ commit }, filter) {
       commit('SET_CQL_FILTER', filter)
     },
-    resetCQLFilter({commit}) {
+    resetCQLFilter({ commit }) {
       commit('RESET_CQL_FILTER')
     }, 
     setOpenedFolders({ commit }, folders) {
