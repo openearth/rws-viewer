@@ -95,5 +95,6 @@
   "whatIsYourEmail": "What is your email?",
   "whoAreYou": "Who are you?",
   "wmsLayer": "WMS layer",
-  "wmsUrl": "WMS url"
+  "wmsUrl": "WMS url",
+  "screenshot": "Take a snapshot of the current view and save it to png"
 }
