@@ -6,9 +6,19 @@ export default {
     let initialized = false
     let containerId = process.env.VUE_APP_PIWIK_CONTAINER_ID || null
 
+    const ALLOWED_ORIGINS = [ 'https://viewer.openearth.nl' ]
+    const isAllowedOrigin = () => {
+        try {
+            return ALLOWED_ORIGINS.some(p => window.location.origin.startsWith(p))
+        } catch (_e) {
+            return false
+        }
+    }
+
+
     Vue.mixin({
         beforeRouteEnter(to, _from, next) {
-            if (!initialized) {
+            if (!initialized && isAllowedOrigin()) {
                 initializePiwikScript()
                 initialized = true
             }
@@ -28,7 +38,10 @@ export default {
     })
 
     function initializePiwikScript() {
-        
+        if (!isAllowedOrigin()) {
+            return
+        }
+
         if (!containerId) {
             console.log('No piwik container id found so Piwik was not installed')
             return
@@ -49,7 +62,6 @@ export default {
         head.appendChild(s)
     }
 
-    
   },
 }
 
