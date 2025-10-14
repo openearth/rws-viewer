@@ -77,6 +77,23 @@
                   {{ selected ? 'mdi-clock-time-three' : 'mdi-clock-time-three-outline' }}
                 </v-icon>
               </v-col>
+              <v-col class="ml-n5">
+                <v-tooltip 
+                  v-if="nonDownloadableLayers.includes(item.id)"
+                  top
+                >
+                  <template #activator="{ on, attrs }">
+                    <v-icon 
+                      color="red"
+                      v-bind="attrs"
+                      v-on="on"
+                      style="cursor: help;"
+                    >
+                      mdi-download-off
+                    </v-icon>
+                  </template>
+                </v-tooltip>
+              </v-col>
               <v-col>
                 <v-icon v-if="item.layer">
                   {{ selected ? 'mdi-layers' : 'mdi-layers-outline' }}
@@ -158,7 +175,14 @@
     computed: {
       ...mapGetters('app', [ 'viewerConfig', 'viewerName', 'viewerPrivacyStatement' ]),
       ...mapGetters('data', [ 'displayLayers', 'openedFolders' ]),
-      ...mapGetters('map', [ 'activeFlattenedLayerIds' ]),
+      ...mapGetters('map', [ 'activeFlattenedLayerIds', 'activeFlattenedLayers' ]),
+      
+      nonDownloadableLayers() {
+        return this.activeFlattenedLayers
+          .filter(layer => layer.dataServiceType === 'Unknown')
+          .map(layer => layer.id)
+      },
+      
       layersWithParents() {
         if (!this.searchString) {
           return addParentIdToLayers(this.displayLayers);
