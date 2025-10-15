@@ -16,9 +16,9 @@ const textToArray = text => text.split(',') //split at comma
 
 
 const getTags = (tagName) => root =>
-  root ? [ ...root ]
+  [ ...root ]
     .map(el => [ ...el.getElementsByTagName(tagName) ])
-    .flat() : []
+    .flat()
 
 const getChildTags = (tagName) => root =>
   [ ...root ]
@@ -268,7 +268,7 @@ async function readWmsCapabilitiesProperties(capabilities, layerObject) {
   if (!keywords.length) {
     
     keywords = pipe(
-      () => [ capabilities.querySelector('KeywordList') ].filter(Boolean),  
+      () => [ capabilities.querySelector('KeywordList') ],  
       getTags('Keyword'), 
       map(getTagContent), 
     )()

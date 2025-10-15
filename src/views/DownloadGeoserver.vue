@@ -243,12 +243,10 @@
       },
 
       activeLayersList() {
-        return this.activeFlattenedLayers
-          .filter(layer => layer.dataServiceType && layer.dataServiceType !== 'Unknown')
-          .map(({ id, name }) => ({
-            text: name,
-            value: id,
-          }))
+        return this.activeFlattenedLayers.map(({ id, name }) => ({
+          text: name,
+          value: id,
+        }))
       },
 
       selectedLayerData() {
