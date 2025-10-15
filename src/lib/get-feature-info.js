@@ -34,7 +34,7 @@ export default async function getFeatureInfo({ url, lng, lat,  layer, serviceTyp
   // Bounding box used with single point selection.
   if (lng && lat) {
     // WCS requires a smaller bounding box to prevent selecting nearby points.
-    const radius = serviceType === 'wfs' ? 0.01 : 0.00001
+    const radius = serviceType === 'wfs' ? 0.005 : 0.00001
     bbox = [
       (lng - radius),
       (lat - radius),
