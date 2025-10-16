@@ -93,7 +93,7 @@ async function getDataServiceType(serviceUrl, wmsLayerName) {
     tryServiceType(wfsUrl, 'wfs'),
     tryServiceType(wcsUrl, 'wcs')
   ])
-
+ 
   if (wfsData && !wcsData) {
 return 'wfs'
 }
@@ -108,7 +108,12 @@ return 'Unknown'
     const wfsXml = parser.parseFromString(wfsData, 'text/xml')
     const wcsXml = parser.parseFromString(wcsData, 'text/xml')
 
-    const wfsLayers = Array.from(wfsXml.getElementsByTagName('ows:Title')).map(el => el.textContent) //TODO: coverageId or title? discuss with Gerrit
+    // Extract from both ows:Title and Title elements for WFS
+    const owsTitles = Array.from(wfsXml.getElementsByTagName('ows:Title')).map(el => el.textContent)
+    const plainTitles = Array.from(wfsXml.getElementsByTagName('Title')).map(el => el.textContent)
+    const wfsLayers = [...new Set([...owsTitles, ...plainTitles])]
+    
+    // Keep WCS as-is
     const wcsLayers = Array.from(wcsXml.getElementsByTagName('ows:Title')).map(el => el.textContent)
     
 
@@ -347,7 +352,6 @@ async function readWmtsCapabilitiesProperties(capabilities, layerObject) {
   const workspace = workspaceLayer.pop();
   // for the wcs/wfs reqeusts we need to change the url to the wms url of the service
   const wmsServiceUrl = layerObject.url.replace('/gwc/service/wmts', `/${ workspace }/wms`)
-  
   const dataServiceType = await getDataServiceType(wmsServiceUrl, layerName)
   return { dataServiceType, acceptedFormats, mapServiceVersion, bbox, wmsServiceUrl }
 }
