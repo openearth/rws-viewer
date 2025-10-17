@@ -96,5 +96,6 @@
   "whoAreYou": "Wie bent u?",
   "wmsLayer": "WMS laag",
   "wmsUrl": "WMS url",
-  "screenshot": "Maak een snapshot van het huidige weergave en sla deze op naar png"
+  "screenshot": "Maak een snapshot van het huidige weergave en sla deze op naar png",
+  "selectedLayerNotAvailable": "De geselecteerde laag is niet beschikbaar voor download"
 }

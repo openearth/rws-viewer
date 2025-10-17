@@ -48,7 +48,20 @@
         <v-divider class="my-4" />
       </v-col>
     </v-row>
-    <template v-if="activeLayersList.length">
+    <template v-if="activeLayersList.length && downloadLayer && !isSelectedLayerDownloadable">
+      <v-row>
+        <v-col>
+          <v-alert
+            dense
+            outlined
+            type="warning"
+          >
+            <p class="mb-0">{{ $t('selectedLayerNotAvailable') }}</p>
+          </v-alert>
+        </v-col>
+      </v-row>
+    </template>
+    <template v-if="activeLayersList.length && isSelectedLayerDownloadable">
       <v-row>
         <v-col>
           <h3>{{ $t('select') }}</h3>
@@ -184,7 +197,7 @@
   import { describeFeatureType, readFeatureProperties } from '~/lib/wfs-filter-helpers'
   import { isRasterLayer, getDataServicesCapabilities } from '~/lib/get-capabilities'
 
-  //import only for test
+
 
   const NO_SELECTION_ID = 'NO_SELECTION_ID'
 
@@ -268,12 +281,18 @@
           this.selectedLayerData.layer,
         )
       },
+
+      isSelectedLayerDownloadable() {
+        if (!this.selectedLayerData) {
+          return true 
+        }
+        return this.selectedLayerData.dataServiceType !== 'Unknown'
+      },
     },
 
     watch: {
       activeFlattenedLayerIds(val, oldVal) {
         if (val !== oldVal) {
-          // if activeFlattenedLayerIds change, reset selected layers in dropdown.
           this.downloadLayer = null
         }
       },
@@ -296,6 +315,10 @@
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection' ]),
 
       reloadCapabilities() {
+        if (!this.isSelectedLayerDownloadable) {
+          return
+        }
+        
         const serviceUrl = this.selectedLayerData.wmsServiceUrl ? this.selectedLayerData.wmsServiceUrl : this.selectedLayerData.url || this.selectedLayerData.downloadUrl
         const serviceType = this.selectedLayerData.dataServiceType
         this.layerCapabilities = null
@@ -374,6 +397,11 @@
         this.selectedFilters = event
       },
       async getAttributesToFilter() {
+        // Don't make request if layer is not downloadable
+        if (!this.isSelectedLayerDownloadable) {
+          return
+        }
+        
         const { dataServiceType, url, layer, downloadLayer, wmsServiceUrl } = this.selectedLayerData
         const layerName = downloadLayer ? downloadLayer : layer
         const serviceUrl = wmsServiceUrl ? wmsServiceUrl : url
