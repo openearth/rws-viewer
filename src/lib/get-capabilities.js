@@ -111,7 +111,7 @@ return 'Unknown'
     // Extract from both ows:Title and Title elements for WFS
     const owsTitles = Array.from(wfsXml.getElementsByTagName('ows:Title')).map(el => el.textContent)
     const plainTitles = Array.from(wfsXml.getElementsByTagName('Title')).map(el => el.textContent)
-    const wfsLayers = [...new Set([...owsTitles, ...plainTitles])]
+    const wfsLayers = [ ...new Set([ ...owsTitles, ...plainTitles ]) ]
     
     // Keep WCS as-is
     const wcsLayers = Array.from(wcsXml.getElementsByTagName('ows:Title')).map(el => el.textContent)

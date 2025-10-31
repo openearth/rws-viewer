@@ -103,9 +103,18 @@
             {{ $t('noFilterSelected') }}
           </p>
 
-          <key-value-filter
+          <beacon-filter
+            v-if="isBeaconApi"
+            :available-columns="availableColumns"
             :filters="availableFiltersForSelectedLayer"
-            :comparers="comparers"
+            :date-filters="dateFilters"
+            @change="handleFilterChange"
+            @columns-change="handleColumnChange"
+          />
+
+          <url-filter
+            v-else
+            :filters="availableFiltersForSelectedLayer"
             :date-filters="dateFilters"
             @change="handleFilterChange"
           />
@@ -139,30 +148,19 @@
 <script>
 /* Sovon and WMR don't offer downloading for multiple areas yet  */
   import { mapActions, mapGetters, mapState } from 'vuex'
-  import KeyValueFilter from '~/components/KeyValueFilter/KeyValueFilter'
+  import UrlFilter from '~/components/UrlFilter/UrlFilter'
+  import BeaconFilter from '~/components/BeaconFilter/BeaconFilter'
   import { downloadFromUrl, generateDownloadUrl } from '~/lib/external-api'
   import getFeature from '~/lib/get-feature'
   import _ from 'lodash'
 
   export default {
-    components: { KeyValueFilter },
+    components: { UrlFilter, BeaconFilter },
     data: () => ({
       selectedLayerId: null,
       isDownloading: false,
       selectedFilters: null,
-      comparers: Object.freeze([
-        'eq',
-        'ne',
-        'lt',
-        'le',
-        'ge',
-        'gt',
-        'in',
-        'notin',
-        'like',
-        'startswith',
-        'endswith',
-      ]),
+      selectedColumns: [], // For Beacon API column selection
       requestFailure: false,
       selectedLayerIdToDownloadWith: null,
       selectedLayerToDownloadFrom: null,
@@ -175,6 +173,23 @@
 
       maxPageSize() {
         return _.get(this.selectedApi, 'maxPageSize')
+      },
+
+      // Beacon API detection
+      isBeaconApi() {
+        return this.selectedApi?.requestType === 'beacon'
+      },
+
+      // Available columns for Beacon API
+      availableColumns() {
+        if (!this.isBeaconApi) {
+          return []
+        }
+        const queryParameters = this.selectedApi?.queryParameters || []
+        return queryParameters.map(param => ({
+          text: typeof param === 'string' ? param : param.label,
+          value: typeof param === 'string' ? param : param.name,
+        }))
       },
       //Active layers to download from. Each layer is connected to one and only API.
       activeLayers() {
@@ -246,8 +261,19 @@
           this.removeApiLayerFromMap()
         }
       },
-      selectedApi() {
-        this.setMultipleSelection(this.selectedApi.pointSelection)
+      selectedApi: {
+        handler(newApi) {
+          this.setMultipleSelection(newApi.pointSelection)
+          
+          // Set default columns for Beacon API
+          if (newApi?.requestType === 'beacon') {
+            const params = newApi.queryParameters || []
+            this.selectedColumns = params.slice(0, Math.min(4, params.length))
+          } else {
+            this.selectedColumns = []
+          }
+        },
+        immediate: true
       },
     },
     mounted() {
@@ -383,6 +409,10 @@
       handleFilterChange(value) {
         this.selectedFilters = value
         this.requestFailure = false
+      },
+
+      handleColumnChange(columns) {
+        this.selectedColumns = columns
       },
       hideActiveLayers() {
 

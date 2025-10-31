@@ -18,12 +18,15 @@ fragment menuWithLayers on MenuRecord {
         id
         name
         url
+        requestType
         propertyMapping
         apiKey
         filters
         dateFilters
         formatCsv
         maxPageSize
+        queryParameters
+        from
         freehandRectangleDrawing
         pointSelection
         multipleSelection
