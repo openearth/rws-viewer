@@ -39,15 +39,43 @@
       <v-col :cols="3">
         <v-select
           v-model="filter.comparer"
-          :items="beaconComparers"
+          :items="dateItems(filter)"
           dense
           outlined
           hide-details
         />
       </v-col>
       <v-col :cols="4">
-        <!-- Beacon-specific filter inputs will go here -->
+        <!-- Date picker for date filters -->
+        <template v-if="checkDateFilters(filter)">
+          <v-btn title="Select Date" @click="handleDateSelectorClick(filter)">
+            {{ filter.value || $t('select') }}
+          </v-btn>
+          <v-dialog
+            v-model="showDialog"
+            max-width="280"
+            @click:outside="handleDialogClose"
+          >
+            <v-container class="white pa-0">
+              <v-date-picker
+                v-model="currentFilterValue"
+              />
+              <v-container class="pa-2 d-flex">
+                <v-spacer />
+                <v-btn
+                  color="primary"
+                  text
+                  @click="handleDialogClose"
+                >
+                  {{ $t('close') }}
+                </v-btn>
+              </v-container>
+            </v-container>
+          </v-dialog>
+        </template>
+        <!-- Regular text field for non-date filters -->
         <v-text-field
+          v-else
           v-model="filter.value"
           dense
           outlined
@@ -123,8 +151,19 @@
         enabledFilters: [],
         selectedFilter: null,
         processedRectangle: null, // Track processed rectangle to avoid reprocessing
+        showDialog: false,
+        currentFilter: null, // Track which filter is using the date picker
+        currentFilterValue: null, // Track the date picker value
         // Beacon API specific operators
         beaconComparers: Object.freeze([
+          'equals',
+          'min',
+          'max',
+          'between',
+          'datetime_range'
+        ]),
+        // Date comparers for date filters
+        dateComparers: Object.freeze([
           'equals',
           'min',
           'max',
@@ -288,6 +327,25 @@
       },
       handleColumnChange(columns) {
         this.$emit('columns-change', columns)
+      },
+      checkDateFilters(filter) {
+        return this.dateFilters.includes(filter.name)
+      },
+      dateItems(filter) {
+        return this.checkDateFilters(filter) ? this.dateComparers : this.beaconComparers
+      },
+      handleDateSelectorClick(filter) {
+        this.currentFilter = filter
+        this.currentFilterValue = filter.value || null
+        this.showDialog = true
+      },
+      handleDialogClose() {
+        if (this.currentFilter && this.currentFilterValue !== null) {
+          this.currentFilter.value = this.currentFilterValue
+        }
+        this.showDialog = false
+        this.currentFilter = null
+        this.currentFilterValue = null
       },
       
       buildBeaconFilter(filter) {
