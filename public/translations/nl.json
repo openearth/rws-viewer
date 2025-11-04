@@ -97,5 +97,8 @@
   "wmsLayer": "WMS laag",
   "wmsUrl": "WMS url",
   "screenshot": "Maak een snapshot van het huidige weergave en sla deze op naar png",
-  "selectedLayerNotAvailable": "De geselecteerde laag is niet beschikbaar voor download"
+  "selectedLayerNotAvailable": "De geselecteerde laag is niet beschikbaar voor download",
+  "selectColumns": "Selecteer Kolommen",
+  "selectColumnsDesc": "Kies welke kolommen u wilt opnemen in de download",
+  "chooseColumns": "Kies kolommen"
 }

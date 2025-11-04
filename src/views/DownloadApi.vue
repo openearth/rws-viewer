@@ -103,7 +103,7 @@
             {{ $t('noFilterSelected') }}
           </p>
 
-          <beacon-filter
+          <beacon-api
             v-if="isBeaconApi"
             :available-columns="availableColumns"
             :filters="availableFiltersForSelectedLayer"
@@ -112,7 +112,7 @@
             @columns-change="handleColumnChange"
           />
 
-          <url-filter
+          <url-api
             v-else
             :filters="availableFiltersForSelectedLayer"
             :date-filters="dateFilters"
@@ -148,14 +148,14 @@
 <script>
 /* Sovon and WMR don't offer downloading for multiple areas yet  */
   import { mapActions, mapGetters, mapState } from 'vuex'
-  import UrlFilter from '~/components/UrlFilter/UrlFilter'
-  import BeaconFilter from '~/components/BeaconFilter/BeaconFilter'
+  import UrlApi from '~/components/UrlApi/UrlApi'
+  import BeaconApi from '~/components/BeaconApi/BeaconApi'
   import { downloadFromUrl, generateDownloadUrl } from '~/lib/external-api'
   import getFeature from '~/lib/get-feature'
   import _ from 'lodash'
 
   export default {
-    components: { UrlFilter, BeaconFilter },
+    components: { UrlApi, BeaconApi },
     data: () => ({
       selectedLayerId: null,
       isDownloading: false,
@@ -181,14 +181,16 @@
       },
 
       // Available columns for Beacon API
+        
       availableColumns() {
         if (!this.isBeaconApi) {
           return []
         }
-        const queryParameters = this.selectedApi?.queryParameters || []
+       
+        const queryParameters = this.selectedApi.queryParameters.split(',').map(param => param.trim())
         return queryParameters.map(param => ({
-          text: typeof param === 'string' ? param : param.label,
-          value: typeof param === 'string' ? param : param.name,
+          text: param,
+          value: param,
         }))
       },
       //Active layers to download from. Each layer is connected to one and only API.
@@ -224,7 +226,7 @@
         if (!this.selectedLayerToDownloadFrom) {
           return
         }
-        return this.selectedLayerToDownloadFrom.externalApi[0] //Why is it an array?
+        return this.selectedLayerToDownloadFrom.externalApi[0]
       },
 
       // multipleselection is not allowed
@@ -261,19 +263,20 @@
           this.removeApiLayerFromMap()
         }
       },
-      selectedApi: {
-        handler(newApi) {
-          this.setMultipleSelection(newApi.pointSelection)
-          
-          // Set default columns for Beacon API
-          if (newApi?.requestType === 'beacon') {
-            const params = newApi.queryParameters || []
-            this.selectedColumns = params.slice(0, Math.min(4, params.length))
-          } else {
-            this.selectedColumns = []
+      watch: {
+        selectedApi(newApi) {
+          if (newApi) {
+            this.setMultipleSelection(newApi.pointSelection)
+            
+            // Set default columns for Beacon API
+            if (newApi.requestType === 'beacon') {
+              const params = newApi.queryParameters || []
+              this.selectedColumns = params.slice(0, Math.min(4, params.length))
+            } else {
+              this.selectedColumns = []
+            }
           }
         },
-        immediate: true
       },
     },
     mounted() {
@@ -420,8 +423,8 @@
           return
         }
 
-        if (this.selectedLayerToDownloadFrom && this.selectedLayerToDownloadFrom.externalApi[0].selectableLayer) {
-
+        // Always show the selected layer so users can see what they're downloading from
+        if (this.selectedLayerToDownloadFrom) {
           this.updateWmsLayerOpacity({ id: this.selectedLayerToDownloadFrom.id, opacity: 1 })
           const restActiveFlattenedLayers = this.activeFlattenedLayers.filter(activeLayer => activeLayer.id != this.selectedLayerToDownloadFrom.id)
 
@@ -429,6 +432,7 @@
             this.updateWmsLayerOpacity({ id, opacity: 0 })
           })
         } else {
+          // If no layer is selected, hide all layers
           this.activeFlattenedLayers.forEach(({ id }) => {
             this.updateWmsLayerOpacity({ id, opacity: 0 })
           })
