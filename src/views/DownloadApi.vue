@@ -95,28 +95,35 @@
       <v-divider class="my-4" />
       <v-row>
         <v-col>
-          <h3 class="pb-3">
-            {{ $t('filtersDownload') }}
-          </h3>
-
-          <p v-if="!selectedFilters || !selectedFilters.length" class="body-2">
-            {{ $t('noFilterSelected') }}
-          </p>
-
           <beacon-api
             v-if="isBeaconApi"
+            ref="beaconApi"
             :available-columns="availableColumns"
             :filters="availableFiltersForSelectedLayer"
             :date-filters="dateFilters"
+            :drawn-features="drawnFeatures"
+            :external-api="selectedApi"
             @change="handleFilterChange"
             @columns-change="handleColumnChange"
+            @downloading="isDownloading = $event"
+            @error="requestFailure = $event"
+            @download-success="requestFailure = false"
           />
 
           <url-api
             v-else
+            ref="urlApi"
             :filters="availableFiltersForSelectedLayer"
             :date-filters="dateFilters"
+            :external-api="selectedApi"
+            :selected-filters="selectedFilters"
+            :drawn-features="drawnFeatures"
+            :selected-area-name="selectedAreaName"
+            :selected-layer-to-download-from="selectedLayerToDownloadFrom"
             @change="handleFilterChange"
+            @downloading="isDownloading = $event"
+            @error="requestFailure = $event"
+            @download-success="requestFailure = false"
           />
         </v-col>
       </v-row>
@@ -150,8 +157,6 @@
   import { mapActions, mapGetters, mapState } from 'vuex'
   import UrlApi from '~/components/UrlApi/UrlApi'
   import BeaconApi from '~/components/BeaconApi/BeaconApi'
-  import { downloadFromUrl, generateDownloadUrl } from '~/lib/external-api'
-  import getFeature from '~/lib/get-feature'
   import _ from 'lodash'
 
   export default {
@@ -263,20 +268,24 @@
           this.removeApiLayerFromMap()
         }
       },
-      watch: {
-        selectedApi(newApi) {
-          if (newApi) {
-            this.setMultipleSelection(newApi.pointSelection)
-            
-            // Set default columns for Beacon API
-            if (newApi.requestType === 'beacon') {
-              const params = newApi.queryParameters || []
-              this.selectedColumns = params.slice(0, Math.min(4, params.length))
-            } else {
-              this.selectedColumns = []
-            }
+      selectedApi(newApi) {
+        if (newApi) {
+          this.setMultipleSelection(newApi.pointSelection)
+          
+          // Set default columns for Beacon API
+          if (newApi.requestType === 'beacon') {
+            const params = newApi.queryParameters || []
+            this.selectedColumns = params.slice(0, Math.min(4, params.length))
+          } else {
+            this.selectedColumns = []
           }
-        },
+        }
+      },
+      selectedLayerToDownloadFrom() {
+        // Ensure layer visibility is updated when the selected layer changes
+        this.$nextTick(() => {
+          this.hideActiveLayers()
+        })
       },
     },
     mounted() {
@@ -295,9 +304,6 @@
 
     methods: {
       ...mapActions('map', [ 'setDrawMode', 'addDrawnFeature', 'clearDrawnFeatures', 'setSelectedLayerForSelection', 'loadApiLayerOnMap', 'removeApiLayerFromMap', 'updateWmsLayerOpacity', 'setMultipleSelection' ]),
-      selectionCoordinates(features) {
-        return features.toString().replace(/,/g, ' ')
-      },
       handleSelectionLayerSelect(id) {
         //Layer to be used for areas selections. This layer is provided from the externalApi model.
         const selectedLayer = this.layersToDownloadWith.find(layer => layer.id === id)
@@ -334,25 +340,6 @@
         }
 
       },
-      drawnFeatureCoordinates(drawnFeature) {
-
-        let featureCoordinates = []
-        if (Array.from(drawnFeature?.geometry?.coordinates).length === 2) {
-          const coords = Array.from(drawnFeature?.geometry?.coordinates)
-          const margin = 0.001
-          const minx = coords[0] - margin
-          const maxx = coords[0] + margin
-          const miny = coords[1] - margin
-          const maxy = coords[1] + margin
-          featureCoordinates = [ minx, maxy, maxx, maxy, maxx, miny, minx, miny, minx, maxy ]
-        } else {
-          featureCoordinates = drawnFeature?.geometry?.coordinates
-            ? Array.from(drawnFeature?.geometry?.coordinates).map(coordinates => coordinates.flat())
-            : []
-        }
-
-        return featureCoordinates
-      },
       async onDrawModeSelect(mode) {
         // We need to wait for clearing the feature
         // before we can start drawing again
@@ -375,39 +362,6 @@
         }
       },
 
-      async getValuesOfFeature(layer, selectedFeatures) {
-        const url = layer.url
-
-        let referenceLayer
-        if (layer.downloadLayer) {
-          referenceLayer = layer.downloadLayer
-        } else {
-          referenceLayer = layer.layer
-        }
-
-        const { features } = await getFeature({
-          url,
-          layer: referenceLayer,
-          coordinates: this.selectionCoordinates(selectedFeatures),
-        })
-        let { layerAttributeArea, layerAttributePreFilter } = this.selectedApi.propertyMapping
-
-        const selectedAreasNamesAll = features.map(feature => feature.properties[layerAttributeArea])
-        const selectedAreasNames = [ ...new Set(selectedAreasNamesAll) ]
-
-
-        layerAttributePreFilter = layerAttributePreFilter.split(', ') // in case more than one pre-filters are provided
-        const preFiltersValuesAll = layerAttributePreFilter.map(filter => {
-
-          return features.map(feature => feature.properties[filter])
-        })
-
-
-        const preFiltersValues = preFiltersValuesAll.map(preFilter => [ ... new Set(preFilter) ][0])
-
-
-        return { selectedAreasNames, preFiltersValues }
-      },
 
       handleFilterChange(value) {
         this.selectedFilters = value
@@ -449,102 +403,19 @@
         }
       },
       async handleDownloadClick() {
-
         this.requestFailure = false
-        const externalApi = this.selectedApi
-
-        let selectedArea // id of clicked feature to be used in the areaFilter, 
-        let selectedAreas = [] // in case of AquaDesk we have have multipleAreas
-        let preFiltersValues = []// in the case of AquaDesk we need to set a default filter for taxontype
-
-        const { apiAttributeArea, apiAttributePreFilter } = externalApi.propertyMapping
-
-        const { formatCsv, name } = externalApi
-        if (!externalApi.pointSelection) {
-          // when drawmode is static and we don't need pre-filter values then we can use selectedAreas 
-          //(derived from the drawnFeatures) directly
-
-          //TODO: if in the future these apis offer Multi area selection then loop over the drawnFeatures
-          selectedArea = this.selectedAreaName
-
-
+        
+        if (this.isBeaconApi) {
+          // Will be handled by BeaconApi component
+          if (this.$refs.beaconApi) {
+            await this.$refs.beaconApi.download()
+          }
         } else {
-          //we need a getFeature request to get the values of the feature
-          //the drawnFeature can be either point, multiple points or polygon
-
-          for await (const featureValues of this.drawnFeatures.map(drawnFeature => this.getValuesOfFeature(this.selectedLayerToDownloadFrom, this.drawnFeatureCoordinates(drawnFeature)))) {
-            selectedAreas = [ ...selectedAreas, _.get(featureValues, 'selectedAreasNames') ].flat()
-            preFiltersValues = [ ...preFiltersValues, _.get(featureValues, 'preFiltersValues') ].flat()
-
+          // Handled by UrlApi component
+          if (this.$refs.urlApi) {
+            await this.$refs.urlApi.download()
           }
         }
-
-        let areaFilter
-        let preFilter = []
-
-        // compose a filter definition in the format of KeyValueFilter
-        if (selectedArea) {
-          areaFilter = {
-            name: apiAttributeArea,
-            comparer: 'eq',
-            value: selectedArea,
-          }
-        } else if (selectedAreas.length) {
-          areaFilter = {
-            name: apiAttributeArea,
-            comparer: 'in',
-            value: `[ ${ selectedAreas.map(area => `"${ area }"`) } ]`,
-          }
-        }
-
-
-
-        if (apiAttributePreFilter) {
-          const preFiltersArray = apiAttributePreFilter.split(',')
-
-          preFilter = preFiltersArray.map((a, ind) => {
-
-            // compose a filter definition in the format of KeyValueFilter
-            return {
-              name: a,
-              comparer: 'eq',
-              value: JSON.stringify(preFiltersValues[ind]),
-            }
-          })
-        }
-
-
-
-        let fileExtension = 'json'
-        if (formatCsv) {
-          fileExtension = 'csv'
-        }
-        const downloadUrl = generateDownloadUrl({
-          ...externalApi, filters: [
-            areaFilter,
-            ...(preFilter) && preFilter, //TODO: fix this
-            ...(this.selectedFilters || []),
-          ],
-        })
-
-        this.isDownloading = true
-        const date = new Date(Date.now())
-        const fileName = `${ name }_${ date.toLocaleString() }.${ fileExtension }`
-
-        downloadFromUrl({
-          url: downloadUrl,
-          apiKey: process.env[externalApi.apiKey],
-          formatCsv,
-          fileName,
-        })
-          .then(() => this.$trackEvent('download', 'api'))
-          .finally(() => {
-            this.isDownloading = false
-          }).catch(err => {
-            console.log('ERROR', err)
-            this.requestFailure = `Request failed: ${ err }`
-          })
-
       },
     },
   }
