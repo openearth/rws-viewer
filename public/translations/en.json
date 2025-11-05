@@ -96,5 +96,6 @@
   "whoAreYou": "Who are you?",
   "wmsLayer": "WMS layer",
   "wmsUrl": "WMS url",
-  "screenshot": "Take a snapshot of the current view and save it to png"
+  "screenshot": "Take a snapshot of the current view and save it to png",
+  "selectedLayerNotAvailable": "! It is not possible to recognize if this layer allows downloading of data from the service."
 }
