@@ -97,5 +97,9 @@
   "wmsLayer": "WMS laag",
   "wmsUrl": "WMS url",
   "screenshot": "Maak een snapshot van het huidige weergave en sla deze op naar png",
-  "selectedLayerNotAvailable": "! Het is niet mogelijk te achterhalen of de kaartlaag downloaden van data mogelijk maakt."
+  "selectedLayerNotAvailable": "! Het is niet mogelijk te achterhalen of de kaartlaag downloaden van data mogelijk maakt.",
+  "selectColumns": "Selecteer Kolommen",
+  "selectColumnsDesc": "Kies welke kolommen u wilt opnemen in de download",
+  "chooseColumns": "Kies kolommen"
+ 
 }

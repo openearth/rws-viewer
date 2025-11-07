@@ -38,6 +38,7 @@
     "@mapbox/mapbox-gl-draw-static-mode": "^1.0.1",
     "@netlify/functions": "^3.0.1",
     "@sindresorhus/slugify": "^2.1.0",
+    "@turf/bbox": "^7.2.0",
     "@types/prompt": "^1.1.8",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
@@ -99,6 +100,7 @@
     "stylelint": "^16.6.1",
     "stylelint-config-property-sort-order-smacss": "^10.0.0",
     "stylelint-config-standard": "^36.0.1",
+    "stylelint-scss": "^6.12.1",
     "vue-cli-plugin-vuetify": "^2.4.3",
     "vue-template-compiler": "^2.6.11",
     "vuetify-loader": "^1.9.2"
