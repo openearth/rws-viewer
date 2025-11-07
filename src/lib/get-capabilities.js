@@ -111,7 +111,7 @@ return 'Unknown'
     // Extract from both ows:Title and Title elements for WFS
     const owsTitles = Array.from(wfsXml.getElementsByTagName('ows:Title')).map(el => el.textContent)
     const plainTitles = Array.from(wfsXml.getElementsByTagName('Title')).map(el => el.textContent)
-    const wfsLayers = [...new Set([...owsTitles, ...plainTitles])]
+    const wfsLayers = [ ...new Set([ ...owsTitles, ...plainTitles ]) ]
     
     // Keep WCS as-is
     const wcsLayers = Array.from(wcsXml.getElementsByTagName('ows:Title')).map(el => el.textContent)
@@ -207,30 +207,6 @@ export function getSupportedOutputFormats(type, capabilities) {
 
 }
 
-/**
- * Determines if the layer is a raster layer
- */
-export function isRasterLayer(type, capabilities, layer) {
-  if (type !== 'wcs') {
-    return false
-  }
-
-  const findCoverageForLayer = id => (layers) => {
-    id = id.replace(/:/, '__')
-    return layers.find(layer => layer.textContent.trim() === id)
-  }
-
-  const keywords = pipe(
-    () => [ ...capabilities.querySelectorAll('CoverageId') ],
-    findCoverageForLayer(layer),
-    getParentNode,
-    el => el.getElementsByTagName('ows:Keywords'),
-    getTags('ows:Keyword'),
-    map(getTagContent),
-  )()
-
-  return keywords.includes('GeoTIFF')
-}
 async function readWmsCapabilitiesProperties(capabilities, layerObject) {
 /**
  * function that reads the wms capabilities response of the workpspace

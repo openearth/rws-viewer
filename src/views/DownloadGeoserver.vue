@@ -195,7 +195,7 @@
   import metaRepo from '~/repo/metaRepo'
   import buildDownloadUrl from '~/lib/build-download-url'
   import { describeFeatureType, readFeatureProperties } from '~/lib/wfs-filter-helpers'
-  import { isRasterLayer, getDataServicesCapabilities } from '~/lib/get-capabilities'
+  import { getDataServicesCapabilities } from '~/lib/get-capabilities'
 
 
 
@@ -271,15 +271,10 @@
       },
 
       isRasterLayer() {
-        if (!this.layerCapabilities) {
+        if (!this.selectedLayerData) {
           return false
         }
-
-        return isRasterLayer(
-          this.selectedLayerData.dataServiceType,
-          this.layerCapabilities,
-          this.selectedLayerData.layer,
-        )
+        return this.selectedLayerData.dataServiceType === 'wcs'
       },
 
       isSelectedLayerDownloadable() {
