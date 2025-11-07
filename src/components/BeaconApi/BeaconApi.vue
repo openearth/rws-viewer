@@ -111,6 +111,16 @@
         required: false,
         default: null,
       },
+      filterConfig: {
+        type: Object,
+        required: false,
+        default: () => ({
+          hiddenFilters: [ 'longitude', 'latitude' ],
+          combinableFilters: [ 'longitude', 'latitude' ],
+          defaultComparer: 'equals',
+          dateComparer: 'datetime_range',
+        }),
+      },
     },
     data() {
       return {
@@ -128,15 +138,59 @@
     computed: {
       selectableFilters() {
         return this.filters
-          .filter(filter => filter !== 'longitude' && filter !== 'latitude')
+          .filter(filter => !this.filterConfig.hiddenFilters.includes(filter))
           .filter(filter => 
             !this.enabledFilters.find(enabledFilter => enabledFilter.name === filter)
           )
       },
       visibleFilters() {
         return this.enabledFilters.filter(filter => 
-          !filter.hidden && filter.name !== 'longitude' && filter.name !== 'latitude'
+          !filter.hidden && !this.filterConfig.hiddenFilters.includes(filter.name)
         )
+      },
+      comparerMap() {
+        return {
+          equals: (value, name) => ({
+            eq: value,
+            for_query_parameter: name,
+          }),
+          min: (value, name) => ({
+            min: this.parseFilterValue(value),
+            for_query_parameter: name,
+          }),
+          max: (value, name) => ({
+            max: this.parseFilterValue(value),
+            for_query_parameter: name,
+          }),
+          between: (value, name) => {
+            const parts = value.split(',').map(v => v.trim())
+            if (parts.length === 2) {
+              return {
+                min: this.parseFilterValue(parts[0]),
+                max: this.parseFilterValue(parts[1]),
+                for_query_parameter: name,
+              }
+            }
+            return {
+              min: this.parseFilterValue(value),
+              for_query_parameter: name,
+            }
+          },
+          datetime_range: (value, name) => {
+            const parts = value.split(',').map(v => v.trim())
+            if (parts.length === 2) {
+              return {
+                min: this.parseFilterValue(parts[0]),
+                max: this.parseFilterValue(parts[1]),
+                for_query_parameter: name,
+              }
+            }
+            return {
+              min: this.parseFilterValue(value),
+              for_query_parameter: name,
+            }
+          },
+        }
       },
     },
     watch: {
@@ -176,12 +230,21 @@
 
           this.processedRectangle = feature.id
 
-          const filterConfigs = [
-            { name: 'longitude', comparer: 'min', value: minLng },
-            { name: 'longitude', comparer: 'max', value: maxLng },
-            { name: 'latitude', comparer: 'min', value: minLat },
-            { name: 'latitude', comparer: 'max', value: maxLat },
-          ]
+          const spatialFields = this.filterConfig.combinableFilters
+          const filterConfigs = []
+
+          if (spatialFields.includes('longitude')) {
+            filterConfigs.push(
+              { name: 'longitude', comparer: 'min', value: minLng },
+              { name: 'longitude', comparer: 'max', value: maxLng }
+            )
+          }
+          if (spatialFields.includes('latitude')) {
+            filterConfigs.push(
+              { name: 'latitude', comparer: 'min', value: minLat },
+              { name: 'latitude', comparer: 'max', value: maxLat }
+            )
+          }
 
           filterConfigs.forEach(config => {
             const existingFilter = this.enabledFilters.find(
@@ -207,7 +270,7 @@
         const isDateFilter = this.checkDateFilters({ name: this.selectedFilter })
         this.enabledFilters.push({
           name: this.selectedFilter,
-          comparer: isDateFilter ? 'datetime_range' : this.beaconComparers[0],
+          comparer: isDateFilter ? this.filterConfig.dateComparer : this.filterConfig.defaultComparer,
           value: '',
           minDate: '',
           maxDate: '',
@@ -238,43 +301,12 @@
           }
         }
         
-        switch (comparer) {
-        case 'equals':
-          return {
-            eq: value,
-            for_query_parameter: name,
-          }
-        case 'min':
-          return {
-            min: this.parseFilterValue(value),
-            for_query_parameter: name,
-          }
-        case 'max':
-          return {
-            max: this.parseFilterValue(value),
-            for_query_parameter: name,
-          }
-        case 'between':
-        case 'datetime_range': {
-          const parts = value.split(',').map(v => v.trim())
-          if (parts.length === 2) {
-            return {
-              min: this.parseFilterValue(parts[0]),
-              max: this.parseFilterValue(parts[1]),
-              for_query_parameter: name,
-            }
-          }
-          return {
-            min: this.parseFilterValue(value),
-            for_query_parameter: name,
-          }
+        const mapper = this.comparerMap[comparer]
+        if (mapper) {
+          return mapper(value, name)
         }
-        default:
-          return {
-            eq: value,
-            for_query_parameter: name,
-          }
-        }
+        
+        return this.comparerMap.equals(value, name)
       },
       formatDateForFilter(dateString, isMin) {
         if (!dateString) {
@@ -327,8 +359,10 @@
               return
             }
             
-            if ((filter.name === 'longitude' || filter.name === 'latitude') &&
-              (filter.comparer === 'min' || filter.comparer === 'max')) {
+            const isCombinable = this.filterConfig.combinableFilters.includes(filter.name)
+            const isMinMax = filter.comparer === 'min' || filter.comparer === 'max'
+            
+            if (isCombinable && isMinMax) {
               if (!filterGroups[filter.name]) {
                 filterGroups[filter.name] = {}
               }
@@ -338,7 +372,7 @@
             }
           })
           
-          ;[ 'longitude', 'latitude' ].forEach(name => {
+          this.filterConfig.combinableFilters.forEach(name => {
             const group = filterGroups[name]
             if (group && group.min && group.max) {
               filters.push({
