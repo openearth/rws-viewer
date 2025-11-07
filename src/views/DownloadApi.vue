@@ -98,13 +98,11 @@
           <beacon-api
             v-if="isBeaconApi"
             ref="beaconApi"
-            :available-columns="availableColumns"
             :filters="availableFiltersForSelectedLayer"
             :date-filters="dateFilters"
             :drawn-features="drawnFeatures"
             :external-api="selectedApi"
             @change="handleFilterChange"
-            @columns-change="handleColumnChange"
             @downloading="isDownloading = $event"
             @error="requestFailure = $event"
             @download-success="requestFailure = false"
@@ -165,7 +163,6 @@
       selectedLayerId: null,
       isDownloading: false,
       selectedFilters: null,
-      selectedColumns: [], // For Beacon API column selection
       requestFailure: false,
       selectedLayerIdToDownloadWith: null,
       selectedLayerToDownloadFrom: null,
@@ -183,20 +180,6 @@
       // Beacon API detection
       isBeaconApi() {
         return this.selectedApi?.requestType === 'beacon'
-      },
-
-      // Available columns for Beacon API
-        
-      availableColumns() {
-        if (!this.isBeaconApi) {
-          return []
-        }
-       
-        const queryParameters = this.selectedApi.queryParameters.split(',').map(param => param.trim())
-        return queryParameters.map(param => ({
-          text: param,
-          value: param,
-        }))
       },
       //Active layers to download from. Each layer is connected to one and only API.
       activeLayers() {
@@ -271,14 +254,6 @@
       selectedApi(newApi) {
         if (newApi) {
           this.setMultipleSelection(newApi.pointSelection)
-          
-          // Set default columns for Beacon API
-          if (newApi.requestType === 'beacon') {
-            const params = newApi.queryParameters || []
-            this.selectedColumns = params.slice(0, Math.min(4, params.length))
-          } else {
-            this.selectedColumns = []
-          }
         }
       },
       selectedLayerToDownloadFrom() {
@@ -366,10 +341,6 @@
       handleFilterChange(value) {
         this.selectedFilters = value
         this.requestFailure = false
-      },
-
-      handleColumnChange(columns) {
-        this.selectedColumns = columns
       },
       hideActiveLayers() {
 

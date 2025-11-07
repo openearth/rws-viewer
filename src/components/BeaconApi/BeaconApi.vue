@@ -1,74 +1,21 @@
 <template>
   <v-container class="pa-0">
-   
-
-    <!-- Column Selection Section -->
-    <v-row v-if="availableColumns.length">
-      <v-col>
-        <h4>{{ $t('selectColumns') }}</h4>
-        <p class="body-2">{{ $t('selectColumnsDesc') }}</p>
-        
-        <v-combobox
-          v-model="selectedColumns"
-          :items="availableColumns"
-          :label="$t('chooseColumns')"
-          multiple
-          small-chips
-          deletable-chips
-          dense
-          outlined
-          @change="handleColumnChange"
-        />
-        <div class="mt-2">
-          <v-chip
-            v-for="col in hardcodedDisplayColumns"
-            :key="col"
-            x-small
-            color="grey"
-            text-color="white"
-            class="mr-1 mb-1"
-          >
-            {{ col }} (hardcoded)
-          </v-chip>
-        </div>
-      </v-col>
-    </v-row>
-
-    <v-divider v-if="availableColumns.length" class="my-4" />
     <h3 class="pb-3">
       {{ $t('filtersDownload') }}
     </h3>
 
-    <p v-if="!enabledFilters || !enabledFilters.length" class="body-2">
+    <p v-if="!visibleFilters || !visibleFilters.length" class="body-2">
       {{ $t('noFilterSelected') }}
     </p>
     <!-- Filter Section -->
-    <v-row v-for="filter in allDisplayedFilters" :key="filter.name + '-' + (filter.comparer || 'hardcoded')">
+    <v-row v-for="filter in visibleFilters" :key="filter.name + '-' + (filter.comparer || '')">
       <v-col :cols="3" class="d-flex align-center text-break">
         {{ filter.name }}
-        <v-chip
-          v-if="filter.hardcoded"
-          x-small
-          color="grey"
-          text-color="white"
-          class="ml-2"
-        >
-          Hardcoded
-        </v-chip>
       </v-col>
       <v-col :cols="4">
         <v-select
-          v-if="!filter.hardcoded"
           v-model="filter.comparer"
           :items="dateItems(filter)"
-          dense
-          outlined
-          hide-details
-        />
-        <v-text-field
-          v-else
-          value="FLUORCTE"
-          readonly
           dense
           outlined
           hide-details
@@ -99,16 +46,8 @@
         </template>
         <!-- Regular text field for non-date filters -->
         <v-text-field
-          v-else-if="!filter.hardcoded"
-          v-model="filter.value"
-          dense
-          outlined
-          hide-details
-        />
-        <v-text-field
           v-else
-          value="FLUORCTE"
-          readonly
+          v-model="filter.value"
           dense
           outlined
           hide-details
@@ -116,7 +55,6 @@
       </v-col>
       <v-col :cols="1">
         <v-btn
-          v-if="!filter.hardcoded"
           icon
         >
           <v-icon @click="removeFilter(filter)">
@@ -155,11 +93,6 @@
 <script>
   export default {
     props: {
-      availableColumns: {
-        type: Array,
-        required: true,
-        default: () => []
-      },
       filters: {
         type: Array,
         required: true,
@@ -182,20 +115,11 @@
     },
     data() {
       return {
-        selectedColumns: [],
         enabledFilters: [],
         selectedFilter: null,
         processedRectangle: null, // Track processed rectangle to avoid reprocessing
-        // Beacon API specific operators
+        // Beacon API operators (same for all filters)
         beaconComparers: Object.freeze([
-          'equals',
-          'min',
-          'max',
-          'between',
-          'datetime_range'
-        ]),
-        // Date comparers for date filters
-        dateComparers: Object.freeze([
           'equals',
           'min',
           'max',
@@ -206,39 +130,18 @@
     },
     computed: {
       selectableFilters() {
-        return this.filters.filter(filter => 
-          !this.enabledFilters.find(enabledFilter => enabledFilter.name === filter)
+        // Exclude longitude and latitude from selectable filters
+        return this.filters
+          .filter(filter => filter !== 'longitude' && filter !== 'latitude')
+          .filter(filter => 
+            !this.enabledFilters.find(enabledFilter => enabledFilter.name === filter)
+          )
+      },
+      visibleFilters() {
+        // Only show filters that are not hidden (exclude longitude/latitude)
+        return this.enabledFilters.filter(filter => 
+          !filter.hidden && filter.name !== 'longitude' && filter.name !== 'latitude'
         )
-      },
-      allDisplayedFilters() {
-        // Combine enabled filters with hardcoded filters for display
-        const hardcodedFilter = {
-          name: 'grootheidcode',
-          comparer: 'equals',
-          value: 'FLUORCTE',
-          hardcoded: true,
-        }
-        return [ ...this.enabledFilters, hardcodedFilter ]
-      },
-      allDisplayedColumns() {
-        // Combine selected columns with hardcoded columns for display
-        const hardcodedColumns = [ 'grootheidcode' ]
-        const selectedColumnNames = this.selectedColumns.map(col => 
-          typeof col === 'string' ? col : col.value || col.text || col
-        )
-        const allColumnNames = [ ...new Set([ ...selectedColumnNames, ...hardcodedColumns ]) ]
-        
-        // Map back to column objects preserving format
-        return allColumnNames.map(val => {
-          const colObj = this.availableColumns.find(col => {
-            const colVal = typeof col === 'string' ? col : col.value || col.text
-            return colVal === val
-          })
-          return colObj || val
-        })
-      },
-      hardcodedDisplayColumns() {
-        return [ 'grootheidcode' ]
       },
     },
     watch: {
@@ -321,83 +224,36 @@
         // Mark this rectangle as processed
         this.processedRectangle = feature.id
 
-        // Check if longitude/latitude filters already exist
-        const hasLongitudeMinFilter = this.enabledFilters.some(f => f.name === 'longitude' && f.comparer === 'min')
-        const hasLongitudeMaxFilter = this.enabledFilters.some(f => f.name === 'longitude' && f.comparer === 'max')
-        const hasLatitudeMinFilter = this.enabledFilters.some(f => f.name === 'latitude' && f.comparer === 'min')
-        const hasLatitudeMaxFilter = this.enabledFilters.some(f => f.name === 'latitude' && f.comparer === 'max')
+        // Define filter configurations for longitude and latitude
+        const filterConfigs = [
+          { name: 'longitude', comparer: 'min', value: bbox.minLng },
+          { name: 'longitude', comparer: 'max', value: bbox.maxLng },
+          { name: 'latitude', comparer: 'min', value: bbox.minLat },
+          { name: 'latitude', comparer: 'max', value: bbox.maxLat },
+        ]
 
-        // Add longitude min filter if it doesn't exist
-        if (!hasLongitudeMinFilter) {
-          this.enabledFilters.push({
-            name: 'longitude',
-            comparer: 'min',
-            value: bbox.minLng.toString(),
-          })
-        }
+        // Add or update each filter
+        filterConfigs.forEach(config => {
+          const existingFilter = this.enabledFilters.find(
+            f => f.name === config.name && f.comparer === config.comparer
+          )
 
-        // Add longitude max filter if it doesn't exist
-        if (!hasLongitudeMaxFilter) {
-          this.enabledFilters.push({
-            name: 'longitude',
-            comparer: 'max',
-            value: bbox.maxLng.toString(),
-          })
-        }
-
-        // Add latitude min filter if it doesn't exist
-        if (!hasLatitudeMinFilter) {
-          this.enabledFilters.push({
-            name: 'latitude',
-            comparer: 'min',
-            value: bbox.minLat.toString(),
-          })
-        }
-
-        // Add latitude max filter if it doesn't exist
-        if (!hasLatitudeMaxFilter) {
-          this.enabledFilters.push({
-            name: 'latitude',
-            comparer: 'max',
-            value: bbox.maxLat.toString(),
-          })
-        }
-
-        // Auto-select longitude and latitude columns
-        const columnValues = this.availableColumns.map(col => 
-          typeof col === 'string' ? col : col.value || col.text
-        )
-        
-        const selectedValues = Array.isArray(this.selectedColumns) 
-          ? this.selectedColumns.map(col => typeof col === 'string' ? col : col.value || col.text || col)
-          : []
-
-        // Add longitude if not already selected
-        if (!selectedValues.includes('longitude') && columnValues.includes('longitude')) {
-          selectedValues.push('longitude')
-        }
-
-        // Add latitude if not already selected
-        if (!selectedValues.includes('latitude') && columnValues.includes('latitude')) {
-          selectedValues.push('latitude')
-        }
-
-        // Update selectedColumns with the proper format
-        this.selectedColumns = selectedValues.map(val => {
-          // Find the matching column object to preserve format
-          const colObj = this.availableColumns.find(col => {
-            const colVal = typeof col === 'string' ? col : col.value || col.text
-            return colVal === val
-          })
-          return colObj || val
+          if (existingFilter) {
+            // Update existing filter value
+            existingFilter.value = config.value.toString()
+          } else {
+            // Add new filter (hidden from UI)
+            this.enabledFilters.push({
+              name: config.name,
+              comparer: config.comparer,
+              value: config.value.toString(),
+              hidden: true,
+            })
+          }
         })
-
-        // Emit column change
-        this.handleColumnChange(this.selectedColumns)
       },
       addFilter() {
         const isDateFilter = this.checkDateFilters({ name: this.selectedFilter })
-        const filterName = this.selectedFilter // Capture filter name before resetting
         this.enabledFilters.push({
           name: this.selectedFilter,
           comparer: isDateFilter ? 'datetime_range' : this.beaconComparers[0], // default to datetime_range for date filters
@@ -406,53 +262,17 @@
           maxDate: '',
         })
         this.selectedFilter = this.selectableFilters[0]
-        
-        // Auto-select the column when a filter is added
-        this.autoSelectFilterColumn(filterName)
-      },
-      autoSelectFilterColumn(filterName) {
-        if (!filterName) {
-          return
-        }
-        
-        const columnValues = this.availableColumns.map(col => 
-          typeof col === 'string' ? col : col.value || col.text
-        )
-        
-        const selectedValues = Array.isArray(this.selectedColumns) 
-          ? this.selectedColumns.map(col => typeof col === 'string' ? col : col.value || col.text || col)
-          : []
-
-        // Add filter column if not already selected and it exists in availableColumns
-        if (!selectedValues.includes(filterName) && columnValues.includes(filterName)) {
-          selectedValues.push(filterName)
-        }
-
-        // Update selectedColumns with the proper format
-        this.selectedColumns = selectedValues.map(val => {
-          // Find the matching column object to preserve format
-          const colObj = this.availableColumns.find(col => {
-            const colVal = typeof col === 'string' ? col : col.value || col.text
-            return colVal === val
-          })
-          return colObj || val
-        })
-
-        // Emit column change
-        this.handleColumnChange(this.selectedColumns)
       },
       removeFilter(filter) {
         this.enabledFilters = this.enabledFilters.filter(enabledFilter => enabledFilter !== filter)
         this.selectedFilter = this.selectableFilters[0]
       },
-      handleColumnChange(columns) {
-        this.$emit('columns-change', columns)
-      },
       checkDateFilters(filter) {
         return this.dateFilters.includes(filter.name)
       },
-      dateItems(filter) {
-        return this.checkDateFilters(filter) ? this.dateComparers : this.beaconComparers
+      dateItems() {
+        // All filters use the same comparers
+        return this.beaconComparers
       },
       
       buildBeaconFilter(filter) {
@@ -544,67 +364,67 @@
             throw new Error('External API configuration is missing')
           }
           
-          const { name, from } = externalApi
+          const { name, endpoint } = externalApi
           
-          // Build query_parameters from selectedColumns
-          // Start with selected columns
-          const selectedColumnNames = this.selectedColumns.map(column => {
-            // Handle both string and object formats
-            const columnName = typeof column === 'string' ? column : (column.value || column.text || column)
-            return columnName
-          })
-          
-          // Ensure all filter columns are included in query_parameters
-          const filterColumnNames = this.enabledFilters
-            .filter(filter => {
-              // Include filters with values OR date filters with minDate/maxDate
-              if (this.checkDateFilters(filter)) {
-                return filter.minDate && filter.maxDate
-              }
-              return filter.value
-            })
-            .map(filter => filter.name)
-          
-          // Hardcoded columns that should always be included
-          const hardcodedColumns = [ 'grootheidcode' ]
-          
-          // Combine and deduplicate column names
-          const allColumnNames = [ ...new Set([ ...selectedColumnNames, ...filterColumnNames, ...hardcodedColumns ]) ]
-          
-          // Build query_parameters array
-          const queryParameters = allColumnNames.map(columnName => ({
-            column: columnName,
+          // Build query_parameters from ALL filters (not just selected ones)
+          const queryParameters = this.filters.map(filterName => ({
+            column: filterName,
             alias: null,
           }))
           
-          // Build filters array
+          // Build filters array - only include selected/enabled filters
           const filters = []
           
-          // Add user-defined filters
+          // Group filters by name for longitude/latitude combination
+          const filterGroups = {}
+          
+          // Group all enabled filters (including hidden longitude/latitude)
           this.enabledFilters.forEach(filter => {
-            // Include filters with values OR date filters with minDate/maxDate
-            if (this.checkDateFilters(filter)) {
-              if (filter.minDate && filter.maxDate) {
-                filters.push(this.buildBeaconFilter(filter))
+            // Skip filters without values
+            if (this.checkDateFilters(filter) && (!filter.minDate || !filter.maxDate)) {
+              return
+            }
+            if (!this.checkDateFilters(filter) && !filter.value) {
+              return
+            }
+            
+            // For longitude and latitude, group by name and comparer
+            if ((filter.name === 'longitude' || filter.name === 'latitude') &&
+              (filter.comparer === 'min' || filter.comparer === 'max')) {
+              if (!filterGroups[filter.name]) {
+                filterGroups[filter.name] = {}
               }
-            } else if (filter.value) {
+              filterGroups[filter.name][filter.comparer] = filter
+            } else {
+              // Process other filters directly
               filters.push(this.buildBeaconFilter(filter))
             }
           })
           
-          // Hardcoded filter for grootheidcode (TODO: make this configurable)
-          filters.push({
-            or: [
-              {
-                eq: 'FLUORCTE',
-                for_query_parameter: 'grootheidcode',
-              },
-            ],
+          // Combine longitude and latitude filters if both min and max exist
+          ;[ 'longitude', 'latitude' ].forEach(name => {
+            const group = filterGroups[name]
+            if (group && group.min && group.max) {
+              // Combine into single object
+              filters.push({
+                min: this.parseFilterValue(group.min.value),
+                max: this.parseFilterValue(group.max.value),
+                for_query_parameter: name,
+              })
+            } else {
+              // Add individual filters
+              if (group?.min) {
+                filters.push(this.buildBeaconFilter(group.min))
+              }
+              if (group?.max) {
+                filters.push(this.buildBeaconFilter(group.max))
+              }
+            }
           })
           
           // Build request body
           const requestBody = {
-            from: from,
+            from: endpoint,
             query_parameters: queryParameters,
             filters: filters,
             output: {
