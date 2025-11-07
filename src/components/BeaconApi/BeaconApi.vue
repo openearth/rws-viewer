@@ -7,7 +7,6 @@
     <p v-if="!visibleFilters || !visibleFilters.length" class="body-2">
       {{ $t('noFilterSelected') }}
     </p>
-    <!-- Filter Section -->
     <v-row v-for="filter in visibleFilters" :key="filter.name + '-' + (filter.comparer || '')">
       <v-col :cols="3" class="d-flex align-center text-break">
         {{ filter.name }}
@@ -22,7 +21,6 @@
         />
       </v-col>
       <v-col :cols="4">
-        <!-- Date picker for date filters -->
         <template v-if="checkDateFilters(filter)">
           <v-text-field
             v-model="filter.minDate"
@@ -44,7 +42,6 @@
             style="padding-right: 8px;"
           />
         </template>
-        <!-- Regular text field for non-date filters -->
         <v-text-field
           v-else
           v-model="filter.value"
@@ -64,7 +61,6 @@
       </v-col>
     </v-row>
 
-    <!-- Add Filter Section -->
     <v-row>
       <v-col :cols="10">
         <v-select
@@ -91,6 +87,9 @@
 </template>
 
 <script>
+  import bbox from '@turf/bbox'
+  import { parseISO, startOfDay, endOfDay, formatISO } from 'date-fns'
+
   export default {
     props: {
       filters: {
@@ -117,20 +116,17 @@
       return {
         enabledFilters: [],
         selectedFilter: null,
-        processedRectangle: null, // Track processed rectangle to avoid reprocessing
-        // Beacon API operators (same for all filters)
+        processedRectangle: null,
         beaconComparers: Object.freeze([
           'equals',
           'min',
           'max',
-          'between',
           'datetime_range'
         ]),
       }
     },
     computed: {
       selectableFilters() {
-        // Exclude longitude and latitude from selectable filters
         return this.filters
           .filter(filter => filter !== 'longitude' && filter !== 'latitude')
           .filter(filter => 
@@ -138,7 +134,6 @@
           )
       },
       visibleFilters() {
-        // Only show filters that are not hidden (exclude longitude/latitude)
         return this.enabledFilters.filter(filter => 
           !filter.hidden && filter.name !== 'longitude' && filter.name !== 'latitude'
         )
@@ -155,15 +150,12 @@
       },
       drawnFeatures: {
         handler(newFeatures) {
-          // Process rectangle when features are added after entering the menu
           if (newFeatures && newFeatures.length > 0) {
             const feature = newFeatures[0]
-            // Only process if it's a new rectangle (not already processed)
             if (feature && feature.id !== this.processedRectangle) {
-              this.processRectangleFeature(feature)
+              this.extractBboxFromFeature(feature)
             }
           } else if (!newFeatures || newFeatures.length === 0) {
-            // Reset processed rectangle when features are cleared
             this.processedRectangle = null
           }
         },
@@ -175,88 +167,47 @@
     },
     methods: {
       extractBboxFromFeature(feature) {
-        if (!feature || !feature.geometry || !feature.geometry.coordinates) {
-          return null
-        }
-
-        const coordinates = feature.geometry.coordinates
-        let allCoords = []
-
-        // Handle polygon format: [[[lng1, lat1], [lng2, lat2], ...]]
-        if (feature.geometry.type === 'Polygon' && Array.isArray(coordinates[0])) {
-          // Flatten the first ring (exterior ring) of the polygon
-          allCoords = coordinates[0]
-        } else if (feature.geometry.type === 'Point' && Array.isArray(coordinates)) {
-          // Handle point format: [lng, lat]
-          allCoords = [ coordinates ]
-        } else {
-          return null
-        }
-
-        // Extract longitude and latitude values
-        const lngs = []
-        const lats = []
-
-        allCoords.forEach(coord => {
-          if (Array.isArray(coord) && coord.length >= 2) {
-            lngs.push(coord[0])
-            lats.push(coord[1])
-          }
-        })
-
-        if (lngs.length === 0 || lats.length === 0) {
-          return null
-        }
-
-        return {
-          minLng: Math.min(...lngs),
-          maxLng: Math.max(...lngs),
-          minLat: Math.min(...lats),
-          maxLat: Math.max(...lats),
-        }
-      },
-      processRectangleFeature(feature) {
-        const bbox = this.extractBboxFromFeature(feature)
-        if (!bbox) {
+        if (!feature || !feature.geometry) {
           return
         }
 
-        // Mark this rectangle as processed
-        this.processedRectangle = feature.id
+        try {
+          const [ minLng, minLat, maxLng, maxLat ] = bbox(feature)
 
-        // Define filter configurations for longitude and latitude
-        const filterConfigs = [
-          { name: 'longitude', comparer: 'min', value: bbox.minLng },
-          { name: 'longitude', comparer: 'max', value: bbox.maxLng },
-          { name: 'latitude', comparer: 'min', value: bbox.minLat },
-          { name: 'latitude', comparer: 'max', value: bbox.maxLat },
-        ]
+          this.processedRectangle = feature.id
 
-        // Add or update each filter
-        filterConfigs.forEach(config => {
-          const existingFilter = this.enabledFilters.find(
-            f => f.name === config.name && f.comparer === config.comparer
-          )
+          const filterConfigs = [
+            { name: 'longitude', comparer: 'min', value: minLng },
+            { name: 'longitude', comparer: 'max', value: maxLng },
+            { name: 'latitude', comparer: 'min', value: minLat },
+            { name: 'latitude', comparer: 'max', value: maxLat },
+          ]
 
-          if (existingFilter) {
-            // Update existing filter value
-            existingFilter.value = config.value.toString()
-          } else {
-            // Add new filter (hidden from UI)
-            this.enabledFilters.push({
-              name: config.name,
-              comparer: config.comparer,
-              value: config.value.toString(),
-              hidden: true,
-            })
-          }
-        })
+          filterConfigs.forEach(config => {
+            const existingFilter = this.enabledFilters.find(
+              f => f.name === config.name && f.comparer === config.comparer
+            )
+
+            if (existingFilter) {
+              existingFilter.value = config.value.toString()
+            } else {
+              this.enabledFilters.push({
+                name: config.name,
+                comparer: config.comparer,
+                value: config.value.toString(),
+                hidden: true,
+              })
+            }
+          })
+        } catch (error) {
+          console.error('Error extracting bbox from feature:', error)
+        }
       },
       addFilter() {
         const isDateFilter = this.checkDateFilters({ name: this.selectedFilter })
         this.enabledFilters.push({
           name: this.selectedFilter,
-          comparer: isDateFilter ? 'datetime_range' : this.beaconComparers[0], // default to datetime_range for date filters
+          comparer: isDateFilter ? 'datetime_range' : this.beaconComparers[0],
           value: '',
           minDate: '',
           maxDate: '',
@@ -271,16 +222,13 @@
         return this.dateFilters.includes(filter.name)
       },
       dateItems() {
-        // All filters use the same comparers
         return this.beaconComparers
       },
       
       buildBeaconFilter(filter) {
         const { name, comparer, value, minDate, maxDate } = filter
         
-        // Handle date filters with minDate and maxDate
         if (this.checkDateFilters(filter) && minDate && maxDate) {
-          // Format dates to ISO 8601 format with time
           const minDateFormatted = this.formatDateForFilter(minDate, true)
           const maxDateFormatted = this.formatDateForFilter(maxDate, false)
           return {
@@ -308,7 +256,6 @@
           }
         case 'between':
         case 'datetime_range': {
-          // For between/datetime_range, value should be a string like "min,max"
           const parts = value.split(',').map(v => v.trim())
           if (parts.length === 2) {
             return {
@@ -317,7 +264,6 @@
               for_query_parameter: name,
             }
           }
-          // Fallback to single value if format is incorrect
           return {
             min: this.parseFilterValue(value),
             for_query_parameter: name,
@@ -331,26 +277,24 @@
         }
       },
       formatDateForFilter(dateString, isMin) {
-        // Convert date string (YYYY-MM-DD) to ISO 8601 format with time
         if (!dateString) {
           return null
         }
         
-        if (isMin) {
-          // For min date, use 00:00:00.000Z
-          return `${ dateString }T00:00:00.000Z`
-        } else {
-          // For max date, use 23:59:59Z
-          return `${ dateString }T23:59:59Z`
+        try {
+          const date = parseISO(dateString)
+          const dateWithTime = isMin ? startOfDay(date) : endOfDay(date)
+          return formatISO(dateWithTime)
+        } catch (error) {
+          console.error('Error formatting date:', error)
+          return null
         }
       },
       parseFilterValue(value) {
-        // Try to parse as number for numeric filters (like longitude/latitude)
         const numValue = Number(value)
         if (!isNaN(numValue) && value !== '' && value !== null) {
           return numValue
         }
-        // Return as string for dates and other non-numeric values
         return value
       },
       
@@ -366,21 +310,16 @@
           
           const { name, endpoint } = externalApi
           
-          // Build query_parameters from ALL filters (not just selected ones)
           const queryParameters = this.filters.map(filterName => ({
             column: filterName,
             alias: null,
           }))
           
-          // Build filters array - only include selected/enabled filters
           const filters = []
           
-          // Group filters by name for longitude/latitude combination
           const filterGroups = {}
           
-          // Group all enabled filters (including hidden longitude/latitude)
           this.enabledFilters.forEach(filter => {
-            // Skip filters without values
             if (this.checkDateFilters(filter) && (!filter.minDate || !filter.maxDate)) {
               return
             }
@@ -388,7 +327,6 @@
               return
             }
             
-            // For longitude and latitude, group by name and comparer
             if ((filter.name === 'longitude' || filter.name === 'latitude') &&
               (filter.comparer === 'min' || filter.comparer === 'max')) {
               if (!filterGroups[filter.name]) {
@@ -396,23 +334,19 @@
               }
               filterGroups[filter.name][filter.comparer] = filter
             } else {
-              // Process other filters directly
               filters.push(this.buildBeaconFilter(filter))
             }
           })
           
-          // Combine longitude and latitude filters if both min and max exist
           ;[ 'longitude', 'latitude' ].forEach(name => {
             const group = filterGroups[name]
             if (group && group.min && group.max) {
-              // Combine into single object
               filters.push({
                 min: this.parseFilterValue(group.min.value),
                 max: this.parseFilterValue(group.max.value),
                 for_query_parameter: name,
               })
             } else {
-              // Add individual filters
               if (group?.min) {
                 filters.push(this.buildBeaconFilter(group.min))
               }
@@ -458,11 +392,8 @@
             throw new Error(errorMessage)
           }
           
-          // Download the file
-          // Since we're requesting CSV format, the response will be CSV
           const blob = await response.blob()
           
-          // Ensure correct MIME type for CSV
           const csvBlob = new Blob([ blob ], { type: 'text/csv;charset=utf-8;' })
           
           const { saveAs } = await import('file-saver')

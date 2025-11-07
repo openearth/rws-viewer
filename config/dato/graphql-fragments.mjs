@@ -25,8 +25,7 @@ fragment menuWithLayers on MenuRecord {
         dateFilters
         formatCsv
         maxPageSize
-        queryParameters
-        from
+        endpoint
         freehandRectangleDrawing
         pointSelection
         multipleSelection

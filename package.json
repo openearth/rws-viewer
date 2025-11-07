@@ -38,6 +38,7 @@
     "@mapbox/mapbox-gl-draw-static-mode": "^1.0.1",
     "@netlify/functions": "^3.0.1",
     "@sindresorhus/slugify": "^2.1.0",
+    "@turf/bbox": "^7.2.0",
     "@types/prompt": "^1.1.8",
     "@typescript-eslint/eslint-plugin": "^7.15.0",
     "@typescript-eslint/parser": "^7.15.0",
