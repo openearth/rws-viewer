@@ -97,8 +97,9 @@
   "wmsLayer": "WMS layer",
   "wmsUrl": "WMS url",
   "screenshot": "Take a snapshot of the current view and save it to png",
-  "selectedLayerNotAvailable": "The selected layer is not available for download",
+  "selectedLayerNotAvailable": "! It is not possible to recognize if this layer allows downloading of data from the service.",
   "selectColumns": "Select Columns",
   "selectColumnsDesc": "Choose which columns to include in the download",
   "chooseColumns": "Choose columns"
+  
 }
