@@ -61,13 +61,12 @@
 
         if (info) {
           const { properties } = info
-          console.log('Feature info properties:', properties)
 
           if ('GRAY_INDEX' in properties) {
             properties[`${ this.layer.name }_value`] = properties['GRAY_INDEX']
             delete properties['GRAY_INDEX']
           }
-        
+          console.log('Feature info properties:', properties)
           
           // Get primary color from Vuetify theme
           const primaryColor = this.$vuetify.theme.currentTheme.primary
@@ -110,5 +109,6 @@
     width: 400px;
     max-height: 400px;
     overflow-y: scroll;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 </style>
