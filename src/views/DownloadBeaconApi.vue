@@ -30,7 +30,7 @@
       </v-col>
     </v-row>
     <v-divider class="my-4" />
-    <div v-if="selectedApi">
+    <div v-if="selectedApis.length">
       <v-row>
         <v-col cols="6">
           <v-select
@@ -62,7 +62,7 @@
       </v-row>
       <div v-if="selectedApi.pointSelection">
         <v-subheader>or </v-subheader>
-        <v-row v-if="selectedApi">
+        <v-row v-if="selectedApis.length">
           <v-col>
             <v-btn
               :color="selectionMode === 'selectPoints' ? 'primary' : null"
@@ -102,7 +102,7 @@
             :filters="availableFiltersForSelectedLayer"
             :date-filters="dateFilters"
             :drawn-features="drawnFeatures"
-            :external-api="selectedApi"
+            :external-apis="selectedApis"
             @change="handleFilterChange"
             @downloading="isDownloading = $event"
             @error="requestFailure = $event"
@@ -176,6 +176,16 @@
           }
           return apisLayers
         }, [])
+      },
+
+      // Array of all selected APIs
+      selectedApis() {
+        if (!this.selectedLayersToDownloadFrom || this.selectedLayersToDownloadFrom.length === 0) {
+          return []
+        }
+        return this.selectedLayersToDownloadFrom
+          .map(layer => layer.externalApi[0])
+          .filter(Boolean)
       },
 
       // Use first selected layer's API for compatibility with existing logic

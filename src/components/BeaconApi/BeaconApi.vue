@@ -89,6 +89,7 @@
 <script>
   import bbox from '@turf/bbox'
   import { parseISO, startOfDay, endOfDay, formatISO } from 'date-fns'
+  import JSZip from 'jszip'
 
   export default {
     props: {
@@ -106,10 +107,10 @@
         required: false,
         default: () => [],
       },
-      externalApi: {
-        type: Object,
+      externalApis: {
+        type: Array,
         required: false,
-        default: null,
+        default: () => [],
       },
       filterConfig: {
         type: Object,
@@ -335,20 +336,25 @@
         this.$emit('error', null)
         
         try {
-          const externalApi = this.externalApi
-          if (!externalApi) {
-            throw new Error('External API configuration is missing')
+          const externalApis = this.externalApis || []
+          
+          if (externalApis.length === 0) {
+            throw new Error('No external APIs configured')
           }
           
-          const { name, endpoint } = externalApi
+          // Always use zip approach, even for single API
+          const zip = new JSZip()
+          const date = new Date(Date.now())
+          const dateString = date.toLocaleString().replace(/[/:]/g, '-')
           
+          // Build query parameters (same for all APIs)
           const queryParameters = this.filters.map(filterName => ({
             column: filterName,
             alias: null,
           }))
           
+          // Build filters (same for all APIs)
           const filters = []
-          
           const filterGroups = {}
           
           this.enabledFilters.forEach(filter => {
@@ -390,51 +396,66 @@
             }
           })
           
-          // Build request body
-          const requestBody = {
-            from: endpoint,
-            query_parameters: queryParameters,
-            filters: filters,
-            output: {
-              format: 'csv', // TODO: add support of all the formats
-            },
-          }
-          
-          // Make POST request
-          const options = {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              ...(externalApi.apiKey ? { 'x-api-key': process.env[externalApi.apiKey] } : {}),
-            },
-            body: JSON.stringify(requestBody),
-          }
-          
-          const response = await fetch(externalApi.url, options)
-          
-          if (!response.ok) {
-            // Try to get error message from response
-            let errorMessage = `HTTP error! status: ${ response.status }`
-            try {
-              const errorData = await response.json()
-              if (errorData.message || errorData.error) {
-                errorMessage = errorData.message || errorData.error
-              }
-            } catch {
-              // If response is not JSON, use default error message
+          // Make all requests in parallel using Promise.all
+          const downloadPromises = externalApis.map(async (externalApi) => {
+            const { name, endpoint } = externalApi
+            
+            // Build request body (same structure, different endpoint/name per API)
+            const requestBody = {
+              from: endpoint,
+              query_parameters: queryParameters,
+              filters: filters,
+              output: {
+                format: 'csv',
+              },
             }
-            throw new Error(errorMessage)
-          }
+            
+            // Make POST request
+            const options = {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...(externalApi.apiKey ? { 'x-api-key': process.env[externalApi.apiKey] } : {}),
+              },
+              body: JSON.stringify(requestBody),
+            }
+            
+            const response = await fetch(externalApi.url, options)
+            
+            if (!response.ok) {
+              let errorMessage = `HTTP error! status: ${ response.status }`
+              try {
+                const errorData = await response.json()
+                if (errorData.message || errorData.error) {
+                  errorMessage = errorData.message || errorData.error
+                }
+              } catch {
+                // If response is not JSON, use default error message
+              }
+              throw new Error(`${ name }: ${ errorMessage }`)
+            }
+            
+            const blob = await response.blob()
+            const filename = `${ name }_${ dateString }.csv`
+            
+            return { filename, blob }
+          })
           
-          const blob = await response.blob()
+          // Wait for all downloads to complete
+          const results = await Promise.all(downloadPromises)
           
-          const csvBlob = new Blob([ blob ], { type: 'text/csv;charset=utf-8;' })
+          // Add all files to zip
+          results.forEach(({ filename, blob }) => {
+            zip.file(filename, blob, { binary: true })
+          })
           
+          // Generate zip file
+          const zipBlob = await zip.generateAsync({ type: 'blob' })
+          
+          // Download zip file (always zip, even for single file)
           const { saveAs } = await import('file-saver')
-          const date = new Date(Date.now())
-          const fileName = `${ name }_${ date.toLocaleString().replace(/[/:]/g, '-') }.csv`
-          
-          saveAs(csvBlob, fileName)
+          const zipFileName = `beacon_apis_${ dateString }.zip`
+          saveAs(zipBlob, zipFileName)
           
           this.$emit('download-success')
           this.$trackEvent('download', 'api')
