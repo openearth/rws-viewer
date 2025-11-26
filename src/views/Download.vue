@@ -31,6 +31,14 @@
         >
           API
         </v-tab>
+        <v-tab
+          v-if="showBeaconApiTab"
+          :to="{
+            name: 'download.beaconapi'
+          }"
+        >
+          Beacon API
+        </v-tab>
       </v-tabs>
       <router-view />
     </template>
@@ -54,6 +62,12 @@
 
       showApiTab() {
         return this.activeLayers.some(layer => layer?.externalApi?.length)
+      },
+
+      showBeaconApiTab() {
+        return this.activeLayers.some(layer => 
+          layer?.externalApi?.some(api => api.requestType === 'beacon')
+        )
       },
     },
     methods: {

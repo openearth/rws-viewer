@@ -13,6 +13,7 @@ const Layers = () => import('../views/Layers.vue')
 const Filters = () => import('../views/Filters.vue')
 const DownloadGeoserver = () => import('../views/DownloadGeoserver.vue')
 const DownloadApi = () => import('../views/DownloadApi.vue')
+const DownloadBeaconApi = () => import('../views/DownloadBeaconApi.vue')
 
 Vue.use(VueRouter)
 
@@ -39,6 +40,11 @@ const routes = [
         path: 'api',
         name: 'download.api',
         component: DownloadApi,
+      },
+      {
+        path: 'beaconapi',
+        name: 'download.beaconapi',
+        component: DownloadBeaconApi,
       },
     ],
   },

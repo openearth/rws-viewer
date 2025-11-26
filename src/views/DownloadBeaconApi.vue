@@ -14,7 +14,7 @@
     <v-row>
       <v-col>
         <v-select
-          v-model="selectedLayerToDownloadFrom"
+          v-model="selectedLayersToDownloadFrom"
           :label="$t('chooseApi')"
           :items="activeLayers"
           item-text="name"
@@ -22,6 +22,8 @@
           dense
           outlined
           hide-details
+          multiple
+          chips
           return-object
           @change="handleVisibilityOfLayers"
         />
@@ -50,7 +52,7 @@
             :color="selectionMode === 'selectFeatures' ? 'primary' : null"
             block
             :ripple="false"
-            :disabled="!selectedLayerIdToDownloadWith || selectedLayerIdToDownloadWith === selectedLayerToDownloadFrom.id
+            :disabled="!selectedLayerIdToDownloadWith || (selectedLayersToDownloadFrom.length > 0 && selectedLayersToDownloadFrom.some(layer => layer.id === selectedLayerIdToDownloadWith))
               || selectionMode === 'selectPoints' || selectionMode === 'selectRectangle'"
             @click="onDrawModeSelect('static')"
           >
@@ -95,15 +97,12 @@
       <v-divider class="my-4" />
       <v-row>
         <v-col>
-          <url-api
-            ref="urlApi"
+          <beacon-api
+            ref="beaconApi"
             :filters="availableFiltersForSelectedLayer"
             :date-filters="dateFilters"
-            :external-api="selectedApi"
-            :selected-filters="selectedFilters"
             :drawn-features="drawnFeatures"
-            :selected-area-name="selectedAreaName"
-            :selected-layer-to-download-from="selectedLayerToDownloadFrom"
+            :external-api="selectedApi"
             @change="handleFilterChange"
             @downloading="isDownloading = $event"
             @error="requestFailure = $event"
@@ -137,21 +136,20 @@
 </template>
 
 <script>
-/* Sovon and WMR don't offer downloading for multiple areas yet  */
-  import UrlApi from '~/components/UrlApi/UrlApi'
+  import BeaconApi from '~/components/BeaconApi/BeaconApi'
   import downloadApiMixin from '~/mixins/downloadApiMixin'
   import _ from 'lodash'
 
   export default {
     mixins: [ downloadApiMixin ],
-    components: { UrlApi },
+    components: { BeaconApi },
     data() {
       return {
-        selectedLayerToDownloadFrom: null,
+        selectedLayersToDownloadFrom: [], // Array for multiple selection
       }
     },
     computed: {
-      // Filter to only show non-beacon APIs
+      // Filter to only show beacon APIs
       activeLayers() {
         return this.activeFlattenedLayerIds
           .map(id => this.activeFlattenedLayers.find(layer => layer.id === id))
@@ -159,12 +157,13 @@
             if (!layer?.externalApi.length) {
               return false
             }
-            // Only show layers with non-beacon APIs
-            return layer.externalApi.some(api => api.requestType !== 'beacon')
+            // Only show layers with beacon APIs
+            return layer.externalApi.some(api => api.requestType === 'beacon')
           })
       },
 
       maxPageSize() {
+        // Get maxPageSize from first selected API
         return _.get(this.selectedApi, 'maxPageSize')
       },
 
@@ -179,11 +178,21 @@
         }, [])
       },
 
+      // Use first selected layer's API for compatibility with existing logic
       selectedApi() {
-        if (!this.selectedLayerToDownloadFrom) {
+        if (!this.selectedLayersToDownloadFrom || this.selectedLayersToDownloadFrom.length === 0) {
           return
         }
-        return this.selectedLayerToDownloadFrom.externalApi[0]
+        // Use the first selected layer's API
+        return this.selectedLayersToDownloadFrom[0].externalApi[0]
+      },
+
+      // For compatibility, use first selected layer
+      selectedLayerToDownloadFrom() {
+        if (!this.selectedLayersToDownloadFrom || this.selectedLayersToDownloadFrom.length === 0) {
+          return null
+        }
+        return this.selectedLayersToDownloadFrom[0]
       },
 
       // multipleselection is not allowed
@@ -212,55 +221,70 @@
       },
     },
     watch: {
-      selectedLayerToDownloadFrom() {
-        // Ensure layer visibility is updated when the selected layer changes
+      selectedLayersToDownloadFrom() {
+        // Ensure layer visibility is updated when the selected layers change
         this.$nextTick(() => {
           this.hideActiveLayers()
         })
       },
     },
-    mounted() {
-      this.hideActiveLayers()
-    },
-    updated() {
-      this.hideActiveLayers()
-    },
-
-    beforeDestroy() {
-      this.showActiveLayers()
-    },
-    deactivated() {
-      this.showActiveLayers()
-    },
-
     methods: {
       hideActiveLayers() {
-        if (this.$route.name !== 'download.api') {
+        if (this.$route.name !== 'download.beaconapi') {
           return
         }
 
-        // Always show the selected layer so users can see what they're downloading from
-        if (this.selectedLayerToDownloadFrom) {
-          this.updateWmsLayerOpacity({ id: this.selectedLayerToDownloadFrom.id, opacity: 1 })
-          const restActiveFlattenedLayers = this.activeFlattenedLayers.filter(activeLayer => activeLayer.id !== this.selectedLayerToDownloadFrom.id)
+        // Show all selected layers
+        if (this.selectedLayersToDownloadFrom && this.selectedLayersToDownloadFrom.length > 0) {
+          // Show all selected layers
+          this.selectedLayersToDownloadFrom.forEach(layer => {
+            this.updateWmsLayerOpacity({ id: layer.id, opacity: 1 })
+          })
+          
+          // Hide all other active layers
+          const selectedLayerIds = this.selectedLayersToDownloadFrom.map(l => l.id)
+          const restActiveFlattenedLayers = this.activeFlattenedLayers.filter(
+            activeLayer => !selectedLayerIds.includes(activeLayer.id)
+          )
 
           restActiveFlattenedLayers.forEach(({ id }) => {
             this.updateWmsLayerOpacity({ id, opacity: 0 })
           })
         } else {
-          // If no layer is selected, hide all layers
+          // If no layers are selected, hide all layers
           this.activeFlattenedLayers.forEach(({ id }) => {
             this.updateWmsLayerOpacity({ id, opacity: 0 })
           })
         }
       },
 
+      async onDrawModeSelectPoints(mode) {
+        await this.clearDrawnFeatures()
+        this.selectedArea = null
+        
+        // Use first selected layer for point selection
+        if (this.selectedLayersToDownloadFrom && this.selectedLayersToDownloadFrom.length > 0) {
+          const firstLayer = this.selectedLayersToDownloadFrom[0]
+          this.selectedLayerIdToDownloadWith = firstLayer.id
+          this.selectedLayerId = firstLayer.id
+          this.setSelectedLayerForSelection(firstLayer)
+        }
+        
+        this.setDrawMode({ mode })
+
+        if (this.selectionMode === 'selectPoints') {
+          this.selectionMode = null
+        } else {
+          this.selectionMode = 'selectPoints'
+        }
+      },
+
       async handleDownloadClick() {
         this.requestFailure = false
         
-        // Handled by UrlApi component
-        if (this.$refs.urlApi) {
-          await this.$refs.urlApi.download()
+        // Handled by BeaconApi component
+        if (this.$refs.beaconApi) {
+          await this.$refs.beaconApi.download()
         }
       },
     },
