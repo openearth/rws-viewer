@@ -15,6 +15,8 @@
         <v-select
           v-model="filter.comparer"
           :items="dateItems(filter)"
+          item-text="text"
+          item-value="value"
           dense
           outlined
           hide-details
@@ -36,6 +38,25 @@
             v-model="filter.maxDate"
             :label="$t('maxDate') || 'Max Date'"
             type="date"
+            dense
+            outlined
+            hide-details
+            style="padding-right: 8px;"
+          />
+        </template>
+        <template v-else-if="filter.comparer === 'min_max'">
+          <v-text-field
+            v-model="filter.minValue"
+            :label="$t('minValue') || 'Min'"
+            dense
+            outlined
+            hide-details
+            class="mb-2"
+            style="padding-right: 8px;"
+          />
+          <v-text-field
+            v-model="filter.maxValue"
+            :label="$t('maxValue') || 'Max'"
             dense
             outlined
             hide-details
@@ -130,8 +151,7 @@
         processedRectangle: null,
         beaconComparers: Object.freeze([
           'equals',
-          'min',
-          'max',
+          'min_max',
           'datetime_range'
         ]),
       }
@@ -169,12 +189,9 @@
             eq: value,
             for_query_parameter: name,
           }),
-          min: (value, name) => ({
-            min: this.parseFilterValue(value),
-            for_query_parameter: name,
-          }),
-          max: (value, name) => ({
-            max: this.parseFilterValue(value),
+          min_max: (minValue, maxValue, name) => ({
+            min: this.parseFilterValue(minValue),
+            max: this.parseFilterValue(maxValue),
             for_query_parameter: name,
           }),
           between: (value, name) => {
@@ -240,16 +257,20 @@
             const filterConfigs = []
 
             if (spatialFields.includes('longitude')) {
-              filterConfigs.push(
-                { name: `${ apiPrefix }longitude`, comparer: 'min', value: minLng },
-                { name: `${ apiPrefix }longitude`, comparer: 'max', value: maxLng }
-              )
+              filterConfigs.push({
+                name: `${ apiPrefix }longitude`,
+                comparer: 'min_max',
+                minValue: minLng.toString(),
+                maxValue: maxLng.toString(),
+              })
             }
             if (spatialFields.includes('latitude')) {
-              filterConfigs.push(
-                { name: `${ apiPrefix }latitude`, comparer: 'min', value: minLat },
-                { name: `${ apiPrefix }latitude`, comparer: 'max', value: maxLat }
-              )
+              filterConfigs.push({
+                name: `${ apiPrefix }latitude`,
+                comparer: 'min_max',
+                minValue: minLat.toString(),
+                maxValue: maxLat.toString(),
+              })
             }
 
             filterConfigs.forEach(config => {
@@ -258,12 +279,22 @@
               )
 
               if (existingFilter) {
-                existingFilter.value = config.value.toString()
+                if (config.minValue !== undefined) {
+                  existingFilter.minValue = config.minValue
+                }
+                if (config.maxValue !== undefined) {
+                  existingFilter.maxValue = config.maxValue
+                }
+                if (config.value !== undefined) {
+                  existingFilter.value = config.value.toString()
+                }
               } else {
                 this.enabledFilters.push({
                   name: config.name,
                   comparer: config.comparer,
-                  value: config.value.toString(),
+                  value: config.value ? config.value.toString() : '',
+                  minValue: config.minValue || '',
+                  maxValue: config.maxValue || '',
                   hidden: true,
                 })
               }
@@ -281,6 +312,8 @@
           value: '',
           minDate: '',
           maxDate: '',
+          minValue: '',
+          maxValue: '',
         })
         this.selectedFilter = this.selectableFilters[0]
       },
@@ -304,11 +337,16 @@
         })
       },
       dateItems() {
-        return this.beaconComparers
+        return this.beaconComparers.map(comparer => {
+          if (comparer === 'min_max') {
+            return { text: 'min, max', value: comparer }
+          }
+          return { text: comparer, value: comparer }
+        })
       },
       
       buildBeaconFilter(filter) {
-        const { name, comparer, value, minDate, maxDate } = filter
+        const { name, comparer, value, minDate, maxDate, minValue, maxValue } = filter
         
         if (this.checkDateFilters(filter) && minDate && maxDate) {
           const minDateFormatted = this.formatDateForFilter(minDate, true)
@@ -318,6 +356,10 @@
             max: maxDateFormatted,
             for_query_parameter: name,
           }
+        }
+        
+        if (comparer === 'min_max' && minValue && maxValue) {
+          return this.comparerMap.min_max(minValue, maxValue, name)
         }
         
         const mapper = this.comparerMap[comparer]
@@ -388,7 +430,6 @@
             
             // Build filters for this API (only enabled filters with matching prefix)
             const filters = []
-            const filterGroups = {}
             
             apiEnabledFilters.forEach(filter => {
               // Check if it's a date filter using the original prefixed name
@@ -397,72 +438,39 @@
               if (isDateFilter && (!filter.minDate || !filter.maxDate)) {
                 return
               }
-              if (!isDateFilter && !filter.value) {
+              
+              // Check for min_max comparer
+              if (filter.comparer === 'min_max' && (!filter.minValue || !filter.maxValue)) {
+                return
+              }
+              
+              // Check for other comparers that need a value
+              if (!isDateFilter && filter.comparer !== 'min_max' && !filter.value) {
                 return
               }
               
               // Extract the actual filter name (without prefix)
               const actualFilterName = filter.name.replace(apiPrefix, '')
               
-              // Check if this filter is combinable (using the actual filter name)
-              const isCombinable = this.filterConfig.combinableFilters.includes(actualFilterName)
-              const isMinMax = filter.comparer === 'min' || filter.comparer === 'max'
-              
-              if (isCombinable && isMinMax) {
-                if (!filterGroups[actualFilterName]) {
-                  filterGroups[actualFilterName] = {}
-                }
-                filterGroups[actualFilterName][filter.comparer] = {
-                  ...filter,
-                  name: actualFilterName, // Use actual name without prefix
-                }
-              } else {
-                // Create a filter object with the actual name (without prefix)
-                // But keep the original date filter check result
-                const filterWithActualName = {
-                  ...filter,
-                  name: actualFilterName,
-                }
-                
-                // For date filters, we need to ensure checkDateFilters works with the actual name
-                // So we'll handle date filters specially
-                if (isDateFilter) {
-                  // Build date filter directly with the actual name
-                  const minDateFormatted = this.formatDateForFilter(filter.minDate, true)
-                  const maxDateFormatted = this.formatDateForFilter(filter.maxDate, false)
-                  filters.push({
-                    min: minDateFormatted,
-                    max: maxDateFormatted,
-                    for_query_parameter: actualFilterName,
-                  })
-                } else {
-                  filters.push(this.buildBeaconFilter(filterWithActualName))
-                }
+              // Create a filter object with the actual name (without prefix)
+              const filterWithActualName = {
+                ...filter,
+                name: actualFilterName,
               }
-            })
-            
-            // Handle combinable filters
-            this.filterConfig.combinableFilters.forEach(name => {
-              const group = filterGroups[name]
-              if (group && group.min && group.max) {
+              
+              // For date filters, we need to ensure checkDateFilters works with the actual name
+              // So we'll handle date filters specially
+              if (isDateFilter) {
+                // Build date filter directly with the actual name
+                const minDateFormatted = this.formatDateForFilter(filter.minDate, true)
+                const maxDateFormatted = this.formatDateForFilter(filter.maxDate, false)
                 filters.push({
-                  min: this.parseFilterValue(group.min.value),
-                  max: this.parseFilterValue(group.max.value),
-                  for_query_parameter: name,
+                  min: minDateFormatted,
+                  max: maxDateFormatted,
+                  for_query_parameter: actualFilterName,
                 })
               } else {
-                if (group?.min) {
-                  filters.push(this.buildBeaconFilter({
-                    ...group.min,
-                    name: name,
-                  }))
-                }
-                if (group?.max) {
-                  filters.push(this.buildBeaconFilter({
-                    ...group.max,
-                    name: name,
-                  }))
-                }
+                filters.push(this.buildBeaconFilter(filterWithActualName))
               }
             })
             
