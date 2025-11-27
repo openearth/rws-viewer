@@ -191,20 +191,6 @@
               for_query_parameter: name,
             }
           },
-          datetime_range: (value, name) => {
-            const parts = value.split(',').map(v => v.trim())
-            if (parts.length === 2) {
-              return {
-                min: this.parseFilterValue(parts[0]),
-                max: this.parseFilterValue(parts[1]),
-                for_query_parameter: name,
-              }
-            }
-            return {
-              min: this.parseFilterValue(value),
-              for_query_parameter: name,
-            }
-          },
         }
       },
     },
