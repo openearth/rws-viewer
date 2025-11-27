@@ -93,13 +93,13 @@
         </v-row>
       </div>
     </div>
-    <template v-if="availableFiltersForSelectedLayer.length">
+    <template v-if="availableFiltersForSelectedLayers.length">
       <v-divider class="my-4" />
       <v-row>
         <v-col>
           <beacon-api
             ref="beaconApi"
-            :filters="availableFiltersForSelectedLayer"
+            :filters="availableFiltersForSelectedLayers"
             :date-filters="dateFilters"
             :drawn-features="drawnFeatures"
             :external-apis="selectedApis"
@@ -215,19 +215,40 @@
         return this.drawnFeatures.map(feature => feature.properties[layerAttributeArea])[0]
       },
 
-      availableFiltersForSelectedLayer() {
-        if (this.selectedApi?.filters) {
-          const filters = this.selectedApi.filters.split(', ')
-          return filters.concat(this.dateFilters)
-        }
-
-        return []
+     
+      availableFiltersForSelectedLayers() {
+        const allFilters = []
+  
+        this.selectedApis.forEach(selectedApi => {
+          if (selectedApi?.filters) {
+            const filters = selectedApi.filters.split(',')
+            // Prefix each filter with API name
+            const prefixedFilters = filters.map(filter => `${ selectedApi.name }:${ filter }`)
+            allFilters.push(...prefixedFilters)
+          }
+          
+          // Also add date filters with prefix
+          if (selectedApi?.dateFilters) {
+            const dateFilters = selectedApi.dateFilters.split(',')
+            const prefixedDateFilters = dateFilters.map(filter => `${ selectedApi.name }:${ filter }`)
+            allFilters.push(...prefixedDateFilters)
+          }
+        })
+  
+        return allFilters
       },
       dateFilters() {
-        if (this.selectedApi?.dateFilters) {
-          return this.selectedApi.dateFilters.split(',')
-        }
-        return []
+        const allDateFilters = []
+  
+        this.selectedApis.forEach(selectedApi => {
+          if (selectedApi?.dateFilters) {
+            const dateFilters = selectedApi.dateFilters.split(',')
+            const prefixedDateFilters = dateFilters.map(filter => `${ selectedApi.name }:${ filter }`)
+            allDateFilters.push(...prefixedDateFilters)
+          }
+        })
+  
+        return allDateFilters
       },
     },
     watch: {

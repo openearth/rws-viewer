@@ -139,15 +139,29 @@
     computed: {
       selectableFilters() {
         return this.filters
-          .filter(filter => !this.filterConfig.hiddenFilters.includes(filter))
+          .filter(filter => {
+            // Extract actual filter name (without API prefix)
+            // Format: "apiName:filterName" -> "filterName"
+            const actualFilterName = filter.includes(':') 
+              ? filter.split(':').slice(1).join(':') 
+              : filter
+            return !this.filterConfig.hiddenFilters.includes(actualFilterName)
+          })
           .filter(filter => 
             !this.enabledFilters.find(enabledFilter => enabledFilter.name === filter)
           )
       },
       visibleFilters() {
-        return this.enabledFilters.filter(filter => 
-          !filter.hidden && !this.filterConfig.hiddenFilters.includes(filter.name)
-        )
+        return this.enabledFilters.filter(filter => {
+          if (filter.hidden) {
+            return false
+          }
+          // Extract actual filter name (without API prefix)
+          const actualFilterName = filter.name.includes(':') 
+            ? filter.name.split(':').slice(1).join(':') 
+            : filter.name
+          return !this.filterConfig.hiddenFilters.includes(actualFilterName)
+        })
       },
       comparerMap() {
         return {
@@ -232,36 +246,42 @@
           this.processedRectangle = feature.id
 
           const spatialFields = this.filterConfig.combinableFilters
-          const filterConfigs = []
+          const externalApis = this.externalApis || []
 
-          if (spatialFields.includes('longitude')) {
-            filterConfigs.push(
-              { name: 'longitude', comparer: 'min', value: minLng },
-              { name: 'longitude', comparer: 'max', value: maxLng }
-            )
-          }
-          if (spatialFields.includes('latitude')) {
-            filterConfigs.push(
-              { name: 'latitude', comparer: 'min', value: minLat },
-              { name: 'latitude', comparer: 'max', value: maxLat }
-            )
-          }
+          // Create filter configs for each external API with prefixed names
+          externalApis.forEach(api => {
+            const apiPrefix = `${ api.name }:`
+            const filterConfigs = []
 
-          filterConfigs.forEach(config => {
-            const existingFilter = this.enabledFilters.find(
-              f => f.name === config.name && f.comparer === config.comparer
-            )
-
-            if (existingFilter) {
-              existingFilter.value = config.value.toString()
-            } else {
-              this.enabledFilters.push({
-                name: config.name,
-                comparer: config.comparer,
-                value: config.value.toString(),
-                hidden: true,
-              })
+            if (spatialFields.includes('longitude')) {
+              filterConfigs.push(
+                { name: `${ apiPrefix }longitude`, comparer: 'min', value: minLng },
+                { name: `${ apiPrefix }longitude`, comparer: 'max', value: maxLng }
+              )
             }
+            if (spatialFields.includes('latitude')) {
+              filterConfigs.push(
+                { name: `${ apiPrefix }latitude`, comparer: 'min', value: minLat },
+                { name: `${ apiPrefix }latitude`, comparer: 'max', value: maxLat }
+              )
+            }
+
+            filterConfigs.forEach(config => {
+              const existingFilter = this.enabledFilters.find(
+                f => f.name === config.name && f.comparer === config.comparer
+              )
+
+              if (existingFilter) {
+                existingFilter.value = config.value.toString()
+              } else {
+                this.enabledFilters.push({
+                  name: config.name,
+                  comparer: config.comparer,
+                  value: config.value.toString(),
+                  hidden: true,
+                })
+              }
+            })
           })
         } catch (error) {
           console.error('Error extracting bbox from feature:', error)
@@ -347,60 +367,90 @@
           const date = new Date(Date.now())
           const dateString = date.toLocaleString().replace(/[/:]/g, '-')
           
-          // Build query parameters (same for all APIs)
-          const queryParameters = this.filters.map(filterName => ({
-            column: filterName,
-            alias: null,
-          }))
-          
-          // Build filters (same for all APIs)
-          const filters = []
-          const filterGroups = {}
-          
-          this.enabledFilters.forEach(filter => {
-            if (this.checkDateFilters(filter) && (!filter.minDate || !filter.maxDate)) {
-              return
-            }
-            if (!this.checkDateFilters(filter) && !filter.value) {
-              return
-            }
-            
-            const isCombinable = this.filterConfig.combinableFilters.includes(filter.name)
-            const isMinMax = filter.comparer === 'min' || filter.comparer === 'max'
-            
-            if (isCombinable && isMinMax) {
-              if (!filterGroups[filter.name]) {
-                filterGroups[filter.name] = {}
-              }
-              filterGroups[filter.name][filter.comparer] = filter
-            } else {
-              filters.push(this.buildBeaconFilter(filter))
-            }
-          })
-          
-          this.filterConfig.combinableFilters.forEach(name => {
-            const group = filterGroups[name]
-            if (group && group.min && group.max) {
-              filters.push({
-                min: this.parseFilterValue(group.min.value),
-                max: this.parseFilterValue(group.max.value),
-                for_query_parameter: name,
-              })
-            } else {
-              if (group?.min) {
-                filters.push(this.buildBeaconFilter(group.min))
-              }
-              if (group?.max) {
-                filters.push(this.buildBeaconFilter(group.max))
-              }
-            }
-          })
-          
           // Make all requests in parallel using Promise.all
           const downloadPromises = externalApis.map(async (externalApi) => {
             const { name, endpoint } = externalApi
             
-            // Build request body (same structure, different endpoint/name per API)
+            // Filter enabled filters by API name prefix (e.g., "beacon_test:")
+            const apiPrefix = `${ name }:`
+            const apiEnabledFilters = this.enabledFilters.filter(filter => 
+              filter.name && filter.name.startsWith(apiPrefix)
+            )
+            
+            // Extract filter names without prefix for this API
+            const apiFilterNames = this.filters
+              .filter(filterName => filterName.startsWith(apiPrefix))
+              .map(filterName => filterName.replace(apiPrefix, ''))
+            
+            // Build query parameters for this API (only filters with matching prefix)
+            const queryParameters = apiFilterNames.map(filterName => ({
+              column: filterName,
+              alias: null,
+            }))
+            
+            // Build filters for this API (only enabled filters with matching prefix)
+            const filters = []
+            const filterGroups = {}
+            
+            apiEnabledFilters.forEach(filter => {
+              if (this.checkDateFilters(filter) && (!filter.minDate || !filter.maxDate)) {
+                return
+              }
+              if (!this.checkDateFilters(filter) && !filter.value) {
+                return
+              }
+              
+              // Extract the actual filter name (without prefix)
+              const actualFilterName = filter.name.replace(apiPrefix, '')
+              
+              // Check if this filter is combinable (using the actual filter name)
+              const isCombinable = this.filterConfig.combinableFilters.includes(actualFilterName)
+              const isMinMax = filter.comparer === 'min' || filter.comparer === 'max'
+              
+              if (isCombinable && isMinMax) {
+                if (!filterGroups[actualFilterName]) {
+                  filterGroups[actualFilterName] = {}
+                }
+                filterGroups[actualFilterName][filter.comparer] = {
+                  ...filter,
+                  name: actualFilterName, // Use actual name without prefix
+                }
+              } else {
+                // Create a filter object with the actual name (without prefix)
+                const filterWithActualName = {
+                  ...filter,
+                  name: actualFilterName,
+                }
+                filters.push(this.buildBeaconFilter(filterWithActualName))
+              }
+            })
+            
+            // Handle combinable filters
+            this.filterConfig.combinableFilters.forEach(name => {
+              const group = filterGroups[name]
+              if (group && group.min && group.max) {
+                filters.push({
+                  min: this.parseFilterValue(group.min.value),
+                  max: this.parseFilterValue(group.max.value),
+                  for_query_parameter: name,
+                })
+              } else {
+                if (group?.min) {
+                  filters.push(this.buildBeaconFilter({
+                    ...group.min,
+                    name: name,
+                  }))
+                }
+                if (group?.max) {
+                  filters.push(this.buildBeaconFilter({
+                    ...group.max,
+                    name: name,
+                  }))
+                }
+              }
+            })
+            
+            // Build request body (different filters and query parameters per API)
             const requestBody = {
               from: endpoint,
               query_parameters: queryParameters,
