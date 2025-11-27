@@ -303,7 +303,19 @@
         this.selectedFilter = this.selectableFilters[0]
       },
       checkDateFilters(filter) {
-        return this.dateFilters.includes(filter.name)
+        const filterName = filter.name || filter
+        // Check if the filter name (with or without prefix) matches any date filter
+        return this.dateFilters.some(dateFilter => {
+          // Extract actual name from dateFilter (remove prefix if present)
+          const actualDateFilterName = dateFilter.includes(':') 
+            ? dateFilter.split(':').slice(1).join(':') 
+            : dateFilter
+          // Extract actual name from filter name (remove prefix if present)
+          const actualFilterName = filterName.includes(':') 
+            ? filterName.split(':').slice(1).join(':') 
+            : filterName
+          return actualDateFilterName === actualFilterName
+        })
       },
       dateItems() {
         return this.beaconComparers
@@ -393,10 +405,13 @@
             const filterGroups = {}
             
             apiEnabledFilters.forEach(filter => {
-              if (this.checkDateFilters(filter) && (!filter.minDate || !filter.maxDate)) {
+              // Check if it's a date filter using the original prefixed name
+              const isDateFilter = this.checkDateFilters(filter)
+              
+              if (isDateFilter && (!filter.minDate || !filter.maxDate)) {
                 return
               }
-              if (!this.checkDateFilters(filter) && !filter.value) {
+              if (!isDateFilter && !filter.value) {
                 return
               }
               
@@ -417,11 +432,26 @@
                 }
               } else {
                 // Create a filter object with the actual name (without prefix)
+                // But keep the original date filter check result
                 const filterWithActualName = {
                   ...filter,
                   name: actualFilterName,
                 }
-                filters.push(this.buildBeaconFilter(filterWithActualName))
+                
+                // For date filters, we need to ensure checkDateFilters works with the actual name
+                // So we'll handle date filters specially
+                if (isDateFilter) {
+                  // Build date filter directly with the actual name
+                  const minDateFormatted = this.formatDateForFilter(filter.minDate, true)
+                  const maxDateFormatted = this.formatDateForFilter(filter.maxDate, false)
+                  filters.push({
+                    min: minDateFormatted,
+                    max: maxDateFormatted,
+                    for_query_parameter: actualFilterName,
+                  })
+                } else {
+                  filters.push(this.buildBeaconFilter(filterWithActualName))
+                }
               }
             })
             
