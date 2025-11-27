@@ -160,8 +160,6 @@
       selectableFilters() {
         return this.filters
           .filter(filter => {
-            // Extract actual filter name (without API prefix)
-            // Format: "apiName:filterName" -> "filterName"
             const actualFilterName = filter.includes(':') 
               ? filter.split(':').slice(1).join(':') 
               : filter
@@ -176,7 +174,6 @@
           if (filter.hidden) {
             return false
           }
-          // Extract actual filter name (without API prefix)
           const actualFilterName = filter.name.includes(':') 
             ? filter.name.split(':').slice(1).join(':') 
             : filter.name
@@ -458,10 +455,8 @@
                 name: actualFilterName,
               }
               
-              // For date filters, we need to ensure checkDateFilters works with the actual name
-              // So we'll handle date filters specially
+             
               if (isDateFilter) {
-                // Build date filter directly with the actual name
                 const minDateFormatted = this.formatDateForFilter(filter.minDate, true)
                 const maxDateFormatted = this.formatDateForFilter(filter.maxDate, false)
                 filters.push({
@@ -484,7 +479,7 @@
               },
             }
             
-            // Make POST request
+         
             const options = {
               method: 'POST',
               headers: {
@@ -515,18 +510,15 @@
             return { filename, blob }
           })
           
-          // Wait for all downloads to complete
+        
           const results = await Promise.all(downloadPromises)
-          
-          // Add all files to zip
           results.forEach(({ filename, blob }) => {
             zip.file(filename, blob, { binary: true })
           })
           
-          // Generate zip file
+         
           const zipBlob = await zip.generateAsync({ type: 'blob' })
           
-          // Download zip file (always zip, even for single file)
           const { saveAs } = await import('file-saver')
           const zipFileName = `beacon_apis_${ dateString }.zip`
           saveAs(zipBlob, zipFileName)
