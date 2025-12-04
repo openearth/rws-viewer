@@ -60,12 +60,32 @@
         loadingPopup.remove()
 
         if (info) {
-          
           const { properties } = info
+
+          if ('GRAY_INDEX' in properties) {
+            properties[`${ this.layer.name }_value`] = properties['GRAY_INDEX']
+            delete properties['GRAY_INDEX']
+          }
+          
+          // Get primary color from Vuetify theme
+          const primaryColor = this.$vuetify.theme.currentTheme.primary
+          
           const popup = new Mapbox.Popup()
             .setLngLat(event.lngLat)
             .setHTML(json2HtmlTable(this.layer.name, [ properties ]))
             .addTo(map)
+          
+          // Apply primary color to popup header after it's added to the map
+          setTimeout(() => {
+            const popupElement = popup.getElement()
+            const header = popupElement.querySelector('.mapboxgl-popup-content p')
+            if (header) {
+              header.style.backgroundColor = primaryColor
+              header.style.color = 'white'
+              header.style.padding = '2px'
+              header.style.margin = '0'
+            }
+          }, 0)
           
           this.$emit('set-active-popup', popup)
         }
@@ -85,8 +105,9 @@
 
 <style>
   .mapboxgl-popup-content {
-    width: 360px;
-    max-height: 240px;
+    width: 400px;
+    max-height: 400px;
     overflow-y: scroll;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 </style>
