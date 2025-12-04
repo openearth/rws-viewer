@@ -66,7 +66,6 @@
             properties[`${ this.layer.name }_value`] = properties['GRAY_INDEX']
             delete properties['GRAY_INDEX']
           }
-          console.log('Feature info properties:', properties)
           
           // Get primary color from Vuetify theme
           const primaryColor = this.$vuetify.theme.currentTheme.primary
