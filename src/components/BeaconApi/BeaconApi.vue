@@ -63,6 +63,17 @@
             style="padding-right: 8px;"
           />
         </template>
+        <template v-else-if="filter.name === 'beacon-aquadesk_ns:Class'">
+          <v-select
+            v-model="filter.value"
+            :items="classFilterValues"
+            :loading="loadingClassValues"
+            dense
+            outlined
+            hide-details
+            :placeholder="loadingClassValues ? 'Loading...' : 'Select a value'"
+          />
+        </template>
         <v-text-field
           v-else
           v-model="filter.value"
@@ -154,6 +165,8 @@
           'min_max',
           'datetime_range'
         ]),
+        classFilterValues: [], // Store Class filter values
+        loadingClassValues: false, // Track loading state
       }
     },
     computed: {
@@ -214,6 +227,11 @@
           if (newValue.length || newValue.length !== oldValue.length) {
             this.$emit('change', newValue)
           }
+          // Fetch Class filter values when the Class filter is added
+          const classFilter = newValue.find(f => f.name === 'beacon-aquadesk_ns:Class')
+          if (classFilter && !this.classFilterValues.length) {
+            this.fetchClassFilterValues()
+          }
         },
         deep: true,
       },
@@ -235,6 +253,48 @@
       this.selectedFilter = this.selectableFilters[0]
     },
     methods: {
+      async fetchClassFilterValues() {
+        this.loadingClassValues = true
+        const requestBody = {
+          "sql": "SELECT DISTINCT(Class) FROM easy_ihm_aquadesk_noordzee ORDER BY Class ASC",
+          "output": {
+            "format": "csv"
+          }
+        }
+
+        const options = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        }
+        
+        try {
+          const response = await fetch("https://beacon-ihm.maris.nl/api/query", options)
+          
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${ response.status }`)
+          }
+          
+          // Get the CSV text from the response
+          const csvText = await response.text()
+          
+          // Parse CSV: split by newlines, filter out empty lines, skip header row
+          const lines = csvText.split('\n').filter(line => line.trim() !== '')
+          
+          // Skip the first line (header "Class") and extract values
+          this.classFilterValues = lines.slice(1).map(line => line.trim())
+          
+        } catch (error) {
+          console.error('Error fetching class filter values:', error)
+          this.classFilterValues = []
+        } finally {
+          this.loadingClassValues = false
+        }
+      },
+  
+
       extractBboxFromFeature(feature) {
         if (!feature || !feature.geometry) {
           return
