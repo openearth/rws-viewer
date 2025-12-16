@@ -12,7 +12,7 @@ exports.handler = async (event, context) => {
             return createErrorResponse("Current instance not found", 500);
         }
 
-        const apiUrl = `${currentInstance.apiUrl}/api`;
+        const apiUrl = `${ currentInstance.apiUrl }/api`;
 
         if (!apiUrl) {
             return createErrorResponse("API_URL is not configured", 500);
@@ -20,13 +20,29 @@ exports.handler = async (event, context) => {
 
         // Get the path and query parameters from the request URL
         const eventUrl = new URL(event.rawUrl || `https://${event.headers.host}${event.path}`);
-        const path = eventUrl.pathname.replace('/.netlify/functions/api', '');
+        
+        // Extract path - check if it's from the redirect (contains :splat) or direct call
+        let path = eventUrl.pathname.replace('/.netlify/functions/api', '');
+        
+        // If path is empty or just '/', check pathParameters for the splat
+        if (!path || path === '/') {
+            // Check if we have path parameters from the redirect
+            if (event.pathParameters && event.pathParameters.splat) {
+                path = '/' + event.pathParameters.splat;
+            } else if (event.rawPath) {
+                // Fallback: try to extract from rawPath
+                const rawPathMatch = event.rawPath.match(/\/api\/(.+)$/);
+                if (rawPathMatch) {
+                    path = '/' + rawPathMatch[1];
+                }
+            }
+        }
 
         // Create the target URL with the path
         const targetUrl = new URL(path, apiUrl);
 
         // Copy all query parameters from the original request URL
-        for (const [key, value] of eventUrl.searchParams.entries()) {
+        for (const [ key, value ] of eventUrl.searchParams.entries()) {
             targetUrl.searchParams.set(key, value);
         }
 
@@ -69,13 +85,13 @@ exports.handler = async (event, context) => {
         };
 
         // Forward request body for POST, PUT, PATCH methods
-        if (['POST', 'PUT', 'PATCH'].includes(fetchOptions.method) && event.body) {
+        if ([ 'POST', 'PUT', 'PATCH' ].includes(fetchOptions.method) && event.body) {
             fetchOptions.body = event.body;
         }
 
         // Log request details (only in development)
         if (process.env.NODE_ENV !== 'production') {
-            console.log(`Proxying ${fetchOptions.method} request to: ${targetUrlString}`);
+            console.log(`Proxying ${ fetchOptions.method } request to: ${ targetUrlString }`);
         }
 
         console.log('[TARGET URL]', targetUrlString);
