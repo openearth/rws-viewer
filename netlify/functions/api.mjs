@@ -3,6 +3,17 @@ const { instances } = require("../../config/dato/instances");
 // Change to exports.handler format
 exports.handler = async (event, context) => {
     try {
+        // DEBUG: Log the entire event structure
+        console.log('[DEBUG] Full event object:', JSON.stringify({
+            path: event.path,
+            rawPath: event.rawPath,
+            rawUrl: event.rawUrl,
+            pathParameters: event.pathParameters,
+            queryStringParameters: event.queryStringParameters,
+            httpMethod: event.httpMethod,
+            headers: event.headers ? Object.keys(event.headers) : null
+        }, null, 2));
+
         // Find the current instance
         const currentInstance = instances.find(
             (instance) => instance.name === process.env.DATO_INSTANCE_CURRENT
@@ -18,38 +29,76 @@ exports.handler = async (event, context) => {
             return createErrorResponse("API_URL is not configured", 500);
         }
 
-        // Get the path and query parameters from the request URL
-        const eventUrl = new URL(event.rawUrl || `https://${event.headers.host}${event.path}`);
+        // Extract path - prioritize pathParameters.splat for redirects
+        let path = '';
         
-        // Extract path - check if it's from the redirect (contains :splat) or direct call
-        let path = eventUrl.pathname.replace('/.netlify/functions/api', '');
-        
-        // If path is empty or just '/', check pathParameters for the splat
-        if (!path || path === '/') {
-            // Check if we have path parameters from the redirect
-            if (event.pathParameters && event.pathParameters.splat) {
-                path = '/' + event.pathParameters.splat;
-            } else if (event.rawPath) {
-                // Fallback: try to extract from rawPath
-                const rawPathMatch = event.rawPath.match(/\/api\/(.+)$/);
-                if (rawPathMatch) {
-                    path = '/' + rawPathMatch[1];
+        // First, check if we have pathParameters.splat (from redirect)
+        if (event.pathParameters && event.pathParameters.splat) {
+            path = '/' + event.pathParameters.splat;
+            console.log('[DEBUG] Using pathParameters.splat:', path);
+        } else {
+            // Try to extract from rawUrl or path
+            let eventPath = '';
+            
+            if (event.rawUrl) {
+                try {
+                    const eventUrl = new URL(event.rawUrl);
+                    eventPath = eventUrl.pathname;
+                } catch (e) {
+                    console.log('[DEBUG] Failed to parse rawUrl:', e.message);
                 }
             }
+            
+            if (!eventPath && event.rawPath) {
+                eventPath = event.rawPath;
+            }
+            
+            if (!eventPath && event.path) {
+                eventPath = event.path;
+            }
+            
+            console.log('[DEBUG] Extracted eventPath:', eventPath);
+            
+            // Remove the function path prefix
+            if (eventPath) {
+                path = eventPath.replace('/.netlify/functions/api', '');
+                
+                // If still empty, try extracting from /api/ pattern
+                if (!path || path === '/') {
+                    const apiMatch = eventPath.match(/\/api\/(.+)$/);
+                    if (apiMatch) {
+                        path = '/' + apiMatch[1];
+                    }
+                }
+            }
+            
+            // Fallback: if still empty, default to root
+            if (!path || path === '/') {
+                console.log('[DEBUG] Path is empty after extraction, defaulting to /');
+                path = '/';
+            }
         }
+
+        console.log('[DEBUG] Final extracted path:', path);
 
         // Create the target URL with the path
         const targetUrl = new URL(path, apiUrl);
 
-        // Copy all query parameters from the original request URL
-        for (const [ key, value ] of eventUrl.searchParams.entries()) {
-            targetUrl.searchParams.set(key, value);
+        // Copy all query parameters
+        if (event.rawUrl) {
+            try {
+                const eventUrl = new URL(event.rawUrl);
+                for (const [ key, value ] of eventUrl.searchParams.entries()) {
+                    targetUrl.searchParams.set(key, value);
+                }
+            } catch (e) {
+                console.log('[DEBUG] Failed to parse rawUrl for query params:', e.message);
+            }
         }
 
-        // Also check event.queryStringParameters as a fallback for compatibility
+        // Also check event.queryStringParameters as a fallback
         const params = event.queryStringParameters || {};
         Object.keys(params).forEach(key => {
-            // Only set if not already set from URL search params
             if (!targetUrl.searchParams.has(key)) {
                 targetUrl.searchParams.set(key, params[key]);
             }
@@ -72,8 +121,12 @@ exports.handler = async (event, context) => {
             ];
 
             for (const header of headersToForward) {
-                if (event.headers[header]) {
-                    headers[header] = event.headers[header];
+                // Netlify lowercases header names, so check both cases
+                const headerKey = Object.keys(event.headers).find(
+                    h => h.toLowerCase() === header.toLowerCase()
+                );
+                if (headerKey && event.headers[headerKey]) {
+                    headers[header] = event.headers[headerKey];
                 }
             }
         }
@@ -89,18 +142,24 @@ exports.handler = async (event, context) => {
             fetchOptions.body = event.body;
         }
 
-        // Log request details (only in development)
-        if (process.env.NODE_ENV !== 'production') {
-            console.log(`Proxying ${ fetchOptions.method } request to: ${ targetUrlString }`);
-        }
-
+        console.log('[DEBUG] Fetch options:', JSON.stringify({
+            method: fetchOptions.method,
+            headers: Object.keys(fetchOptions.headers),
+            hasBody: !!fetchOptions.body
+        }, null, 2));
         console.log('[TARGET URL]', targetUrlString);
 
         // Fetch the target URL and properly handle its response
         const response = await fetch(targetUrlString, fetchOptions);
+        
+        // Check if response is ok before trying to parse JSON
+        if (!response.ok) {
+            console.log('[DEBUG] Response not OK:', response.status, response.statusText);
+            const errorText = await response.text();
+            console.log('[DEBUG] Error response body:', errorText);
+        }
 
         const json = await response.json();
-
         console.log('[RESPONSE]', json);
         console.log('[RESPONSE STATUS]', response.status);
 
@@ -113,8 +172,19 @@ exports.handler = async (event, context) => {
             }
         };
     } catch (error) {
+        // Enhanced error logging
         console.error("Error proxying request:", error);
-        return createErrorResponse("Error proxying request to API", 500);
+        console.error("Error stack:", error.stack);
+        console.error("Error details:", JSON.stringify({
+            message: error.message,
+            name: error.name,
+            cause: error.cause
+        }, null, 2));
+        
+        return createErrorResponse(
+            `Error proxying request to API: ${ error.message }`,
+            500
+        );
     }
 };
 
