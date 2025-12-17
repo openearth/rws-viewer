@@ -35,56 +35,46 @@ exports.handler = async (event, context) => {
         // First, check if we have pathParameters.splat (from redirect)
         if (event.pathParameters && event.pathParameters.splat) {
             path = '/' + event.pathParameters.splat;
+            console.log('[DEBUG] Using pathParameters.splat:', path);
         } else {
-            // Try to extract from the path - when redirected, event.path might be the full path
-            // or event.rawPath might contain the original /api/feedback path
+            // Try to extract from rawUrl or path
             let eventPath = '';
             
-            // Check rawPath first (contains original request path before redirect)
-            if (event.rawPath) {
-                eventPath = event.rawPath;
-                // Extract from /api/feedback pattern
-                const apiMatch = eventPath.match(/^\/api\/(.+)$/);
-                if (apiMatch) {
-                    path = '/' + apiMatch[1];
-                }
-            }
-            
-            // If not found, try event.path (after redirect processing)
-            if (!path && event.path) {
-                eventPath = event.path;
-                // Remove function base path
-                path = eventPath.replace('/.netlify/functions/api', '');
-                // If path is empty or just '/', try to extract from full path
-                if (!path || path === '/') {
-                    // Try matching the full path pattern
-                    const fullPathMatch = eventPath.match(/\/\.netlify\/functions\/api\/(.+)$/);
-                    if (fullPathMatch) {
-                        path = '/' + fullPathMatch[1];
-                    }
-                }
-            }
-            
-            // Last resort: try rawUrl
-            if (!path && event.rawUrl) {
+            if (event.rawUrl) {
                 try {
                     const eventUrl = new URL(event.rawUrl);
-                    const urlPath = eventUrl.pathname;
-                    // Try to extract /api/feedback from the URL
-                    const apiMatch = urlPath.match(/\/api\/(.+)$/);
-                    if (apiMatch) {
-                        path = '/' + apiMatch[1];
-                    } else {
-                        // Or remove function path
-                        path = urlPath.replace('/.netlify/functions/api', '');
-                    }
+                    eventPath = eventUrl.pathname;
                 } catch (e) {
-                    // Ignore URL parsing errors
+                    console.log('[DEBUG] Failed to parse rawUrl:', e.message);
                 }
             }
             
-            // Final fallback
+            if (!eventPath && event.rawPath) {
+                eventPath = event.rawPath;
+            }
+            
+            if (!eventPath && event.path) {
+                eventPath = event.path;
+            }
+            
+            console.log('[DEBUG] Extracted eventPath:', eventPath);
+            
+            // Remove the function path prefix
+            if (eventPath) {
+                path = eventPath.replace('/.netlify/functions/api', '');
+                
+                // If still empty, try extracting from /api/ pattern
+                if (!path || path === '/') {
+                    const apiMatch = eventPath.match(/\/api\/(.+)$/);
+                    if (apiMatch) {
+                        path = '/' + apiMatch[1];
+                    }
+                }
+            }
+            
+            // Fallback: if still empty, default to root
             if (!path || path === '/') {
+                console.log('[DEBUG] Path is empty after extraction, defaulting to /');
                 path = '/';
             }
         }
@@ -162,21 +152,52 @@ exports.handler = async (event, context) => {
         // Fetch the target URL and properly handle its response
         const response = await fetch(targetUrlString, fetchOptions);
         
-        // Check if response is ok before trying to parse JSON
-        if (!response.ok) {
-            console.log('[DEBUG] Response not OK:', response.status, response.statusText);
-            const errorText = await response.text();
-            console.log('[DEBUG] Error response body:', errorText);
+        console.log('[DEBUG] Response status:', response.status);
+        console.log('[DEBUG] Response headers:', Object.fromEntries(response.headers.entries()));
+        
+        // Get the response body as text first
+        const responseText = await response.text();
+        
+        // Determine the content type
+        const contentType = response.headers.get('content-type') || '';
+        const isJson = contentType.includes('application/json');
+        
+        console.log('[DEBUG] Response body length:', responseText.length);
+        console.log('[DEBUG] Response is JSON:', isJson);
+        
+        let responseBody;
+        
+        // Handle empty responses (like 204 No Content)
+        if (!responseText || responseText.trim() === '') {
+            responseBody = response.ok ? { success: true } : { error: 'Empty response from API' };
+        } else if (isJson) {
+            // Try to parse as JSON
+            try {
+                responseBody = JSON.parse(responseText);
+            } catch (parseError) {
+                console.error('[DEBUG] Failed to parse JSON:', parseError.message);
+                console.error('[DEBUG] Response text:', responseText.substring(0, 500));
+                responseBody = { 
+                    error: 'Invalid JSON response from API',
+                    rawResponse: responseText.substring(0, 200)
+                };
+            }
+        } else {
+            // Non-JSON response - return as text
+            responseBody = {
+                error: 'Non-JSON response from API',
+                contentType: contentType,
+                body: responseText.substring(0, 500)
+            };
         }
-
-        const json = await response.json();
-        console.log('[RESPONSE]', json);
+        
+        console.log('[RESPONSE]', responseBody);
         console.log('[RESPONSE STATUS]', response.status);
 
         // Return in the format expected by Netlify Functions
         return {
             statusCode: response.status,
-            body: JSON.stringify(json),
+            body: JSON.stringify(responseBody),
             headers: {
                 'Content-Type': 'application/json',
             }
