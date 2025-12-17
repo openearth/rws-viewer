@@ -3,17 +3,6 @@ const { instances } = require("../../config/dato/instances");
 // Change to exports.handler format
 exports.handler = async (event, context) => {
     try {
-        // DEBUG: Log the entire event structure
-        console.log('[DEBUG] Full event object:', JSON.stringify({
-            path: event.path,
-            rawPath: event.rawPath,
-            rawUrl: event.rawUrl,
-            pathParameters: event.pathParameters,
-            queryStringParameters: event.queryStringParameters,
-            httpMethod: event.httpMethod,
-            headers: event.headers ? Object.keys(event.headers) : null
-        }, null, 2));
-
         // Find the current instance
         const currentInstance = instances.find(
             (instance) => instance.name === process.env.DATO_INSTANCE_CURRENT
@@ -35,7 +24,6 @@ exports.handler = async (event, context) => {
         // First, check if we have pathParameters.splat (from redirect)
         if (event.pathParameters && event.pathParameters.splat) {
             path = '/' + event.pathParameters.splat;
-            console.log('[DEBUG] Using pathParameters.splat:', path);
         } else {
             // Try to extract from rawUrl or path
             let eventPath = '';
@@ -45,7 +33,7 @@ exports.handler = async (event, context) => {
                     const eventUrl = new URL(event.rawUrl);
                     eventPath = eventUrl.pathname;
                 } catch (e) {
-                    console.log('[DEBUG] Failed to parse rawUrl:', e.message);
+                    // Ignore URL parsing errors
                 }
             }
             
@@ -56,8 +44,6 @@ exports.handler = async (event, context) => {
             if (!eventPath && event.path) {
                 eventPath = event.path;
             }
-            
-            console.log('[DEBUG] Extracted eventPath:', eventPath);
             
             // Remove the function path prefix
             if (eventPath) {
@@ -74,12 +60,9 @@ exports.handler = async (event, context) => {
             
             // Fallback: if still empty, default to root
             if (!path || path === '/') {
-                console.log('[DEBUG] Path is empty after extraction, defaulting to /');
                 path = '/';
             }
         }
-
-        console.log('[DEBUG] Final extracted path:', path);
 
         // Create the target URL with the path
         const targetUrl = new URL(path, apiUrl);
@@ -92,7 +75,7 @@ exports.handler = async (event, context) => {
                     targetUrl.searchParams.set(key, value);
                 }
             } catch (e) {
-                console.log('[DEBUG] Failed to parse rawUrl for query params:', e.message);
+                // Ignore URL parsing errors
             }
         }
 
@@ -142,18 +125,8 @@ exports.handler = async (event, context) => {
             fetchOptions.body = event.body;
         }
 
-        console.log('[DEBUG] Fetch options:', JSON.stringify({
-            method: fetchOptions.method,
-            headers: Object.keys(fetchOptions.headers),
-            hasBody: !!fetchOptions.body
-        }, null, 2));
-        console.log('[TARGET URL]', targetUrlString);
-
         // Fetch the target URL and properly handle its response
         const response = await fetch(targetUrlString, fetchOptions);
-        
-        console.log('[DEBUG] Response status:', response.status);
-        console.log('[DEBUG] Response headers:', Object.fromEntries(response.headers.entries()));
         
         // Get the response body as text first
         const responseText = await response.text();
@@ -161,9 +134,6 @@ exports.handler = async (event, context) => {
         // Determine the content type
         const contentType = response.headers.get('content-type') || '';
         const isJson = contentType.includes('application/json');
-        
-        console.log('[DEBUG] Response body length:', responseText.length);
-        console.log('[DEBUG] Response is JSON:', isJson);
         
         let responseBody;
         
@@ -175,8 +145,6 @@ exports.handler = async (event, context) => {
             try {
                 responseBody = JSON.parse(responseText);
             } catch (parseError) {
-                console.error('[DEBUG] Failed to parse JSON:', parseError.message);
-                console.error('[DEBUG] Response text:', responseText.substring(0, 500));
                 responseBody = { 
                     error: 'Invalid JSON response from API',
                     rawResponse: responseText.substring(0, 200)
@@ -190,9 +158,6 @@ exports.handler = async (event, context) => {
                 body: responseText.substring(0, 500)
             };
         }
-        
-        console.log('[RESPONSE]', responseBody);
-        console.log('[RESPONSE STATUS]', response.status);
 
         // Return in the format expected by Netlify Functions
         return {
