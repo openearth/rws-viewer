@@ -79,10 +79,9 @@ exports.handler = async (event, context) => {
             }
         }
 
-        // Also check event.queryStringParameters as a fallback for compatibility
+        // Also check event.queryStringParameters as a fallback
         const params = event.queryStringParameters || {};
         Object.keys(params).forEach(key => {
-            // Only set if not already set from URL search params
             if (!targetUrl.searchParams.has(key)) {
                 targetUrl.searchParams.set(key, params[key]);
             }
@@ -105,8 +104,12 @@ exports.handler = async (event, context) => {
             ];
 
             for (const header of headersToForward) {
-                if (event.headers[header]) {
-                    headers[header] = event.headers[header];
+                // Netlify lowercases header names, so check both cases
+                const headerKey = Object.keys(event.headers).find(
+                    h => h.toLowerCase() === header.toLowerCase()
+                );
+                if (headerKey && event.headers[headerKey]) {
+                    headers[header] = event.headers[headerKey];
                 }
             }
         }
@@ -165,8 +168,19 @@ exports.handler = async (event, context) => {
             }
         };
     } catch (error) {
+        // Enhanced error logging
         console.error("Error proxying request:", error);
-        return createErrorResponse("Error proxying request to API", 500);
+        console.error("Error stack:", error.stack);
+        console.error("Error details:", JSON.stringify({
+            message: error.message,
+            name: error.name,
+            cause: error.cause
+        }, null, 2));
+        
+        return createErrorResponse(
+            `Error proxying request to API: ${ error.message }`,
+            500
+        );
     }
 };
 
@@ -181,3 +195,5 @@ function createErrorResponse(message, statusCode) {
         }
     };
 }
+
+// The path configuration is handled differently in netlify.toml for traditional functions
