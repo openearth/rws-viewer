@@ -35,46 +35,56 @@ exports.handler = async (event, context) => {
         // First, check if we have pathParameters.splat (from redirect)
         if (event.pathParameters && event.pathParameters.splat) {
             path = '/' + event.pathParameters.splat;
-            console.log('[DEBUG] Using pathParameters.splat:', path);
         } else {
-            // Try to extract from rawUrl or path
+            // Try to extract from the path - when redirected, event.path might be the full path
+            // or event.rawPath might contain the original /api/feedback path
             let eventPath = '';
             
-            if (event.rawUrl) {
-                try {
-                    const eventUrl = new URL(event.rawUrl);
-                    eventPath = eventUrl.pathname;
-                } catch (e) {
-                    console.log('[DEBUG] Failed to parse rawUrl:', e.message);
+            // Check rawPath first (contains original request path before redirect)
+            if (event.rawPath) {
+                eventPath = event.rawPath;
+                // Extract from /api/feedback pattern
+                const apiMatch = eventPath.match(/^\/api\/(.+)$/);
+                if (apiMatch) {
+                    path = '/' + apiMatch[1];
                 }
             }
             
-            if (!eventPath && event.rawPath) {
-                eventPath = event.rawPath;
-            }
-            
-            if (!eventPath && event.path) {
+            // If not found, try event.path (after redirect processing)
+            if (!path && event.path) {
                 eventPath = event.path;
-            }
-            
-            console.log('[DEBUG] Extracted eventPath:', eventPath);
-            
-            // Remove the function path prefix
-            if (eventPath) {
+                // Remove function base path
                 path = eventPath.replace('/.netlify/functions/api', '');
-                
-                // If still empty, try extracting from /api/ pattern
+                // If path is empty or just '/', try to extract from full path
                 if (!path || path === '/') {
-                    const apiMatch = eventPath.match(/\/api\/(.+)$/);
-                    if (apiMatch) {
-                        path = '/' + apiMatch[1];
+                    // Try matching the full path pattern
+                    const fullPathMatch = eventPath.match(/\/\.netlify\/functions\/api\/(.+)$/);
+                    if (fullPathMatch) {
+                        path = '/' + fullPathMatch[1];
                     }
                 }
             }
             
-            // Fallback: if still empty, default to root
+            // Last resort: try rawUrl
+            if (!path && event.rawUrl) {
+                try {
+                    const eventUrl = new URL(event.rawUrl);
+                    const urlPath = eventUrl.pathname;
+                    // Try to extract /api/feedback from the URL
+                    const apiMatch = urlPath.match(/\/api\/(.+)$/);
+                    if (apiMatch) {
+                        path = '/' + apiMatch[1];
+                    } else {
+                        // Or remove function path
+                        path = urlPath.replace('/.netlify/functions/api', '');
+                    }
+                } catch (e) {
+                    // Ignore URL parsing errors
+                }
+            }
+            
+            // Final fallback
             if (!path || path === '/') {
-                console.log('[DEBUG] Path is empty after extraction, defaulting to /');
                 path = '/';
             }
         }
