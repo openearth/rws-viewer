@@ -22,6 +22,20 @@ npm install --legacy-peer-deps
 npm run dev
 ```
 
+## Supported Layer Types
+
+The viewer supports three types of map services:
+
+- **WMS** (Web Map Service) - Standard OGC WMS services
+- **WMTS** (Web Map Tile Service) - URLs containing `wmts` in the pathname
+- **ESRI MapServer** - URLs containing `MapServer` in the pathname (GetCapabilities is automatically skipped)
+
+Service type is automatically detected from the URL pattern. All layers require:
+- `id`: Unique identifier
+- `name`: Display name
+- `url`: Service URL
+- `layer`: Layer name/ID (not used for ESRI layers)
+
 ## Migrations
 
 This project uses [DatoCMS migrations](https://www.datocms.com/docs/content-management-api/migrations) for managing the models and moving data around in the DatoCMS instances. It uses custom scripts to generate the migrations, and to apply them.
