@@ -1,4 +1,5 @@
 import { isNil } from '~/lib/helpers.js'
+import * as mapboxglEsriSources from 'mapbox-gl-esri-sources'
 
 export default {
   name: 'v-mapbox-layer',
@@ -51,13 +52,35 @@ export default {
     addLayer() {
       const map = this.getMap()
       
-     
-      if (this.before && map.getLayer(this.before)) {
-        map.addLayer(this.options, this.before)
-      } else if (map.getLayer('gl-draw-polygon-fill-inactive.cold')) {
-        map.addLayer(this.options, 'gl-draw-polygon-fill-inactive.cold')
+      // Handle ESRI sources specially
+      if (this.options.source && this.options.source.type === 'esri-tiled') {
+        // Create ESRI source using mapbox-gl-esri-sources
+        new mapboxglEsriSources.TiledMapService(this.options.id + '-source', map, {
+          url: this.options.source.url
+        })
+        
+        // Update the layer source to reference the ESRI source
+        const esriLayerOptions = {
+          ...this.options,
+          source: this.options.id + '-source'
+        }
+        
+        if (this.before && map.getLayer(this.before)) {
+          map.addLayer(esriLayerOptions, this.before)
+        } else if (map.getLayer('gl-draw-polygon-fill-inactive.cold')) {
+          map.addLayer(esriLayerOptions, 'gl-draw-polygon-fill-inactive.cold')
+        } else {
+          map.addLayer(esriLayerOptions)
+        }
       } else {
-        map.addLayer(this.options)
+        // Existing code for WMS/WMTS layers
+        if (this.before && map.getLayer(this.before)) {
+          map.addLayer(this.options, this.before)
+        } else if (map.getLayer('gl-draw-polygon-fill-inactive.cold')) {
+          map.addLayer(this.options, 'gl-draw-polygon-fill-inactive.cold')
+        } else {
+          map.addLayer(this.options)
+        }
       }
 
       if (this.clickable) {

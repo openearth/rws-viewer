@@ -171,7 +171,10 @@ export default {
 
       layersToAdd.forEach((layer) => {
         getMapServicesCapabilities(layer.url) 
-          .then(capabilities => getLayerProperties(capabilities, layer))
+          .then(capabilities => {
+            // For ESRI layers, capabilities will be null, so we pass it through
+            return getLayerProperties(capabilities, layer)
+          })
           .then((properties) => {
             commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...properties } )
             commit('ADD_MAPBOX_LAYER',buildMapboxLayer({ ...layer, ...properties }))
@@ -201,7 +204,10 @@ export default {
   
     loadApiLayerOnMap({ commit }, layer) {
       getMapServicesCapabilities(layer.url)
-      .then(capabilities => getLayerProperties(capabilities, layer))
+      .then(capabilities => {
+        // For ESRI layers, capabilities will be null, so we pass it through
+        return getLayerProperties(capabilities, layer)
+      })
       .then((properties) => {
         commit('ADD_WMS_API_LAYER', buildMapboxLayer({ ...layer, ...properties }))
       },

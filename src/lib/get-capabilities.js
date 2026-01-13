@@ -165,6 +165,11 @@ export async function getMapServicesCapabilities(service) {
 
   const mapServiceType = checkMapServiceType(service)
 
+  // Skip getCapabilities for ESRI MapServer services
+  if (mapServiceType === 'esri') {
+    return null
+  }
+
   const serviceUrl = new URL(service)
   const servicePath = `${ serviceUrl.origin }${ serviceUrl.pathname }`
 
@@ -331,12 +336,32 @@ async function readWmtsCapabilitiesProperties(capabilities, layerObject) {
   const dataServiceType = await getDataServiceType(wmsServiceUrl, layerName)
   return { dataServiceType, acceptedFormats, mapServiceVersion, bbox, wmsServiceUrl }
 }
+async function readEsriCapabilitiesProperties(capabilities, layerObject) {
+  /**
+   * Function to read ESRI MapServer layer properties
+   * ESRI MapServer services don't use GetCapabilities, so we return minimal properties
+   */
+  const { layer, url } = layerObject
+  
+  // For ESRI layers, we can extract basic info from the URL
+  // Return minimal required properties
+  return {
+    dataServiceType: null, // ESRI layers typically don't have WFS/WCS equivalents
+    timeExtent: [],
+    mapServiceVersion: '1.0.0', // Default version
+    bbox: null, // Could be fetched from REST API if needed
+  }
+}
+
 export async function getLayerProperties(capabilities, layerObject) {
   const mapServiceType = checkMapServiceType(layerObject.url)
   if (mapServiceType === 'wms'){
     return readWmsCapabilitiesProperties(capabilities, layerObject)
   } else if (mapServiceType === 'wmts') {
     return readWmtsCapabilitiesProperties(capabilities, layerObject)
+  } else if (mapServiceType === 'esri') {
+    // For ESRI, capabilities will be null since we skip getCapabilities
+    return readEsriCapabilitiesProperties(capabilities, layerObject)
   }
 }
 
