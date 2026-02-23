@@ -7,6 +7,7 @@ import {
   WCS_LAYER_TYPE,
   WFS_LAYER_TYPE,
 } from '~/lib/constants'
+import getFeature from '~/lib/get-feature'
 
 
 
@@ -306,7 +307,7 @@ async function readWmtsCapabilitiesProperties(capabilities, layerObject) {
     map(getTagContent),
     uniq,
   )()
-
+console.log('acceptedFormats', acceptedFormats)
  const bbox = pipe(
   () => [ ...capabilities.querySelectorAll('Layer') ],
   filter(el => {
@@ -329,7 +330,26 @@ async function readWmtsCapabilitiesProperties(capabilities, layerObject) {
   // for the wcs/wfs reqeusts we need to change the url to the wms url of the service
   const wmsServiceUrl = layerObject.url.replace('/gwc/service/wmts', `/${ workspace }/wms`)
   const dataServiceType = await getDataServiceType(wmsServiceUrl, layerName)
-  return { dataServiceType, acceptedFormats, mapServiceVersion, bbox, wmsServiceUrl }
+
+  let getFeatureResponse
+  const isVectorTiles = acceptedFormats.some(
+    f => f && f.trim() === 'application/vnd.mapbox-vector-tile'
+  )
+  if (isVectorTiles) {
+    const wfsServiceUrl = wmsServiceUrl.replace(/(wms|wcs)/i, 'wfs')
+    getFeatureResponse = await getFeature({
+      url: wfsServiceUrl,
+      layer: layerObject.layer,
+      count: 1,
+    })
+  }
+  let featureType;
+  if (getFeatureResponse !== undefined) {
+    featureType = getFeatureResponse?.features?.[0]?.geometry?.type
+  }
+
+
+  return { dataServiceType, acceptedFormats, mapServiceVersion, bbox, wmsServiceUrl, featureType }
 }
 export async function getLayerProperties(capabilities, layerObject) {
   const mapServiceType = checkMapServiceType(layerObject.url)
