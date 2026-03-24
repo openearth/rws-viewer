@@ -4,6 +4,7 @@ import buildMapboxLayer from '~/lib/build-mapbox-layer'
 import addFilterAttributesToLayer from '~/lib/add-filter-attributes-to-layer'
 import { getMapServicesCapabilities, getLayerProperties } from '~/lib/get-capabilities'
 import { NETHERLANDS_MAP_CENTER, NETHERLANDS_MAP_ZOOM } from '~/lib/constants'
+import buildWmtsVectorLayer from '~/lib/build-wmts-vector-layer'
 
 
 export default {
@@ -170,11 +171,14 @@ export default {
       const layersToAdd = difference(layers, state.activeFlattenedLayers)
 
       layersToAdd.forEach((layer) => {
-        getMapServicesCapabilities(layer.url) 
+        getMapServicesCapabilities(layer.url)
           .then(capabilities => getLayerProperties(capabilities, layer))
           .then((properties) => {
             commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...properties } )
-            commit('ADD_MAPBOX_LAYER',buildMapboxLayer({ ...layer, ...properties }))
+            // commit('ADD_MAPBOX_LAYER',buildMapboxLayer({ ...layer, ...properties }))
+            if (properties.featureType) {
+              commit('ADD_MAPBOX_LAYER', buildWmtsVectorLayer({ ...layer, ...properties, id: `${ layer.id }-vector` }))
+            }
           },
           )
       })
