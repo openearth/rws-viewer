@@ -70,9 +70,6 @@ export default {
       }
 
       const layerId = this.options.id
-      if (this.clickable) {
-        map.on('click', layerId, this.clickFn)
-      }
       if (this.highlightable) {
         map.on('click', layerId, this.highlightClickFn)
         map.on('click', this.clearHighlightOnOutsideClick)
@@ -91,15 +88,14 @@ export default {
       const map = this.getMap()
       if (map) {
         const layerId = this.options.id
-        if (this.clickable) {
-          map.off('click', layerId, this.clickFn)
-        }
         if (this.highlightable) {
+          console.log('highlightable', this.highlightable)
           map.off('click', layerId, this.highlightClickFn)
           map.off('click', this.clearHighlightOnOutsideClick)
           this.clearSelectedFeature()
         }
         if (this.hoverable) {
+          console.log('hoverable', this.hoverable)
           map.off('mouseenter', layerId, this.mouseEnterFn)
           map.off('mouseleave', layerId, this.mouseLeaveFn)
         }
@@ -176,10 +172,6 @@ export default {
       if (!features || !features.length) {
         this.clearSelectedFeature()
       }
-    },
-
-    clickFn(e) {
-      this.$emit('click', e)
     },
 
     mouseEnterFn() {
