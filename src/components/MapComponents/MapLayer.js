@@ -23,6 +23,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    hoverable: {
+      type: Boolean,
+      default: false,
+    },
+    highlightable: {
+      type: Boolean,
+      default: false,
+    },
 
     opacity: {
       type: Number,
@@ -33,6 +41,7 @@ export default {
 
   data: () => ({
     isInitialized: false,
+    selectedFeatureState: null,
   }),
 
   methods: {
@@ -60,9 +69,15 @@ export default {
         map.addLayer(this.options)
       }
 
+      const layerId = this.options.id
       if (this.clickable) {
-        const layerId = this.options.id
         map.on('click', layerId, this.clickFn)
+      }
+      if (this.highlightable) {
+        map.on('click', layerId, this.highlightClickFn)
+        map.on('click', this.clearHighlightOnOutsideClick)
+      }
+      if (this.hoverable) {
         map.on('mouseenter', layerId, this.mouseEnterFn)
         map.on('mouseleave', layerId, this.mouseLeaveFn)
       }
@@ -76,6 +91,19 @@ export default {
       const map = this.getMap()
       if (map) {
         const layerId = this.options.id
+        if (this.clickable) {
+          map.off('click', layerId, this.clickFn)
+        }
+        if (this.highlightable) {
+          map.off('click', layerId, this.highlightClickFn)
+          map.off('click', this.clearHighlightOnOutsideClick)
+          this.clearSelectedFeature()
+        }
+        if (this.hoverable) {
+          map.off('mouseenter', layerId, this.mouseEnterFn)
+          map.off('mouseleave', layerId, this.mouseLeaveFn)
+        }
+
         const layer = map.getLayer(layerId)
         if (layer) {
           const layerSource = layer.source
@@ -83,12 +111,70 @@ export default {
           if (layerSource && !map.getStyle().layers.some(({ source }) => source === layerSource)) {
             map.removeSource(layerSource)
           }
-          if (this.clickable) {
-            map.off('click', layerId, this.clickFn)
-            map.off('mouseenter', layerId, this.mouseEnterFn)
-            map.off('mouseleave', layerId, this.mouseLeaveFn)
-          }
         }
+      }
+    },
+
+    setFeatureState(state, selected) {
+      const map = this.getMap()
+      if (!map || !state) {
+        return
+      }
+      const { source, sourceLayer, id } = state
+      if (source == null || sourceLayer == null || id == null) {
+        return
+      }
+      map.setFeatureState({ source, sourceLayer, id }, { selected })
+    },
+
+    clearSelectedFeature() {
+      if (!this.selectedFeatureState) {
+        return
+      }
+      this.setFeatureState(this.selectedFeatureState, false)
+      this.selectedFeatureState = null
+    },
+
+    highlightClickFn(e) {
+      const feature = e.features && e.features[0]
+      if (!feature || feature.id == null) {
+        return
+      }
+      const next = {
+        source: feature.source,
+        sourceLayer: feature.sourceLayer || this.options['source-layer'],
+        id: feature.id,
+      }
+      if (next.source == null || next.sourceLayer == null) {
+        return
+      }
+
+      const current = this.selectedFeatureState
+      const isSameFeature = current &&
+        current.source === next.source &&
+        current.sourceLayer === next.sourceLayer &&
+        current.id === next.id
+
+      this.clearSelectedFeature()
+      if (!isSameFeature) {
+        this.setFeatureState(next, true)
+        this.selectedFeatureState = next
+      }
+    },
+
+    clearHighlightOnOutsideClick(e) {
+      if (!this.selectedFeatureState) {
+        return
+      }
+      const map = this.getMap()
+      if (!map || !this.options || !this.options.id) {
+        return
+      }
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: [ this.options.id ],
+      })
+      if (!features || !features.length) {
+        this.clearSelectedFeature()
       }
     },
 

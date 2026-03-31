@@ -36,6 +36,20 @@ export default function buildWmtsVectorLayer ({
   })
 
   const sourceLayerId = layer.split(':')[1]
+  const defaultFillPaint = {
+    'fill-color': [
+      'case',
+      [ 'boolean', [ 'feature-state', 'selected' ], false ],
+      '#ffcc00',
+      'black',
+    ],
+    'fill-opacity': [
+      'case',
+      [ 'boolean', [ 'feature-state', 'selected' ], false ],
+      1,
+      0.8,
+    ],
+  }
 
   return {
     id: sourceLayerId,
@@ -47,9 +61,9 @@ export default function buildWmtsVectorLayer ({
       ...(bbox && Array.isArray(bbox) && bbox.length > 0 && { bounds: bbox }),
     },
     'source-layer': sourceLayerId,
-      "paint": {
-        "fill-color": "black",
-        "fill-opacity": 1
+    paint: {
+      ...defaultFillPaint,
+      ...paint,
     },
   }
 }
