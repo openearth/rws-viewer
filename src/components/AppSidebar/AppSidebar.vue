@@ -75,6 +75,7 @@
 
 <style lang="scss">
   .app-sidebar {
+    transition: none;
     z-index: 3;
     box-shadow:
       0 3px 5px -1px rgba(0, 0, 0, .2),
