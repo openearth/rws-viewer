@@ -172,11 +172,15 @@ export default {
 
       layersToAdd.forEach((layer) => {
         getMapServicesCapabilities(layer.url)
+        //In the getLayerProperties based on the wms or wmts ending of the url we send the get
+        // capabilities request to the server. In the response we get the properties of the layer.
           .then(capabilities => getLayerProperties(capabilities, layer))
           .then((properties) => {
             commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...properties } )
-            // commit('ADD_MAPBOX_LAYER',buildMapboxLayer({ ...layer, ...properties }))
+            //wms and wmts raster layers are using the buildMapboxLayer 
+            commit('ADD_MAPBOX_LAYER',buildMapboxLayer({ ...layer, ...properties }))
             if (properties.featureType) {
+              // if in the properties there is a featureType then we have a vector tiled layer. 
               commit('ADD_MAPBOX_LAYER', buildWmtsVectorLayer({ ...layer, ...properties, id: `${ layer.id }-vector` }))
             }
           },
@@ -200,6 +204,7 @@ export default {
       layers.forEach(layer => {
         commit('REMOVE_ACTIVE_FLATTENED_LAYER', { layer })
         commit('REMOVE_MAPBOX_LAYER', layer.id)
+        commit('REMOVE_MAPBOX_LAYER', layer.layer.split(':')[1])
       })
     },
   

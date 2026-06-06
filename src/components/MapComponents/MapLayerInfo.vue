@@ -60,7 +60,7 @@
           properties = { ...(feature.properties || {}) }
         } else {
       
-          const loadingPopup = new Mapbox.Popup().setLngLat(event.lngLat).addTo(map)
+          const featureInfoPending = new Mapbox.Popup().setLngLat(event.lngLat).addTo(map)
           let infoLayer
           if (this.layer.downloadLayer) {
             infoLayer = this.layer.downloadLayer
@@ -73,7 +73,7 @@
             serviceType: this.layer.dataServiceType,
             lng, lat,
           })
-          loadingPopup.remove()
+          featureInfoPending.remove()
           if (!info) {
             return
           }

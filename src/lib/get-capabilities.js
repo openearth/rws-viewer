@@ -307,7 +307,7 @@ async function readWmtsCapabilitiesProperties(capabilities, layerObject) {
     map(getTagContent),
     uniq,
   )()
-console.log('acceptedFormats', acceptedFormats)
+
  const bbox = pipe(
   () => [ ...capabilities.querySelectorAll('Layer') ],
   filter(el => {
