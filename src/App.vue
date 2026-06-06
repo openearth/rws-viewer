@@ -95,7 +95,6 @@
         :options="layer"
         :opacity="layer.opacity"
         :hoverable="layer.source && layer.source.type === 'vector'"
-        :highlightable="layer.source && layer.source.type === 'vector'"
       />
 
       <mapbox-scale-control />

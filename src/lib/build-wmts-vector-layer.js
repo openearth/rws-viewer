@@ -19,25 +19,18 @@ function mapboxLayerTypeFromGeometry(geometryType) {
   }
 }
 
-const selectedCase = (selectedValue, defaultValue) => [
-  'case',
-  [ 'boolean', [ 'feature-state', 'selected' ], false ],
-  selectedValue,
-  defaultValue,
-]
-
 const defaultPaintByType = {
   fill: {
-    'fill-color': selectedCase('#ffcc00', 'black'),
-    'fill-opacity': selectedCase(1, 0.8),
+    'fill-color': 'black',
+    'fill-opacity': 0,
   },
   line: {
-    'line-color': selectedCase('#ffcc00', 'black'),
-    'line-width': selectedCase(3, 1),
+    'line-color': 'black',
+    'line-width': 0,
   },
   circle: {
-    'circle-color': selectedCase('#ffcc00', 'black'),
-    'circle-radius': selectedCase(8, 5),
+    'circle-color': 'black',
+    'circle-radius': 0,
   },
 }
 
@@ -47,7 +40,6 @@ const defaultPaintByType = {
  */
 export default function buildWmtsVectorLayer ({
   url: rawUrl = defaultUrl,
-  id,
   layer,
   style = '',
   paint = {},
