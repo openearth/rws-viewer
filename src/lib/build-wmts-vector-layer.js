@@ -3,10 +3,47 @@ import buildGeoserverUrl from './build-geoserver-url'
 const defaultUrl = process.env.VUE_APP_GEOSERVER_BASE_URL
 const VECTOR_TILE_FORMAT = 'application/vnd.mapbox-vector-tile'
 
+function mapboxLayerTypeFromGeometry(geometryType) {
+  switch (geometryType) {
+    case 'Polygon':
+    case 'MultiPolygon':
+      return 'fill'
+    case 'LineString':
+    case 'MultiLineString':
+      return 'line'
+    case 'Point':
+    case 'MultiPoint':
+      return 'circle'
+    default:
+      return 'fill'
+  }
+}
+
+const selectedCase = (selectedValue, defaultValue) => [
+  'case',
+  [ 'boolean', [ 'feature-state', 'selected' ], false ],
+  selectedValue,
+  defaultValue,
+]
+
+const defaultPaintByType = {
+  fill: {
+    'fill-color': selectedCase('#ffcc00', 'black'),
+    'fill-opacity': selectedCase(1, 0.8),
+  },
+  line: {
+    'line-color': selectedCase('#ffcc00', 'black'),
+    'line-width': selectedCase(3, 1),
+  },
+  circle: {
+    'circle-color': selectedCase('#ffcc00', 'black'),
+    'circle-radius': selectedCase(8, 5),
+  },
+}
+
 /**
  * Build a Mapbox GL layer spec for WMTS vector tiles (MVT).
- * Same inputs as the raster WMTS builder, plus vectorType (e.g. 'line', 'fill', 'circle')
- * from the feature geometry type.
+ * Layer type (fill / line / circle) is derived from featureType (GeoJSON geometry type).
  */
 export default function buildWmtsVectorLayer ({
   url: rawUrl = defaultUrl,
@@ -16,7 +53,7 @@ export default function buildWmtsVectorLayer ({
   paint = {},
   mapServiceVersion = '1.0.0',
   bbox = [],
-  vectorType,
+  featureType,
 }) {
   const url = new URL(rawUrl)
   const tile = buildGeoserverUrl({
@@ -36,25 +73,12 @@ export default function buildWmtsVectorLayer ({
   })
 
   const sourceLayerId = layer.split(':')[1]
-  const defaultFillPaint = {
-    'fill-color': [
-      'case',
-      [ 'boolean', [ 'feature-state', 'selected' ], false ],
-      '#ffcc00',
-      'black',
-    ],
-    'fill-opacity': [
-      'case',
-      [ 'boolean', [ 'feature-state', 'selected' ], false ],
-      1,
-      0.8,
-    ],
-  }
+  const layerType = mapboxLayerTypeFromGeometry(featureType)
 
   return {
     id: sourceLayerId,
     layer,
-    type: "fill",
+    type: layerType,
     source: {
       type: 'vector',
       tiles: [ tile ],
@@ -62,7 +86,7 @@ export default function buildWmtsVectorLayer ({
     },
     'source-layer': sourceLayerId,
     paint: {
-      ...defaultFillPaint,
+      ...defaultPaintByType[layerType],
       ...paint,
     },
   }
