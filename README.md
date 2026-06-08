@@ -105,3 +105,55 @@ The `staging-migrations.yaml` workflow is triggered on pull request events (open
 1. If changes are detected, sets up Node.js, installs dependencies, and runs the `migrations:apply-staging` script.
 1. Deploys the application to Netlify using the specified instances.
 
+## OGC Architecture
+
+This application is an OGC-based map viewer and downloader that integrates WMS, WMTS, WFS, and WCS services behind a single user flow.
+
+### High-level flow
+
+1. Load viewer configuration and layer catalog.
+1. Select a layer to fetch map capabilities (`GetCapabilities`).
+1. Render map tiles (`GetMap` for WMS, `GetTile` for WMTS).
+1. Open Download and fetch data capabilities (`GetCapabilities` for WFS/WCS).
+1. Download data with `GetFeature` (WFS) or `GetCoverage` (WCS).
+
+### Component responsibilities
+
+- **Data store (`data` module):** loads viewer configuration and manages catalog and flattened layers.
+- **Map store (`map` module):** handles layer activation, capabilities enrichment, and map layer state.
+- **Capabilities utilities:** normalize WMS/WMTS/WFS/WCS capability responses into app-level metadata.
+- **Map layer builders:** build Mapbox-compatible definitions for WMS/WMTS raster/vector layers.
+- **Download view:** resolves formats, filters, and builds final OGC download URLs.
+
+### Current implementation note
+
+- `DescribeFeatureType` is implemented and used for WFS downloads.
+- `DescribeCoverage` is currently not implemented in this codebase.
+- WCS downloads use `GetCapabilities` plus `GetCoverage`.
+
+### User actions and OGC calls
+
+| User action | OGC endpoint call | Response |
+| --- | --- | --- |
+| Select a layer on the map | `WMS/WMTS GetCapabilities` | Layer metadata (bbox, version, dimensions, formats) |
+| View selected layer | `WMS GetMap` or `WMTS GetTile` | Renderable map tiles |
+| Open Download and choose layer | `WFS/WCS GetCapabilities` | Supported output formats |
+| Configure filters (WFS only) | `WFS DescribeFeatureType` | Filterable attributes |
+| Start download (WFS) | `WFS GetFeature` | Vector dataset payload |
+| Start download (WCS) | `WCS GetCoverage` | Raster coverage payload |
+
+### Simplified schema
+
+```mermaid
+flowchart TD
+  A[User selects map layer] --> B[WMS/WMTS GetCapabilities]
+  B --> C[User views layer on map]
+  C --> D[WMS GetMap or WMTS GetTile]
+  D --> E[User opens Download and selects layer]
+  E --> F[WFS/WCS GetCapabilities]
+  F --> G{Data service type}
+  G -->|WFS| H[DescribeFeatureType]
+  H --> I[GetFeature]
+  G -->|WCS| J[GetCoverage]
+```
+

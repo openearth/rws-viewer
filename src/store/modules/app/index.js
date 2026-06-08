@@ -10,6 +10,7 @@ export default {
     viewerUserAgreement: '',
     acknowledgments: '',
     viewerLogo: '',
+    hideTour: false,
   }),
 
   getters: {
@@ -21,6 +22,7 @@ export default {
     viewerUserAgreement: state => state.viewerUserAgreement,
     acknowledgments: state => state.acknowledgments,
     viewerLogo: state => state.viewerLogo,
+    hideTour: state => state.hideTour,
   },
 
   mutations: {
@@ -44,6 +46,9 @@ export default {
     },
     SET_VIEWER_LOGO(state, { logo }) {
       state.viewerLogo = logo
+    },
+    SET_HIDE_TOUR(state, { hideTour }) {
+      state.hideTour = hideTour
     },
   },
 
@@ -71,6 +76,10 @@ export default {
 
     setViewerLogo({ commit }, { logo }) {
       commit('SET_VIEWER_LOGO', { logo })
+    },
+
+    setHideTour({ commit }, { hideTour }) {
+      commit('SET_HIDE_TOUR', { hideTour })
     },
   },
 }

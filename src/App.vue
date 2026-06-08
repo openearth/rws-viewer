@@ -52,6 +52,7 @@
     />
 
     <v-tour
+      v-if="!hideTour"
       :steps="generateTourSteps({title: viewerName})"
       :options="tourConfig"
       name="introduction"
@@ -198,7 +199,7 @@
     }),
 
     computed: {
-      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement', 'viewerPrivacyStatement', 'acknowledgments' ]),
+      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement', 'viewerPrivacyStatement', 'acknowledgments', 'hideTour' ]),
       ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'mapboxLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
       ...mapGetters('data', [ 'timeExtent', 'flattenedLayers', 'displayLayers' ]),
       formattedTimeExtent() {
@@ -257,7 +258,7 @@
       })
       this.tourCallbacks = { onSkip: this.skipTourCallback, }
       const skipTourCookie = getCookie("skipTour")
-      if (!skipTourCookie) {
+      if (!skipTourCookie && !this.hideTour) {
         this.showTour()
       }
     },
@@ -352,6 +353,9 @@
         this.clickedUserAgreementOpen = false
       },
       showTour () {
+        if (this.hideTour) {
+          return
+        }
         this.$tours.introduction.start()
       },
       skipTourCallback() {
