@@ -189,6 +189,20 @@
     methods: {
       ...mapActions('map', [ 'updateWmsLayerOpacity', 'updateZoomExtent' ]),
       ...mapActions('data', [ 'setOpenedFolders' ]),
+      getNodeSearchName(node, textKey = 'name') {
+        if (!node) {
+          return '';
+        }
+        const name = node[textKey] ?? node.name ?? node.layerInstance?.name;
+        return typeof name === 'string' ? name : '';
+      },
+      nameMatchesSearch(node, searchLower, textKey = 'name') {
+        const name = this.getNodeSearchName(node, textKey);
+        return name.toLowerCase().includes(searchLower);
+      },
+      isSearchableLayer(node) {
+        return Boolean(node?.layer);
+      },
       getFilteredTree(nodes, searchLower) {
         if (!searchLower) {
           return nodes;
@@ -196,17 +210,23 @@
 
         return nodes
           .map(node => {
-            if (node.layer) {
-              return node.name.toLowerCase().includes(searchLower) ? node : null;
-            } else {
-              const folderMatches = node.name.toLowerCase().includes(searchLower);
-              let filteredChildren = this.getFilteredTree(node.children || [], searchLower);
+            if (!node) {
+              return null;
+            }
 
-              if (folderMatches) {
-                return { ...node, children: node.children || [] };
-              } else if (filteredChildren.length > 0) {
-                return { ...node, children: filteredChildren };
-              }
+            if (this.isSearchableLayer(node)) {
+              return this.nameMatchesSearch(node, searchLower) ? node : null;
+            }
+
+            const children = node.children || [];
+            const folderMatches = this.nameMatchesSearch(node, searchLower);
+            const filteredChildren = this.getFilteredTree(children, searchLower);
+
+            if (folderMatches) {
+              return { ...node, children };
+            }
+            if (filteredChildren.length > 0) {
+              return { ...node, children: filteredChildren };
             }
             return null;
           })
@@ -252,36 +272,25 @@
 
         const searchLower = input.toLowerCase();
 
-        if (item.layer) {
-          return item[textKey].toLowerCase().includes(searchLower);
-        } else {
-          return this.isRelevantFolder(item, searchLower);
+        if (this.isSearchableLayer(item)) {
+          return this.nameMatchesSearch(item, searchLower, textKey);
         }
-      },
-      hasMatchingChild(folder, searchLower) {
-        if (!folder.children || folder.children.length === 0) {
-          return false;
-        }
-
-        return folder.children.some(child => {
-          if (child.layer) {
-            return child.name.toLowerCase().includes(searchLower);
-          } else {
-            return child.name.toLowerCase().includes(searchLower) || this.hasMatchingChild(child, searchLower);
-          }
-        });
+        return this.isRelevantFolder(item, searchLower);
       },
       isRelevantFolder(folder, searchLower) {
-        if (!folder.children || folder.children.length === 0) {
+        if (!folder?.children?.length) {
           return false;
         }
 
         return folder.children.some(child => {
-          if (child.layer) {
-            return child.name.toLowerCase().includes(searchLower);
-          } else {
-            return child.name.toLowerCase().includes(searchLower) || this.isRelevantFolder(child, searchLower);
+          if (!child) {
+            return false;
           }
+          if (this.isSearchableLayer(child)) {
+            return this.nameMatchesSearch(child, searchLower);
+          }
+          return this.nameMatchesSearch(child, searchLower)
+            || this.isRelevantFolder(child, searchLower);
         });
       },
       updateLayerOpacity({ id, opacity }) {
