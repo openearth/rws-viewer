@@ -27,10 +27,12 @@ const defaultPaintByType = {
   line: {
     'line-color': 'black',
     'line-width': 0,
+    'line-opacity': 0,
   },
   circle: {
     'circle-color': 'black',
-    'circle-radius': 0,
+    'circle-radius': 10,
+    'circle-opacity': 0,
   },
 }
 
