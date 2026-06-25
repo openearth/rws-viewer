@@ -113,7 +113,6 @@
       />
       <map-layer-info
         v-if="activeFlattenedLayers.length && !drawMode"
-        :layer="activeFlattenedLayers[0]"
       />
     </v-mapbox>
   </app-shell>

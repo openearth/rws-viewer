@@ -137,10 +137,31 @@ This application is an OGC-based map viewer and downloader that integrates WMS, 
 | --- | --- | --- |
 | Select a layer on the map | `WMS/WMTS GetCapabilities` | Layer metadata (bbox, version, dimensions, formats) |
 | View selected layer | `WMS GetMap` or `WMTS GetTile` | Renderable map tiles |
+| Click map with active layer(s)* | `WMS GetFeatureInfo` (raster) or rendered vector features (MVT) | Combined attribute popup per layer with data |
 | Open Download and choose layer | `WFS/WCS GetCapabilities` | Supported output formats |
 | Configure filters (WFS only) | `WFS DescribeFeatureType` | Filterable attributes |
 | Start download (WFS) | `WFS GetFeature` | Vector dataset payload |
 | Start download (WCS) | `WCS GetCoverage` | Raster coverage payload |
+
+\* **Map click uses two paths depending on layer type.** Raster layers (WMS / WMTS without vector tiles) trigger one parallel `WMS GetFeatureInfo` request per active layer to GeoServer. Vector tile layers (WMTS MVT) skip `GetFeatureInfo` entirely — Mapbox GL `map.queryRenderedFeatures` reads feature properties from tiles already rendered at the click point. Both paths feed into a single combined popup. See [Map click info popup](#map-click-info-popup) below.
+
+### Map click info popup
+
+Clicking the map with one or more active layers opens a single combined attribute popup at the click location. The popup shows one titled section per layer that returned data, ordered top-to-bottom by map stacking order.
+
+#### Behaviour by layer type
+
+| Layer type | Detection | Data source |
+| --- | --- | --- |
+| Vector tiles (WMTS MVT) | Layer has `featureType` from capabilities | `map.queryRenderedFeatures` at the click point |
+| Raster / WMS / WMTS | No `featureType` | Per-layer `WMS GetFeatureInfo` (parallel requests) |
+
+- Only one popup is shown at a time; a new click replaces the previous popup.
+- While raster `GetFeatureInfo` requests are in flight, a loading placeholder popup is shown.
+- Raster responses that return `GRAY_INDEX` are renamed to `<layerName>_value` per layer.
+- Layers with no data at the click point (empty `GetFeatureInfo` response or no rendered vector feature) are omitted from the popup.
+
+ a separate code path used for feature selection in draw mode, not the map info popup.
 
 ### Simplified schema
 
@@ -149,6 +170,12 @@ flowchart TD
   A[User selects map layer] --> B[WMS/WMTS GetCapabilities]
   B --> C[User views layer on map]
   C --> D[WMS GetMap or WMTS GetTile]
+  D --> K[User clicks map]
+  K --> L{Layer type}
+  L -->|Vector MVT| M[queryRenderedFeatures]
+  L -->|Raster WMS| N[GetFeatureInfo per layer]
+  M --> O[Combined info popup]
+  N --> O
   D --> E[User opens Download and selects layer]
   E --> F[WFS/WCS GetCapabilities]
   F --> G{Data service type}
