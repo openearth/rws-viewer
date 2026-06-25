@@ -95,6 +95,7 @@
         :before="wmsLayerIds[index - 1]"
         :options="layer"
         :opacity="layer.opacity"
+        :hoverable="layer.source && layer.source.type === 'vector'"
       />
 
       <mapbox-scale-control />
@@ -112,7 +113,6 @@
       />
       <map-layer-info
         v-if="activeFlattenedLayers.length && !drawMode"
-        :layer="activeFlattenedLayers[0]"
       />
     </v-mapbox>
   </app-shell>
