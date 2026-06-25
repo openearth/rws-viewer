@@ -119,3 +119,82 @@ The `staging-migrations.yaml` workflow is triggered on pull request events (open
 1. If changes are detected, sets up Node.js, installs dependencies, and runs the `migrations:apply-staging` script.
 1. Deploys the application to Netlify using the specified instances.
 
+## OGC Architecture
+
+This application is an OGC-based map viewer and downloader that integrates WMS, WMTS, WFS, and WCS services behind a single user flow.
+
+### High-level flow
+
+1. Load viewer configuration and layer catalog.
+1. Select a layer to fetch map capabilities (`GetCapabilities`).
+1. Render map tiles (`GetMap` for WMS, `GetTile` for WMTS).
+1. Open Download and fetch data capabilities (`GetCapabilities` for WFS/WCS).
+1. Download data with `GetFeature` (WFS) or `GetCoverage` (WCS).
+
+### Component responsibilities
+
+- **Data store (`data` module):** loads viewer configuration and manages catalog and flattened layers.
+- **Map store (`map` module):** handles layer activation, capabilities enrichment, and map layer state.
+- **Capabilities utilities:** normalize WMS/WMTS/WFS/WCS capability responses into app-level metadata.
+- **Map layer builders:** build Mapbox-compatible definitions for WMS/WMTS raster/vector layers.
+- **Download view:** resolves formats, filters, and builds final OGC download URLs.
+
+### Current implementation note
+
+- `DescribeFeatureType` is implemented and used for WFS downloads.
+- `DescribeCoverage` is currently not implemented in this codebase.
+- WCS downloads use `GetCapabilities` plus `GetCoverage`.
+
+### User actions and OGC calls
+
+| User action | OGC endpoint call | Response |
+| --- | --- | --- |
+| Select a layer on the map | `WMS/WMTS GetCapabilities` | Layer metadata (bbox, version, dimensions, formats) |
+| View selected layer | `WMS GetMap` or `WMTS GetTile` | Renderable map tiles |
+| Click map with active layer(s)* | `WMS GetFeatureInfo` (raster) or rendered vector features (MVT) | Combined attribute popup per layer with data |
+| Open Download and choose layer | `WFS/WCS GetCapabilities` | Supported output formats |
+| Configure filters (WFS only) | `WFS DescribeFeatureType` | Filterable attributes |
+| Start download (WFS) | `WFS GetFeature` | Vector dataset payload |
+| Start download (WCS) | `WCS GetCoverage` | Raster coverage payload |
+
+\* **Map click uses two paths depending on layer type.** Raster layers (WMS / WMTS without vector tiles) trigger one parallel `WMS GetFeatureInfo` request per active layer to GeoServer. Vector tile layers (WMTS MVT) skip `GetFeatureInfo` entirely — Mapbox GL `map.queryRenderedFeatures` reads feature properties from tiles already rendered at the click point. Both paths feed into a single combined popup. See [Map click info popup](#map-click-info-popup) below.
+
+### Map click info popup
+
+Clicking the map with one or more active layers opens a single combined attribute popup at the click location. The popup shows one titled section per layer that returned data, ordered top-to-bottom by map stacking order.
+
+#### Behaviour by layer type
+
+| Layer type | Detection | Data source |
+| --- | --- | --- |
+| Vector tiles (WMTS MVT) | Layer has `featureType` from capabilities | `map.queryRenderedFeatures` at the click point |
+| Raster / WMS / WMTS | No `featureType` | Per-layer `WMS GetFeatureInfo` (parallel requests) |
+
+- Only one popup is shown at a time; a new click replaces the previous popup.
+- While raster `GetFeatureInfo` requests are in flight, a loading placeholder popup is shown.
+- Raster responses that return `GRAY_INDEX` are renamed to `<layerName>_value` per layer.
+- Layers with no data at the click point (empty `GetFeatureInfo` response or no rendered vector feature) are omitted from the popup.
+
+ a separate code path used for feature selection in draw mode, not the map info popup.
+
+### Simplified schema
+
+```mermaid
+flowchart TD
+  A[User selects map layer] --> B[WMS/WMTS GetCapabilities]
+  B --> C[User views layer on map]
+  C --> D[WMS GetMap or WMTS GetTile]
+  D --> K[User clicks map]
+  K --> L{Layer type}
+  L -->|Vector MVT| M[queryRenderedFeatures]
+  L -->|Raster WMS| N[GetFeatureInfo per layer]
+  M --> O[Combined info popup]
+  N --> O
+  D --> E[User opens Download and selects layer]
+  E --> F[WFS/WCS GetCapabilities]
+  F --> G{Data service type}
+  G -->|WFS| H[DescribeFeatureType]
+  H --> I[GetFeature]
+  G -->|WCS| J[GetCoverage]
+```
+

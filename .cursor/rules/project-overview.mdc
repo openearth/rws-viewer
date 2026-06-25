@@ -1,0 +1,155 @@
+---
+description: OpenEarth Viewer (rws-viewer) project architecture, data flow, and conventions
+alwaysApply: true
+---
+
+# OpenEarth Viewer — Project Overview
+
+Marine data map viewer by Deltares/OpenEarth. Embeddable, multi-tenant: one codebase serves multiple viewer configs (Wadden, WOZE, IHM, etc.) via URL slug and DatoCMS content.
+
+**Live:** https://rws-viewer.netlify.app/
+
+## Tech Stack
+
+- **Vue 2.7** + Vue Router (history mode) + Vuex + Vuetify 2
+- **Mapbox GL** via `vue2mapbox-gl`; map layers from WMS and WMTS; downloads from WFS and WCS
+- **DatoCMS** as headless CMS; content dumped to static JSON at build/dev time
+- **Netlify** hosting + serverless functions (`netlify/functions/api.mjs`)
+- **i18n:** `en` and `nl` (`vue-i18n`)
+
+## Architecture
+
+```
+DatoCMS (GraphQL)
+    ↓  npm run dato  (config/dato/dump-data.mjs)
+public/data/{locale}/*.json
+    ↓  configRepo / viewer-configs
+Vuex (app / data / map)
+    ↓
+Mapbox map + sidebar UI
+```
+
+### Vuex Modules
+
+| Module | Responsibility |
+|--------|----------------|
+| `app` | Viewer identity: name, config slug, privacy/user agreement, logo, sidebar state |
+| `data` | Layer tree from CMS, filters, time extent, CQL filters, opened folders |
+| `map` | Active layers, Mapbox layer state, draw mode, map center/zoom |
+
+### Routing
+
+All routes are scoped by viewer config slug: `/:config`, `/:config/download`, `/:config/favourites`, `/:config/filters`.
+
+Valid config slugs come from `public/data/{locale}/available-configs-viewers.json` (generated from DatoCMS menus). Router falls back to the first valid config if slug is invalid. Active layer IDs are synced to the `?layers=` query param.
+
+## Key Directories
+
+| Path | Purpose |
+|------|---------|
+| `src/App.vue` | Root shell: map, sidebar, dialogs, tour, time slider |
+| `src/views/` | Route views: Layers, Download, Favourites, Filters |
+| `src/components/` | UI components (LayerChooser, MapboxLegend, etc.) |
+| `src/lib/` | Layer builders, capabilities parsing, helpers — **core map logic** |
+| `src/repo/` | Data access (`configRepo.js`, `metaRepo.js`) |
+| `src/store/modules/` | Vuex modules |
+| `config/dato/` | DatoCMS dump scripts and GraphQL queries |
+| `public/data/` | Generated static JSON (do not hand-edit; regenerate via `npm run dato`) |
+| `migrations/` | DatoCMS schema migrations (TypeScript) |
+| `scripts/dato/` | Migration create/apply scripts |
+| `netlify/functions/` | API proxy to external data services |
+
+## OGC Services and Request Flow
+
+OGC-based map viewer and downloader: WMS/WMTS for map display, WFS/WCS for data download.
+
+### Supported services
+
+| Context | Services | Detection |
+|---------|----------|-----------|
+| Map display | WMS, WMTS | `src/lib/check-map-service-type.js` — `wmts` in URL pathname, else WMS |
+| Data download | WFS, WCS | `src/lib/get-capabilities.js` — probes both via `GetCapabilities`, picks type by layer match |
+
+### User actions → OGC calls
+
+| User action | OGC call | Response |
+|-------------|----------|----------|
+| Select map layer | WMS/WMTS `GetCapabilities` | Bbox, version, dimensions, formats |
+| View layer on map | WMS `GetMap` or WMTS `GetTile` | Map tiles |
+| Open Download | WFS/WCS `GetCapabilities` | Supported output formats |
+| Configure filters (WFS) | WFS `DescribeFeatureType` | Filterable attributes |
+| Download (WFS) | WFS `GetFeature` | Vector dataset |
+| Download (WCS) | WCS `GetCoverage` | Raster coverage |
+
+`DescribeCoverage` is not implemented; WCS downloads use `GetCapabilities` + `GetCoverage`.
+
+### Flow
+
+```mermaid
+flowchart TD
+  A[User selects map layer] --> B[WMS/WMTS GetCapabilities]
+  B --> C[User views layer on map]
+  C --> D[WMS GetMap or WMTS GetTile]
+  D --> E[User opens Download]
+  E --> F[WFS/WCS GetCapabilities]
+  F --> G{Data service type}
+  G -->|WFS| H[DescribeFeatureType]
+  H --> I[GetFeature]
+  G -->|WCS| J[GetCoverage]
+```
+
+### OGC-related code
+
+| Path | Role |
+|------|------|
+| `src/lib/get-capabilities.js` | WMS/WMTS/WFS/WCS `GetCapabilities` parsing and service-type detection |
+| `src/lib/build-mapbox-layer.js` | Dispatches to `build-wms-layer.js` or `build-wmts-layer.js` |
+| `src/lib/get-feature.js` | WFS `GetFeature` URL building |
+| `src/lib/wfs-filter-helpers.js` | WFS `DescribeFeatureType` and filter attributes |
+| `src/lib/download-helpers.js` | Download URL assembly |
+| `src/views/DownloadGeoserver.vue` | Download UI and format/filter resolution |
+| `src/components/MapComponents/MapLayer.js` | Renders Mapbox raster layers |
+
+Map layers require `id`, `name`, `url`, and `layer` (layer name).
+
+## Multi-Instance Deployment
+
+Three DatoCMS/Netlify instances in `config/dato/instances.js`:
+
+- `openearth-rws-viewer` (primary RWS viewer)
+- `openearth-data-viewer`
+- `nl2120`
+
+Set `DATO_INSTANCE_CURRENT` in `.env` to select which instance to dump from. GitHub Actions run Dato migrations and deploy per instance on push/PR.
+
+## Development
+
+```sh
+npm install --legacy-peer-deps
+cp .env.example .env   # set VUE_APP_MAPBOX_TOKEN, DATO_API_KEY_*, etc.
+npm run dato            # get latest information from data
+npm run serve           # runs in development
+```
+
+- `npm run lint` — ESLint + Stylelint
+- `npm run migrations:create` — new DatoCMS migration
+
+## Conventions
+
+- Use existing patterns: Options API in `.vue` files, Ramda for immutable helpers, `~/` alias for `src/`
+- Layer/tree helpers live in `src/lib/layer-helpers.js`; don't duplicate flatten/filter logic in components
+- Viewer config is locale-specific; always pass `locale` when loading CMS data
+- Prefer extending existing layer builders over adding new map integration paths
+- SCSS lives in `src/components/AppCore/`; component-scoped styles use Vuetify patterns
+- `patch-package` runs on postinstall — check `patches/` before upgrading deps
+
+## Environment Variables (`.env.example`)
+
+| Variable | Purpose |
+|----------|---------|
+| `DATO_INSTANCE_CURRENT` | Which CMS instance to use |
+| `DATO_API_KEY_*` | Per-instance DatoCMS API keys |
+| `VUE_APP_MAPBOX_TOKEN` | Mapbox access token |
+| `VUE_APP_API_ENDPOINT` | External API base URL |
+| `VUE_APP_PIWIK_CONTAINER_ID` | Analytics |
+| `NODE_OPTIONS=--openssl-legacy-provider` | Required for webpack 4 / Node 17+ |

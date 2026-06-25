@@ -16,6 +16,8 @@ query($locale: SiteLocale) {
     userAgreement
     acknowledgments
     logo
+    sidebarClosed
+    hideTour
   }
 }
 `
@@ -35,7 +37,9 @@ export default async function dumpAvailableConfigs(locale) {
       privacyStatement: config.privacyStatement,
       userAgreement: config.userAgreement,
       acknowledgments: config.acknowledgments,
-      logo: config.logo
+      logo: config.logo,
+      sidebarClosed: config.sidebarClosed,
+      hideTour: config.hideTour,
     }
   })
 

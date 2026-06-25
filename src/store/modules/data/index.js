@@ -73,11 +73,13 @@ export default {
       const viewer = route?.params?.config
 
       //Set viewer configuration
-      const { mapCenter, mapZoom, defaultLayer, privacyStatement, userAgreement, acknowledgments, logo } = await getViewerConfiguration(viewer, locale)
+      const { mapCenter, mapZoom, defaultLayer, privacyStatement, userAgreement, acknowledgments, logo, sidebarClosed, hideTour } = await getViewerConfiguration(viewer, locale)
       
 
       dispatch('map/setMapCenter', mapCenter, { root: true })
       dispatch('map/setMapZoom', mapZoom, { root: true })
+      dispatch('app/setNavigationOpen', { open: sidebarClosed !== true }, { root: true })
+      dispatch('app/setHideTour', { hideTour: hideTour === true }, { root: true })
 
       const { layers, name } = await dispatch('addViewerData', { viewer, locale })
 

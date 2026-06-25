@@ -402,7 +402,7 @@
         const serviceUrl = wmsServiceUrl ? wmsServiceUrl : url
         if (dataServiceType === 'wfs') {
           const response = await describeFeatureType({
-            serviceUrl,
+            url: serviceUrl,
             layer: layerName,
           })
           this.availableFiltersForSelectedLayer = readFeatureProperties(response)

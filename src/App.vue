@@ -52,6 +52,7 @@
     />
 
     <v-tour
+      v-if="!hideTour"
       :steps="generateTourSteps({title: viewerName})"
       :options="tourConfig"
       name="introduction"
@@ -94,6 +95,7 @@
         :before="wmsLayerIds[index - 1]"
         :options="layer"
         :opacity="layer.opacity"
+        :hoverable="layer.source && layer.source.type === 'vector'"
       />
 
       <mapbox-scale-control />
@@ -111,7 +113,6 @@
       />
       <map-layer-info
         v-if="activeFlattenedLayers.length && !drawMode"
-        :layer="activeFlattenedLayers[0]"
       />
     </v-mapbox>
   </app-shell>
@@ -197,7 +198,7 @@
     }),
 
     computed: {
-      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement', 'viewerPrivacyStatement', 'acknowledgments' ]),
+      ...mapGetters('app', [ 'viewerName', 'appNavigationOpen', 'appNavigationWidth', 'viewerUserAgreement', 'viewerPrivacyStatement', 'acknowledgments', 'hideTour' ]),
       ...mapGetters('map', [ 'drawnFeatures', 'drawMode', 'wmsLayerIds', 'mapboxLayers', 'filteredLayerId', 'mapCenter', 'mapZoom', 'zoomExtent', 'selectedLayerForSelection', 'activeFlattenedLayers', 'wmsApiLayer', 'multipleSelection' ]),
       ...mapGetters('data', [ 'timeExtent', 'flattenedLayers', 'displayLayers' ]),
       formattedTimeExtent() {
@@ -256,7 +257,7 @@
       })
       this.tourCallbacks = { onSkip: this.skipTourCallback, }
       const skipTourCookie = getCookie("skipTour")
-      if (!skipTourCookie) {
+      if (!skipTourCookie && !this.hideTour) {
         this.showTour()
       }
     },
@@ -351,6 +352,9 @@
         this.clickedUserAgreementOpen = false
       },
       showTour () {
+        if (this.hideTour) {
+          return
+        }
         this.$tours.introduction.start()
       },
       skipTourCallback() {
