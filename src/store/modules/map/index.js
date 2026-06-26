@@ -172,9 +172,10 @@ export default {
 
       layersToAdd.forEach((layer) => {
         getMapServicesCapabilities(layer.url)
-        //In the getLayerProperties based on the wms or wmts ending of the url we send the get
-        // capabilities request to the server. In the response we get the properties of the layer.
-          .then(capabilities => getLayerProperties(capabilities, layer))
+          .then(capabilities => {
+            // For ESRI layers, capabilities will be null, so we pass it through
+            return getLayerProperties(capabilities, layer)
+          })
           .then((properties) => {
             commit('ADD_ACTIVE_FLATTENED_LAYER', { ...layer, ...properties } )
             //wms and wmts raster layers are using the buildMapboxLayer 
@@ -210,7 +211,10 @@ export default {
   
     loadApiLayerOnMap({ commit }, layer) {
       getMapServicesCapabilities(layer.url)
-      .then(capabilities => getLayerProperties(capabilities, layer))
+      .then(capabilities => {
+        // For ESRI layers, capabilities will be null, so we pass it through
+        return getLayerProperties(capabilities, layer)
+      })
       .then((properties) => {
         commit('ADD_WMS_API_LAYER', buildMapboxLayer({ ...layer, ...properties }))
       },

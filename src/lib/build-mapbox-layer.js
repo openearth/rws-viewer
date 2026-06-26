@@ -1,6 +1,7 @@
 import buildWmsLayer from "./build-wms-layer"
 import checkMapServiceType from "./check-map-service-type"
 import buildWmtsLayer from "./build-wmts-layer"
+import buildEsriLayer from "./build-esri-layer"
 
 export default (layerConfig) => {
     const mapServiceType = checkMapServiceType(layerConfig.url)
@@ -8,5 +9,7 @@ export default (layerConfig) => {
         return buildWmsLayer(layerConfig)
     } else if (mapServiceType === 'wmts') {
        return buildWmtsLayer(layerConfig)
+    } else if (mapServiceType === 'esri') {
+       return buildEsriLayer(layerConfig)
     }
 }
