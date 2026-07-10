@@ -4,7 +4,10 @@ export default function (url) {
     const urlObject = new URL(url)
     if (urlObject.pathname.includes('wmts')) {
         mapServiceType = 'wmts'
-    } else if (urlObject.pathname.includes('MapServer') || urlObject.pathname.includes('mapserver')) {
+    } else if (
+        (urlObject.pathname.includes('MapServer') || urlObject.pathname.includes('mapserver')) &&
+        !url.toLowerCase().includes('service=wms')
+    ) {
         mapServiceType = 'esri'
     } else {
         mapServiceType = 'wms'
