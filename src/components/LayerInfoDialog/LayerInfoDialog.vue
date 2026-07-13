@@ -258,8 +258,8 @@
             this.isLoading = true
 
             const data = await this.multipleFetch([
-              `/api/record-register?record=${ this.layerId }&viewer=${ this.viewerName }`,
               `/api/record-register?record=${ this.viewerLayerId }&viewer=${ this.viewerName }`,
+              `/api/record-register?record=${ this.layerId }&viewer=${ this.viewerName }`,
             ])
 
             this.recordUrl = data
